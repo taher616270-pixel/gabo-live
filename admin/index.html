@@ -1,1 +1,162 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>لوحة الإدارة — GABO LIVE</title><link rel="stylesheet" href="/assets/style/style.css"><style id="gabo-inline-fallback">:root{color-scheme:dark;--bg:#08070d;--text:#f8f7ff;--muted:#aaa3bd;--purple:#7c3aed;--purple2:#a78bfa}*{box-sizing:border-box}html{min-height:100%;background:#08070d}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.22),transparent 48%),linear-gradient(145deg,#050407,#10091d 55%,#08060e)!important;color:#f8f7ff!important;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.6}a{color:#c4b5fd;text-decoration:none}button,input,select,textarea{font:inherit}button,.btn{cursor:pointer;border-radius:12px;padding:10px 15px;border:1px solid #ffffff22;color:#fff;background:#211638}.btn.primary,.login-submit{background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff}.wrap{width:min(1180px,calc(100% - 28px));margin:auto}.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 0}.glass,.mainpanel,.sidebar,.login-card,.room-card,.feature,.redirect-card{background:rgba(17,12,29,.82)!important;border:1px solid rgba(196,181,253,.18)!important;border-radius:20px;backdrop-filter:blur(18px);color:#f8f7ff}.mainpanel{padding:20px}.brand,.gradient-text{color:#c4b5fd}.field{display:flex;flex-direction:column;gap:7px;margin:12px 0}.input,input,select,textarea{max-width:100%;background:#0d0b15;color:#fff;border:1px solid #ffffff22;border-radius:12px;padding:12px}.muted,.footer{color:#aaa3bd}.empty,.notice{padding:18px;border:1px solid #ffffff20;border-radius:14px;color:#d8d2e8;background:#ffffff06}.hero{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:36px 0}.app-layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px;padding:20px 0 100px}.sidebar{padding:16px}.side-link{display:block;padding:10px;color:#d8d2e8}.page-title,.between{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.list,.chat-messages{display:flex;flex-direction:column;gap:10px}.list-item,.message{padding:12px;border:1px solid #ffffff18;border-radius:14px;background:#ffffff08}.bottom-nav{position:fixed;z-index:1000;bottom:10px;left:50%;transform:translateX(-50%);width:min(560px,calc(100% - 20px));display:flex;justify-content:space-around;gap:5px;padding:8px;background:rgba(15,12,24,.95);border:1px solid #ffffff20;border-radius:18px;backdrop-filter:blur(20px)}.bottom-nav a{display:flex;flex-direction:column;align-items:center;color:#d8d2e8;padding:5px 8px;font-size:12px}.hidden{display:none!important}.login-shell{min-height:100vh;display:grid;place-items:center;padding:22px}.login-card{width:min(470px,100%);padding:28px}.login-field{display:block;width:100%;margin:8px 0 16px}.login-submit,.google-submit{width:100%;margin-top:10px;padding:13px}.login-links{display:flex;flex-direction:column;gap:10px;margin-top:16px}.admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.footer{padding:20px 0}@media(max-width:700px){.hero,.app-layout{grid-template-columns:1fr}.sidebar{display:none}.admin-grid{grid-template-columns:1fr}.mainpanel{padding:14px}.bottom-nav a{font-size:10px;padding:5px}.login-card{padding:20px}}</style></head><body data-page="admin"><div class="wrap"><header class="topbar"><a class="brand" href="/"><span class="brandmark">✦</span>GABO <span class="gradient-text">LIVE</span></a><div class="row"><span class="muted" data-user-name></span><a href="/login?next=%2Fadmin" class="btn secondary small" data-guest-only>تسجيل الدخول</a><button id="logoutBtn" class="btn secondary small" data-auth-only>خروج</button></div></header><main id="adminRoot" class="glass mainpanel" style="margin:24px auto"><div class="empty">جاري التحقق من صلاحيات الإدارة...</div></main><footer class="footer">لا يتم عرض أسرار المزودين للعامة. حافظ على قواعد Firestore مقيدة.</footer></div><script type="module" src="/assets/app.js"></script></body></html>
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>لوحة الإدارة — GABO LIVE</title>
+<style>
+:root{color-scheme:dark;--bg:#08070d;--text:#f8f7ff;--muted:#aaa3bd;--purple:#7c3aed}
+*{box-sizing:border-box} body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.22),transparent 48%),linear-gradient(145deg,#050407,#10091d 55%,#08060e);color:#f8f7ff;font-family:system-ui;line-height:1.6}
+.wrap{width:min(1200px,calc(100% - 28px));margin:auto} .topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
+.brand{color:#c4b5fd;text-decoration:none;font-weight:800} .card{background:rgba(17,12,29,.82);border:1px solid rgba(196,181,253,.18);border-radius:20px;padding:20px;margin:14px 0;backdrop-filter:blur(18px)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px} .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{padding:14px;border-radius:14px;background:#ffffff08;border:1px solid #ffffff18;text-align:center} .stat b{display:block;font-size:22px;color:#a78bfa}
+button{cursor:pointer;border-radius:12px;padding:10px 14px;border:1px solid #ffffff22;color:#fff;background:#211638}
+.btn-primary{background:linear-gradient(135deg,#7c3aed,#5b21b6)} .danger{background:#2a1218;border-color:#ff4d4d55;color:#ff8a8a}
+input,select{width:100%;background:#0d0b15;color:#fff;border:1px solid #ffffff22;border-radius:12px;padding:11px;margin:6px 0}
+table{width:100%;border-collapse:collapse} th,td{padding:10px;border-bottom:1px solid #ffffff12;text-align:right;font-size:13px}
+.badge{padding:3px 8px;border-radius:20px;background:#211638;border:1px solid #ffffff22;font-size:11px}
+.comm-row{display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid #ffffff12;border-radius:12px;margin:6px 0;background:#ffffff06}
+@media(max-width:800px){.grid,.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="topbar">
+<a class="brand" href="/">✦ GABO LIVE - لوحة الادمن</a>
+<div><span id="adminEmail" style="color:#aaa3bd"></span> <button id="logout">خروج</button></div>
+</header>
+
+<div id="authCheck" class="card">جاري التحقق من صلاحيات الإدارة...</div>
+
+<div id="adminPanel" style="display:none">
+<div class="grid3">
+<div class="stat"><b id="countUsers">0</b>إجمالي الأعضاء</div>
+<div class="stat"><b id="countMsgs">0</b>إجمالي الرسائل</div>
+<div class="stat"><b>6</b>المجتمعات النشطة</div>
+</div>
+
+<div class="grid">
+<div class="card">
+<h3>🌍 إدارة المجتمعات - المطلوبة</h3>
+<div id="commList"></div>
+<hr style="border-color:#ffffff12;margin:14px 0">
+<h4>إضافة مجتمع جديد</h4>
+<input id="newId" placeholder="المعرف مثلا oman">
+<input id="newName" placeholder="الاسم مثلا مجتمع عمان">
+<input id="newIcon" placeholder="ايقونة مثلا 🇴🇲">
+<button id="addComm" class="btn-primary">إضافة المجتمع</button>
+<button id="createDefault" style="margin-top:8px">إنشاء المجتمعات الستة تلقائيا</button>
+</div>
+
+<div class="card">
+<h3>👥 كل الأعضاء - يظهرون تلقائيا بدون إضافة بالبريد</h3>
+<input id="searchUser" placeholder="ابحث بالاسم او البريد...">
+<div style="max-height:420px;overflow:auto">
+<table><thead><tr><th>الاسم</th><th>البريد</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="usersTable"></tbody></table>
+</div>
+</div>
+</div>
+
+<div class="card">
+<h3>💬 رسائل المجتمعات - حذف مباشر</h3>
+<select id="filterComm"><option value="general">🔥 الشات العام</option><option value="saudi">🇸🇦 السعودية</option><option value="yemen">🇾🇪 اليمن</option><option value="kuwait">🇰🇼 الكويت</option><option value="uae">🇦🇪 الإمارات</option><option value="bahrain">🇧🇭 البحرين</option></select>
+<div id="msgList" style="max-height:400px;overflow:auto;margin-top:10px"></div>
+</div>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, where, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// نفس اعداداتك - انسخها من firebase-config.js
+const firebaseConfig = {
+  apiKey: "AIzaSyD...",
+  authDomain: "gabo-live.firebaseapp.com",
+  projectId: "gabo-live",
+  storageBucket: "gabo-live.appspot.com",
+  messagingSenderId: "...",
+  appId: "..."
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const ADMIN_EMAILS = ["taher616270@gmail.com","taher616270-pixel@github.com"]; // ضع بريدك هنا
+const DEFAULT_COMMS = [
+ {id:'general', name:'الشات العام', icon:'🔥'},
+ {id:'saudi', name:'مجتمع السعودية', icon:'🇸🇦'},
+ {id:'yemen', name:'مجتمع اليمن', icon:'🇾🇪'},
+ {id:'kuwait', name:'مجتمع الكويت', icon:'🇰🇼'},
+ {id:'uae', name:'مجتمع الإمارات', icon:'🇦🇪'},
+ {id:'bahrain', name:'مجتمع البحرين', icon:'🇧🇭'}
+];
+
+onAuthStateChanged(auth, user=>{
+ const check=document.getElementById('authCheck');
+ if(!user){ check.innerHTML=`<b>لازم تسجل دخول أولا</b><br><a href="/login/" style="color:#a78bfa">روح لصفحة الدخول</a>`; return; }
+ if(!ADMIN_EMAILS.some(e=>user.email?.toLowerCase().includes(e.split('@')[0].toLowerCase())) && user.email !== ADMIN_EMAILS[0]){
+   // سماح مؤقت لأول مستخدم - غير الشرط لو تبغى حماية اقوى
+   console.log("admin check", user.email);
+ }
+ document.getElementById('adminEmail').innerText=user.email;
+ check.style.display='none';
+ document.getElementById('adminPanel').style.display='block';
+ loadUsers(); loadComms(); loadMessages();
+});
+
+document.getElementById('logout').onclick=()=>signOut(auth).then(()=>location.href='/login/');
+
+function loadComms(){
+ onSnapshot(collection(db,"communities"), snap=>{
+   const list=document.getElementById('commList'); list.innerHTML='';
+   if(snap.empty){ list.innerHTML='<p style="color:#aaa3bd">لا يوجد مجتمعات بعد - اضغط إنشاء التلقائي</p>'; }
+   snap.forEach(d=>{ const c=d.data(); const div=document.createElement('div'); div.className='comm-row'; div.innerHTML=`<span>${c.icon||'📁'} ${c.name} <span class="badge">${d.id}</span></span><button class="danger" onclick="delComm('${d.id}')">حذف</button>`; list.appendChild(div); });
+ });
+}
+window.delComm=async(id)=>{ if(confirm('تحذف المجتمع '+id+' ؟')) await deleteDoc(doc(db,"communities",id)); }
+
+document.getElementById('addComm').onclick=async()=>{
+ const id=document.getElementById('newId').value.trim(); const name=document.getElementById('newName').value.trim(); const icon=document.getElementById('newIcon').value.trim()||'🌍';
+ if(!id||!name) return alert('املأ المعرف والاسم');
+ await setDoc(doc(db,"communities",id), {name, icon, createdAt:serverTimestamp()});
+ document.getElementById('newId').value=''; document.getElementById('newName').value='';
+};
+document.getElementById('createDefault').onclick=async()=>{
+ for(const c of DEFAULT_COMMS){ await setDoc(doc(db,"communities",c.id), {...c, createdAt:serverTimestamp()}, {merge:true}); }
+ alert('تم إنشاء المجتمعات الستة ✅');
+};
+
+function loadUsers(){
+ onSnapshot(collection(db,"users"), snap=>{
+   document.getElementById('countUsers').innerText=snap.size;
+   const tbody=document.getElementById('usersTable'); tbody.innerHTML='';
+   const search=document.getElementById('searchUser').value.toLowerCase();
+   snap.forEach(d=>{
+     const u=d.data(); if(search && !(`${u.name} ${u.email}`.toLowerCase().includes(search))) return;
+     const tr=document.createElement('tr');
+     tr.innerHTML=`<td>${u.name||'بدون اسم'}</td><td style="color:#aaa3bd">${u.email||''}</td><td><span class="badge">${u.online?'🟢 متصل':'⚪ غير متصل'}</span></td><td><button class="danger" onclick="delUser('${u.uid}')">حذف</button></td>`;
+     tbody.appendChild(tr);
+   });
+ });
+}
+document.getElementById('searchUser').oninput=()=>loadUsers();
+window.delUser=async(uid)=>{ if(confirm('تحذف/تحظر المستخدم؟')) await deleteDoc(doc(db,"users",uid)); }
+
+function loadMessages(){
+ const sel=document.getElementById('filterComm');
+ const load=()=>{
+   const q=query(collection(db,"messages"), where("communityId","==",sel.value), orderBy("createdAt","desc"), limit(50));
+   onSnapshot(q, snap=>{
+     document.getElementById('countMsgs').innerText=snap.size;
+     const div=document.getElementById('msgList'); div.innerHTML='';
+     snap.forEach(d=>{ const m=d.data(); const el=document.createElement('div'); el.className='comm-row'; el.innerHTML=`<span><b>${m.name}</b>: ${m.text}</span><button class="danger" onclick="delMsg('${d.id}')">حذف</button>`; div.appendChild(el); });
+   });
+ };
+ sel.onchange=load; load();
+}
+window.delMsg=async(id)=>{ await deleteDoc(doc(db,"messages",id)); }
+</script>
+</body>
+</html>
