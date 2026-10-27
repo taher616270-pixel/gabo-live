@@ -2,46 +2,118 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>لوحة الإدارة — GABO LIVE</title>
+<title>لوحة الإدارة — GABO LIVE - مطورة</title>
 <style>
 :root{--p:#7c3aed;--p2:#a78bfa}*{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.22),transparent 48%),linear-gradient(145deg,#050407,#10091d 55%,#08060e);color:#f8f7ff;font-family:system-ui}
-.wrap{width:min(1200px,calc(100% - 24px));margin:auto} .topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.22),transparent 48%),linear-gradient(145deg,#050407,#10091d 55%,#08060e);color:#f8f7ff;font-family:system-ui;padding-bottom:90px}
+.wrap{width:min(1300px,calc(100% - 24px));margin:auto} .topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 0;position:sticky;top:0;z-index:20;background:#08060eef;backdrop-filter:blur(10px)}
 .brand{color:#c4b5fd;font-weight:900;text-decoration:none} 
 .card{background:rgba(17,12,29,.88);border:1px solid rgba(196,181,253,.18);border-radius:18px;padding:18px;margin:12px 0;backdrop-filter:blur(16px)}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px} 
 .stat{padding:14px;border-radius:14px;background:#ffffff08;border:1px solid #ffffff15;text-align:center} .stat b{font-size:22px;color:var(--p2);display:block}
 button{cursor:pointer;border-radius:12px;padding:10px 14px;border:1px solid #ffffff22;background:#211638;color:#fff}
 .primary{background:linear-gradient(135deg,#7c3aed,#5b21b6);border:0} .danger{background:#2a1218;color:#ff8a8a;border-color:#ff8a8a33}
-input{width:100%;background:#0d0b15;border:1px solid #ffffff22;border-radius:12px;padding:11px;color:#fff;margin:6px 0}
-.row{display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid #ffffff12;border-radius:12px;margin:6px 0;background:#ffffff06}
+input,select,textarea{width:100%;background:#0d0b15;border:1px solid #ffffff22;border-radius:12px;padding:11px;color:#fff;margin:6px 0}
+textarea{min-height:90px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid #ffffff12;border-radius:12px;margin:6px 0;background:#ffffff06;gap:8px}
+.tabs{position:sticky;top:58px;z-index:15;background:#08060eef;display:flex;gap:6px;overflow:auto;padding:10px 0}
+.tab{padding:8px 14px;border-radius:20px;background:#ffffff0e;cursor:pointer;white-space:nowrap;font-size:12px}
+.tab.active{background:#7c3aed;color:#fff}
+.panel{display:none}.panel.active{display:block}
+.small{padding:6px 10px;font-size:11px}
 @media(max-width:800px){.grid{grid-template-columns:1fr}}
 </style>
+<script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
 </head>
 <body>
 <div class="wrap">
-<div class="topbar"><a class="brand" href="/">✦ GABO LIVE</a><div><span id="adminEmail" style="color:#aaa3bd;font-size:13px"></span> <button id="logout">خروج</button></div></div>
+<div class="topbar"><a class="brand" href="/">✦ GABO LIVE - ADMIN كل شي</a><div><span id="adminEmail" style="color:#aaa3bd;font-size:13px"></span> <button id="logout">خروج</button></div></div>
 
+<div class="tabs">
+<div class="tab active" data-p="main">🌍 المجتمعات</div>
+<div class="tab" data-p="agora">🎙️ Agora</div>
+<div class="tab" data-p="subs">💳 الاشتراكات</div>
+<div class="tab" data-p="nav">🧭 الأزرار</div>
+<div class="tab" data-p="pages">📄 الصفحات</div>
+<div class="tab" data-p="hosts">🎤 المضيفين</div>
+<div class="tab" data-p="users">👥 الأعضاء</div>
+</div>
+
+<!-- MAIN -->
+<div class="panel active" id="p-main">
 <div class="card">
 <b>🌍 إنشاء المجتمعات الستة بضغطة زر</b>
 <p style="color:#aaa3bd;font-size:13px">اضغط الزر مرة واحدة وينشئ كل المجتمعات في قاعدة البيانات</p>
 <button id="createAll" class="primary" style="width:100%;padding:14px;font-size:16px">إنشاء المجتمعات الستة الآن</button>
 <div id="commList" style="margin-top:12px"></div>
 </div>
-
 <div class="grid">
-<div class="card"><b>📊 الإحصائيات</b><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px"><div class="stat"><b id="cUsers">0</b>الأعضاء</div><div class="stat"><b id="cMsgs">0</b>الرسائل</div><div class="stat"><b id="cComm">0</b>المجتمعات</div></div></div>
+<div class="card"><b>📊 الإحصائيات</b><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px"><div class="stat"><b id="cUsers">0</b>الأعضاء</div><div class="stat"><b id="cMsgs">0</b>الرسائل</div><div class="stat"><b id="cComm">0</b>المجتمعات</div><div class="stat"><b id="cHosts">0</b>المضيفين</div></div></div>
 <div class="card"><b>➕ إضافة مجتمع جديد</b><input id="newName" placeholder="مثال: عمان"><input id="newIcon" placeholder="أيقونة مثال: 🇴🇲"><button id="addOne" class="primary" style="width:100%">إضافة</button></div>
 </div>
+<div class="card"><b>💬 كل الرسائل (30 الأخيرة)</b><div id="msgsList"></div></div>
+</div>
 
-<div class="card"><b>👥 كل الأعضاء - يظهرون تلقائياً بدون إضافة بالبريد</b><div id="usersList"></div></div>
-<div class="card"><b>💬 كل الرسائل</b><div id="msgsList"></div></div>
+<!-- AGORA -->
+<div class="card panel" id="p-agora">
+<b>🎙️ إعدادات Agora - الغرف الصوتية (مرتبطة بالأدمن)</b>
+<div class="grid">
+<div><label>App ID من Agora Console</label><input id="agAppId" placeholder="xxxxxx"></div>
+<div><label>App Certificate (اتركه فاضي للتجربة)</label><input id="agCert"></div>
+<div><label>مفعل؟</label><select id="agEnabled"><option value="true">مفعل ✅</option><option value="false">معطل ❌</option></select></div>
+<div><label>عدد المايكات</label><input id="agMaxMic" type="number" value="8"></div>
+</div>
+<button id="saveAgora" class="primary" style="margin-top:10px;width:100%">💾 حفظ Agora - يطبق على كل الموقع فوراً</button>
+<small style="color:#aaa">الموقع يقرأ هذه القيم من site_config/main → كل غرفة صوتية تنشئها تستخدم هذا الـ App ID</small>
+</div>
+
+<!-- SUBS -->
+<div class="card panel" id="p-subs">
+<b>💳 نظام الاشتراكات + ربط الدفع السعودي</b>
+<div class="grid">
+<div><label>مفتاح الدفع Moyasar/Tap</label><input id="payKey" placeholder="sk_test_..."></div>
+<div><label>العملة</label><select id="payCurrency"><option>SAR</option><option>USD</option></select></div>
+</div>
+<div style="display:flex;gap:6px;margin-top:10px"><input id="planName" placeholder="VIP ذهبي"><input id="planPrice" type="number" placeholder="29"><input id="planDays" type="number" placeholder="30 يوم"><button id="addPlan" class="primary">+ خطة</button></div>
+<div id="plansList"></div>
+</div>
+
+<!-- NAV -->
+<div class="card panel" id="p-nav">
+<b>🧭 التحكم بكل أزرار الموقع السفلية - تضيف/تحذف بدون كود</b>
+<div id="navList"></div>
+<div style="display:flex;gap:6px"><input id="nIcon" placeholder="⌂" style="max-width:60px"><input id="nLabel" placeholder="الاسم"><input id="nPath" placeholder="/app/"><button id="addNav" class="primary">+ زر</button></div>
+</div>
+
+<!-- PAGES -->
+<div class="card panel" id="p-pages">
+<b>📄 إضافة صفحة جديدة للموقع من الأدمن</b>
+<div style="display:flex;gap:6px"><input id="pgId" placeholder="store"><input id="pgTitle" placeholder="العنوان"><input id="pgPath" placeholder="/store/"></div>
+<textarea id="pgContent" placeholder="محتوى HTML للصفحة"></textarea>
+<button id="addPage" class="primary" style="width:100%">+ إنشاء الصفحة</button>
+<div id="pagesList"></div>
+</div>
+
+<!-- HOSTS -->
+<div class="card panel" id="p-hosts">
+<b>🎤 طلبات المضيفين - عند القبول يرسل ايميل تلقائي عبر Google Script الجديد</b>
+<div id="hostsList"></div>
+</div>
+
+<!-- USERS -->
+<div class="card panel" id="p-users">
+<b>👥 كل الأعضاء - حظر / ترقية / VIP / جعل أدمن (يظهرون تلقائياً)</b>
+<div id="usersListFull"></div>
+</div>
+
 </div>
 
 <script type="module">
 import { auth, db } from "/firebase-config.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { collection, doc, setDoc, deleteDoc, onSnapshot, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const EMAIL_URL = "https://script.google.com/macros/s/AKfycbyDYmsYoCBSkuzn97cD9bnl6Fo0IuI-MrcCO8q1H4fdnT1EvGXCYoxM3TW2zinmopqS/exec";
 
 const commsDefault = [
  {id:'general', name:'الشات العام', icon:'🔥'},
@@ -53,22 +125,32 @@ const commsDefault = [
 ];
 
 let me=null;
-onAuthStateChanged(auth, u=>{
+let cfg={brand:"GABO LIVE",bottomNav:[{icon:"⌂",label:"الرئيسية",path:"/",order:0,visible:true},{icon:"♬",label:"المجتمع",path:"/app/",order:1,visible:true},{icon:"✉",label:"الخاص",path:"/app/private/",order:2,visible:true},{icon:"◉",label:"حسابي",path:"/profile/",order:3,visible:true}],agora:{appId:"",appCert:"",enabled:true,maxMic:8},payment:{key:"",currency:"SAR"},plans:[{id:"vip1",name:"VIP شهري",price:29,days:30}],pages:[],features:{privateChat:true}};
+
+onAuthStateChanged(auth, async u=>{
  if(!u){ location.href='/login/'; return; }
  me=u; document.getElementById('adminEmail').innerText=u.email;
- listenAll();
+ const c=await getDoc(doc(db,'site_config','main')); if(c.exists()) cfg={...cfg,...c.data()};
+ initTabs(); listenAll(); fillAgoraForm(); renderNav(); renderPlans(); renderPages(); loadHosts(); loadUsersFull();
 });
 
 document.getElementById('logout').onclick=()=>signOut(auth).then(()=>location.href='/login/');
 
+function initTabs(){
+ document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active'); document.getElementById('p-'+t.dataset.p).classList.add('active');
+ });
+}
+
+async function saveCfg(){ await setDoc(doc(db,'site_config','main'),{...cfg,updatedAt:serverTimestamp(),updatedBy:me.uid},{merge:true}); alert('✅ تم الحفظ - الموقع تحدث فوراً'); }
+
 document.getElementById('createAll').onclick=async()=>{
  const btn=document.getElementById('createAll'); btn.innerText='جاري الإنشاء...'; btn.disabled=true;
- for(const c of commsDefault){
-   await setDoc(doc(db,'communities',c.id),{...c, createdAt:serverTimestamp()});
- }
- btn.innerText='✅ تم إنشاء المجتمعات الستة'; setTimeout(()=>{btn.innerText='إنشاء المجتمعات الستة الآن'; btn.disabled=false;},2000);
+ for(const c of commsDefault){ await setDoc(doc(db,'communities',c.id),{...c, createdAt:serverTimestamp()}); }
+ btn.innerText='✅ تم'; setTimeout(()=>{btn.innerText='إنشاء المجتمعات الستة الآن'; btn.disabled=false;},2000);
 };
-
 document.getElementById('addOne').onclick=async()=>{
  const name=document.getElementById('newName').value.trim(); const icon=document.getElementById('newIcon').value.trim()||'🌍';
  if(!name) return; const id='comm_'+Date.now();
@@ -76,16 +158,31 @@ document.getElementById('addOne').onclick=async()=>{
  document.getElementById('newName').value=''; document.getElementById('newIcon').value='';
 };
 
+// Agora
+function fillAgoraForm(){ document.getElementById('agAppId').value=cfg.agora?.appId||''; document.getElementById('agCert').value=cfg.agora?.appCert||''; document.getElementById('agEnabled').value=String(cfg.agora?.enabled??true); document.getElementById('agMaxMic').value=cfg.agora?.maxMic||8; }
+document.getElementById('saveAgora').onclick=()=>{ cfg.agora={appId:document.getElementById('agAppId').value.trim(),appCert:document.getElementById('agCert').value.trim(),enabled:document.getElementById('agEnabled').value==='true',maxMic:parseInt(document.getElementById('agMaxMic').value||'8')}; saveCfg(); };
+
+// Nav
+function renderNav(){ const el=document.getElementById('navList'); el.innerHTML=''; (cfg.bottomNav||[]).forEach((n,i)=>{const d=document.createElement('div'); d.className='row'; d.innerHTML=`<span>${n.icon} ${n.label} → ${n.path}</span><div><button class="small" onclick="moveNav(${i},-1)">↑</button><button class="small" onclick="moveNav(${i},1)">↓</button><button class="small danger" onclick="delNav(${i})">حذف</button></div>`; el.appendChild(d);});}
+window.moveNav=(i,dir)=>{const a=cfg.bottomNav; const j=i+dir; if(j<0||j>=a.length) return; [a[i],a[j]]=[a[j],a[i]]; a.forEach((x,idx)=>x.order=idx); renderNav(); saveCfg();}
+window.delNav=i=>{if(confirm('حذف؟')){cfg.bottomNav.splice(i,1); renderNav(); saveCfg();}}
+document.getElementById('addNav').onclick=()=>{const icon=document.getElementById('nIcon').value||'•'; const label=document.getElementById('nLabel').value; const path=document.getElementById('nPath').value; if(!label||!path) return alert('اكمل'); cfg.bottomNav.push({icon,label,path,order:cfg.bottomNav.length,visible:true}); renderNav(); saveCfg();}
+
+// Plans
+function renderPlans(){const el=document.getElementById('plansList'); el.innerHTML=''; (cfg.plans||[]).forEach((p,i)=>{const d=document.createElement('div'); d.className='row'; d.innerHTML=`<span><b>${p.name}</b> — ${p.price} SAR / ${p.days} يوم</span><button class="small danger" onclick="delPlan(${i})">حذف</button>`; el.appendChild(d);});}
+window.delPlan=i=>{cfg.plans.splice(i,1); renderPlans(); saveCfg();}
+document.getElementById('addPlan').onclick=()=>{const name=document.getElementById('planName').value; const price=parseFloat(document.getElementById('planPrice').value); const days=parseInt(document.getElementById('planDays').value); if(!name||!price) return; cfg.plans.push({id:'plan_'+Date.now(),name,price,days}); cfg.payment={key:document.getElementById('payKey').value,currency:document.getElementById('payCurrency').value}; renderPlans(); saveCfg();}
+
+// Pages
+function renderPages(){const el=document.getElementById('pagesList'); el.innerHTML=''; (cfg.pages||[]).forEach((p,i)=>{const d=document.createElement('div'); d.className='row'; d.innerHTML=`<span><b>${p.title}</b> — ${p.path}</span><button class="small danger" onclick="delPage(${i})">حذف</button>`; el.appendChild(d);});}
+window.delPage=i=>{cfg.pages.splice(i,1); renderPages(); saveCfg();}
+document.getElementById('addPage').onclick=()=>{const id=document.getElementById('pgId').value.trim(); const title=document.getElementById('pgTitle').value.trim(); const path=document.getElementById('pgPath').value.trim(); const content=document.getElementById('pgContent').value.trim(); if(!id||!title||!path) return alert('اكمل'); cfg.pages.push({id,title,path,content}); renderPages(); saveCfg();}
+
 function listenAll(){
  onSnapshot(collection(db,'communities'), s=>{
    const list=document.getElementById('commList'); list.innerHTML=''; let count=0;
    s.forEach(d=>{ count++; const c=d.data(); const div=document.createElement('div'); div.className='row'; div.innerHTML=`<span>${c.icon||'🌍'} ${c.name}</span><button class="danger" data-id="${d.id}">حذف</button>`; div.querySelector('button').onclick=()=>deleteDoc(doc(db,'communities',d.id)); list.appendChild(div); });
    document.getElementById('cComm').innerText=count;
- });
- onSnapshot(collection(db,'users'), s=>{
-   const list=document.getElementById('usersList'); list.innerHTML=''; let count=0;
-   s.forEach(d=>{ count++; const u=d.data(); const div=document.createElement('div'); div.className='row'; div.innerHTML=`<span>🟢 ${u.name||u.email} - ${u.email}</span><div><button onclick="location.href='/app/private/?to=${u.uid}'">خاص</button> <button class="danger" data-id="${d.id}">حذف</button></div>`; div.querySelector('.danger').onclick=()=>deleteDoc(doc(db,'users',d.id)); list.appendChild(div); });
-   document.getElementById('cUsers').innerText=count;
  });
  onSnapshot(collection(db,'messages'), s=>{
    document.getElementById('cMsgs').innerText=s.size;
@@ -94,6 +191,40 @@ function listenAll(){
    arr.forEach(m=>{ const div=document.createElement('div'); div.className='row'; div.innerHTML=`<span><b>${m.name||'مجهول'}</b>: ${m.text} <small style="color:#aaa3bd">(${m.communityId})</small></span><button class="danger" data-id="${m.id}">حذف</button>`; div.querySelector('button').onclick=()=>deleteDoc(doc(db,'messages',m.id)); list.appendChild(div); });
  });
 }
+
+function loadUsersFull(){
+ onSnapshot(collection(db,'users'), s=>{
+   document.getElementById('cUsers').innerText=s.size;
+   const list=document.getElementById('usersListFull'); list.innerHTML='';
+   s.forEach(d=>{ const u=d.data(); const div=document.createElement('div'); div.className='row'; div.innerHTML=`<span>🟢 ${u.name||u.email}<br><small>${u.email} | ${u.subscription||'مجاني'} ${u.isAdmin?'⭐ أدمن':''}</small></span><div style="display:flex;gap:4px;flex-wrap:wrap"><button class="small" onclick="toggleAdmin('${d.id}',${!!u.isAdmin})">${u.isAdmin?'إلغاء أدمن':'جعله أدمن'}</button><button class="small" onclick="giveVIP('${d.id}')">VIP</button><button class="small" onclick="location.href='/app/private/?to=${d.id}'">خاص</button><button class="small danger" onclick="banUser('${d.id}')">حظر</button></div>`; list.appendChild(div); });
+ });
+}
+window.toggleAdmin=async(uid,cur)=>{await updateDoc(doc(db,'users',uid),{isAdmin:!cur});}
+window.giveVIP=async uid=>{
+ await updateDoc(doc(db,'users',uid),{subscription:'VIP',subUntil:Date.now()+30*24*3600*1000});
+ fetch(EMAIL_URL,{method:"POST",body:JSON.stringify({type:"contact",name:"نظام GABO",email:uid,message:"تمت ترقيتك الى VIP ✅"})});
+ alert('تمت الترقية + ارسال ايميل');
+}
+window.banUser=async uid=>{ if(confirm('حظر؟')) await updateDoc(doc(db,'users',uid),{banned:true}); }
+
+function loadHosts(){
+ onSnapshot(collection(db,'hosts'), s=>{
+   document.getElementById('cHosts').innerText=s.size;
+   const el=document.getElementById('hostsList'); el.innerHTML=s.empty?'<div class="row">لا يوجد طلبات</div>':'';
+   s.forEach(d=>{
+    const h=d.data();
+    const div=document.createElement('div'); div.className='row';
+    div.innerHTML=`<span><b>${h.name}</b> — ${h.email}<br><small>${h.city||''} ${h.phone||''} — ${h.details||''}</small></span><div><button class="small primary" onclick="approveHost('${d.id}','${h.email}','${h.name}')">قبول + ايميل</button><button class="small danger" onclick="delHost('${d.id}')">رفض</button></div>`;
+    el.appendChild(div);
+   });
+ });
+}
+window.approveHost=async(id,email,name)=>{
+ await updateDoc(doc(db,'hosts',id),{approved:true,approvedAt:serverTimestamp()});
+ fetch(EMAIL_URL,{method:"POST",body:JSON.stringify({type:"host",name,email,city:"موافقة",details:"تمت الموافقة عليك كمضيف في GABO LIVE 🎉 - رح يجيك ايميل الآن"})});
+ alert('✅ تمت الموافقة + ارسال ايميل للمضيف + تنبيه لك على taher616270@gmail.com');
+}
+window.delHost=async id=>{ if(confirm('حذف؟')) await deleteDoc(doc(db,'hosts',id)); }
 </script>
 </body>
 </html>
