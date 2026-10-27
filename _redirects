@@ -1,0 +1,8 @@
+/app/public /app/public/index.html 200
+/app/private /app/private/index.html 200
+/app/private/* /app/private/chat/index.html 200
+/hosts /hosts/index.html 200
+/vip /vip/index.html 200
+/profile /profile/index.html 200
+/login /login/index.html 200
+/admin /admin/index.html 200
