@@ -1,1 +1,82 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>المجتمع — GABO LIVE</title><link rel="stylesheet" href="/assets/style/style.css"><style id="gabo-inline-fallback">:root{color-scheme:dark;--bg:#08070d;--text:#f8f7ff;--muted:#aaa3bd;--purple:#7c3aed;--purple2:#a78bfa}*{box-sizing:border-box}html{min-height:100%;background:#08070d}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.22),transparent 48%),linear-gradient(145deg,#050407,#10091d 55%,#08060e)!important;color:#f8f7ff!important;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.6}a{color:#c4b5fd;text-decoration:none}button,input,select,textarea{font:inherit}button,.btn{cursor:pointer;border-radius:12px;padding:10px 15px;border:1px solid #ffffff22;color:#fff;background:#211638}.btn.primary,.login-submit{background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff}.wrap{width:min(1180px,calc(100% - 28px));margin:auto}.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 0}.glass,.mainpanel,.sidebar,.login-card,.room-card,.feature,.redirect-card{background:rgba(17,12,29,.82)!important;border:1px solid rgba(196,181,253,.18)!important;border-radius:20px;backdrop-filter:blur(18px);color:#f8f7ff}.mainpanel{padding:20px}.brand,.gradient-text{color:#c4b5fd}.field{display:flex;flex-direction:column;gap:7px;margin:12px 0}.input,input,select,textarea{max-width:100%;background:#0d0b15;color:#fff;border:1px solid #ffffff22;border-radius:12px;padding:12px}.muted,.footer{color:#aaa3bd}.empty,.notice{padding:18px;border:1px solid #ffffff20;border-radius:14px;color:#d8d2e8;background:#ffffff06}.hero{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:36px 0}.app-layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px;padding:20px 0 100px}.sidebar{padding:16px}.side-link{display:block;padding:10px;color:#d8d2e8}.page-title,.between{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.list,.chat-messages{display:flex;flex-direction:column;gap:10px}.list-item,.message{padding:12px;border:1px solid #ffffff18;border-radius:14px;background:#ffffff08}.bottom-nav{position:fixed;z-index:1000;bottom:10px;left:50%;transform:translateX(-50%);width:min(560px,calc(100% - 20px));display:flex;justify-content:space-around;gap:5px;padding:8px;background:rgba(15,12,24,.95);border:1px solid #ffffff20;border-radius:18px;backdrop-filter:blur(20px)}.bottom-nav a{display:flex;flex-direction:column;align-items:center;color:#d8d2e8;padding:5px 8px;font-size:12px}.hidden{display:none!important}.login-shell{min-height:100vh;display:grid;place-items:center;padding:22px}.login-card{width:min(470px,100%);padding:28px}.login-field{display:block;width:100%;margin:8px 0 16px}.login-submit,.google-submit{width:100%;margin-top:10px;padding:13px}.login-links{display:flex;flex-direction:column;gap:10px;margin-top:16px}.admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.footer{padding:20px 0}@media(max-width:700px){.hero,.app-layout{grid-template-columns:1fr}.sidebar{display:none}.admin-grid{grid-template-columns:1fr}.mainpanel{padding:14px}.bottom-nav a{font-size:10px;padding:5px}.login-card{padding:20px}}</style></head><body data-page="public"><div class="wrap"><header class="topbar"><a class="brand" href="/"><span class="brandmark">✦</span>GABO <span class="gradient-text">LIVE</span></a><div class="row"><span class="pill"><i class="dot"></i> المجتمع</span><a href="/login" class="btn secondary small" data-guest-only>تسجيل الدخول</a><span class="muted" data-user-name></span></div></header><div class="app-layout"><aside class="glass sidebar"><div class="side-head"><span class="brandmark">✦</span><div><b>GABO LIVE</b><div class="muted" style="font-size:12px">مساحتك الاجتماعية</div></div></div><a class="side-link active" href="/app/public"><span>♬</span> الشات العام</a><a class="side-link" href="/app/private" data-flag="privateChat"><span>✉</span> الرسائل الخاصة</a><a class="side-link" href="/profile" data-flag="userProfiles"><span>◉</span> الملف الشخصي</a><a class="side-link" href="/vip" data-flag="vipFounders"><span>♛</span> VIP</a><a class="side-link" href="/admin"><span>⚙</span> لوحة التحكم</a></aside><main class="glass mainpanel"><div class="page-title"><div><span class="eyebrow">COMMUNITY / PUBLIC</span><h1>الشات العام</h1><p class="muted">تواصل باحترام وخلّ حضورك أجمل.</p></div><span class="pill"><i class="dot"></i> تحديث مباشر</span></div><div class="room-grid" id="voiceRoomsList" data-flag="voiceRooms"></div><div class="between" style="margin:20px 0 10px"><h2 style="margin:0">المحادثة العامة</h2><div class="row"><button id="reactHeart" class="btn secondary small" data-flag="giftReactions">❤️</button><button id="reactFire" class="btn secondary small" data-flag="giftReactions">🔥</button><button id="requestMic" class="btn primary small" data-flag="voiceRooms">طلب مايك 🎙</button></div></div><div id="reactionArea" class="reactions"></div><div class="chat-window"><div id="publicMessages" class="chat-messages glass" style="padding:14px;max-height:48vh;overflow:auto"><div class="empty">جاري تحميل الرسائل...</div></div><form id="publicSendForm" class="chat-compose"><textarea class="input" id="publicMessageText" rows="1" maxlength="1000" placeholder="اكتب رسالتك للمجتمع..." required></textarea><button class="btn primary">إرسال ↑</button></form></div></main></div><footer class="footer">GABO LIVE · الشات العام</footer></div><nav class="bottom-nav"><a href="/"><b>⌂</b><span>الرئيسية</span></a><a href="/app/public" class="active"><b>♬</b><span>المجتمع</span></a><a href="/app/private" data-flag="privateChat"><b>✉</b><span>الخاص</span></a><a href="/hosts" data-flag="hostRegistration"><b>♙</b><span>المضيفون</span></a><a href="/profile" data-flag="userProfiles"><b>◉</b><span>حسابي</span></a></nav><script type="module" src="/assets/app.js"></script></body></html>
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>المجتمعات — GABO LIVE</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.22),transparent 48%),linear-gradient(145deg,#050407,#10091d 55%,#08060e);color:#f8f7ff;font-family:system-ui}
+.wrap{width:min(1350px,calc(100% - 16px));margin:auto}.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 0}
+.brand{color:#c4b5fd;font-weight:900;text-decoration:none}.top-links a{color:#c4b5fd;text-decoration:none;margin:0 8px;font-size:13px}
+.layout{display:grid;grid-template-columns:240px 1fr 280px;gap:10px;height:calc(100vh - 60px)}
+.card{background:rgba(17,12,29,.90);border:1px solid rgba(196,181,253,.18);border-radius:16px;display:flex;flex-direction:column;overflow:hidden}
+.card h3{margin:0;padding:12px;border-bottom:1px solid #ffffff12;font-size:13px;color:#aaa3bd}
+.list{overflow:auto;flex:1}.item{padding:11px 12px;cursor:pointer;display:flex;gap:8px;align-items:center;border-bottom:1px solid #ffffff06}
+.item.active{background:#7c3aed33}.item:hover{background:#ffffff08}
+.messages{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.msg{padding:10px 12px;border-radius:14px;max-width:78%;background:#ffffff0e;border:1px solid #ffffff12}
+.msg.me{align-self:flex-end;background:linear-gradient(135deg,#7c3aed,#5b21b6);border:0}
+.input-area{display:flex;gap:8px;padding:10px;border-top:1px solid #ffffff12}
+input{flex:1;background:#0d0b15;border:1px solid #ffffff22;border-radius:10px;padding:11px;color:#fff}
+button{border-radius:10px;padding:10px 14px;border:1px solid #ffffff22;background:#211638;color:#fff;cursor:pointer}
+.primary{background:linear-gradient(135deg,#7c3aed,#5b21b6);border:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topbar">
+<a class="brand" href="/">✦ GABO LIVE</a>
+<div class="top-links">
+<a href="/app/private/">الخاص</a>
+<a href="/admin/">الادمن</a>
+<span id="meName" style="color:#aaa3bd;font-size:12px"></span>
+<button id="logoutBtn">خروج</button>
+</div>
+</div>
+<div class="layout">
+<div class="card"><h3>🌍 المجتمعات</h3><div class="list" id="commList"></div></div>
+<div class="card"><h3 id="chatTitle">الشات العام</h3><div class="messages" id="msgsBox"></div><div class="input-area"><input id="msgInput" placeholder="اكتب..."><button id="sendBtn" class="primary">إرسال</button></div></div>
+<div class="card"><h3>👥 الأعضاء</h3><div class="list" id="usersList"></div></div>
+</div>
+</div>
+<script type="module">
+import { auth, db } from "/firebase-config.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { collection, addDoc, doc, setDoc, query, where, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+let me=null,currentId='general',unsubMsgs=null;
+onAuthStateChanged(auth, async u=>{
+ if(!u){ location.href='/login/'; return; }
+ me=u; document.getElementById('meName').innerText=u.displayName||u.email;
+ await setDoc(doc(db,'users',u.uid),{uid:u.uid,name:u.displayName||u.email.split('@')[0],email:u.email,online:true,lastSeen:serverTimestamp()},{merge:true});
+ listenComms(); listenUsers(); listenMsgs();
+});
+function listenComms(){
+ onSnapshot(collection(db,'communities'), snap=>{
+   const el=document.getElementById('commList'); el.innerHTML='';
+   snap.forEach(d=>{ const c=d.data(); const div=document.createElement('div'); div.className='item'+(c.id===currentId?' active':''); div.innerHTML=`${c.icon||'🌍'} ${c.name}`; div.onclick=()=>{ currentId=c.id; document.getElementById('chatTitle').innerText=c.name; document.querySelectorAll('#commList .item').forEach(i=>i.classList.remove('active')); div.classList.add('active'); listenMsgs(); }; el.appendChild(div); });
+ });
+}
+function listenUsers(){
+ onSnapshot(collection(db,'users'), snap=>{
+   const el=document.getElementById('usersList'); el.innerHTML='';
+   snap.forEach(d=>{ const us=d.data(); if(us.uid===me?.uid) return; const div=document.createElement('div'); div.className='item'; div.innerHTML=`${us.name||us.email}`; div.onclick=()=>location.href='/app/private/?to='+us.uid; el.appendChild(div); });
+ });
+}
+function listenMsgs(){
+ if(unsubMsgs) unsubMsgs();
+ const q=query(collection(db,'messages'),where('communityId','==',currentId),orderBy('createdAt','asc'));
+ unsubMsgs=onSnapshot(q, snap=>{
+   const box=document.getElementById('msgsBox'); box.innerHTML='';
+   snap.forEach(d=>{ const m=d.data(); const div=document.createElement('div'); div.className='msg'+(m.uid===me.uid?' me':''); div.innerHTML=`${m.text}<br><small>${m.name||''}</small>`; box.appendChild(div); });
+   box.scrollTop=box.scrollHeight;
+ });
+}
+async function send(){
+ const inp=document.getElementById('msgInput'); const t=inp.value.trim(); if(!t||!me) return; inp.value='';
+ await addDoc(collection(db,'messages'),{communityId:currentId,uid:me.uid,name:me.displayName||me.email.split('@')[0],text:t,createdAt:serverTimestamp()});
+}
+document.getElementById('sendBtn').onclick=send;
+document.getElementById('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter') send();});
+document.getElementById('logoutBtn').onclick=()=>signOut(auth).then(()=>location.href='/login/');
+</script>
+</body>
+</html>
