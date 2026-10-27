@@ -6,23 +6,27 @@
 <title>الخاص — GABO LIVE</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:#0a0812;color:#f8f7ff;font-family:system-ui}
+body{margin:0;min-height:100vh;background:#0a0812;color:#f8f7ff;font-family:system-ui;padding-bottom:80px}
 .wrap{width:min(1200px,calc(100% - 16px));margin:auto}
-.topbar{display:flex;justify-content:space-between;padding:12px 0}
+.topbar{display:flex;justify-content:space-between;padding:12px 0;position:sticky;top:0;background:#0a0812cc;z-index:10}
 .brand{color:#c4b5fd;font-weight:900;text-decoration:none}
-.layout{display:grid;grid-template-columns:280px 1fr;gap:10px;height:calc(100vh - 60px)}
-.card{background:rgba(17,12,29,.9);border:1px solid rgba(196,181,253,.18);border-radius:16px;display:flex;flex-direction:column;overflow:hidden}
+.layout{display:grid;grid-template-columns:280px 1fr;gap:10px}
+.card{background:rgba(17,12,29,.95);border:1px solid rgba(196,181,253,.2);border-radius:16px;display:flex;flex-direction:column;overflow:hidden;margin-top:12px}
 .card h3{margin:0;padding:12px;border-bottom:1px solid #ffffff12;font-size:13px;color:#aaa3bd}
-.list{overflow:auto;flex:1}
+.list{overflow:auto;flex:1;max-height:70vh}
 .item{padding:11px 12px;cursor:pointer;border-bottom:1px solid #ffffff06}
 .item.active{background:#7c3aed33}
-.msgs{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.msgs{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:50vh;max-height:65vh}
 .msg{padding:10px 12px;border-radius:14px;max-width:75%;background:#ffffff0e}
 .msg.me{align-self:flex-end;background:linear-gradient(135deg,#7c3aed,#5b21b6)}
 .input-area{display:flex;gap:8px;padding:10px;border-top:1px solid #ffffff12}
 input{flex:1;background:#0d0b15;border:1px solid #ffffff22;border-radius:10px;padding:11px;color:#fff}
-button{border-radius:10px;padding:10px 14px;border:1px solid #ffffff22;background:#211638;color:#fff;cursor:pointer}
-.primary{background:linear-gradient(135deg,#7c3aed,#5b21b6);border:0}
+button{border-radius:10px;padding:10px 14px;border:0;background:#211638;color:#fff;cursor:pointer}
+.primary{background:linear-gradient(135deg,#7c3aed,#5b21b6)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(15,12,24,.98);border-top:1px solid #ffffff18;display:flex;justify-content:space-around;padding:8px 0 12px;z-index:100}
+.bottom-nav a{display:flex;flex-direction:column;align-items:center;color:#aaa3bd;text-decoration:none;font-size:11px;padding:6px 16px}
+.bottom-nav a.active{color:#c4b5fd}
+@media(max-width:800px){.layout{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -46,15 +50,19 @@ button{border-radius:10px;padding:10px 14px;border:1px solid #ffffff22;backgroun
 </div>
 </div>
 </div>
+<nav class="bottom-nav">
+<a href="/"><b>⌂</b><span>الرئيسية</span></a>
+<a href="/app/"><b>♬</b><span>المجتمع</span></a>
+<a href="/app/private/" class="active"><b>✉</b><span>الخاص</span></a>
+<a href="/profile/"><b>◉</b><span>حسابي</span></a>
+</nav>
 <script type="module">
-  import {auth,db} from "/firebase-config.js";
+import {auth,db} from "/firebase-config.js";
 import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {collection,addDoc,query,where,orderBy,onSnapshot,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
 let me=null;
 let toId=new URLSearchParams(location.search).get('to');
 let unsub=null;
-
 onAuthStateChanged(auth,u=>{
  if(!u){location.href='/login/';return;}
  me=u;
@@ -62,7 +70,6 @@ onAuthStateChanged(auth,u=>{
  listenUsers();
  if(toId) listenPrivate();
 });
-
 function listenUsers(){
  onSnapshot(collection(db,'users'),snap=>{
   const el=document.getElementById('usersList');
@@ -85,10 +92,7 @@ function listenUsers(){
   });
  });
 }
-  function getChatId(a,b){
- return [a,b].sort().join('_');
-}
-
+function getChatId(a,b){return [a,b].sort().join('_');}
 function listenPrivate(){
  if(!toId) return;
  if(unsub) unsub();
@@ -107,25 +111,15 @@ function listenPrivate(){
   box.scrollTop=box.scrollHeight;
  });
 }
-
 async function send(){
  const inp=document.getElementById('msgInput');
  const t=inp.value.trim();
  if(!t||!me||!toId){alert('اختر عضو أولا');return;}
  inp.value='';
- await addDoc(collection(db,'private_messages'),{
-  chatId:getChatId(me.uid,toId),
-  from:me.uid,
-  to:toId,
-  text:t,
-  createdAt:serverTimestamp()
- });
+ await addDoc(collection(db,'private_messages'),{chatId:getChatId(me.uid,toId),from:me.uid,to:toId,text:t,createdAt:serverTimestamp()});
 }
-
 document.getElementById('sendBtn').onclick=send;
-document.getElementById('msgInput').addEventListener('keydown',e=>{
- if(e.key==='Enter') send();
-});
+document.getElementById('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter') send();});
 </script>
 </body>
 </html>
