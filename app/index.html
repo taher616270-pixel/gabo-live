@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>المجتمعات — GABO LIVE</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.22),transparent 48%),linear-gradient(145deg,#050407,#10091d 55%,#08060e);color:#f8f7ff;font-family:system-ui}
+.wrap{width:min(1350px,calc(100% - 16px));margin:auto}.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 0}
+.brand{color:#c4b5fd;font-weight:900;text-decoration:none}.top-links a{color:#c4b5fd;text-decoration:none;margin:0 8px;font-size:13px}
+.layout{display:grid;grid-template-columns:240px 1fr 280px;gap:10px;height:calc(100vh - 60px)}
+.card{background:rgba(17,12,29,.90);border:1px solid rgba(196,181,253,.18);border-radius:16px;display:flex;flex-direction:column;overflow:hidden}
+.card h3{margin:0;padding:12px;border-bottom:1px solid #ffffff12;font-size:13px;color:#aaa3bd}
+.list{overflow:auto;flex:1}.item{padding:11px 12px;cursor:pointer;display:flex;gap:8px;align-items:center;border-bottom:1px solid #ffffff06}
+.item.active{background:#7c3aed33}.item:hover{background:#ffffff08}
+.messages{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.msg{padding:10px 12px;border-radius:14px;max-width:78%;background:#ffffff0e;border:1px solid #ffffff12}
+.msg.me{align-self:flex-end;background:linear-gradient(135deg,#7c3aed,#5b21b6);border:0}
+.input-area{display:flex;gap:8px;padding:10px;border-top:1px solid #ffffff12}
+input{flex:1;background:#0d0b15;border:1px solid #ffffff22;border-radius:10px;padding:11px;color:#fff}
+button{border-radius:10px;padding:10px 14px;border:1px solid #ffffff22;background:#211638;color:#fff;cursor:pointer}
+.primary{background:linear-gradient(135deg,#7c3aed,#5b21b6);border:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topbar">
+<a class="brand" href="/">✦ GABO LIVE</a>
+<div class="top-links">
+<a href="/app/private/">الخاص</a>
+<a href="/admin/">الادمن</a>
+<span id="meName" style="color:#aaa3bd;font-size:12px"></span>
+<button id="logoutBtn">خروج</button>
+</div>
+</div>
+<div class="layout">
+<div class="card"><h3>🌍 المجتمعات</h3><div class="list" id="commList"></div></div>
+<div class="card"><h3 id="chatTitle">الشات العام</h3><div class="messages" id="msgsBox"></div><div class="input-area"><input id="msgInput" placeholder="اكتب..."><button id="sendBtn" class="primary">إرسال</button></div></div>
+<div class="card"><h3>👥 الأعضاء</h3><div class="list" id="usersList"></div></div>
+</div>
+</div>
+<script type="module">
+import { auth, db } from "/firebase-config.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { collection, addDoc, doc, setDoc, query, where, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+let me=null,currentId='general',unsubMsgs=null;
+onAuthStateChanged(auth, async u=>{
+ if(!u){ location.href='/login/'; return; }
+ me=u; document.getElementById('meName').innerText=u.displayName||u.email;
+ await setDoc(doc(db,'users',u.uid),{uid:u.uid,name:u.displayName||u.email.split('@')[0],email:u.email,online:true,lastSeen:serverTimestamp()},{merge:true});
+ listenComms(); listenUsers(); listenMsgs();
+});
+function listenComms(){
+ onSnapshot(collection(db,'communities'), snap=>{
+   const el=document.getElementById('commList'); el.innerHTML='';
+   snap.forEach(d=>{ const c=d.data(); const div=document.createElement('div'); div.className='item'+(c.id===currentId?' active':''); div.innerHTML=`${c.icon||'🌍'} ${c.name}`; div.onclick=()=>{ currentId=c.id; document.getElementById('chatTitle').innerText=c.name; document.querySelectorAll('#commList .item').forEach(i=>i.classList.remove('active')); div.classList.add('active'); listenMsgs(); }; el.appendChild(div); });
+ });
+}
+function listenUsers(){
+ onSnapshot(collection(db,'users'), snap=>{
+   const el=document.getElementById('usersList'); el.innerHTML='';
+   snap.forEach(d=>{ const us=d.data(); if(us.uid===me?.uid) return; const div=document.createElement('div'); div.className='item'; div.innerHTML=`${us.name||us.email}`; div.onclick=()=>location.href='/app/private/?to='+us.uid; el.appendChild(div); });
+ });
+}
+function listenMsgs(){
+ if(unsubMsgs) unsubMsgs();
+ const q=query(collection(db,'messages'),where('communityId','==',currentId),orderBy('createdAt','asc'));
+ unsubMsgs=onSnapshot(q, snap=>{
+   const box=document.getElementById('msgsBox'); box.innerHTML='';
+   snap.forEach(d=>{ const m=d.data(); const div=document.createElement('div'); div.className='msg'+(m.uid===me.uid?' me':''); div.innerHTML=`${m.text}<br><small>${m.name||''}</small>`; box.appendChild(div); });
+   box.scrollTop=box.scrollHeight;
+ });
+}
+async function send(){
+ const inp=document.getElementById('msgInput'); const t=inp.value.trim(); if(!t||!me) return; inp.value='';
+ await addDoc(collection(db,'messages'),{communityId:currentId,uid:me.uid,name:me.displayName||me.email.split('@')[0],text:t,createdAt:serverTimestamp()});
+}
+document.getElementById('sendBtn').onclick=send;
+document.getElementById('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter') send();});
+document.getElementById('logoutBtn').onclick=()=>signOut(auth).then(()=>location.href='/login/');
+</script>
+</body>
+</html>
