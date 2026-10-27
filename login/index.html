@@ -1,76 +1,111 @@
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
+<!doctype html><html lang="ar" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>تسجيل الدخول — GABO LIVE</title>
+<title>الدخول — GABO LIVE</title>
 <link rel="stylesheet" href="/assets/style/style.css">
 <style>
-body{min-height:100vh;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 5%,rgba(124,58,237,.28),transparent 48%),#08050f;color:#fff;font-family:system-ui;padding:16px}
-.login-card{width:min(470px,100%);padding:28px;background:rgba(17,12,29,.92);border:1px solid rgba(196,181,253,.18);border-radius:24px;backdrop-filter:blur(20px)}
+body{min-height:100vh;display:grid;place-items:center;background:#08070d;color:#fff;font-family:system-ui;padding:20px}
+.card{width:min(440px,100%);background:rgba(17,12,29,.9);border:1px solid #ffffff20;border-radius:20px;padding:26px}
 .page{display:none}.page.active{display:block}
-.input{width:100%;background:#0d0b15;color:#fff;border:1px solid #ffffff22;border-radius:13px;padding:13px;margin:8px 0;outline:none}
-.input:focus{border-color:#a78bfa;box-shadow:0 0 0 3px #7c3aed22}
-.btn{width:100%;padding:13px;border-radius:13px;border:0;font-weight:800;cursor:pointer;margin-top:10px}
-.btn.primary{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff}
-.btn.secondary{background:rgba(255,255,255,.06);border:1px solid #ffffff18;color:#fff}
-.muted{color:#a6a0b9;font-size:13px}
-.brandmark{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,#8b5cf6,#4c1d95);margin:0 auto 12px;font-size:24px}
-</style>
-</head>
-<body data-page="login">
-
-<div class="login-card">
-<div class="brandmark">✦</div>
-<h1 style="text-align:center;margin:0">GABO LIVE</h1>
-<p class="muted" style="text-align:center;margin:8px 0 18px">ادخل بحسابك للدخول للمجتمع</p>
-
-<!-- صفحة 1: تسجيل الدخول -->
-<div class="page active" id="page-login">
-<form id="loginForm">
-<input class="input" id="loginEmail" type="email" placeholder="البريد الإلكتروني" required>
-<input class="input" id="loginPassword" type="password" placeholder="كلمة السر" required>
-<button class="btn primary" type="submit">تسجيل الدخول</button>
-</form>
-<button class="btn secondary" id="googleLogin">🔵 الدخول بـ Google</button>
-<div style="display:flex;justify-content:space-between;margin-top:14px">
-<a id="forgotPassword" style="color:#c4b5fd;cursor:pointer;font-size:13px">نسيت كلمة السر؟</a>
-<a onclick="showPage('register')" style="color:#c4b5fd;cursor:pointer;font-size:13px">إنشاء حساب جديد</a>
-</div>
+input{width:100%;padding:12px;border-radius:12px;border:1px solid #ffffff22;background:#0d0b15;color:#fff;margin:8px 0 14px}
+.btn{width:100%;padding:13px;border-radius:12px;border:0;cursor:pointer;font-weight:800;margin-top:8px}
+.btn.primary{background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff}
+.btn.ghost{background:transparent;border:1px solid #ffffff20;color:#aaa3bd}
+.tabs{display:flex;gap:8px;margin-bottom:18px}
+.tabs button{flex:1}
+.tabs button.active{background:#7c3aed;color:#fff}
+.muted{color:#aaa3bd;font-size:13px;text-align:center;margin-top:12px;cursor:pointer}
+.error{color:#fb7185;font-size:13px;margin:6px 0}
+.success{color:#4ade80;font-size:13px;margin:6px 0}
+</style></head><body>
+<div class="card">
+<div class="tabs">
+<button class="btn ghost active" id="t-login" onclick="show('login')">دخول</button>
+<button class="btn ghost" id="t-signup" onclick="show('signup')">حساب جديد</button>
 </div>
 
-<!-- صفحة 2: إنشاء حساب -->
-<div class="page" id="page-register">
-<form id="registerForm">
-<input class="input" id="regEmail" type="email" placeholder="البريد الإلكتروني" required>
-<input class="input" id="regPassword" type="password" placeholder="كلمة سر (6 أحرف على الأقل)" required>
-<button class="btn primary" id="registerNow" type="button">إنشاء حساب</button>
-</form>
-<div style="text-align:center;margin-top:14px"><a onclick="showPage('login')" style="color:#aaa3bd;cursor:pointer;font-size:13px">← لديك حساب؟ سجل دخول</a></div>
+<!-- صفحة 1: دخول -->
+<div class="page active" id="p-login">
+<h3>مرحباً بعودتك 👋</h3>
+<div id="err-login" class="error"></div>
+<input id="l-email" type="email" placeholder="البريد">
+<input id="l-pass" type="password" placeholder="كلمة السر">
+<button class="btn primary" onclick="doLogin()">دخول</button>
+<p class="muted" onclick="show('forgot')">نسيت كلمة السر؟</p>
 </div>
 
-<div style="text-align:center;margin-top:20px">
-<a href="/" style="color:#aaa3bd;font-size:12px;text-decoration:none">← الرجوع للرئيسية</a>
-</div>
+<!-- صفحة 2: انشاء حساب منعزلة -->
+<div class="page" id="p-signup">
+<h3>إنشاء حساب جديد ✨</h3>
+<div id="err-signup" class="error"></div>
+<div id="ok-signup" class="success"></div>
+<input id="s-name" placeholder="اسمك">
+<input id="s-email" type="email" placeholder="البريد">
+<input id="s-pass" type="password" placeholder="كلمة سر (6+ أحرف)">
+<button class="btn primary" onclick="doSignup()">إنشاء حساب</button>
+<p class="muted" onclick="show('login')">عندك حساب؟ سجل دخول</p>
 </div>
 
-<script>
-function showPage(id){
+<!-- صفحة 3: نسيت كلمة السر منعزلة -->
+<div class="page" id="p-forgot">
+<h3>إعادة تعيين 🔑</h3>
+<div id="err-forgot" class="error"></div>
+<div id="ok-forgot" class="success"></div>
+<p style="color:#aaa3bd;font-size:14px">سنرسل رابط إعادة التعيين لبريدك</p>
+<input id="f-email" type="email" placeholder="بريدك المسجل">
+<button class="btn primary" onclick="doForgot()">إرسال الرابط</button>
+<p class="muted" onclick="show('login')">← رجوع للدخول</p>
+</div>
+
+</div>
+<script type="module">
+import { auth, db } from "/assets/firebase-config.js";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+window.show = (id)=>{
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
- document.getElementById('page-'+id).classList.add('active');
+ document.getElementById('p-'+id).classList.add('active');
+ document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+ const tb = document.getElementById('t-'+id);
+ if(tb) tb.classList.add('active');
 }
-// ربط register form بـ login logic
-document.getElementById('registerNow')?.addEventListener('click',()=>{
- const e=document.getElementById('regEmail').value;
- const p=document.getElementById('regPassword').value;
- document.getElementById('loginEmail').value=e;
- document.getElementById('loginPassword').value=p;
- document.getElementById('registerNow').click = null;
- // يحول للـ app.js
- document.querySelector('#page-login #loginEmail')?.dispatchEvent(new Event('input'));
- const evt = new CustomEvent('gabo-register',{detail:{email:e,password:p}});
- document.dispatchEvent(evt);
-});
+
+window.doLogin = async()=>{
+ const e=document.getElementById('l-email').value.trim();
+ const p=document.getElementById('l-pass').value;
+ const err=document.getElementById('err-login');
+ if(!e||!p){err.textContent='أكمل البيانات';return}
+ try{ await signInWithEmailAndPassword(auth,e,p); location.href='/app/public/'; }
+ catch(ex){ err.textContent=ex.message; }
+}
+
+window.doSignup = async()=>{
+ const name=document.getElementById('s-name').value.trim();
+ const e=document.getElementById('s-email').value.trim();
+ const p=document.getElementById('s-pass').value;
+ const err=document.getElementById('err-signup');
+ const ok=document.getElementById('ok-signup');
+ err.textContent=''; ok.textContent='';
+ if(!name||!e||p.length<6){err.textContent='أكمل البيانات (كلمة السر 6+ أحرف)';return}
+ try{
+  const cred=await createUserWithEmailAndPassword(auth,e,p);
+  await updateProfile(cred.user,{displayName:name});
+  await setDoc(doc(db,'users',cred.user.uid),{name,email:e,createdAt:serverTimestamp(),role:'user'},{merge:true});
+  ok.textContent='تم إنشاء حسابك ✅ جاري الدخول...';
+  setTimeout(()=>location.href='/app/public/',900);
+ }catch(ex){ err.textContent=ex.message; }
+}
+
+window.doForgot = async()=>{
+ const e=document.getElementById('f-email').value.trim();
+ const err=document.getElementById('err-forgot');
+ const ok=document.getElementById('ok-forgot');
+ err.textContent=''; ok.textContent='';
+ if(!e){err.textContent='أدخل بريدك';return}
+ try{
+  await sendPasswordResetEmail(auth,e);
+  ok.textContent='تم إرسال رابط إعادة التعيين 📩 تفقد بريدك';
+ }catch(ex){ err.textContent=ex.message; }
+}
 </script>
-<script type="module" src="/assets/app.js"></script>
-</body>
-</html>
+</body></html>
