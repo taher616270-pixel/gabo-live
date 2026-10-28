@@ -53,7 +53,7 @@ body{padding-bottom:110px}
     <div class="avatar" id="avatarMain"><img id="avatarImgMain"><span id="avL">T</span><div class="pencil" id="openEdit">✏️</div></div>
     <div class="info">
       <div class="nameRow"><span id="nameMain">Taher Hammam</span><span id="flagMain"></span></div>
-      <div class="countryRow"><span id="countryNameMain">الجنوب العربي</span><span id="countryFlagMain"><img src="/assets/south-arabia.png" style="width:26px;height:18px;border-radius:3px"></span></div>
+      <div class="countryRow"><span id="countryNameMain">الجنوب العربي</span><span id="countryFlagMain"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Flag_of_South_Arabia.svg/320px-Flag_of_South_Arabia.svg.png" style="width:26px;height:18px;border-radius:3px"></span></div>
       <div class="idRow">ID: <span id="idMain">--------</span></div>
     </div>
   </div>
@@ -82,7 +82,7 @@ body{padding-bottom:110px}
   <div class="cardList">
     <div class="row"><div class="left"><small id="userId">--------</small></div><div class="right">User ID</div></div>
     <div class="row" id="rowGender"><div class="left"><span>‹</span> <small id="rowGenderVal">ذكر ♂️</small></div><div class="right">الجنس</div></div>
-    <div class="row" id="rowCountry"><div class="left"><span>‹</span> <img id="rowCountryImg" src="/assets/south-arabia.png" style="width:28px;height:20px;border-radius:4px;object-fit:cover"><small id="rowCountryVal">الجنوب العربي</small></div><div class="right">الدولة</div></div>
+    <div class="row" id="rowCountry"><div class="left"><span>‹</span> <img id="rowCountryImg" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Flag_of_South_Arabia.svg/320px-Flag_of_South_Arabia.svg.png" style="width:28px;height:20px;border-radius:4px;object-fit:cover"><small id="rowCountryVal">الجنوب العربي</small></div><div class="right">الدولة</div></div>
   </div>
   <div class="saveArea"><button class="saveBtn" id="saveAll">💾 حفظ التغييرات</button></div>
 </div>
@@ -113,9 +113,11 @@ let pending={name:null,bio:null,bday:null,gender:null,country:null,countryName:n
 let tempGender=null;
 let selDay=3, selMonth=1, selYear=2000;
 
+const SOUTH_FLAG = 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Flag_of_South_Arabia.svg/320px-Flag_of_South_Arabia.svg.png';
+
 // كل دولة مع علمها - الجنوب العربي له علمه الخاص
 const countries=[
-  {code:'south-arabia',name:'الجنوب العربي',flagImg:'/assets/south-arabia.png'},
+  {code:'south-arabia',name:'الجنوب العربي',flagImg:SOUTH_FLAG},
   {code:'SA',name:'السعودية',flagImg:'https://flagcdn.com/w40/sa.png'},
   {code:'YE',name:'اليمن',flagImg:'https://flagcdn.com/w40/ye.png'},
   {code:'AE',name:'الإمارات',flagImg:'https://flagcdn.com/w40/ae.png'},
@@ -134,18 +136,18 @@ function showStatus(t){const el=document.getElementById('statusBar');el.textCont
 function compressImage(file,cb){const r=new FileReader();r.onload=e=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');let w=im.width,h=im.height;const max=600;if(w>max||h>max){if(w>h){h*=max/w;w=max;}else{w*=max/h;h=max;}}c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);cb(c.toDataURL('image/jpeg',0.7));};im.src=e.target.result;};r.readAsDataURL(file);}
 
 function setCountryDisplay(name,code,flagImg){
-  const imgUrl = flagImg || (countries.find(c=>c.code===code)?.flagImg) || '/assets/south-arabia.png';
+  const imgUrl = flagImg || (countries.find(c=>c.code===code)?.flagImg) || SOUTH_FLAG;
   document.getElementById('countryNameMain').textContent=name;
-  document.getElementById('countryFlagMain').innerHTML=`<img src="${imgUrl}" style="width:26px;height:18px;border-radius:3px;object-fit:cover;border:1px solid rgba(255,255,255,.25)" onerror="this.src='https://flagcdn.com/w40/sa.png'">`;
-  document.getElementById('flagMain').innerHTML=`<img src="${imgUrl}" style="width:32px;height:22px;border-radius:4px;object-fit:cover;border:1px solid rgba(255,255,255,.3)" onerror="this.src='https://flagcdn.com/w40/sa.png'">`;
+  document.getElementById('countryFlagMain').innerHTML=`<img src="${imgUrl}" style="width:26px;height:18px;border-radius:3px;object-fit:cover;border:1px solid rgba(255,255,255,.25)">`;
+  document.getElementById('flagMain').innerHTML=`<img src="${imgUrl}" style="width:32px;height:22px;border-radius:4px;object-fit:cover;border:1px solid rgba(255,255,255,.3)">`;
   document.getElementById('rowCountryVal').textContent=name;
-  const ri=document.getElementById('rowCountryImg'); ri.src=imgUrl; ri.style.display='block'; ri.onerror=()=>{ri.src='https://flagcdn.com/w40/sa.png';};
+  const ri=document.getElementById('rowCountryImg'); ri.src=imgUrl; ri.style.display='block';
 }
 
 function renderCountryList(filter=''){
   const list=document.getElementById('countryList'); const f=filter.trim();
   const filtered=countries.filter(c=>c.name.includes(f)||c.code.includes(f)||c.code.toLowerCase().includes(f.toLowerCase()));
-  list.innerHTML=filtered.map(c=>`<div class="countryItem" data-code="${c.code}" data-name="${c.name}" data-img="${c.flagImg}"><div style="display:flex;align-items:center;gap:10px"><div class="flag"><img src="${c.flagImg}" onerror="this.src='https://flagcdn.com/w40/sa.png'"></div><div><div style="font-size:14px;font-weight:600">${c.name}</div><div style="font-size:11px;color:#8b8ba7">${c.code}</div></div></div><div>‹</div></div>`).join('');
+  list.innerHTML=filtered.map(c=>`<div class="countryItem" data-code="${c.code}" data-name="${c.name}" data-img="${c.flagImg}"><div style="display:flex;align-items:center;gap:10px"><div class="flag"><img src="${c.flagImg}"></div><div><div style="font-size:14px;font-weight:600">${c.name}</div><div style="font-size:11px;color:#8b8ba7">${c.code}</div></div></div><div>‹</div></div>`).join('');
   list.querySelectorAll('.countryItem').forEach(el=>{
     el.onclick=()=>{
       pending.country=el.dataset.code;
@@ -179,15 +181,15 @@ onAuthStateChanged(auth,async u=>{
   let finalId;
   if(!snap.exists()){
     finalId=genId(u.uid);
-    await setDoc(ref,{followers:0,following:0,visitors:0,gaboId:finalId,bio:'مرحبا بكم في ملفي الشخصي 👋',country:'south-arabia',countryName:'الجنوب العربي',countryFlagImg:'/assets/south-arabia.png',gender:'ذكر ♂️',bday:'2000-01-03'},{merge:true});
-    setCountryDisplay('الجنوب العربي','south-arabia','/assets/south-arabia.png');
+    await setDoc(ref,{followers:0,following:0,visitors:0,gaboId:finalId,bio:'مرحبا بكم في ملفي الشخصي 👋',country:'south-arabia',countryName:'الجنوب العربي',countryFlagImg:SOUTH_FLAG,gender:'ذكر ♂️',bday:'2000-01-03'},{merge:true});
+    setCountryDisplay('الجنوب العربي','south-arabia',SOUTH_FLAG);
   }else{
     finalId=snap.data().gaboId;
     if(!finalId||finalId==='00000000'||finalId==='--------'||finalId.length!==8){finalId=genId(u.uid);await setDoc(ref,{gaboId:finalId},{merge:true});}
     const d=snap.data();
     if(d.bio){document.getElementById('bioPublic').textContent=d.bio; document.getElementById('rowBioVal').textContent=d.bio;}
-    if(d.countryName){setCountryDisplay(d.countryName,d.country||'south-arabia',d.countryFlagImg||'/assets/south-arabia.png');}
-    else{setCountryDisplay('الجنوب العربي','south-arabia','/assets/south-arabia.png');}
+    if(d.countryName){setCountryDisplay(d.countryName,d.country||'south-arabia',d.countryFlagImg||SOUTH_FLAG);}
+    else{setCountryDisplay('الجنوب العربي','south-arabia',SOUTH_FLAG);}
     if(d.gender){document.getElementById('rowGenderVal').textContent=d.gender;}
     if(d.bday){document.getElementById('rowBdayVal').textContent=d.bday;}
   }
