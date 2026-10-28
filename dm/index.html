@@ -1,108 +1,82 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <title>دردشة خاصة - GABO LIVE</title>
 <style>
 :root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;overflow:hidden;position:fixed;inset:0;display:flex;flex-direction:column}
 .top{height:60px;min-height:60px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px;padding:0 12px;flex-shrink:0}
-.back{width:44px;height:44px;min-width:44px;background:#1e1c2e;border:1px solid var(--b);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;cursor:pointer}
-.topActions{margin-right:auto;display:flex;gap:8px}
-.callBtn{width:44px;height:44px;border-radius:50%;background:var(--v);border:1px solid var(--v);color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(124,58,237,.4)}
-.listView{flex:1;overflow:auto;padding:12px}
+.back{width:44px;height:44px;background:#1e1c2e;border:1px solid var(--b);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;cursor:pointer}
+.listView{flex:1;overflow:auto;padding:12px 12px 110px}
 .chatView{flex:1;display:none;flex-direction:column;background:#050507}
 .chatView.on{display:flex}
 .item{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:16px;margin-bottom:12px;display:flex;gap:14px;align-items:center;cursor:pointer;position:relative}
-.item img{width:56px;height:56px;min-width:56px;border-radius:50%;background:#2a2840;object-fit:cover;border:2px solid var(--b)}
-.badge{position:absolute;left:14px;top:50%;transform:translateY(-50%);background:#ff3b30;color:#fff;min-width:24px;height:24px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;padding:0 7px}
+.item img{width:56px;height:56px;border-radius:50%;background:#2a2840;object-fit:cover}
+.badge{position:absolute;left:14px;background:#ff3b30;color:#fff;min-width:22px;height:22px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;padding:0 6px}
 .badge.hide{display:none}
 .messages{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
-.bubble{max-width:78%;padding:12px 16px;border-radius:18px;font-size:15px;word-break:break-word}
+.bubble{max-width:80%;padding:12px 16px;border-radius:18px;font-size:15px;word-break:break-word}
 .bubble.in{align-self:flex-start;background:#1e1e2e;border:1px solid var(--b)}
 .bubble.out{align-self:flex-end;background:linear-gradient(135deg,#7c3aed,#4f46e5)}
-.bubble.voice{display:flex;align-items:center;gap:10px;padding:10px 14px}
-.bubble.voice audio{width:170px;height:36px}
-.inputBar{background:#11111a;border-top:1px solid var(--b);padding:10px 12px calc(12px + env(safe-area-inset-bottom));display:flex;gap:8px;flex-shrink:0;align-items:center}
+.bubble.voice{padding:8px 12px;display:flex;align-items:center;gap:8px;min-width:180px}
+.bubble.voice audio{width:160px;height:32px}
+.inputBar{position:fixed;bottom:78px;left:0;right:0;background:#11111a;border-top:1px solid var(--b);padding:10px 12px;display:flex;gap:8px;align-items:center;z-index:25}
+.chatView .inputBar{position:relative;bottom:auto}
 .inputWrap{flex:1;background:#1e1e2e;border:1px solid var(--b);border-radius:26px;display:flex;padding:6px 14px}
 .inputWrap input{flex:1;background:transparent;border:0;color:#fff;outline:none;padding:8px 0;font-size:15px}
 .iconBtn{width:48px;height:48px;min-width:48px;border-radius:50%;background:#1e1c2e;border:1px solid var(--b);color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .iconBtn.send{background:var(--v);border-color:var(--v)}
-.iconBtn.mic.rec{background:#ff3b30;animation:pulse 1s infinite}
+.iconBtn.mic.rec{background:#ff3b30;border-color:#ff3b30;animation:pulse .9s infinite}
 @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
-.fab{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);height:58px;background:linear-gradient(135deg,#7c3aed 0%,#a78bfa 100%);color:#fff;border-radius:30px;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 28px;font-size:17px;font-weight:800;cursor:pointer;z-index:20;border:0;box-shadow:0 8px 24px rgba(124,58,237,.45)}
-.bottomNav{height:78px;min-height:78px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:center;padding-bottom:env(safe-area-inset-bottom);direction:ltr;flex-shrink:0;z-index:30}
-.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 0;position:relative}
-.bottomNav a.on{color:#fff}.bottomNav a .ic{font-size:28px}
-.navBadge{position:absolute;top:2px;left:50%;transform:translateX(8px);background:#ff3b30;color:#fff;min-width:20px;height:20px;border-radius:10px;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid #0f0e18}
+.fab{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);height:56px;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;border-radius:28px;display:flex;align-items:center;gap:10px;padding:0 24px;font-size:16px;font-weight:800;z-index:20;border:0}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;height:78px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:center;direction:ltr;z-index:30;padding-bottom:env(safe-area-inset-bottom)}
+.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:11px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
+.bottomNav a.on{color:#fff}.bottomNav a .ic{font-size:26px}
+.navBadge{position:absolute;top:-4px;left:55%;background:#ff3b30;color:#fff;min-width:18px;height:18px;border-radius:9px;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0 4px}
 .navBadge.hide{display:none}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:100;display:none;flex-direction:column}.modal.on{display:flex}
-.userRow{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--b);border-radius:16px;padding:14px;margin-bottom:10px}
-.callOverlay{position:fixed;inset:0;background:linear-gradient(180deg,#1a1a2e 0%,#050507 100%);z-index:300;display:none;flex-direction:column;align-items:center;justify-content:center;gap:24px}
-.callOverlay.on{display:flex}
-.callAvatar{width:130px;height:130px;border-radius:50%;border:4px solid var(--v);object-fit:cover;box-shadow:0 0 40px rgba(124,58,237,.5)}
-.callActions{display:flex;gap:28px;margin-top:30px}
-.callAction{width:68px;height:68px;border-radius:50%;border:0;font-size:30px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.callAction.hang{background:#ff3b30;color:#fff}.callAction.mute{background:#1e1c2e;color:#fff;border:1px solid var(--b)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:100;display:none;flex-direction:column}.modal.on{display:flex}
 </style>
 </head>
 <body>
-<div class="top" id="listTop"><div class="back" onclick="location.href='/profile/'">‹</div><b style="font-size:16px">🔒 دردشة خاصة</b></div>
+<div class="top" id="listTop"><div class="back" onclick="location.href='/profile/'">‹</div><b>🔒 دردشة خاصة</b></div>
 <div class="listView" id="listView"><div id="chatList">جاري التحميل...</div></div>
 
 <div class="chatView" id="chatView">
-  <div class="top">
-    <div class="back" id="backToList">‹</div>
-    <img id="chatAvatar" style="width:42px;height:42px;border-radius:50%;background:#2a2840">
-    <b id="chatName" style="font-size:16px;flex:1">...</b>
-    <div class="topActions">
-      <div class="callBtn" id="voiceCallBtn">📞</div>
-    </div>
-  </div>
+  <div class="top"><div class="back" id="backToList">‹</div><img id="chatAvatar" style="width:40px;height:40px;border-radius:50%;background:#2a2840"><b id="chatName" style="flex:1">...</b></div>
   <div class="messages" id="messages"></div>
   <div class="inputBar">
     <div class="iconBtn mic" id="micBtn">🎤</div>
-    <div class="inputWrap"><input id="msgInput" placeholder="اكتب رسالة..."></div>
+    <div class="inputWrap"><input id="msgInput" placeholder="اكتب رسالة..." autocomplete="off"></div>
     <div class="iconBtn send" id="sendBtn">➤</div>
   </div>
 </div>
 
-<button class="fab" id="newChatBtn"><span style="font-size:22px">💬</span> دردشة جديدة</button>
+<button class="fab" id="newChatBtn">💬 دردشة جديدة</button>
 <div class="bottomNav">
   <a href="/profile/"><span class="ic">👤</span>حسابي</a>
-  <a class="on" id="chatTab"><span class="ic">🔒</span>دردشة<span class="navBadge hide" id="navBadge">0</span></a>
-  <a href="/create/"><span class="ic">➕</span>منشور</a>
+  <a class="on"><span class="ic">🔒</span>دردشة<span class="navBadge hide" id="navBadge">0</span></a>
+  <a href="/create/"><span class="ic">➕</span></a>
   <a href="/app/"><span class="ic">🏠</span>الرئيسية</a>
 </div>
 
-<div class="callOverlay" id="callOverlay">
-  <img id="callAvatar" class="callAvatar" src="">
-  <h2 id="callName" style="font-size:22px"></h2>
-  <p id="callStatus" style="color:#8b8ba7">جاري الاتصال...</p>
-  <div style="font-size:48px;margin:20px 0">🎧</div>
-  <div class="callActions">
-    <div class="callAction mute" id="muteBtn">🎙️</div>
-    <div class="callAction hang" id="hangBtn">📞</div>
-    <div class="callAction mute" id="speakerBtn">🔊</div>
-  </div>
-</div>
-
 <div class="modal" id="usersModal">
-  <div class="top"><input id="searchUser" placeholder="ابحث..." style="flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:12px;padding:14px;color:#fff"><button id="closeModal" style="width:44px;height:44px;border-radius:50%;background:#1e1c2e;border:1px solid var(--b);color:#fff">✕</button></div>
+  <div class="top"><input id="searchUser" placeholder="ابحث..." style="flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:12px;padding:12px;color:#fff"><button id="closeModal" style="width:44px;height:44px;border-radius:50%;background:#1e1c2e;border:1px solid var(--b);color:#fff">✕</button></div>
   <div style="flex:1;overflow:auto;padding:12px" id="usersList"></div>
 </div>
 
 <script type="module">
 import { auth, db } from '/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { collection, query, where, getDocs, onSnapshot, addDoc, doc, orderBy, serverTimestamp, updateDoc, getDoc, setDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { collection, query, where, getDocs, onSnapshot, addDoc, doc, orderBy, serverTimestamp, updateDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
 
 let myUid=null, currentChatId=null, unsubscribe=null, currentOther=null;
-let mediaRecorder=null, audioChunks=[], isRecording=false, localStream=null;
+let mediaRecorder=null, audioChunks=[], isRecording=false;
+const storage=getStorage();
 
 function saveUid(uid){ myUid=uid; localStorage.setItem('gabo_uid',uid); }
-
 onAuthStateChanged(auth, u=>{
   if(u){ saveUid(u.uid); loadChats(u.uid); loadUsers(u.uid); }
   else{ const s=localStorage.getItem('gabo_uid'); if(s){ myUid=s; loadChats(s); loadUsers(s); } }
@@ -112,97 +86,90 @@ function loadChats(uid){
   const q=query(collection(db,'chats'), where('users','array-contains', uid));
   onSnapshot(q, snap=>{
     const list=document.getElementById('chatList');
-    if(snap.empty){ list.innerHTML='<div style="text-align:center;padding:80px;color:#888">لا توجد دردشات</div>'; updateBadge(0); return; }
+    if(snap.empty){ list.innerHTML='<div style="text-align:center;padding:60px;color:#888">لا توجد دردشات</div>'; return; }
     list.innerHTML=''; let total=0;
     snap.forEach(d=>{
       const data=d.data(); const otherId=data.users.find(id=>id!==uid); const other=data.usersInfo?.[otherId]||{name:'مستخدم',photo:''};
       const unread=data.unreadCounts?.[uid]||0; total+=unread;
       const el=document.createElement('div'); el.className='item';
-      el.innerHTML=`<img src="${other.photo}"><div><b>${other.name}</b><small>${data.lastMsg||''}</small></div><div class="badge ${unread?'':'hide'}">${unread}</div>`;
+      el.innerHTML=`<img src="${other.photo}"><div><b>${other.name}</b><br><small>${data.lastMsg||''}</small></div><div class="badge ${unread?'':'hide'}">${unread}</div>`;
       el.onclick=()=>openChat(d.id, other, otherId); list.appendChild(el);
     });
-    updateBadge(total);
+    const b=document.getElementById('navBadge'); if(total>0){ b.textContent=total; b.classList.remove('hide'); } else b.classList.add('hide');
   });
 }
-function updateBadge(n){ const b=document.getElementById('navBadge'); if(n>0){ b.textContent=n>99?'99+':n; b.classList.remove('hide'); } else b.classList.add('hide'); }
 
 async function openChat(chatId, other, otherId){
-  currentChatId=chatId; currentOther={id:otherId||other.id, ...other};
+  currentChatId=chatId; currentOther={id:otherId, ...other};
   document.getElementById('chatName').textContent=other.name; document.getElementById('chatAvatar').src=other.photo||'';
   document.getElementById('listView').style.display='none'; document.getElementById('listTop').style.display='none'; document.getElementById('newChatBtn').style.display='none';
   document.getElementById('chatView').classList.add('on');
-  try{ const ref=doc(db,'chats',chatId); const s=await getDoc(ref); const c=s.data().unreadCounts||{}; c[myUid]=0; await updateDoc(ref,{unreadCounts:c}); }catch(e){}
+  try{ const r=doc(db,'chats',chatId); const s=await getDoc(r); const c=s.data().unreadCounts||{}; c[myUid]=0; await updateDoc(r,{unreadCounts:c}); }catch(e){}
   const msgs=document.getElementById('messages'); if(unsubscribe) unsubscribe();
   const q=query(collection(db,'chats',chatId,'messages'), orderBy('createdAt','asc'));
   unsubscribe=onSnapshot(q, snap=>{
     msgs.innerHTML=''; snap.forEach(d=>{
       const m=d.data(); const isMe=m.senderId===myUid;
-      if(m.type==='voice'){ msgs.innerHTML+=`<div class="bubble ${isMe?'out':'in'} voice">🎤 <audio controls src="${m.audio}"></audio></div>`; }
-      else{ msgs.innerHTML+=`<div class="bubble ${isMe?'out':'in'}">${(m.text||'').replace(/</g,'&lt;')}</div>`; }
+      if(m.type==='voice' && m.audioUrl){
+        msgs.innerHTML+=`<div class="bubble ${isMe?'out':'in'} voice">🎤 <audio controls src="${m.audioUrl}"></audio></div>`;
+      }else if(m.text){
+        msgs.innerHTML+=`<div class="bubble ${isMe?'out':'in'}">${m.text.replace(/</g,'&lt;')}</div>`;
+      }
     }); msgs.scrollTop=msgs.scrollHeight;
   });
 }
 document.getElementById('backToList').onclick=()=>{ document.getElementById('chatView').classList.remove('on'); document.getElementById('listView').style.display='flex'; document.getElementById('listTop').style.display='flex'; document.getElementById('newChatBtn').style.display='flex'; currentChatId=null; if(unsubscribe) unsubscribe(); };
 
 async function sendText(){
-  const inp=document.getElementById('msgInput'); const text=inp.value.trim(); if(!text||!currentChatId) return; inp.value='';
+  const inp=document.getElementById('msgInput'); const t=inp.value.trim(); if(!t||!currentChatId) return; inp.value='';
   const ref=doc(db,'chats',currentChatId); const s=await getDoc(ref); const d=s.data(); const otherId=d.users.find(id=>id!==myUid);
   const counts=d.unreadCounts||{}; counts[otherId]=(counts[otherId]||0)+1; counts[myUid]=0;
-  await addDoc(collection(db,'chats',currentChatId,'messages'),{text, senderId:myUid, type:'text', createdAt:serverTimestamp()});
-  await updateDoc(ref,{lastMsg:text.slice(0,30), lastAt:serverTimestamp(), unreadCounts:counts});
+  await addDoc(collection(db,'chats',currentChatId,'messages'),{text:t, senderId:myUid, type:'text', createdAt:serverTimestamp()});
+  await updateDoc(ref,{lastMsg:t.slice(0,30), lastAt:serverTimestamp(), unreadCounts:counts});
 }
 document.getElementById('sendBtn').onclick=sendText;
 document.getElementById('msgInput').onkeydown=e=>{ if(e.key==='Enter'){ e.preventDefault(); sendText(); } };
 
+// مايك يشتغل في سفاري
 const micBtn=document.getElementById('micBtn');
 micBtn.onclick=async()=>{
   if(!isRecording){
     try{
       const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-      mediaRecorder=new MediaRecorder(stream); audioChunks=[]; isRecording=true; micBtn.classList.add('rec'); micBtn.textContent='⏹️';
+      let mime='audio/mp4';
+      if(MediaRecorder.isTypeSupported('audio/webm')) mime='audio/webm';
+      else if(MediaRecorder.isTypeSupported('audio/mp4')) mime='audio/mp4';
+      else if(MediaRecorder.isTypeSupported('audio/aac')) mime='audio/aac';
+      mediaRecorder=new MediaRecorder(stream,{mimeType:mime}); audioChunks=[]; isRecording=true;
+      micBtn.classList.add('rec'); micBtn.textContent='⏹️';
       mediaRecorder.ondataavailable=e=>{ if(e.data.size>0) audioChunks.push(e.data); };
       mediaRecorder.onstop=async()=>{
-        const blob=new Blob(audioChunks,{type:'audio/webm'}); const reader=new FileReader();
-        reader.onloadend=async()=>{
-          const base64=reader.result;
+        const blob=new Blob(audioChunks,{type:mime});
+        if(blob.size<500){ alert('التسجيل قصير جدا'); stream.getTracks().forEach(t=>t.stop()); micBtn.classList.remove('rec'); micBtn.textContent='🎤'; isRecording=false; return; }
+        micBtn.textContent='⏳';
+        try{
+          const fileName=`voice/${currentChatId}/${Date.now()}.${mime.includes('mp4')?'m4a':'webm'}`;
+          const storageRef=ref(storage,fileName);
+          await uploadBytes(storageRef,blob);
+          const url=await getDownloadURL(storageRef);
           const ref=doc(db,'chats',currentChatId); const s=await getDoc(ref); const d=s.data(); const otherId=d.users.find(id=>id!==myUid);
           const counts=d.unreadCounts||{}; counts[otherId]=(counts[otherId]||0)+1;
-          await addDoc(collection(db,'chats',currentChatId,'messages'),{type:'voice', audio:base64, senderId:myUid, createdAt:serverTimestamp()});
+          await addDoc(collection(db,'chats',currentChatId,'messages'),{type:'voice', audioUrl:url, senderId:myUid, createdAt:serverTimestamp()});
           await updateDoc(ref,{lastMsg:'🎤 رسالة صوتية', lastAt:serverTimestamp(), unreadCounts:counts});
-        }; reader.readAsDataURL(blob);
+        }catch(err){ alert('فشل رفع الصوت: '+err.message); }
         stream.getTracks().forEach(t=>t.stop());
+        micBtn.classList.remove('rec'); micBtn.textContent='🎤'; isRecording=false;
       };
       mediaRecorder.start();
-    }catch(err){ alert('فعل اذن الميكروفون من اعدادات سفاري'); }
+    }catch(err){ alert('افتح الاعدادات > سفاري > الميكروفون > سماح لـ gabo-live.pages.dev'); }
   }else{
-    mediaRecorder.stop(); isRecording=false; micBtn.classList.remove('rec'); micBtn.textContent='🎤';
+    if(mediaRecorder) mediaRecorder.stop();
   }
 };
 
-// اتصال صوت فقط
-async function startVoiceCall(){
-  if(!currentChatId) return;
-  const overlay=document.getElementById('callOverlay');
-  document.getElementById('callName').textContent=currentOther.name||'...';
-  document.getElementById('callAvatar').src=currentOther.photo||'';
-  document.getElementById('callStatus').textContent='جاري الاتصال...';
-  overlay.classList.add('on');
-  try{
-    localStream=await navigator.mediaDevices.getUserMedia({audio:true, video:false});
-    await setDoc(doc(db,'calls',currentChatId),{from:myUid, to:currentOther.id, type:'voice', status:'calling', createdAt:serverTimestamp(), chatId:currentChatId, callerName:currentOther.name||'مكالمة صوتية'});
-    document.getElementById('callStatus').textContent='يرن... 📞';
-  }catch(e){ alert('يجب السماح للميكروفون'); overlay.classList.remove('on'); }
-}
-document.getElementById('voiceCallBtn').onclick=startVoiceCall;
-document.getElementById('hangBtn').onclick=async()=>{
-  document.getElementById('callOverlay').classList.remove('on');
-  if(localStream) localStream.getTracks().forEach(t=>t.stop());
-  try{ await deleteDoc(doc(db,'calls',currentChatId)); }catch(e){}
-};
-document.getElementById('muteBtn').onclick=function(){ if(!localStream) return; const t=localStream.getAudioTracks()[0]; t.enabled=!t.enabled; this.textContent=t.enabled?'🎙️':'🔇'; };
-
 async function loadUsers(uid){ const snap=await getDocs(collection(db,'users')); allUsers=[]; snap.forEach(d=>{ if(d.id!==uid){ const dd=d.data(); allUsers.push({id:d.id, name:dd.displayName||dd.name||'مستخدم', photo:dd.photo||''}); }}); renderUsers(allUsers); }
-function renderUsers(arr){ document.getElementById('usersList').innerHTML=arr.map(u=>`<div class="userRow" style="display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--b);border-radius:16px;padding:14px;margin-bottom:10px"><img src="${u.photo}" style="width:54px;height:54px;border-radius:50%"><b>${u.name}</b><button style="background:var(--v);color:#fff;border:0;padding:10px 18px;border-radius:12px;margin-right:auto" onclick="startChat('${u.id}')">راسل</button></div>`).join(''); }
+let allUsers=[];
+function renderUsers(arr){ document.getElementById('usersList').innerHTML=arr.map(u=>`<div class="userRow" style="display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--b);border-radius:14px;padding:12px;margin-bottom:10px"><img src="${u.photo}" style="width:50px;height:50px;border-radius:50%"><b>${u.name}</b><button style="margin-right:auto;background:var(--v);color:#fff;border:0;padding:8px 14px;border-radius:10px" onclick="startChat('${u.id}')">راسل</button></div>`).join(''); }
 document.getElementById('searchUser').oninput=e=>{ const v=e.target.value.toLowerCase(); renderUsers(allUsers.filter(u=>u.name.toLowerCase().includes(v))); };
 document.getElementById('newChatBtn').onclick=()=>document.getElementById('usersModal').classList.add('on');
 document.getElementById('closeModal').onclick=()=>document.getElementById('usersModal').classList.remove('on');
@@ -212,13 +179,6 @@ window.startChat=async(targetId)=>{
   const target=allUsers.find(u=>u.id===targetId); const newChat=await addDoc(collection(db,'chats'),{users:[myUid,targetId], usersInfo:{[myUid]:{name:'انا',photo:''}, [targetId]:{name:target.name,photo:target.photo}}, lastMsg:'بدأت المحادثة', lastAt:serverTimestamp(), createdAt:serverTimestamp(), unreadCounts:{[targetId]:1, [myUid]:0}});
   document.getElementById('usersModal').classList.remove('on'); openChat(newChat.id, target, targetId);
 };
-
-function listenCalls(){
-  if(!myUid) return;
-  const q=query(collection(db,'calls'), where('to','==',myUid), where('status','==','calling'));
-  onSnapshot(q, snap=>{ snap.forEach(d=>{ const data=d.data(); if(confirm(`📞 مكالمة صوتية من ${data.callerName} - ترد؟`)){ openChat(data.chatId, {name:data.callerName, photo:''}, data.from); startVoiceCall(); } }); });
-}
-setTimeout(listenCalls,2000);
 </script>
 </body>
 </html>
