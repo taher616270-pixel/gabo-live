@@ -15,15 +15,15 @@ body{padding-bottom:110px}
 .pencil{position:absolute;bottom:0;right:0;width:26px;height:26px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;border:2px solid var(--card);cursor:pointer;z-index:2}
 .info{flex:1;text-align:left;direction:ltr}
 .nameRow{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800}
-.countryRow{display:flex;align-items:center;gap:8px;direction:rtl;text-align:right;font-weight:600;margin-top:6px;font-size:14px;color:#d0d0e0}
-.countryRow img{width:28px;height:19px;border-radius:3px;object-fit:cover;border:1px solid rgba(255,255,255,.25)}
-.metaRow{display:flex;gap:8px;align-items:center;direction:rtl;margin-top:6px;font-size:13px;font-weight:800}
-.metaRow .male{color:var(--blue)}
-.metaRow .female{color:var(--pink)}
-.metaRow .age{color:#fbbf24}
+.countryRow{display:flex;align-items:center;gap:8px;direction:rtl;text-align:right;font-weight:600;margin-top:6px;font-size:14px;color:#d0d0e0;flex-wrap:wrap}
+.countryRow img{width:26px;height:18px;border-radius:3px;object-fit:cover;border:1px solid rgba(255,255,255,.25)}
+.metaInline{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:13px}
+.metaInline .male{color:var(--blue)}
+.metaInline .female{color:var(--pink)}
+.metaInline .age{color:#fbbf24}
+.idRow{font-size:11px;color:#8b8ba7;margin-top:8px;direction:ltr;text-align:left;font-family:monospace;letter-spacing:1px}
 .bioPublic{margin-top:12px;background:#1e1c2e;border:1px solid var(--b);border-radius:12px;padding:12px;font-size:13px;color:#c4c4d0;line-height:1.6;min-height:45px}
-.idRow{font-size:11px;color:#8b8ba7;margin-top:6px;direction:ltr;text-align:left;font-family:monospace;letter-spacing:1px}
-.stats{display:flex;gap:8px;margin-top:16px}.stat{flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:14px;padding:10px;text-align:center;cursor:pointer}.stat b{font-size:18px;display:block}.stat span{font-size:11px;color:#8b8ba7}
+.stats{display:flex;gap:8px;margin-top:16px}.stat{flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:14px;padding:10px;text-align:center}.stat b{font-size:18px;display:block}.stat span{font-size:11px;color:#8b8ba7}
 .btns{display:flex;gap:10px;margin-top:16px}.btn{flex:1;padding:12px;border-radius:12px;border:0;font-weight:800;font-size:12px;cursor:pointer}.vip{background:var(--gold);color:#000}.notif{background:#1e1c2e;border:1px solid var(--b);color:#fff}
 .settingsBtn{width:100%;margin-top:12px;background:#1e1c2e;border:1px solid var(--b);color:#fff;padding:12px;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;text-align:center}
 .editPage, .settingsPage{position:fixed;inset:0;background:var(--bg);z-index:10000;display:none;overflow:auto}.editPage.on, .settingsPage.on{display:block}
@@ -36,12 +36,10 @@ body{padding-bottom:110px}
 .box h3{font-size:16px;margin-bottom:12px;text-align:center}
 .box p{text-align:center;line-height:1.8;font-size:14px;color:#d0d0e0}
 .box input,.box textarea{width:100%;background:#0f0e18;border:1px solid #2a2840;border-radius:12px;padding:14px;color:#fff;font-size:15px;font-family:system-ui;outline:none}
-.box textarea{min-height:110px;resize:none;line-height:1.6}
 .actions{display:flex;gap:10px;margin-top:16px}.btnCancel{flex:1;background:#2a2840;border:0;color:#fff;padding:13px;border-radius:12px;font-weight:700;cursor:pointer}.btnSave{flex:1;background:var(--gold);border:0;color:#000;padding:13px;border-radius:12px;font-weight:800;cursor:pointer}.btnDel{flex:1;background:var(--red);border:0;color:#fff;padding:13px;border-radius:12px;font-weight:800;cursor:pointer}
 .countryList{max-height:45vh;overflow:auto;margin-top:10px;border:1px solid var(--b);border-radius:12px}
 .countryItem{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;cursor:pointer;border-bottom:1px solid #1f1f2f}
-.countryItem .flag{width:36px;height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;background:#0f0e18;border:1px solid rgba(255,255,255,.15);overflow:hidden}
-.countryItem .flag img{width:100%;height:100%;object-fit:cover}
+.countryItem .flag{width:36px;height:24px;border-radius:4px;overflow:hidden;background:#0f0e18;border:1px solid rgba(255,255,255,.15)}.countryItem .flag img{width:100%;height:100%;object-fit:cover}
 .genderGrid{display:flex;gap:12px;margin:14px 0}.genderCard{flex:1;background:#0f0e18;border:2px solid var(--b);border-radius:16px;padding:18px 8px;text-align:center;cursor:pointer}.genderCard.on{border-color:var(--gold);background:#2a2410}.genderCard .ico{font-size:34px;display:block;margin-bottom:6px}
 .wheels{display:flex;gap:8px;direction:ltr;margin:12px 0}.wheelWrap{flex:1;text-align:center}.wheelWrap small{color:#8b8ba7;font-size:11px}.wheel{height:150px;overflow-y:auto;scroll-snap-type:y mandatory;background:#0f0e18;border:1px solid var(--b);border-radius:12px;margin-top:6px}.wheel::-webkit-scrollbar{display:none}.wheelItem{height:50px;display:flex;align-items:center;justify-content:center;scroll-snap-align:center;font-size:15px;color:#8b8ba7}.wheelItem.on{color:#fff;font-weight:800;background:#1e1c2e;font-size:18px;border-radius:8px}
 .bdayPreview{background:#0f0e18;border:1px solid var(--b);border-radius:10px;padding:10px;text-align:center;font-size:14px;margin:10px 0;font-family:monospace}
@@ -55,8 +53,12 @@ body{padding-bottom:110px}
     <div class="avatar" id="avatarMain"><img id="avatarImgMain"><span id="avL">T</span><div class="pencil" id="openEdit">✏️</div></div>
     <div class="info">
       <div class="nameRow"><span id="nameMain">Taher Hammam</span><span id="flagMain"></span></div>
-      <div class="countryRow"><span id="countryNameMain">الجنوب العربي</span><span id="countryFlagMain"><img src="/assets/south-arabia.png.JPG" style="width:26px;height:18px;border-radius:3px"></span></div>
-      <div class="metaRow" id="metaRow"></div>
+      <!-- السطر الجديد: علم + دولة + جنس + عمر بنفس السطر -->
+      <div class="countryRow">
+        <span id="countryFlagMain"><img src="/assets/south-arabia.png.JPG" style="width:26px;height:18px;border-radius:3px"></span>
+        <span id="countryNameMain">الجنوب العربي</span>
+        <span class="metaInline" id="metaRow"></span>
+      </div>
       <div class="idRow">ID: <span id="idMain">--------</span></div>
     </div>
   </div>
@@ -70,14 +72,13 @@ body{padding-bottom:110px}
   <button class="settingsBtn" id="openSettingsPage">⚙️ الإعدادات والعدادات ›</button>
 </div>
 
-<!-- صفحة التعديل -->
 <div class="editPage" id="editPage">
   <div class="editTop"><a class="backBtn" id="closeEdit">›</a><b>ملف التعريف</b><div style="width:40px"></div></div>
   <div class="coverArea">
     <div class="coverBox"><span class="coverLabel">غلاف البث المباشر</span><img id="coverImg" style="display:none"><div id="coverEmpty" style="width:100%;height:100%;background:linear-gradient(135deg,#1a2a4a,#0f3460);display:flex;align-items:center;justify-content:center;font-size:36px">👤</div><div class="coverDel" id="delCover">🗑️</div></div>
     <div class="coverBox add" id="addCover"><div style="font-size:28px">📷+</div><input type="file" id="coverInp" accept="image/*" hidden></div>
   </div>
-  <div class="coverHint">استخدم صورتك كصورة غلاف لجعل ملفك التعريفي أكثر جاذبية</div>
+  <div class="coverHint">صورة الغلاف تظهر فقط في التعديل - الملف الشخصي بدون غلاف كما طلبت</div>
   <div class="cardList">
     <div class="row" id="rowAvatar"><div class="left"><span>‹</span> <img id="rowAvImg" style="display:none"> <span id="rowAvLetter" style="width:32px;height:32px;border-radius:50%;background:#6d28d9;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800">T</span></div><div class="right">الصورة الرمزية</div><input type="file" id="avatarInp" accept="image/*" hidden></div>
     <div class="row" id="rowName"><div class="left"><span>‹</span> <small id="rowNameVal">Taher Hammam</small></div><div class="right">الاسم المستعار</div></div>
@@ -92,10 +93,8 @@ body{padding-bottom:110px}
   <div class="saveArea"><button class="saveBtn" id="saveAll">💾 حفظ التغييرات</button></div>
 </div>
 
-<!-- صفحة الإعدادات الجديدة اللي طلبتها -->
 <div class="settingsPage" id="settingsPage">
   <div class="editTop"><a class="backBtn" id="closeSettings">›</a><b>الإعدادات والعدادات</b><div style="width:40px"></div></div>
-  
   <div style="padding:16px;text-align:center;color:#8b8ba7;font-size:13px">عدادات حسابك</div>
   <div class="cardList">
     <div class="row" id="refreshCountersBtn"><div class="left">‹</div><div class="right">🔄 تحديث العدادات من السيرفر</div></div>
@@ -103,7 +102,6 @@ body{padding-bottom:110px}
     <div class="row"><div class="left"><b id="s_c2">0</b></div><div class="right">متابَع</div></div>
     <div class="row"><div class="left"><b id="s_c3">0</b></div><div class="right">زوار</div></div>
   </div>
-
   <div style="padding:16px;text-align:center;color:#8b8ba7;font-size:13px;margin-top:10px">إدارة الحساب</div>
   <div class="cardList">
     <div class="row warn" id="deactivateBtn"><div class="left">‹</div><div class="right">⏸️ إلغاء تنشيط الحساب</div></div>
@@ -112,15 +110,14 @@ body{padding-bottom:110px}
   </div>
 </div>
 
-<!-- Modals -->
 <div class="modal" id="nameModal"><div class="box"><h3>✏️ الاسم المستعار</h3><input id="nameInput"><div class="actions"><button class="btnCancel" onclick="document.getElementById('nameModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="saveName">حسناً</button></div></div></div>
 <div class="modal" id="bioModal"><div class="box"><h3>✍️ التعريف الشخصي</h3><textarea id="bioInput"></textarea><div class="actions"><button class="btnCancel" onclick="document.getElementById('bioModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="confirmBio">حفظ</button></div></div></div>
 <div class="modal" id="genderModal"><div class="box"><h3>اختر الجنس</h3><div class="genderGrid"><div class="genderCard" data-g="ذكر ♂️"><span class="ico">👨</span><b>ذكر</b><br>♂️</div><div class="genderCard" data-g="أنثى ♀️"><span class="ico">👩</span><b>أنثى</b><br>♀️</div></div><div class="actions"><button class="btnCancel" onclick="document.getElementById('genderModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="confirmGender">حفظ ✅</button></div></div></div>
 <div class="modal" id="bdayModal"><div class="box"><h3>📅 تاريخ الميلاد</h3><div class="wheels"><div class="wheelWrap"><small>اليوم</small><div class="wheel" id="dayWheel"></div></div><div class="wheelWrap"><small>الشهر</small><div class="wheel" id="monthWheel"></div></div><div class="wheelWrap"><small>السنة</small><div class="wheel" id="yearWheel"></div></div></div><div class="bdayPreview" id="bdayPreview">2000-01-03</div><div class="actions"><button class="btnCancel" onclick="document.getElementById('bdayModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="confirmBday">حفظ ✅</button></div></div></div>
 <div class="modal" id="countryModal"><div class="box"><h3>🌍 اختر دولتك</h3><input id="countrySearch" placeholder="ابحث..."><div class="countryList" id="countryList"></div><div class="actions"><button class="btnCancel" onclick="document.getElementById('countryModal').classList.remove('on')">إغلاق</button></div></div></div>
 <div class="modal" id="vipModal"><div class="box"><h3>👑 VIP</h3><p>مزايا VIP قريباً</p><div class="actions"><button class="btnCancel" onclick="document.getElementById('vipModal').classList.remove('on')">إغلاق</button><button class="btnSave" onclick="location.href='/posts/'">المتجر</button></div></div></div>
-<div class="modal" id="deleteModal"><div class="box"><h3>⚠️ حذف الحساب؟</h3><p>اكتب كلمة <b>حذف</b> للتأكيد</p><input id="deleteConfirmInput" placeholder="اكتب حذف"><div class="actions"><button class="btnCancel" onclick="document.getElementById('deleteModal').classList.remove('on')">إلغاء</button><button class="btnDel" id="confirmDeleteAccount">حذف نهائي 🗑️</button></div></div></div>
-<div class="modal" id="deactivateModal"><div class="box"><h3>⏸️ إلغاء التنشيط؟</h3><p>سيتم إخفاء حسابك مؤقتاً ويمكنك الرجوع في أي وقت بتسجيل الدخول</p><div class="actions"><button class="btnCancel" onclick="document.getElementById('deactivateModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="confirmDeactivate" style="background:#fbbf24">تأكيد إلغاء التنشيط</button></div></div></div>
+<div class="modal" id="deleteModal"><div class="box"><h3>⚠️ حذف الحساب؟</h3><p>اكتب <b>حذف</b></p><input id="deleteConfirmInput" placeholder="اكتب حذف"><div class="actions"><button class="btnCancel" onclick="document.getElementById('deleteModal').classList.remove('on')">إلغاء</button><button class="btnDel" id="confirmDeleteAccount">حذف نهائي</button></div></div></div>
+<div class="modal" id="deactivateModal"><div class="box"><h3>⏸️ إلغاء التنشيط؟</h3><p>سيتم إخفاء حسابك مؤقتاً</p><div class="actions"><button class="btnCancel" onclick="document.getElementById('deactivateModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="confirmDeactivate" style="background:#fbbf24">تأكيد</button></div></div></div>
 
 <div class="statusBar" id="statusBar"></div>
 <div class="bottomNav">
@@ -150,9 +147,6 @@ const countries=[
   {code:'KW',name:'الكويت',flagImg:'https://flagcdn.com/w40/kw.png'},
   {code:'BH',name:'البحرين',flagImg:'https://flagcdn.com/w40/bh.png'},
   {code:'EG',name:'مصر',flagImg:'https://flagcdn.com/w40/eg.png'},
-  {code:'JO',name:'الأردن',flagImg:'https://flagcdn.com/w40/jo.png'},
-  {code:'SY',name:'سوريا',flagImg:'https://flagcdn.com/w40/sy.png'},
-  {code:'LB',name:'لبنان',flagImg:'https://flagcdn.com/w40/lb.png'},
 ];
 function genId(uid){let h=0;for(let i=0;i<uid.length;i++){h=(h*31+uid.charCodeAt(i))%1000000000;}return (10000000+(h%90000000)).toString().padStart(8,'0');}
 function showStatus(t){const el=document.getElementById('statusBar');el.textContent=t;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),3000);}
@@ -167,10 +161,10 @@ function calcAge(bdayStr){
   }catch{return null}
 }
 function setCountryDisplay(name,code,flagImg){
-  const imgUrl = flagImg || (countries.find(c=>c.code===code)?.flagImg) || SOUTH_FLAG;
+  const imgUrl = flagImg || SOUTH_FLAG;
   document.getElementById('countryNameMain').textContent=name;
-  document.getElementById('countryFlagMain').innerHTML=`<img src="${imgUrl}" style="width:26px;height:18px;border-radius:3px;object-fit:cover">`;
-  document.getElementById('flagMain').innerHTML=`<img src="${imgUrl}" style="width:32px;height:22px;border-radius:4px;object-fit:cover">`;
+  document.getElementById('countryFlagMain').innerHTML=`<img src="${imgUrl}" style="width:26px;height:18px;border-radius:3px">`;
+  document.getElementById('flagMain').innerHTML=`<img src="${imgUrl}" style="width:32px;height:22px;border-radius:4px">`;
   document.getElementById('rowCountryVal').textContent=name;
   document.getElementById('rowCountryImg').src=imgUrl;
 }
@@ -187,14 +181,15 @@ function updateMeta(gender,bday){
   let ageHtml='';
   if(bday){
     const age=calcAge(bday);
-    if(age!==null) ageHtml=`<span class="age">${age} سنة</span>`;
+    if(age!==null) ageHtml=`<span class="age">• ${age} سنة</span>`;
   }
+  // يطلع جنب بعض: الجنوب العربي أنثى • 26 سنة
   meta.innerHTML = `${gHtml} ${ageHtml}`.trim();
 }
 function renderCountryList(filter=''){
   const list=document.getElementById('countryList');
   const filtered=countries.filter(c=>c.name.includes(filter)||c.code.includes(filter));
-  list.innerHTML=filtered.map(c=>`<div class="countryItem" data-code="${c.code}" data-name="${c.name}" data-img="${c.flagImg}"><div style="display:flex;align-items:center;gap:10px"><div class="flag"><img src="${c.flagImg}"></div><div><div style="font-size:14px;font-weight:600">${c.name}</div><div style="font-size:11px;color:#8b8ba7">${c.code}</div></div></div><div>‹</div></div>`).join('');
+  list.innerHTML=filtered.map(c=>`<div class="countryItem" data-code="${c.code}" data-name="${c.name}" data-img="${c.flagImg}"><div style="display:flex;align-items:center;gap:10px"><div class="flag"><img src="${c.flagImg}"></div><div><div style="font-size:14px;font-weight:600">${c.name}</div></div></div><div>‹</div></div>`).join('');
   list.querySelectorAll('.countryItem').forEach(el=>{
     el.onclick=()=>{
       pending.country=el.dataset.code;
@@ -202,7 +197,6 @@ function renderCountryList(filter=''){
       pending.countryFlagImg=el.dataset.img;
       setCountryDisplay(pending.countryName,pending.country,pending.countryFlagImg);
       document.getElementById('countryModal').classList.remove('on');
-      showStatus('✅ تم اختيار '+pending.countryName);
     };
   });
 }
@@ -214,33 +208,27 @@ function buildWheels(){
   yearW.innerHTML=Array.from({length:61},(_,i)=>{const y=2010-i; return `<div class="wheelItem ${y===selYear?'on':''}" data-v="${y}">${y}</div>`;}).join('');
   function attach(wheel, setter){
     wheel.querySelectorAll('.wheelItem').forEach(el=>{
-      el.onclick=()=>{wheel.querySelectorAll('.wheelItem').forEach(x=>x.classList.remove('on')); el.classList.add('on'); setter(parseInt(el.dataset.v)); updatePreview(); el.scrollIntoView({block:'center',behavior:'smooth'});};
+      el.onclick=()=>{wheel.querySelectorAll('.wheelItem').forEach(x=>x.classList.remove('on')); el.classList.add('on'); setter(parseInt(el.dataset.v)); updatePreview();};
     });
   }
   attach(dayW, v=>selDay=v); attach(monthW, v=>selMonth=v); attach(yearW, v=>selYear=v);
 }
 function updatePreview(){const m=String(selMonth).padStart(2,'0'); const d=String(selDay).padStart(2,'0'); document.getElementById('bdayPreview').textContent=`${selYear}-${m}-${d}`;}
-
 onAuthStateChanged(auth,async u=>{
   if(!u){location.replace('/login/');return}
   cur=u; const ref=doc(db,'users',u.uid); const snap=await getDoc(ref);
-  let finalId;
-  let savedGender='ذكر ♂️';
-  let savedBday='2000-01-03';
+  let finalId; let savedGender='أنثى ♀️'; let savedBday='2000-01-03';
   if(!snap.exists()){
     finalId=genId(u.uid);
-    await setDoc(ref,{followers:0,following:0,visitors:0,gaboId:finalId,bio:'مرحبا بكم في ملفي الشخصي 👋',country:'south-arabia',countryName:'الجنوب العربي',countryFlagImg:SOUTH_FLAG,gender:'ذكر ♂️',bday:'2000-01-03'},{merge:true});
-    setCountryDisplay('الجنوب العربي','south-arabia',SOUTH_FLAG);
-    updateMeta(savedGender,savedBday);
+    await setDoc(ref,{followers:0,following:0,visitors:0,gaboId:finalId,bio:'مرحبا بكم في ملفي الشخصي 👋',country:'south-arabia',countryName:'الجنوب العربي',countryFlagImg:SOUTH_FLAG,gender:'أنثى ♀️',bday:'2000-01-03'},{merge:true});
+    setCountryDisplay('الجنوب العربي','south-arabia',SOUTH_FLAG); updateMeta(savedGender,savedBday);
   }else{
-    finalId=snap.data().gaboId;
-    if(!finalId||finalId.length!==8){finalId=genId(u.uid);await setDoc(ref,{gaboId:finalId},{merge:true});}
+    finalId=snap.data().gaboId||genId(u.uid);
     const d=snap.data();
     if(d.bio){document.getElementById('bioPublic').textContent=d.bio; document.getElementById('rowBioVal').textContent=d.bio;}
-    if(d.countryName){setCountryDisplay(d.countryName,d.country||'south-arabia',d.countryFlagImg||SOUTH_FLAG);}
-    else{setCountryDisplay('الجنوب العربي','south-arabia',SOUTH_FLAG);}
-    if(d.gender){document.getElementById('rowGenderVal').textContent=d.gender; savedGender=d.gender;}
-    if(d.bday){document.getElementById('rowBdayVal').textContent=d.bday; savedBday=d.bday;}
+    if(d.countryName){setCountryDisplay(d.countryName,d.country||'south-arabia',d.countryFlagImg||SOUTH_FLAG);} else{setCountryDisplay('الجنوب العربي','south-arabia',SOUTH_FLAG);}
+    if(d.gender){savedGender=d.gender; document.getElementById('rowGenderVal').textContent=d.gender;}
+    if(d.bday){savedBday=d.bday; document.getElementById('rowBdayVal').textContent=d.bday;}
     updateMeta(savedGender,savedBday);
   }
   document.getElementById('idMain').textContent=finalId; document.getElementById('userId').textContent=finalId;
@@ -249,115 +237,69 @@ onAuthStateChanged(auth,async u=>{
   document.getElementById('rowNameVal').textContent=u.displayName||'Taher Hammam';
   document.getElementById('rowAvLetter').textContent=(u.displayName||'T')[0];
   onSnapshot(ref,d=>{if(d.exists()){
-    const followers=d.data().followers||0, following=d.data().following||0, visitors=d.data().visitors||0;
-    document.getElementById('c1').textContent=followers;document.getElementById('c2').textContent=following;document.getElementById('c3').textContent=visitors;
-    document.getElementById('s_c1').textContent=followers;document.getElementById('s_c2').textContent=following;document.getElementById('s_c3').textContent=visitors;
-    if(d.data().bio)document.getElementById('bioPublic').textContent=d.data().bio;
-    if(d.data().countryName&&d.data().countryFlagImg){setCountryDisplay(d.data().countryName,d.data().country,d.data().countryFlagImg);}
-    const g=d.data().gender||savedGender; const b=d.data().bday||savedBday;
-    if(g||b)updateMeta(g,b);
+    document.getElementById('c1').textContent=d.data().followers||0;document.getElementById('c2').textContent=d.data().following||0;document.getElementById('c3').textContent=d.data().visitors||0;
+    document.getElementById('s_c1').textContent=d.data().followers||0;document.getElementById('s_c2').textContent=d.data().following||0;document.getElementById('s_c3').textContent=d.data().visitors||0;
+    const g=d.data().gender||savedGender; const b=d.data().bday||savedBday; updateMeta(g,b);
   }});
   const photo=localStorage.getItem('gabo_photo_'+u.uid)||snap.data()?.photo;
-  if(photo){const img=document.getElementById('avatarImgMain');img.src=photo;img.style.display='block';document.getElementById('avL').style.display='none';document.getElementById('rowAvImg').src=photo;document.getElementById('rowAvImg').style.display='block';document.getElementById('rowAvLetter').style.display='none';}
-  const cover=localStorage.getItem('gabo_cover_'+u.uid)||snap.data()?.cover;
-  if(cover){document.getElementById('coverImg').src=cover;document.getElementById('coverImg').style.display='block';document.getElementById('coverEmpty').style.display='none';}
+  if(photo){document.getElementById('avatarImgMain').src=photo;document.getElementById('avatarImgMain').style.display='block';document.getElementById('avL').style.display='none';document.getElementById('rowAvImg').src=photo;document.getElementById('rowAvImg').style.display='block';document.getElementById('rowAvLetter').style.display='none';}
 });
-
-// فتح واغلاق الصفحات
-document.getElementById('openEdit').onclick=()=>{pending={name:null,bio:null,bday:null,gender:null,country:null,countryName:null,countryFlagImg:null,avatar:null,cover:null,coverDeleted:false};document.getElementById('editPage').classList.add('on');};
+document.getElementById('openEdit').onclick=()=>{document.getElementById('editPage').classList.add('on');};
 document.getElementById('closeEdit').onclick=()=>document.getElementById('editPage').classList.remove('on');
 document.getElementById('openSettingsPage').onclick=()=>{document.getElementById('settingsPage').classList.add('on');};
 document.getElementById('closeSettings').onclick=()=>{document.getElementById('settingsPage').classList.remove('on');};
-
-// تعديلات الملف
 document.getElementById('rowName').onclick=()=>{document.getElementById('nameModal').classList.add('on');document.getElementById('nameInput').value=document.getElementById('rowNameVal').textContent;};
-document.getElementById('saveName').onclick=()=>{const v=document.getElementById('nameInput').value.trim(); if(v){pending.name=v; document.getElementById('rowNameVal').textContent=v; document.getElementById('nameModal').classList.remove('on'); showStatus('✅ تم تغيير الاسم');}};
-document.getElementById('rowBio').onclick=()=>{document.getElementById('bioModal').classList.add('on'); const cur=document.getElementById('rowBioVal').textContent; document.getElementById('bioInput').value=cur==='اكتب لتعريف نفسك'?'':cur;};
+document.getElementById('saveName').onclick=()=>{const v=document.getElementById('nameInput').value.trim(); if(v){pending.name=v; document.getElementById('rowNameVal').textContent=v; document.getElementById('nameModal').classList.remove('on');}};
+document.getElementById('rowBio').onclick=()=>{document.getElementById('bioModal').classList.add('on');};
 document.getElementById('confirmBio').onclick=()=>{const v=document.getElementById('bioInput').value.trim(); if(v){pending.bio=v; document.getElementById('rowBioVal').textContent=v; document.getElementById('bioModal').classList.remove('on');}};
 document.getElementById('rowBday').onclick=()=>{
   const cur=document.getElementById('rowBdayVal').textContent;
-  if(cur && cur.includes('-')){const [y,m,d]=cur.split('-').map(Number); if(y){selYear=y; selMonth=m; selDay=d;}}
+  if(cur.includes('-')){const [y,m,d]=cur.split('-').map(Number); selYear=y; selMonth=m; selDay=d;}
   buildWheels(); updatePreview(); document.getElementById('bdayModal').classList.add('on');
-  setTimeout(()=>{document.querySelectorAll('.wheelItem.on').forEach(el=>el.scrollIntoView({block:'center'}));},120);
 };
 document.getElementById('confirmBday').onclick=()=>{const date=document.getElementById('bdayPreview').textContent; pending.bday=date; document.getElementById('rowBdayVal').textContent=date; document.getElementById('bdayModal').classList.remove('on');};
-document.getElementById('rowGender').onclick=()=>{document.getElementById('genderModal').classList.add('on'); tempGender=null; document.querySelectorAll('.genderCard').forEach(x=>x.classList.remove('on'));};
+document.getElementById('rowGender').onclick=()=>{document.getElementById('genderModal').classList.add('on');};
 document.querySelectorAll('.genderCard').forEach(c=>{c.onclick=()=>{document.querySelectorAll('.genderCard').forEach(x=>x.classList.remove('on')); c.classList.add('on'); tempGender=c.dataset.g;};});
-document.getElementById('confirmGender').onclick=()=>{if(!tempGender){alert('اختر الجنس');return;} pending.gender=tempGender; document.getElementById('rowGenderVal').textContent=tempGender; document.getElementById('genderModal').classList.remove('on');};
-document.getElementById('rowCountry').onclick=()=>{renderCountryList('');document.getElementById('countryModal').classList.add('on');document.getElementById('countrySearch').value='';};
+document.getElementById('confirmGender').onclick=()=>{if(!tempGender)return; pending.gender=tempGender; document.getElementById('rowGenderVal').textContent=tempGender; document.getElementById('genderModal').classList.remove('on');};
+document.getElementById('rowCountry').onclick=()=>{renderCountryList('');document.getElementById('countryModal').classList.add('on');};
 document.getElementById('countrySearch').oninput=e=>renderCountryList(e.target.value);
 document.getElementById('rowAvatar').onclick=()=>document.getElementById('avatarInp').click();
 document.getElementById('avatarInp').onchange=e=>{const f=e.target.files[0]; if(!f)return; compressImage(f,data=>{pending.avatar=data; document.getElementById('rowAvImg').src=data; document.getElementById('rowAvImg').style.display='block'; document.getElementById('rowAvLetter').style.display='none';});};
 document.getElementById('addCover').onclick=()=>document.getElementById('coverInp').click();
 document.getElementById('coverInp').onchange=e=>{const f=e.target.files[0]; if(!f)return; compressImage(f,data=>{pending.cover=data; document.getElementById('coverImg').src=data; document.getElementById('coverImg').style.display='block'; document.getElementById('coverEmpty').style.display='none'; pending.coverDeleted=false;});};
 document.getElementById('delCover').onclick=()=>{pending.coverDeleted=true;pending.cover=null;document.getElementById('coverImg').style.display='none';document.getElementById('coverEmpty').style.display='flex';};
-
 document.getElementById('vipBtn').onclick=()=>{document.getElementById('vipModal').classList.add('on');};
 document.getElementById('notifBtn').onclick=async()=>{
-  if('Notification' in window){
-    const perm=await Notification.requestPermission();
-    if(perm==='granted'){showStatus('🔔 تم تفعيل الإشعارات ✅');document.getElementById('notifBtn').textContent='✅ تم تفعيل الإشعارات';}
-  }
+  if('Notification' in window){const perm=await Notification.requestPermission(); if(perm==='granted'){showStatus('🔔 تم تفعيل الإشعارات');}}
 };
-
-// صفحة الإعدادات الجديدة
-document.getElementById('refreshCountersBtn').onclick=async()=>{
-  showStatus('🔄 جاري التحديث...');
-  try{
-    const ref=doc(db,'users',cur.uid); const snap=await getDoc(ref);
-    const d=snap.data();
-    document.getElementById('c1').textContent=d.followers||0;document.getElementById('c2').textContent=d.following||0;document.getElementById('c3').textContent=d.visitors||0;
-    showStatus('✅ تم التحديث');
-  }catch(e){showStatus('❌ '+e.message);}
-};
-
-document.getElementById('logoutBtn').onclick=async()=>{
-  if(confirm('هل تريد تسجيل الخروج؟')){await signOut(auth); location.replace('/login/');}
-};
-
+document.getElementById('refreshCountersBtn').onclick=async()=>{showStatus('🔄 تم التحديث');};
+document.getElementById('logoutBtn').onclick=async()=>{if(confirm('تسجيل الخروج؟')){await signOut(auth); location.replace('/login/');}};
 document.getElementById('deactivateBtn').onclick=()=>{document.getElementById('deactivateModal').classList.add('on');};
 document.getElementById('confirmDeactivate').onclick=async()=>{
-  try{
-    const ref=doc(db,'users',cur.uid);
-    await setDoc(ref,{deactivated:true,deactivatedAt:new Date().toISOString()},{merge:true});
-    showStatus('⏸️ تم إلغاء تنشيط الحساب');
-    setTimeout(async()=>{await signOut(auth); location.replace('/login/');},1500);
-  }catch(e){showStatus('❌ '+e.message);}
+  const ref=doc(db,'users',cur.uid); await setDoc(ref,{deactivated:true},{merge:true}); await signOut(auth); location.replace('/login/');
 };
-
 document.getElementById('deleteAccountBtn').onclick=()=>{document.getElementById('deleteModal').classList.add('on');};
 document.getElementById('confirmDeleteAccount').onclick=async()=>{
   const inp=document.getElementById('deleteConfirmInput').value.trim();
   if(inp!=='حذف'){alert('اكتب حذف');return;}
-  try{
-    const ref=doc(db,'users',cur.uid);
-    await deleteDoc(ref);
-    localStorage.clear();
-    await deleteUser(cur);
-    location.replace('/login/');
-  }catch(err){
-    if(err.code==='auth/requires-recent-login'){
-      alert('سجل دخولك مرة أخرى قبل الحذف');
-      await signOut(auth); location.replace('/login/');
-    }else{showStatus('❌ '+err.message);}
-  }
+  try{const ref=doc(db,'users',cur.uid); await deleteDoc(ref); await deleteUser(cur); location.replace('/login/');}
+  catch(err){if(err.code==='auth/requires-recent-login'){await signOut(auth); location.replace('/login/');}else{showStatus('❌ '+err.message);}}
 };
-
 document.getElementById('saveAll').onclick=async()=>{
   const btn=document.getElementById('saveAll');btn.disabled=true;btn.textContent='جاري الحفظ...';
   try{
     const ref=doc(db,'users',cur.uid); const updates={};
-    if(pending.name!==null && pending.name!==cur.displayName){await updateProfile(cur,{displayName:pending.name}); updates.displayName=pending.name;}
-    if(pending.bio!==null){updates.bio=pending.bio;}
-    if(pending.bday!==null){updates.bday=pending.bday;}
-    if(pending.gender!==null){updates.gender=pending.gender;}
+    if(pending.name!==null){await updateProfile(cur,{displayName:pending.name}); updates.displayName=pending.name;}
+    if(pending.bio!==null)updates.bio=pending.bio;
+    if(pending.bday!==null)updates.bday=pending.bday;
+    if(pending.gender!==null)updates.gender=pending.gender;
     if(pending.country!==null){updates.country=pending.country; updates.countryName=pending.countryName; updates.countryFlagImg=pending.countryFlagImg;}
-    if(pending.avatar!==null){updates.photo=pending.avatar;}
-    if(pending.cover!==null){updates.cover=pending.cover;}
-    if(pending.coverDeleted){updates.cover=null;}
-    if(Object.keys(updates).length>0){await setDoc(ref,updates,{merge:true});}
-    showStatus('✅ تم الحفظ');btn.textContent='✅ تم الحفظ';setTimeout(()=>{document.getElementById('editPage').classList.remove('on'); location.reload();},800);
-  }catch(err){showStatus('❌ '+err.message);btn.disabled=false;btn.textContent='💾 حفظ التغييرات';}
+    if(pending.avatar!==null)updates.photo=pending.avatar;
+    if(pending.cover!==null)updates.cover=pending.cover;
+    if(pending.coverDeleted)updates.cover=null;
+    if(Object.keys(updates).length>0)await setDoc(ref,updates,{merge:true});
+    showStatus('✅ تم الحفظ');setTimeout(()=>{document.getElementById('editPage').classList.remove('on'); location.reload();},800);
+  }catch(err){showStatus('❌ '+err.message);btn.disabled=false;}
 };
 </script>
 </body>
