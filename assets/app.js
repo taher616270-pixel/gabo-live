@@ -5,6 +5,22 @@ import { doc, getDoc, collection, addDoc, query, where, orderBy, limitToLast, on
 
 export { auth, db };
 
+/* ---------- أعلام الدول - تم إضافة علم الجنوب العربي ---------- */
+export const COUNTRY_FLAGS = {
+  'sa': 'https://flagcdn.com/w320/sa.png',
+  'ye': 'https://flagcdn.com/w320/ye.png',
+  'ae': 'https://flagcdn.com/w320/ae.png',
+  'om': 'https://flagcdn.com/w320/om.png',
+  'south-arabia': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Flag_of_South_Arabia.svg/320px-Flag_of_South_Arabia.svg.png',
+  'south-yemen': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Flag_of_South_Arabia.svg/320px-Flag_of_South_Arabia.svg.png'
+};
+
+export function getCountryFlag(code) {
+  if (!code) return '';
+  const c = String(code).toLowerCase();
+  return COUNTRY_FLAGS[c] || '';
+}
+
 /* ---------- المسارات: كل صفحة تعرف الباقي بالاسم ---------- */
 export const ROUTES = {
   home: '/', login: '/login/', app: '/app/', public: '/app/public/',
