@@ -1,107 +1,78 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GABO LIVE</title>
 <style>
-:root{--bg:#08070d;--v:#7c3aed}
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;background:var(--bg)}
-body{position:fixed;inset:0;overflow:hidden;font-family:system-ui}
+html,body{height:100%;background:#08070d;overflow:hidden}
+body{position:fixed;inset:0;font-family:system-ui,Arial}
 
 .stage{
   position:absolute;inset:0;
-  display:flex;align-items:center;justify-content:center;
+  display:flex;align-items:center;justify-content:center;gap:.25em;
+  z-index:2;
 }
-
 .word{
-  font-size:clamp(18px, 5vw, 28px);
-  font-weight:900;letter-spacing:.18em;
-  opacity:0;
-  /* 1- يبدأ صغير ويكبر لنص الشاشة */
-  animation: grow 1.2s cubic-bezier(.16,1,.3,1) forwards;
+  font-weight:900;letter-spacing:.12em;line-height:1;
+  font-size:clamp(28px,8vw,60px);
+  white-space:nowrap;
 }
-.gabo{color:#fff;margin-right:4px}
-.live{color:var(--v);text-shadow:0 0 20px rgba(124,58,237,.9);animation: grow 1.2s cubic-bezier(.16,1,.3,1) forwards, glow 1s ease 1.2s infinite}
+.gabo{color:#fff}
+.live{color:#7c3aed;text-shadow:0 0 30px rgba(124,58,237,.8)}
+
+/* يكبر من صغير لنص الشاشة */
+.stage .word{opacity:0;transform:scale(.15);animation:grow 1s cubic-bezier(.16,1,.3,1) forwards}
+.stage .live{animation-delay:.05s}
 
 @keyframes grow{
-  0%{opacity:0;transform:scale(.2)}
-  40%{opacity:1}
-  100%{opacity:1;transform:scale(2.8)} /* يكبر لنص الشاشة واضح */
+  to{opacity:1;transform:scale(1)}
 }
 
 .panel{
-  position:absolute;top:0;bottom:0;width:50%;background:var(--bg);
-  display:flex;align-items:center;
-  transition:transform .9s cubic-bezier(.76,0,.24,1);
-  z-index:10;
+  position:absolute;top:0;bottom:0;width:50%;background:#08070d;
+  display:flex;align-items:center;z-index:5;
+  transition:transform .85s cubic-bezier(.76,0,.24,1);
 }
-.l{left:0;justify-content:flex-end;padding-right:.2em}
-.r{right:0;justify-content:flex-start;padding-left:.2em}
-.open .l{transform:translate3d(-102%,0,0)}
-.open .r{transform:translate3d(102%,0,0)}
+.l{left:0;justify-content:flex-end;padding-right:8px}
+.r{right:0;justify-content:flex-start;padding-left:8px}
 
-.panel .word{animation:none;opacity:1;transform:scale(2.8);font-size:clamp(18px, 5vw, 28px)}
+.open .l{transform:translateX(-101%)}
+.open .r{transform:translateX(101%)}
 
-@keyframes glow{0%,100%{opacity:1}50%{opacity:.6}}
-
-.glow-bg{
-  position:absolute;left:50%;top:50%;width:80vmin;height:80vmin;margin:-40vmin 0 0 -40vmin;
-  background:radial-gradient(circle,rgba(124,58,237,.35),transparent 65%);
-  opacity:0;animation: glowIn 1s ease .3s forwards;
+.glow{
+  position:absolute;left:50%;top:50%;width:90vmin;height:90vmin;
+  margin:-45vmin 0 0 -45vmin;
+  background:radial-gradient(circle,rgba(124,58,237,.4),transparent 60%);
+  opacity:0;animation:glowIn .6s ease .2s forwards;
 }
 @keyframes glowIn{to{opacity:1}}
-.open .glow-bg{opacity:0;transition:.4s}
+.open .glow{opacity:0;transition:.3s}
 </style>
 </head>
 <body>
+<div class="glow"></div>
 
-<div class="glow-bg"></div>
-
-<!-- المرحلة 1: في النص صغير يكبر -->
 <div class="stage" id="stage">
   <div class="word gabo">GABO</div>
   <div class="word live">LIVE</div>
 </div>
 
-<!-- المرحلة 2: ينقسم يسار يمين -->
-<div class="panel l" id="panelL" style="opacity:0"><div class="word gabo">GABO</div></div>
-<div class="panel r" id="panelR" style="opacity:0"><div class="word live">LIVE</div></div>
+<div class="panel l" id="pl"><div class="word gabo">GABO</div></div>
+<div class="panel r" id="pr"><div class="word live">LIVE</div></div>
 
 <script>
 (function(){
   var LOGIN='/login/';
-  var stage=document.getElementById('stage');
-  var pl=document.getElementById('panelL');
-  var pr=document.getElementById('panelR');
+  var warm=fetch(LOGIN,{credentials:'same-origin'}).catch(()=>{});
   var done=false;
-
-  var warm=fetch(LOGIN,{credentials:'same-origin'}).catch(function(){});
-
   function go(){
-    if(done) return;
-    done=true;
-    Promise.race([warm,new Promise(r=>setTimeout(r,400))]).then(()=>location.replace(LOGIN));
+    if(done) return; done=true;
+    Promise.race([warm,new Promise(r=>setTimeout(r,200))]).then(()=>location.replace(LOGIN));
   }
-
-  // بعد 1.3 ثانية: صار كبير وواضح في النص
-  setTimeout(function(){
-    stage.style.opacity='0';
-    stage.style.transition='opacity .3s';
-    pl.style.opacity='1';
-    pr.style.opacity='1';
-  },1300);
-
-  // بعد 1.6 ثانية: يروح يسار ويمين
-  setTimeout(function(){
-    document.body.classList.add('open');
-  },1600);
-
-  // بعد 2.5 ثانية: يفتح تسجيل دخول
-  setTimeout(go,2500);
-
-  addEventListener('pointerdown',go,{once:true});
+  setTimeout(()=>document.body.classList.add('open'),1400);
+  setTimeout(go,2300);
 })();
 </script>
 </body>
