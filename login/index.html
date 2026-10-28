@@ -3,80 +3,191 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>تسجيل دخول - GABO LIVE</title>
+<title>GABO LIVE - تسجيل</title>
 <style>
-:root{--bg:#08070d;--card:#12111a;--v:#7c3aed;--vl:#a78bfa;--text:#fff;--muted:#9ca3af}
+:root{--bg:#08070d;--card:#13111c;--b:#232131;--v:#7c3aed;--t:#fff;--m:#a1a1aa}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:system-ui;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
-.box{width:100%;max-width:380px;background:var(--card);border:1px solid rgba(124,58,237,.2);border-radius:20px;padding:28px;box-shadow:0 0 40px rgba(124,58,237,.15)}
-.logo{text-align:center;margin-bottom:24px}
-.logo h1{font-size:28px;letter-spacing:.15em}.logo h1 span{color:var(--v)}
-label{display:block;margin:12px 0 6px;color:var(--muted);font-size:14px}
-input{width:100%;padding:14px 16px;border-radius:12px;border:1px solid #2a2840;background:#0e0d14;color:#fff;outline:none;font-size:15px}
+body{background:var(--bg);color:var(--t);font-family:system-ui;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
+.box{width:100%;max-width:400px;background:var(--card);border:1px solid rgba(124,58,237,.2);border-radius:24px;padding:28px;box-shadow:0 20px 60px rgba(124,58,237,.2)}
+.logo{text-align:center;margin-bottom:22px}
+.logo h1{font-size:32px;letter-spacing:.15em;font-weight:900}
+.logo h1 span{color:var(--v)}
+.logo p{color:var(--m);font-size:14px;margin-top:8px}
+.tabs{display:flex;background:#0e0c16;border-radius:12px;padding:4px;margin-bottom:20px}
+.tabs button{flex:1;padding:11px;border:none;border-radius:8px;background:transparent;color:var(--m);cursor:pointer;font-weight:700;transition:.2s}
+.tabs button.on{background:var(--v);color:#fff;box-shadow:0 4px 15px rgba(124,58,237,.4)}
+label{display:block;margin:12px 0 6px;color:var(--m);font-size:13px}
+input{width:100%;padding:14px 16px;border-radius:12px;border:1px solid var(--b);background:#0e0d14;color:#fff;outline:none;font-size:15px}
 input:focus{border-color:var(--v)}
-.btn{width:100%;margin-top:18px;padding:14px;border:none;border-radius:12px;background:var(--v);color:#fff;font-weight:700;font-size:16px;cursor:pointer}
+.btn{width:100%;padding:14px;border:none;border-radius:12px;background:var(--v);color:#fff;font-weight:800;font-size:16px;cursor:pointer;margin-top:14px;transition:.2s}
 .btn:active{transform:scale(.98)}
-.divider{margin:18px 0;text-align:center;color:var(--muted);font-size:13px}
-.error{margin-top:12px;color:#f87171;font-size:13px;text-align:center;min-height:18px}
+.btn.ghost{background:#fff;color:#000;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:700}
+.btn.apple{background:#000;border:1px solid var(--b);color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:700}
+.divider{display:flex;align-items:center;gap:10px;margin:20px 0;color:var(--m);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--b)}
+.err{margin-top:12px;color:#fb7185;font-size:13px;text-align:center;min-height:18px;white-space:pre-line}
 </style>
 </head>
 <body>
 <div class="box">
-  <div class="logo"><h1>GABO <span>LIVE</span></h1><p style="color:var(--muted);font-size:13px;margin-top:6px">سجل دخولك للمتابعة</p></div>
+  <div class="logo"><h1>GABO <span>LIVE</span></h1><p id="sub">سجل دخولك للمتابعة</p></div>
+
+  <div class="tabs">
+    <button id="tabLogin" class="on">تسجيل دخول</button>
+    <button id="tabSignup">إنشاء حساب</button>
+  </div>
+
+  <div id="form">
+    <label>الايميل</label>
+    <input id="email" type="email" placeholder="example@email.com" autocomplete="email">
+    <label>كلمة المرور</label>
+    <input id="pass" type="password" placeholder="••••••••" autocomplete="current-password">
+    <button class="btn" id="mainBtn">تسجيل دخول</button>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="divider">أو المتابعة عبر</div>
+
+  <button class="btn ghost" id="googleBtn">
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="">
+    Google
+  </button>
   
-  <label>الايميل</label>
-  <input id="email" type="email" placeholder="example@email.com">
-  
-  <label>كلمة المرور</label>
-  <input id="pass" type="password" placeholder="••••••••">
-  
-  <button class="btn" id="loginBtn">تسجيل دخول</button>
-  <div class="error" id="err"></div>
-  
-  <div class="divider">إذا ما عندك حساب؟ سيتم إنشاء حساب تلقائي</div>
+  <button class="btn apple" id="appleBtn" style="margin-top:10px">
+     Apple
+  </button>
 </div>
 
 <script type="module">
 import { auth, db } from '/firebase-config.js';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  OAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-// إذا مسجل من قبل ودّيه مباشرة لـ app
-onAuthStateChanged(auth, async (u) => {
+let mode='login';
+const tabLogin=document.getElementById('tabLogin');
+const tabSignup=document.getElementById('tabSignup');
+const mainBtn=document.getElementById('mainBtn');
+const sub=document.getElementById('sub');
+const errEl=document.getElementById('err');
+const emailEl=document.getElementById('email');
+const passEl=document.getElementById('pass');
+
+function setMode(m){
+  mode=m;
+  tabLogin.classList.toggle('on', m==='login');
+  tabSignup.classList.toggle('on', m==='signup');
+  mainBtn.textContent = m==='login' ? 'تسجيل دخول' : 'إنشاء حساب';
+  sub.textContent = m==='login' ? 'سجل دخولك للمتابعة' : 'أنشئ حسابك الجديد';
+  errEl.textContent='';
+}
+tabLogin.onclick=()=>setMode('login');
+tabSignup.onclick=()=>setMode('signup');
+
+// إنشاء مستند المستخدم في Firestore
+async function ensureUserDoc(user){
+  const ref=doc(db,'users',user.uid);
+  const snap=await getDoc(ref).catch(()=>null);
+  if(!snap || !snap.exists()){
+    await setDoc(ref,{
+      email:user.email,
+      name:user.displayName || user.email?.split('@')[0] || 'مستخدم',
+      photo:user.photoURL || '',
+      uid:user.uid,
+      createdAt:serverTimestamp(),
+      provider:user.providerData[0]?.providerId || 'email',
+      banned:false
+    });
+  }
+}
+
+// معالجة نتيجة الـ Redirect للجوال
+getRedirectResult(auth).then(async (res)=>{
+  if(res?.user){
+    await ensureUserDoc(res.user);
+  }
+}).catch(()=>{});
+
+// مراقب الدخول -> يحول لـ app
+onAuthStateChanged(auth, async (u)=>{
   if(u){
-    // فحص هل هو أدمن
     try{
-      const snap = await getDoc(doc(db,'admins',u.uid));
-      if(snap.exists()){ location.replace('/admin/'); return; }
-    }catch(e){}
-    location.replace('/app/');
+      await ensureUserDoc(u);
+      const adminSnap = await getDoc(doc(db,'admins',u.uid)).catch(()=>null);
+      if(adminSnap && adminSnap.exists()){
+        location.replace('/admin/');
+      }else{
+        location.replace('/app/');
+      }
+    }catch(e){
+      console.error(e);
+      location.replace('/app/');
+    }
   }
 });
 
-const emailEl = document.getElementById('email');
-const passEl = document.getElementById('pass');
-const errEl = document.getElementById('err');
-const btn = document.getElementById('loginBtn');
-
-btn.onclick = async () => {
-  const email = emailEl.value.trim();
-  const pass = passEl.value.trim();
-  if(!email || !pass){ errEl.textContent='عبي الايميل والباسوورد'; return; }
-  btn.textContent='جاري الدخول...'; btn.disabled=true; errEl.textContent='';
+// تسجيل بالايميل
+mainBtn.onclick=async()=>{
+  const email=emailEl.value.trim();
+  const pass=passEl.value.trim();
+  if(!email || !pass){errEl.textContent='عبي الايميل والباسوورد';return;}
+  if(pass.length<6){errEl.textContent='الباسوورد لازم 6 أحرف على الأقل';return;}
+  mainBtn.disabled=true; mainBtn.textContent='جاري...'; errEl.textContent='';
   try{
-    await signInWithEmailAndPassword(auth, email, pass);
-    // التحويل يصير تلقائي من onAuthStateChanged -> /app/
-  }catch(e){
-    // إذا الحساب مو موجود أنشئه
-    if(e.code==='auth/invalid-credential' || e.code==='auth/user-not-found' || e.code==='auth/invalid-login-credentials'){
-      try{
-        await createUserWithEmailAndPassword(auth, email, pass);
-      }catch(e2){ errEl.textContent = e2.message; btn.textContent='تسجيل دخول'; btn.disabled=false; return; }
+    if(mode==='login'){
+      await signInWithEmailAndPassword(auth,email,pass);
     }else{
-      errEl.textContent = 'خطأ: '+e.message;
-      btn.textContent='تسجيل دخول'; btn.disabled=false;
+      const cred=await createUserWithEmailAndPassword(auth,email,pass);
+      await ensureUserDoc(cred.user);
     }
+  }catch(e){
+    console.error(e);
+    if(e.code==='auth/email-already-in-use') {errEl.textContent='الايميل مسجل مسبقاً\nاضغط تسجيل دخول'; setMode('login');}
+    else if(e.code==='auth/invalid-credential' || e.code==='auth/wrong-password' || e.code==='auth/invalid-login-credentials') errEl.textContent='الايميل أو الباسوورد خطأ';
+    else if(e.code==='auth/user-not-found') {errEl.textContent='الحساب غير موجود\nأنشئ حساب جديد'; setMode('signup');}
+    else if(e.code==='auth/weak-password') errEl.textContent='الباسوورد ضعيف';
+    else errEl.textContent=e.message;
+    mainBtn.disabled=false;
+    mainBtn.textContent=mode==='login'?'تسجيل دخول':'إنشاء حساب';
   }
+};
+
+// GOOGLE
+document.getElementById('googleBtn').onclick=async()=>{
+  errEl.textContent='';
+  const provider=new GoogleAuthProvider();
+  try{
+    if(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)){
+      await signInWithRedirect(auth,provider);
+    }else{
+      const res=await signInWithPopup(auth,provider);
+      await ensureUserDoc(res.user);
+    }
+  }catch(e){errEl.textContent='فشل Google: '+e.message;}
+};
+
+// APPLE
+document.getElementById('appleBtn').onclick=async()=>{
+  errEl.textContent='';
+  const provider=new OAuthProvider('apple.com');
+  provider.addScope('email');
+  provider.addScope('name');
+  try{
+    if(/iPhone|iPad|iPod/i.test(navigator.userAgent)){
+      await signInWithRedirect(auth,provider);
+    }else{
+      const res=await signInWithPopup(auth,provider);
+      await ensureUserDoc(res.user);
+    }
+  }catch(e){errEl.textContent='فشل Apple: '+e.message;}
 };
 </script>
 </body>
