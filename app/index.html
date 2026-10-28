@@ -7,45 +7,116 @@
 <style>
 :root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed;--muted:#8b8ba7}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:96px;min-height:100vh}
+body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;min-height:100vh}
 .top{height:56px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;padding:0 14px;position:sticky;top:0;z-index:50}
 .tabs{display:flex;gap:8px;padding:12px 14px}
-.tabs button{flex:1;background:#161426;border:1px solid var(--b);color:var(--muted);padding:12px;border-radius:14px;font-weight:800}
+.tabs button{flex:1;background:#161426;border:1px solid var(--b);color:var(--muted);padding:12px;border-radius:14px;font-weight:800;font-size:13px}
 .tabs button.on{background:var(--v);color:#fff;border-color:var(--v)}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px}
 .comm{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;text-align:center;position:relative}
-.flag{width:64px;height:40px;border-radius:8px;border:1px solid #2a2840;overflow:hidden;display:flex;background:#000}
+.flag{width:64px;height:40px;border-radius:8px;border:1px solid #2a2840;overflow:hidden;display:flex;background:#000;box-shadow:0 2px 8px rgba(0,0,0,.4)}
 .flag img,.flag svg{width:100%;height:100%;object-fit:cover;display:block}
-.comm b{font-size:12px;display:flex;align-items:center;gap:5px;justify-content:center}
-.miniFlag{width:18px;height:12px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid #333}
+.comm b{font-size:12.5px;display:flex;align-items:center;gap:6px;justify-content:center}
+.miniFlag{width:18px;height:12px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid #333;flex-shrink:0}
+.miniFlag img,.miniFlag svg{width:100%;height:100%;object-fit:cover}
 .comm small{color:var(--muted);font-size:11px}
-.comm .owner{position:absolute;top:6px;left:6px;background:var(--v);font-size:9px;padding:2px 6px;border-radius:6px}
-.comm.create{border:1.5px dashed var(--v);justify-content:center}
-.bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;z-index:9999;direction:ltr}
+.createBtn{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:var(--v);color:#fff;border:0;padding:14px 26px;border-radius:30px;font-weight:900;font-size:14px;box-shadow:0 8px 20px rgba(124,58,237,.4);z-index:999;display:flex;align-items:center;gap:8px;cursor:pointer}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;z-index:9999;direction:ltr;padding-bottom:env(safe-area-inset-bottom)}
 .bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px}
 .bottomNav a.on{color:#fff}
 .bottomNav a .ic{font-size:22px;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
 .bottomNav a.plus .ic{background:var(--v);color:#fff;width:56px;height:56px;border-radius:16px;font-size:30px;margin-top:-16px}
+
+/* نافذة الانشاء */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:none;align-items:flex-end;justify-content:center;padding:12px}
+.modal.on{display:flex}
+.modalBox{background:#161426;border:1px solid var(--b);border-radius:20px 20px 0 0;width:100%;max-width:420px;padding:16px;max-height:90vh;overflow:auto}
+.modalBox h3{text-align:center;margin-bottom:14px}
+.imgPicker{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:14px}
+.imgBox{width:64px;height:40px;border-radius:8px;border:1.5px dashed var(--v);overflow:hidden;background:#0f0e18;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.imgBox img,.imgBox svg{width:100%;height:100%;object-fit:cover}
+.imgBox span{font-size:20px;color:var(--muted)}
+.field{margin-bottom:12px}
+.field label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
+.field input,.field select{width:100%;background:#0f0e18;border:1px solid var(--b);border-radius:12px;padding:12px;color:#fff;font-size:14px}
+.flagOptions{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.flagOpt{width:46px;height:32px;border-radius:6px;border:2px solid var(--b);overflow:hidden;cursor:pointer;display:flex;position:relative}
+.flagOpt.on{border-color:var(--v);box-shadow:0 0 0 2px rgba(124,58,237,.3)}
+.flagOpt img,.flagOpt svg{width:100%;height:100%;object-fit:cover}
+.modalBtns{display:flex;gap:8px;margin-top:14px}
+.modalBtns button{flex:1;padding:12px;border-radius:12px;border:0;font-weight:900;font-size:14px;cursor:pointer}
+.btnCancel{background:#1e1c2e;color:#fff;border:1px solid var(--b)!important}
+.btnCreate{background:var(--v);color:#fff}
 </style>
 </head>
 <body>
-<div class="top"><b>✨ GABO LIVE</b><span onclick="location.href='/profile/'">👤</span></div>
-<div class="tabs"><button class="on">المجتمعات</button><button onclick="location.href='/dm/'">شات العالم 🌍</button></div>
+
+<div class="top"><b>✨ GABO LIVE</b><span>🔔</span></div>
+
+<div class="tabs">
+  <button class="on">المجتمعات</button>
+  <button onclick="location.href='/dm/'">شات العالم 🌍</button>
+</div>
 
 <div id="commPage" class="grid">
-  <!-- المجتمعات الثابتة -->
-  <div class="comm" onclick="goComm('south')"><div class="flag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/><polygon points="20,18 22.5,24 29,24 23.8,27.8 25.3,34 20,30 14.7,34 16.2,27.8 11,24 17.5,24" fill="#D71921"/></svg></div><b><span class="miniFlag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/></svg></span>الجنوب العربي</b><small>رسمي</small></div>
-  <div class="comm" onclick="goComm('sa')"><div class="flag"><img src="https://flagcdn.com/w80/sa.png"></div><b>🇸🇦 السعودية</b><small>رسمي</small></div>
-  <div class="comm" onclick="goComm('ye')"><div class="flag"><img src="https://flagcdn.com/w80/ye.png"></div><b>🇾🇪 اليمن</b><small>رسمي</small></div>
-  <div class="comm" onclick="goComm('ae')"><div class="flag"><img src="https://flagcdn.com/w80/ae.png"></div><b>🇦🇪 الإمارات</b><small>رسمي</small></div>
-  
-  <div class="comm create" onclick="createComm()"><div class="flag" style="background:#1e1c2e;justify-content:center;align-items:center;font-size:26px">+</div><b>إنشاء مجتمع جديد</b><small>الكل يقدر ينشئ</small></div>
+  <!-- ثوابت -->
+  <div class="comm" onclick="goComm('south')">
+    <div class="flag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/><polygon points="20,18 22.5,24 29,24 23.8,27.8 25.3,34 20,30 14.7,34 16.2,27.8 11,24 17.5,24" fill="#D71921"/></svg></div>
+    <b><span class="miniFlag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/></svg></span>الجنوب العربي</b>
+    <small>رسمي</small>
+  </div>
+  <div class="comm" onclick="goComm('sa')"><div class="flag"><img src="https://flagcdn.com/w80/sa.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/sa.png"></span>السعودية</b><small>رسمي</small></div>
+  <div class="comm" onclick="goComm('ye')"><div class="flag"><img src="https://flagcdn.com/w80/ye.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/ye.png"></span>اليمن</b><small>رسمي</small></div>
+  <div class="comm" onclick="goComm('ae')"><div class="flag"><img src="https://flagcdn.com/w80/ae.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/ae.png"></span>الإمارات</b><small>رسمي</small></div>
+</div>
+
+<!-- زر انشاء تحت -->
+<button class="createBtn" onclick="openCreate()">+ إنشاء مجتمع جديد</button>
+
+<!-- نافذة الانشاء -->
+<div id="createModal" class="modal" onclick="if(event.target===this)closeCreate()">
+  <div class="modalBox">
+    <h3>إنشاء مجتمع جديد</h3>
+    
+    <div class="imgPicker">
+      <div class="imgBox" id="imgBox" onclick="document.getElementById('fileInput').click()">
+        <span id="imgPlus">+</span>
+        <img id="imgPreview" style="display:none">
+      </div>
+      <small style="color:var(--muted);font-size:11px">صورة مربعة بنفس حجم الأعلام (64x40)</small>
+      <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="previewImg(this)">
+    </div>
+
+    <div class="field">
+      <label>اسم المجتمع</label>
+      <input id="commNameInput" placeholder="مثال: سواق">
+    </div>
+
+    <div class="field">
+      <label>علم الدولة (من ضمنهم علم الجنوب)</label>
+      <div class="flagOptions" id="flagOptions">
+        <div class="flagOpt on" data-flag="south" onclick="selectFlag(this,'south')"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/></svg></div>
+        <div class="flagOpt" data-flag="sa" onclick="selectFlag(this,'sa')"><img src="https://flagcdn.com/w80/sa.png"></div>
+        <div class="flagOpt" data-flag="ye" onclick="selectFlag(this,'ye')"><img src="https://flagcdn.com/w80/ye.png"></div>
+        <div class="flagOpt" data-flag="ae" onclick="selectFlag(this,'ae')"><img src="https://flagcdn.com/w80/ae.png"></div>
+        <div class="flagOpt" data-flag="om" onclick="selectFlag(this,'om')"><img src="https://flagcdn.com/w80/om.png"></div>
+        <div class="flagOpt" data-flag="qa" onclick="selectFlag(this,'qa')"><img src="https://flagcdn.com/w80/qa.png"></div>
+        <div class="flagOpt" data-flag="kw" onclick="selectFlag(this,'kw')"><img src="https://flagcdn.com/w80/kw.png"></div>
+        <div class="flagOpt" data-flag="bh" onclick="selectFlag(this,'bh')"><img src="https://flagcdn.com/w80/bh.png"></div>
+      </div>
+    </div>
+
+    <div class="modalBtns">
+      <button class="btnCancel" onclick="closeCreate()">إلغاء</button>
+      <button class="btnCreate" onclick="doCreate()">إنشاء</button>
+    </div>
+  </div>
 </div>
 
 <div class="bottomNav">
   <a href="/profile/"><span class="ic">👤</span><span>حسابي</span></a>
   <a href="/dm/"><span class="ic">🔒</span><span>خاص</span></a>
-  <a href="#" class="plus" onclick="createComm();return false"><span class="ic">+</span></a>
+  <a href="#" class="plus" onclick="openCreate();return false"><span class="ic">+</span></a>
   <a href="/posts/"><span class="ic">📄</span><span>منشورات</span></a>
   <a href="/app/" class="on"><span class="ic">🏠</span><span>الرئيسية</span></a>
 </div>
@@ -53,61 +124,96 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:96px;m
 <script type="module">
 import { auth, db } from '/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { collection, addDoc, onSnapshot, serverTimestamp, doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { collection, onSnapshot, doc, setDoc, serverTimestamp, increment } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-let uid = localStorage.getItem('gabo_uid') || null;
-let uname = localStorage.getItem('gabo_name') || 'مستخدم';
+let uid=localStorage.getItem('gabo_uid')||null;
+let selectedFlag='south';
+let selectedImgBase64=null;
 
-onAuthStateChanged(auth, u=>{
-  if(u){ uid=u.uid; localStorage.setItem('gabo_uid', u.uid); }
-});
+onAuthStateChanged(auth,u=>{ if(u){ uid=u.uid; localStorage.setItem('gabo_uid',u.uid); }});
 
-window.goComm = (id) => location.href = `/community/?id=${id}`;
+window.goComm=id=>location.href=`community/index.html?id=${id}`;
 
-// تحميل المجتمعات اللي انشأها الناس
-const grid = document.getElementById('commPage');
-onSnapshot(collection(db,'communities'), snap=>{
-  // احذف القديمة اللي من الناس
-  grid.querySelectorAll('.userComm').forEach(e=>e.remove());
-  snap.forEach(d=>{
-    const data=d.data();
-    if(['south','sa','ye','ae'].includes(d.id)) return;
-    const div=document.createElement('div');
-    div.className='comm userComm';
-    div.onclick=()=>goComm(d.id);
-    const isOwner = data.ownerUid===uid;
-    div.innerHTML=`
-      ${isOwner?'<span class="owner">مالك</span>':''}
-      <div class="flag" style="background:${data.color||'#7c3aed'};justify-content:center;align-items:center;color:#fff;font-weight:900;font-size:20px">${(data.name||'M')[0]}</div>
-      <b>${data.name}</b>
-      <small>${data.membersCount||0} عضو ${data.closed?'🔒 مغلق':''}</small>
-    `;
-    grid.insertBefore(div, grid.lastElementChild);
-  });
-});
+window.openCreate=()=>document.getElementById('createModal').classList.add('on');
+window.closeCreate=()=>document.getElementById('createModal').classList.remove('on');
 
-window.createComm = async () => {
+window.selectFlag=(el,flag)=>{
+  document.querySelectorAll('.flagOpt').forEach(e=>e.classList.remove('on'));
+  el.classList.add('on');
+  selectedFlag=flag;
+}
+
+window.previewImg=(input)=>{
+  if(input.files && input.files[0]){
+    const reader=new FileReader();
+    reader.onload=e=>{
+      selectedImgBase64=e.target.result;
+      const img=document.getElementById('imgPreview');
+      img.src=selectedImgBase64;
+      img.style.display='block';
+      document.getElementById('imgPlus').style.display='none';
+    }
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+window.doCreate=async()=>{
+  const name=document.getElementById('commNameInput').value.trim();
+  if(!name){ alert('اكتب اسم المجتمع'); return; }
   if(!uid){ alert('سجل دخول أول'); location.href='/login/'; return; }
-  const name = prompt('اسم المجتمع الجديد:');
-  if(!name) return;
-  const color = '#'+Math.floor(Math.random()*16777215).toString(16);
-  const id = name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-أ-ي]/g,'') + '-' + Date.now().toString(36).slice(-4);
+  const id=name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-أ-ي]/g,'')+'-'+Date.now().toString(36).slice(-4);
   try{
     await setDoc(doc(db,'communities',id),{
       name:name,
+      flag:selectedFlag,
+      img:selectedImgBase64||null,
       ownerUid:uid,
-      ownerName:uname,
-      color:color,
       members:[uid],
       membersCount:1,
       banned:[],
       closed:false,
       createdAt:serverTimestamp()
     });
-    alert('تم إنشاء '+name);
+    closeCreate();
+    document.getElementById('commNameInput').value='';
+    selectedImgBase64=null;
+    document.getElementById('imgPreview').style.display='none';
+    document.getElementById('imgPlus').style.display='block';
     goComm(id);
   }catch(e){ alert('خطأ: '+e.message); }
 }
+
+// تحميل المجتمعات
+const grid=document.getElementById('commPage');
+onSnapshot(collection(db,'communities'),snap=>{
+  grid.querySelectorAll('.userComm').forEach(e=>e.remove());
+  snap.forEach(d=>{
+    if(['south','sa','ye','ae'].includes(d.id)) return;
+    const data=d.data();
+    const div=document.createElement('div');
+    div.className='comm userComm';
+    div.onclick=()=>goComm(d.id);
+    
+    let flagHtml='';
+    if(data.img){
+      flagHtml=`<div class="flag"><img src="${data.img}"></div>`;
+    }else if(data.flag==='south'){
+      flagHtml=`<div class="flag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/></svg></div>`;
+    }else{
+      flagHtml=`<div class="flag"><img src="https://flagcdn.com/w80/${data.flag||'sa'}.png"></div>`;
+    }
+    
+    let miniFlag='';
+    if(data.flag==='south'){
+      miniFlag=`<span class="miniFlag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/></svg></span>`;
+    }else{
+      miniFlag=`<span class="miniFlag"><img src="https://flagcdn.com/w80/${data.flag||'sa'}.png"></span>`;
+    }
+    
+    div.innerHTML=`${flagHtml}<b>${miniFlag}${data.name}</b><small>${data.membersCount||1} عضو ${data.closed?'🔒':''}</small>`;
+    grid.appendChild(div);
+  });
+});
 </script>
 </body>
 </html>
