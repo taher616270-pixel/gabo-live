@@ -5,19 +5,20 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>GABO LIVE</title>
 <style>
-:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed}
+:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed;--muted:#8b8ba7}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:96px}
-.top{height:56px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;padding:0 14px;position:sticky;top:0;z-index:20}
-.tabs{display:flex;gap:8px;padding:12px}
-.tabs button{flex:1;background:#161426;border:1px solid var(--b);color:#8b8ba7;padding:12px;border-radius:14px;font-weight:800;font-size:13px}
+body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:96px;min-height:100vh}
+.top{height:56px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;padding:0 14px;position:sticky;top:0;z-index:50}
+.tabs{display:flex;gap:8px;padding:12px 14px}
+.tabs button{flex:1;background:#161426;border:1px solid var(--b);color:var(--muted);padding:12px;border-radius:14px;font-weight:800;font-size:13px}
 .tabs button.on{background:var(--v);color:#fff;border-color:var(--v)}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px}
-.comm{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:8px;cursor:pointer}
-.comm .flag{font-size:28px}
+.comm{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;text-align:center}
+.flag{width:64px;height:40px;border-radius:8px;border:1px solid #2a2840;overflow:hidden;display:flex;box-shadow:0 2px 8px rgba(0,0,0,.4);background:#000}
+.flag img{width:100%;height:100%;object-fit:cover;display:block}
 .comm b{font-size:13px}
-.comm small{color:#8b8ba7;font-size:11px}
-.comm.create{border:1px dashed var(--v);align-items:center;justify-content:center;text-align:center}
+.comm small{color:var(--muted);font-size:11px}
+.comm.create{border:1.5px dashed var(--v);justify-content:center}
 .worldChat{padding:12px;display:none}
 .worldChat.on{display:block}
 .worldBox{background:var(--card);border:1px solid var(--b);border-radius:18px;height:62vh;display:flex;flex-direction:column}
@@ -27,13 +28,11 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:96px}
 .worldInput{display:flex;gap:8px;padding:10px;border-top:1px solid var(--b)}
 .worldInput input{flex:1;background:#0f0e18;border:1px solid var(--b);border-radius:10px;padding:10px;color:#fff}
 .worldInput button{background:var(--v);border:0;color:#fff;padding:10px 14px;border-radius:10px;font-weight:800}
-
-/* شريط ثابت */
-.bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;z-index:9999;direction:ltr}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;z-index:9999;direction:ltr;padding-bottom:env(safe-area-inset-bottom)}
 .bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
 .bottomNav a.on{color:#fff}
 .bottomNav a .ic{font-size:22px;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
-.bottomNav a.plus .ic{background:var(--v);color:#fff;width:56px;height:56px;border-radius:16px;font-size:30px;margin-top:-16px}
+.bottomNav a.plus .ic{background:var(--v);color:#fff;width:56px;height:56px;border-radius:16px;font-size:30px;margin-top:-16px;box-shadow:0 6px 18px rgba(124,58,237,.45)}
 .navBadge{position:absolute;top:-4px;right:14px;background:#ff3b30;color:#fff;min-width:18px;height:18px;border-radius:9px;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #0f0e18}
 .navBadge.hide{display:none}
 </style>
@@ -47,35 +46,46 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:96px}
   <button id="tabWorld">شات العالم 🌍</button>
 </div>
 
-<!-- مجتمعات الدول -->
 <div id="commPage" class="grid">
-  <div class="comm" onclick="openComm('south')">
-    <span class="flag">🏴</span><b>مجتمع الجنوب العربي</b><small>1.2k متواجد</small>
+  <!-- الجنوب العربي - SVG داخلي ما يحتاج صور خارجية -->
+  <div class="comm" onclick="location.href='/community/?id=south'">
+    <div class="flag">
+      <svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+        <rect width="90" height="20" y="0" fill="#D71921"/>
+        <rect width="90" height="20" y="20" fill="#FFFFFF"/>
+        <rect width="90" height="20" y="40" fill="#000000"/>
+        <path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/>
+        <polygon points="20,18 22.5,24 29,24 23.8,27.8 25.3,34 20,30 14.7,34 16.2,27.8 11,24 17.5,24" fill="#D71921"/>
+      </svg>
+    </div>
+    <b>مجتمع الجنوب العربي</b><small>1.2k متواجد</small>
   </div>
-  <div class="comm" onclick="openComm('sa')">
-    <span class="flag">🇸🇦</span><b>مجتمع السعودية</b><small>890 متواجد</small>
+
+  <div class="comm" onclick="location.href='/community/?id=sa'">
+    <div class="flag"><img src="https://flagcdn.com/w80/sa.png" alt="SA"></div>
+    <b>مجتمع السعودية 🇸🇦</b><small>890 متواجد</small>
   </div>
-  <div class="comm" onclick="openComm('ye')">
-    <span class="flag">🇾🇪</span><b>مجتمع اليمن</b><small>650 متواجد</small>
+
+  <div class="comm" onclick="location.href='/community/?id=ye'">
+    <div class="flag"><img src="https://flagcdn.com/w80/ye.png" alt="YE"></div>
+    <b>مجتمع اليمن 🇾🇪</b><small>650 متواجد</small>
   </div>
-  <div class="comm" onclick="openComm('ae')">
-    <span class="flag">🇦🇪</span><b>مجتمع الإمارات</b><small>420 متواجد</small>
+
+  <div class="comm" onclick="location.href='/community/?id=ae'">
+    <div class="flag"><img src="https://flagcdn.com/w80/ae.png" alt="AE"></div>
+    <b>مجتمع الإمارات 🇦🇪</b><small>420 متواجد</small>
   </div>
+
   <div class="comm create" onclick="createComm()">
-    <span style="font-size:28px">+</span><b>إنشاء مجتمع جديد</b><small>اختر اسم وصورة</small>
+    <div class="flag" style="background:#1e1c2e;justify-content:center;align-items:center;font-size:24px">+</div>
+    <b>إنشاء مجتمع جديد</b><small>اختر اسم وصورة</small>
   </div>
 </div>
 
-<!-- شات العالم -->
 <div id="worldPage" class="worldChat">
   <div class="worldBox">
-    <div id="worldMsgs" class="worldMsgs">
-      <div class="msg">أهلا بكم في شات العالم 🌍 - الكل يقدر يدردش هنا</div>
-    </div>
-    <div class="worldInput">
-      <input id="worldInput" placeholder="اكتب رسالة...">
-      <button onclick="sendWorld()">إرسال</button>
-    </div>
+    <div id="worldMsgs" class="worldMsgs"><div class="msg">أهلا بكم في شات العالم 🌍 - الكل يقدر يدردش هنا</div></div>
+    <div class="worldInput"><input id="worldInput" placeholder="اكتب رسالة..."><button onclick="sendWorld()">إرسال</button></div>
   </div>
 </div>
 
@@ -93,22 +103,18 @@ import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/f
 import { collection, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const tabComm=document.getElementById('tabComm'), tabWorld=document.getElementById('tabWorld');
-tabComm.onclick=()=>{tabComm.classList.add('on');tabWorld.classList.remove('on');document.getElementById('commPage').style.display='grid';document.getElementById('worldPage').classList.remove('on')}
-tabWorld.onclick=()=>{tabWorld.classList.add('on');tabComm.classList.remove('on');document.getElementById('commPage').style.display='none';document.getElementById('worldPage').classList.add('on')}
+const commPage=document.getElementById('commPage'), worldPage=document.getElementById('worldPage');
+tabComm.onclick=()=>{tabComm.classList.add('on');tabWorld.classList.remove('on');commPage.style.display='grid';worldPage.classList.remove('on')}
+tabWorld.onclick=()=>{tabWorld.classList.add('on');tabComm.classList.remove('on');commPage.style.display='none';worldPage.classList.add('on')}
 
-window.openComm=(id)=>{ location.href=`/community/?id=${id}` }
 window.createComm=()=>{
-  const name=prompt('اسم المجتمع الجديد:');
-  if(!name) return;
-  // هنا تحفظ في Firebase لاحقا - الآن نعرضه مؤقتا
-  const grid=document.getElementById('commPage');
-  const div=document.createElement('div');
-  div.className='comm'; div.innerHTML=`<span class="flag">✨</span><b>${name}</b><small>مجتمع جديد - انضم الآن</small>`;
-  div.onclick=()=>openComm(name);
-  grid.insertBefore(div, grid.lastElementChild);
+  const name=prompt('اسم المجتمع الجديد:'); if(!name) return;
+  const div=document.createElement('div'); div.className='comm';
+  div.innerHTML=`<div class="flag" style="background:#7c3aed;justify-content:center;align-items:center;color:#fff;font-weight:900">${name[0]}</div><b>${name}</b><small>مجتمع جديد</small>`;
+  div.onclick=()=>location.href=`/community/?id=${encodeURIComponent(name)}`;
+  commPage.insertBefore(div, commPage.lastElementChild);
 }
 
-// عداد الرسائل
 function startBadge(uid){
   const b=document.getElementById('navBadge'); if(!b) return;
   onSnapshot(query(collection(db,'chats'), where('users','array-contains',uid)), snap=>{
@@ -116,14 +122,12 @@ function startBadge(uid){
     if(t>0){ b.textContent=t>99?'99+':t; b.classList.remove('hide'); } else b.classList.add('hide');
   });
 }
-onAuthStateChanged(auth,u=>{ if(u){ localStorage.setItem('gabo_uid',u.uid); startBadge(u.uid); }});
+onAuthStateChanged(auth,u=>{ if(u){ localStorage.setItem('gabo_uid',u.uid); startBadge(u.uid); } else { location.replace('/login/'); }});
 const s=localStorage.getItem('gabo_uid'); if(s) startBadge(s);
 
-// شات العالم محلي مؤقت
 window.sendWorld=()=>{
   const inp=document.getElementById('worldInput'); if(!inp.value.trim()) return;
-  const box=document.getElementById('worldMsgs');
-  const d=document.createElement('div'); d.className='msg me'; d.textContent=inp.value;
+  const box=document.getElementById('worldMsgs'); const d=document.createElement('div'); d.className='msg me'; d.textContent=inp.value;
   box.appendChild(d); inp.value=''; box.scrollTop=box.scrollHeight;
 }
 </script>
