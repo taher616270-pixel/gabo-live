@@ -2,85 +2,71 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
-<meta name="theme-color" content="#08050f">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GABO LIVE</title>
 <style>
-*{box-sizing:border-box}
-html{height:100%;background:#08050f}
 body{
   margin:0;
-  height:100vh;
-  height:100dvh;
-  height:100svh;
-  position:fixed;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.35),transparent 50%),linear-gradient(145deg,#050407,#10091d 55%,#08060e);
-  font-family:system-ui,-apple-system,Segoe UI;
-  overflow:hidden;
+  min-height:100vh;
+  background:#08050f;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:system-ui;
 }
-.shell{width:min(430px,88%);text-align:center}
+.box{width:90%;max-width:380px;text-align:center}
 .logo{
-  font-size:clamp(36px,11vw,52px);font-weight:900;letter-spacing:6px;
-  background:linear-gradient(90deg,#7c3aed,#f59e0b,#c084fc,#7c3aed);
-  background-size:200% auto;
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  animation:shine 3s linear infinite,float 2.8s ease-in-out infinite;
+  font-size:44px;
+  font-weight:900;
+  color:#fff;
+  letter-spacing:4px;
+  animation: updown 2s infinite;
 }
-@keyframes shine{to{background-position:200% center}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-.sub{color:#aaa3bd;margin-top:6px;letter-spacing:4px;font-size:13px}
-.search-box{
-  margin-top:34px;
-  display:flex;align-items:center;gap:10px;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(196,181,253,.18);
-  border-radius:22px;
-  padding:15px 18px;
-  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+@keyframes updown{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
 }
-.search-box input{
-  flex:1;background:transparent;border:0;outline:0;
-  color:#fff;font-size:17px;
+.logo span{color:#8b5cf6}
+.search{
+  margin-top:30px;
+  background:#1a1628;
+  border:1px solid #333;
+  border-radius:20px;
+  padding:14px;
+  display:flex;
+  gap:10px;
 }
-.search-box input::placeholder{color:#aaa3bd88}
-.enter{
-  margin-top:16px;width:100%;min-height:52px;
-  border:0;border-radius:16px;
-  background:linear-gradient(100deg,#6d28d9,#8b5cf6);
-  color:#fff;font-weight:900;font-size:17px;cursor:pointer;
+.search input{
+  flex:1;
+  background:transparent;
+  border:0;
+  outline:0;
+  color:#fff;
+  font-size:16px;
 }
-.enter:active{transform:scale(.97)}
-.note{margin-top:20px;color:#776d86;font-size:12px}
+.btn{
+  margin-top:14px;
+  width:100%;
+  padding:14px;
+  border:0;
+  border-radius:14px;
+  background:#7c3aed;
+  color:#fff;
+  font-weight:800;
+  font-size:16px;
+}
 </style>
 </head>
 <body>
-<div class="shell">
-  <div class="logo">GABO LIVE</div>
-  <div class="sub">LIVE AUDIO COMMUNITY</div>
-
-  <div class="search-box">
+<div class="box">
+  <div class="logo">GABO <span>LIVE</span></div>
+  <p style="color:#888;font-size:12px;letter-spacing:3px">LIVE AUDIO COMMUNITY</p>
+  
+  <div class="search">
     <span>🔍</span>
-    <input id="q" type="search" placeholder="ابحث عن مجتمع، غرفة..." enterkeyhint="search">
+    <input id="q" placeholder="ابحث عن مجتمع، غرفة...">
   </div>
-  <button class="enter" onclick="go()">دخول</button>
-  <div class="note">GABO LIVE · مساحة آمنة لمجتمعك</div>
+  <button class="btn" onclick="location.href='/login/'">دخول</button>
 </div>
-
-<script>
-function go(){
-  const v=document.getElementById('q').value.trim();
-  if(v) localStorage.setItem('gabo_search',v);
-  location.href='/login/';
-}
-document.getElementById('q').addEventListener('keydown',e=>{
-  if(e.key==='Enter') go();
-});
-// إصلاح كيبورد أندرويد + شريط آيفون
-if(window.visualViewport){
-  const fix=()=>{document.body.style.height=window.visualViewport.height+'px'};
-  window.visualViewport.addEventListener('resize',fix);
-}
-</script>
 </body>
 </html>
