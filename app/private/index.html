@@ -2,73 +2,82 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>حسابي — GABO LIVE</title>
+<title>الخاص — GABO LIVE</title>
 <link rel="stylesheet" href="/assets/style/style.css">
 </head>
 <body>
-<div class="wrap" style="max-width:760px">
+<div class="wrap">
   <header class="topbar">
     <a class="brand" href="/app/">GABO LIVE ✨</a>
-    <button class="btn sm" data-logout>خروج</button>
+    <span class="muted" style="font-size:12px" data-user-name></span>
   </header>
 
-  <div class="seg"><button class="on" data-show="profile">الملف</button><button data-show="settings">الإعدادات</button></div>
-
-  <section class="page active" id="page-profile">
-    <div class="card pad">
-      <div style="display:flex;gap:16px;align-items:center">
-        <div class="avatar" id="avatar">G</div>
-        <div><h1 style="margin:0;font-size:24px" data-user-name>حسابي</h1><p class="muted" style="margin:4px 0">ID: <b id="gaboId">—</b> <span id="vipBadge" class="pill hidden">VIP ♛</span></p></div>
-      </div>
-      <form id="profileForm" style="margin-top:12px">
-        <div class="field"><label>اسم العرض</label><input class="input" id="profileName" required maxlength="50" placeholder="اسمك"></div>
-        <div class="field"><label>البريد الإلكتروني</label><input class="input" id="profileEmail" disabled></div>
-        <div class="field"><label>نبذة عنك</label><textarea class="input" id="profileBio" maxlength="280" placeholder="اكتب نبذة قصيرة"></textarea></div>
-        <button class="btn primary block" id="saveBtn">حفظ الملف 💾</button>
-      </form>
-    </div>
+  <section class="page active" id="page-list">
+    <div class="card"><h3>✉️ الخاص - كل الأعضاء</h3><div class="list" id="usersList"><div class="empty">جاري التحميل...</div></div></div>
   </section>
 
-  <section class="page" id="page-settings">
-    <div class="card pad" style="display:flex;flex-direction:column;gap:10px">
-      <h2 style="margin:0">الإعدادات ⚙️</h2>
-      <a class="btn block" href="/vip/">♛ اشتراك VIP</a>
-      <a class="btn block" href="/hosts/">🎙️ انضم كمضيف</a>
-      <a class="btn primary block hidden" data-admin-only href="/admin/">🛠 لوحة الإدارة</a>
-      <button class="btn danger block" data-logout>تسجيل الخروج</button>
+  <section class="page" id="page-chat">
+    <div class="card">
+      <h3 style="display:flex;justify-content:space-between"><span id="chatTitle">الخاص</span><a data-show="list" href="#" class="muted">✕ رجوع</a></h3>
+      <div class="msgs" id="msgsBox" style="height:60vh"></div>
+      <div class="composer"><input id="msgInput" class="input" placeholder="اكتب رسالة..." maxlength="500"><button id="sendBtn" class="btn primary">↑</button></div>
     </div>
   </section>
 </div>
 
 <script type="module">
-import { db, boot, me, myProfile, toast, $ } from '/assets/app.js';
-import { doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-import { updateProfile } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { db, boot, me, showPage, toast, esc, $ } from '/assets/app.js';
+import { collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 await boot({ auth: true });
 
-const name = myProfile.name || me.displayName || '';
-$('#profileName').value = name;
-$('#profileEmail').value = me.email || '';
-$('#profileBio').value = myProfile.bio || '';
-$('#gaboId').textContent = myProfile.gaboId || '—';
-$('#avatar').textContent = (name || me.email || 'G')[0].toUpperCase();
-if (myProfile.subscription === 'VIP' && (!myProfile.subUntil || myProfile.subUntil > Date.now())) $('#vipBadge').classList.remove('hidden');
+let toId = new URLSearchParams(location.search).get('to'), unsub = null;
+const chatId = (a, b) => [a, b].sort().join('_');
 
-$('#profileForm').onsubmit = async e => {
-  e.preventDefault();
-  const btn = $('#saveBtn'), n = $('#profileName').value.trim(), bio = $('#profileBio').value.trim();
-  if (!n) return toast('اكتب اسمك', 'error');
-  btn.disabled = true;
-  try {
-    await setDoc(doc(db, 'users', me.uid), { name: n, bio, updatedAt: serverTimestamp() }, { merge: true });
-    await updateProfile(me, { displayName: n });
-    $$('[data-user-name]').forEach(el => (el.textContent = n));
-    toast('تم حفظ الملف ✅', 'ok');
-  } catch (err) { toast('تعذر الحفظ، حاول مرة ثانية', 'error'); }
-  btn.disabled = false;
-};
-function $$(s) { return [...document.querySelectorAll(s)]; }
+onSnapshot(collection(db, 'users'), snap => {
+  const el = $('#usersList'); el.replaceChildren();
+  snap.forEach(d => {
+    if (d.id === me.uid) return;
+    const u = d.data(); if (u.banned) return;
+    const row = document.createElement('div');
+    row.className = 'item' + (d.id === toId ? ' active' : '');
+    row.innerHTML = `<span><b>${esc(u.name || u.email)}</b><br><small>${esc(u.email || '')}</small></span><span>💬</span>`;
+    if (d.id === toId) $('#chatTitle').textContent = u.name || u.email;
+    row.onclick = () => open(d.id, u.name || u.email);
+    el.append(row);
+  });
+  if (!el.children.length) el.innerHTML = '<div class="empty">لا يوجد أعضاء آخرين بعد</div>';
+}, () => toast('تعذر تحميل الأعضاء', 'error'));
+
+function open(id, title) {
+  toId = id; $('#chatTitle').textContent = title;
+  history.replaceState(null, '', '?to=' + id);
+  showPage('chat'); listen();
+}
+function listen() {
+  unsub?.();
+  const q = query(collection(db, 'private_messages'), where('chatId', '==', chatId(me.uid, toId)), orderBy('createdAt', 'asc'));
+  unsub = onSnapshot(q, snap => {
+    const box = $('#msgsBox'); box.replaceChildren();
+    if (snap.empty) box.innerHTML = '<div class="empty">ابدأ المحادثة 👋</div>';
+    snap.forEach(d => {
+      const m = d.data(), row = document.createElement('div');
+      row.className = 'msg' + (m.from === me.uid ? ' me' : ''); row.textContent = m.text; box.append(row);
+    });
+    box.scrollTop = box.scrollHeight;
+  }, () => toast('تعذر تحميل المحادثة', 'error'));
+}
+async function send() {
+  const inp = $('#msgInput'), text = inp.value.trim().slice(0, 500);
+  if (!text) return;
+  if (!toId) return toast('اختر عضو اولا', 'error');
+  inp.value = '';
+  try { await addDoc(collection(db, 'private_messages'), { chatId: chatId(me.uid, toId), from: me.uid, to: toId, text, createdAt: serverTimestamp() }); }
+  catch (e) { toast('تعذر الارسال', 'error'); inp.value = text; }
+}
+$('#sendBtn').onclick = send;
+$('#msgInput').addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+if (toId) { showPage('chat'); listen(); }
 </script>
 </body>
 </html>
