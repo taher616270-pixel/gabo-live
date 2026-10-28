@@ -35,15 +35,17 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;overflo
 .sendBtn{width:44px;height:44px;min-width:44px;border-radius:50%;background:var(--v);border:0;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .fab{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);height:52px;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;border-radius:26px;display:flex;align-items:center;gap:8px;padding:0 22px;font-size:15px;font-weight:800;z-index:19;border:0}
 .fab.hide{display:none}
-/* نفس الشريط السفلي في كل الموقع بالضبط */
-.bottomNav{position:fixed;bottom:0;left:0;right:0;height:82px;min-height:82px;background:#0f0e18;border-top:1px solid #2a2840;display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;padding-bottom:env(safe-area-inset-bottom);direction:ltr;z-index:30}
+
+/* === شريط سفلي موحد 100% مثل البروفايل === */
+.bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;padding-bottom:env(safe-area-inset-bottom);direction:ltr;z-index:30}
 .bottomNav.hide{display:none}
-.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:11px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:5px;padding:4px 0;position:relative}
+.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
 .bottomNav a.on{color:#fff}
-.bottomNav a .ic{font-size:22px;width:24px;height:24px;display:flex;align-items:center;justify-content:center}
-.bottomNav a.plus .ic{background:var(--v);color:#fff;width:56px;height:56px;border-radius:16px;font-size:32px;margin-top:-18px;box-shadow:0 4px 12px rgba(124,58,237,.4)}
-.navBadge{position:absolute;top:0;left:50%;transform:translateX(8px);background:#ff3b30;color:#fff;min-width:18px;height:18px;border-radius:9px;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #0f0e18}
+.bottomNav a .ic{font-size:22px;line-height:1;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+.bottomNav a.plus .ic{background:var(--v);color:#fff;width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-16px;box-shadow:0 4px 12px rgba(124,58,237,.4)}
+.navBadge{position:absolute;top:-4px;right:14px;background:#ff3b30;color:#fff;min-width:18px;height:18px;border-radius:9px;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #0f0e18}
 .navBadge.hide{display:none}
+
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:100;display:none;flex-direction:column}.modal.on{display:flex}
 </style>
 </head>
@@ -57,13 +59,16 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;overflo
   <div class="inputBar"><div class="inputWrap"><input id="msgInput" placeholder="اكتب رسالة..." autocomplete="off"></div><button class="sendBtn" id="sendBtn">➤</button></div>
 </div>
 <button class="fab" id="newChatBtn">💬 دردشة جديدة</button>
+
+<!-- شريط موحد نفس البروفايل بالضبط -->
 <div class="bottomNav" id="bottomNav">
   <a href="/profile/"><span class="ic">👤</span><span>حسابي</span></a>
-  <a href="/dm/" class="on"><span class="ic">🔒</span><span>دردشة</span><span class="navBadge hide" id="navBadge">0</span></a>
+  <a href="/dm/" class="on"><span class="ic">🔒</span><span>دردشة خاصة</span><span id="navBadge" class="navBadge hide">0</span></a>
   <a href="/create/" class="plus"><span class="ic">+</span></a>
-  <a href="/app/"><span class="ic">📄</span><span>منشور</span></a>
-  <a href="/"><span class="ic">🏠</span><span>الرئيسية</span></a>
+  <a href="/posts/"><span class="ic">📄</span><span>منشورات</span></a>
+  <a href="/app/"><span class="ic">🏠</span><span>الرئيسية</span></a>
 </div>
+
 <div class="modal" id="usersModal">
   <div class="top"><input id="searchUser" placeholder="ابحث..." style="flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:12px;padding:12px;color:#fff"><button id="closeModal" style="width:42px;height:42px;border-radius:50%;background:#1e1c2e;border:1px solid var(--b);color:#fff">✕</button></div>
   <div style="flex:1;overflow:auto;padding:12px" id="usersList"></div>
