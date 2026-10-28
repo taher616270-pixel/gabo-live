@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>حسابي - GABO LIVE</title>
 <style>
-:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed;--gold:#fbbf24}
+:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed;--gold:#fbbf24;--red:#ef4444}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{background:var(--bg);color:#fff;font-family:system-ui;min-height:100vh}
 body{padding-bottom:110px}
@@ -17,6 +17,7 @@ body{padding-bottom:110px}
 .info{flex:1;text-align:left;direction:ltr}
 .nameRow{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800}
 .countryRow{display:flex;align-items:center;gap:8px;direction:rtl;text-align:right;font-weight:600;margin-top:6px;font-size:14px;color:#d0d0e0}
+.metaRow{display:flex;gap:8px;direction:rtl;margin-top:6px;font-size:13px;color:#fbbf24;font-weight:700}
 .countryRow img{width:28px;height:19px;border-radius:3px;object-fit:cover;border:1px solid rgba(255,255,255,.25)}
 .bioPublic{margin-top:12px;background:#1e1c2e;border:1px solid var(--b);border-radius:12px;padding:12px;font-size:13px;color:#c4c4d0;line-height:1.6;min-height:45px}
 .idRow{font-size:11px;color:#8b8ba7;margin-top:6px;direction:ltr;text-align:left;font-family:monospace;letter-spacing:1px}
@@ -26,21 +27,21 @@ body{padding-bottom:110px}
 .editTop{padding:16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--b);z-index:2}
 .backBtn{width:40px;height:40px;background:#1e1c2e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;border:1px solid var(--b);cursor:pointer}
 .coverArea{display:flex;gap:12px;padding:0 16px;justify-content:flex-end;margin-top:14px}.coverBox{width:140px;height:160px;border-radius:16px;overflow:hidden;position:relative;background:#16161f;border:1px solid var(--b)}.coverBox img{width:100%;height:100%;object-fit:cover}.coverBox.add{background:var(--card);display:flex;align-items:center;justify-content:center;border:1px dashed var(--b);cursor:pointer}.coverLabel{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.7);font-size:9px;padding:3px 8px;border-radius:20px}.coverDel{position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.6);width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer}.coverHint{padding:8px 16px;text-align:right;font-size:11px;color:#8b8ba7}
-.cardList{margin:14px 12px;background:var(--card);border-radius:16px;overflow:hidden;border:1px solid var(--b)}.row{display:flex;justify-content:space-between;align-items:center;padding:16px 14px;border-bottom:1px solid #1f1f2f;cursor:pointer}.row:active{background:#1e1c2e}.row:last-child{border:0}.row .right{font-size:14px;font-weight:600}.row .left{display:flex;align-items:center;gap:6px;color:#8b8ba7;font-size:13px}.row .left img{width:32px;height:20px;border-radius:4px;object-fit:cover}.saveArea{padding:16px}.saveBtn{width:100%;background:var(--gold);color:#000;padding:15px;border-radius:14px;border:0;font-weight:900;font-size:15px;cursor:pointer}
+.cardList{margin:14px 12px;background:var(--card);border-radius:16px;overflow:hidden;border:1px solid var(--b)}.row{display:flex;justify-content:space-between;align-items:center;padding:16px 14px;border-bottom:1px solid #1f1f2f;cursor:pointer}.row:active{background:#1e1c2e}.row:last-child{border:0}.row .right{font-size:14px;font-weight:600}.row .left{display:flex;align-items:center;gap:6px;color:#8b8ba7;font-size:13px}.row .left img{width:32px;height:20px;border-radius:4px;object-fit:cover}.row.danger .right{color:var(--red)}.saveArea{padding:16px}.saveBtn{width:100%;background:var(--gold);color:#000;padding:15px;border-radius:14px;border:0;font-weight:900;font-size:15px;cursor:pointer}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);z-index:11000;display:none;align-items:center;justify-content:center;padding:18px}.modal.on{display:flex}
-.box{width:100%;max-width:380px;background:#1c1a2e;border:1px solid #3a3860;border-radius:20px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.7);animation:pop .18s ease}@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.box{width:100%;max-width:380px;background:#1c1a2e;border:1px solid #3a3860;border-radius:20px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.7)}
 .box h3{font-size:16px;margin-bottom:12px;text-align:center}
+.box p{text-align:center;line-height:1.8;font-size:14px;color:#d0d0e0}
 .box input,.box textarea{width:100%;background:#0f0e18;border:1px solid #2a2840;border-radius:12px;padding:14px;color:#fff;font-size:15px;font-family:system-ui;outline:none}
-.box input:focus,.box textarea:focus{border-color:var(--v)}
 .box textarea{min-height:110px;resize:none;line-height:1.6}
-.actions{display:flex;gap:10px;margin-top:16px}.btnCancel{flex:1;background:#2a2840;border:0;color:#fff;padding:13px;border-radius:12px;font-weight:700;cursor:pointer}.btnSave{flex:1;background:var(--gold);border:0;color:#000;padding:13px;border-radius:12px;font-weight:800;cursor:pointer}
+.actions{display:flex;gap:10px;margin-top:16px}.btnCancel{flex:1;background:#2a2840;border:0;color:#fff;padding:13px;border-radius:12px;font-weight:700;cursor:pointer}.btnSave{flex:1;background:var(--gold);border:0;color:#000;padding:13px;border-radius:12px;font-weight:800;cursor:pointer}.btnDel{flex:1;background:var(--red);border:0;color:#fff;padding:13px;border-radius:12px;font-weight:800;cursor:pointer}
 .countryList{max-height:45vh;overflow:auto;margin-top:10px;border:1px solid var(--b);border-radius:12px}
-.countryItem{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;cursor:pointer;border-bottom:1px solid #1f1f2f}.countryItem:active{background:#1e1c2e}
+.countryItem{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;cursor:pointer;border-bottom:1px solid #1f1f2f}
 .countryItem .flag{width:36px;height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;background:#0f0e18;border:1px solid rgba(255,255,255,.15);overflow:hidden}
 .countryItem .flag img{width:100%;height:100%;object-fit:cover}
-.genderGrid{display:flex;gap:12px;margin:14px 0}.genderCard{flex:1;background:#0f0e18;border:2px solid var(--b);border-radius:16px;padding:18px 8px;text-align:center;cursor:pointer;transition:.15s}.genderCard.on{border-color:var(--gold);background:#2a2410;transform:scale(1.02)}.genderCard .ico{font-size:34px;display:block;margin-bottom:6px}
+.genderGrid{display:flex;gap:12px;margin:14px 0}.genderCard{flex:1;background:#0f0e18;border:2px solid var(--b);border-radius:16px;padding:18px 8px;text-align:center;cursor:pointer}.genderCard.on{border-color:var(--gold);background:#2a2410}.genderCard .ico{font-size:34px;display:block;margin-bottom:6px}
 .wheels{display:flex;gap:8px;direction:ltr;margin:12px 0}.wheelWrap{flex:1;text-align:center}.wheelWrap small{color:#8b8ba7;font-size:11px}.wheel{height:150px;overflow-y:auto;scroll-snap-type:y mandatory;background:#0f0e18;border:1px solid var(--b);border-radius:12px;margin-top:6px}.wheel::-webkit-scrollbar{display:none}.wheelItem{height:50px;display:flex;align-items:center;justify-content:center;scroll-snap-align:center;font-size:15px;color:#8b8ba7}.wheelItem.on{color:#fff;font-weight:800;background:#1e1c2e;font-size:18px;border-radius:8px}
-.bdayPreview{background:#0f0e18;border:1px solid var(--b);border-radius:10px;padding:10px;text-align:center;font-size:14px;margin:10px 0;font-family:monospace;letter-spacing:1px}
+.bdayPreview{background:#0f0e18;border:1px solid var(--b);border-radius:10px;padding:10px;text-align:center;font-size:14px;margin:10px 0;font-family:monospace}
 .bottomNav{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-end;padding:8px 0 calc(10px + env(safe-area-inset-bottom));z-index:1000;direction:ltr}.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:9px;display:flex;flex-direction:column;align-items:center;gap:3px}.bottomNav a.on{color:#fff}.bottomNav a .ic{font-size:22px}.bottomNav a.plus .ic{background:var(--v);color:#fff;width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-20px}
 .statusBar{position:fixed;bottom:80px;left:16px;right:16px;background:#201e32;border:1px solid var(--b);padding:12px;border-radius:12px;text-align:center;font-size:13px;display:none;z-index:10001}.statusBar.on{display:block}
 </style>
@@ -52,17 +53,19 @@ body{padding-bottom:110px}
     <div class="info">
       <div class="nameRow"><span id="nameMain">Taher Hammam</span><span id="flagMain"></span></div>
       <div class="countryRow"><span id="countryNameMain">الجنوب العربي</span><span id="countryFlagMain"><img src="/assets/south-arabia.png.JPG" style="width:26px;height:18px;border-radius:3px"></span></div>
+      <div class="metaRow" id="metaRow"></div>
       <div class="idRow">ID: <span id="idMain">--------</span></div>
     </div>
   </div>
   <div class="bioPublic" id="bioPublic">مرحبا بكم في ملفي الشخصي 👋</div>
   <div class="stats">
-    <div class="stat"><b id="c1">0</b><span>متابعين</span></div>
-    <div class="stat"><b id="c2">0</b><span>متابَع</span></div>
-    <div class="stat"><b id="c3">0</b><span>زوار</span></div>
+    <div class="stat" id="statFollowers"><b id="c1">0</b><span>متابعين</span></div>
+    <div class="stat" id="statFollowing"><b id="c2">0</b><span>متابَع</span></div>
+    <div class="stat" id="statVisitors"><b id="c3">0</b><span>زوار</span></div>
   </div>
-  <div class="btns"><button class="btn vip">👑 VIP</button><button class="btn notif">🔔 اشتراك الإشعارات</button></div>
+  <div class="btns"><button class="btn vip" id="vipBtn">👑 VIP</button><button class="btn notif" id="notifBtn">🔔 اشتراك الإشعارات</button></div>
 </div>
+
 <div class="editPage" id="editPage">
   <div class="editTop"><a class="backBtn" id="closeEdit">›</a><b>ملف التعريف</b><div style="width:40px"></div></div>
   <div class="coverArea">
@@ -81,13 +84,30 @@ body{padding-bottom:110px}
     <div class="row" id="rowGender"><div class="left"><span>‹</span> <small id="rowGenderVal">ذكر ♂️</small></div><div class="right">الجنس</div></div>
     <div class="row" id="rowCountry"><div class="left"><span>‹</span> <img id="rowCountryImg" src="/assets/south-arabia.png.JPG" style="width:28px;height:20px;border-radius:4px;object-fit:cover"><small id="rowCountryVal">الجنوب العربي</small></div><div class="right">الدولة</div></div>
   </div>
+
+  <!-- ازرار جديدة: تحديث العدادات والاعدادات -->
+  <div class="cardList">
+    <div class="row" id="rowRefreshCounters"><div class="left"><span>‹</span></div><div class="right">🔄 تحديث العدادات</div></div>
+    <div class="row" id="rowLogout"><div class="left"><span>‹</span></div><div class="right">🚪 تسجيل الخروج</div></div>
+    <div class="row danger" id="rowDeleteAccount"><div class="left"><span>‹</span></div><div class="right">🗑️ حذف الحساب نهائياً</div></div>
+  </div>
+
   <div class="saveArea"><button class="saveBtn" id="saveAll">💾 حفظ التغييرات</button></div>
 </div>
+
 <div class="modal" id="nameModal"><div class="box"><h3>✏️ الاسم المستعار</h3><input id="nameInput" placeholder="اكتب اسمك"><div class="actions"><button class="btnCancel" onclick="document.getElementById('nameModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="saveName">حسناً</button></div></div></div>
 <div class="modal" id="bioModal"><div class="box"><h3>✍️ التعريف الشخصي</h3><textarea id="bioInput" placeholder="اكتب نبذة جميلة..."></textarea><div class="actions"><button class="btnCancel" onclick="document.getElementById('bioModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="confirmBio">حفظ</button></div></div></div>
 <div class="modal" id="genderModal"><div class="box"><h3>اختر الجنس</h3><div class="genderGrid"><div class="genderCard" data-g="ذكر ♂️"><span class="ico">👨</span><b>ذكر</b><br>♂️</div><div class="genderCard" data-g="أنثى ♀️"><span class="ico">👩</span><b>أنثى</b><br>♀️</div></div><div class="actions"><button class="btnCancel" onclick="document.getElementById('genderModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="confirmGender">حفظ ✅</button></div></div></div>
 <div class="modal" id="bdayModal"><div class="box"><h3>📅 تاريخ الميلاد</h3><div class="wheels"><div class="wheelWrap"><small>اليوم</small><div class="wheel" id="dayWheel"></div></div><div class="wheelWrap"><small>الشهر</small><div class="wheel" id="monthWheel"></div></div><div class="wheelWrap"><small>السنة</small><div class="wheel" id="yearWheel"></div></div></div><div class="bdayPreview" id="bdayPreview">2000-01-03</div><div class="actions"><button class="btnCancel" onclick="document.getElementById('bdayModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="confirmBday">حفظ ✅</button></div></div></div>
 <div class="modal" id="countryModal"><div class="box"><h3>🌍 اختر دولتك</h3><input id="countrySearch" placeholder="ابحث... الجنوب العربي، السعودية" style="margin-bottom:10px"><div class="countryList" id="countryList"></div><div class="actions"><button class="btnCancel" onclick="document.getElementById('countryModal').classList.remove('on')">إغلاق</button></div></div></div>
+<div class="modal" id="vipModal"><div class="box"><h3>👑 VIP</h3><p>مزايا VIP قريباً - شارة مميزة ودعم خاص<br>تواصل مع الإدارة</p><div class="actions"><button class="btnCancel" onclick="document.getElementById('vipModal').classList.remove('on')">إغلاق</button><button class="btnSave" onclick="location.href='/posts/'">الذهاب للمتجر</button></div></div></div>
+<div class="modal" id="settingsModal"><div class="box"><h3>⚙️ الإعدادات</h3><div class="cardList" style="margin:0">
+  <div class="row" id="btnUpdateCounters"><div class="left">‹</div><div class="right">🔄 تحديث العدادات من السيرفر</div></div>
+  <div class="row" id="btnLogout2"><div class="left">‹</div><div class="right">🚪 تسجيل خروج</div></div>
+  <div class="row danger" id="btnDelete2"><div class="left">‹</div><div class="right" style="color:#ef4444">🗑️ حذف الحساب</div></div>
+</div><div class="actions"><button class="btnCancel" onclick="document.getElementById('settingsModal').classList.remove('on')">إغلاق</button></div></div></div>
+<div class="modal" id="deleteModal"><div class="box"><h3>⚠️ حذف الحساب؟</h3><p>هل أنت متأكد؟ سيتم حذف كل بياناتك نهائياً ولا يمكن استرجاعها<br><br>اكتب <b>حذف</b> للتأكيد</p><input id="deleteConfirmInput" placeholder="اكتب حذف"><div class="actions"><button class="btnCancel" onclick="document.getElementById('deleteModal').classList.remove('on')">إلغاء</button><button class="btnDel" id="confirmDeleteAccount">حذف نهائي 🗑️</button></div></div></div>
+
 <div class="statusBar" id="statusBar"></div>
 <div class="bottomNav">
   <a href="/profile/" class="on"><span class="ic">👤</span>حسابي</a>
@@ -98,8 +118,8 @@ body{padding-bottom:110px}
 </div>
 <script type="module">
 import {auth,db} from '/firebase-config.js';
-import {onAuthStateChanged,updateProfile} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import {doc,getDoc,setDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import {onAuthStateChanged,updateProfile,signOut,deleteUser} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {doc,getDoc,setDoc,onSnapshot,deleteDoc} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 let cur=null;
 let pending={name:null,bio:null,bday:null,gender:null,country:null,countryName:null,countryFlagImg:null,avatar:null,cover:null,coverDeleted:false};
 let tempGender=null;
@@ -122,6 +142,15 @@ const countries=[
 function genId(uid){let h=0;for(let i=0;i<uid.length;i++){h=(h*31+uid.charCodeAt(i))%1000000000;}return (10000000+(h%90000000)).toString().padStart(8,'0');}
 function showStatus(t){const el=document.getElementById('statusBar');el.textContent=t;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),3000);}
 function compressImage(file,cb){const r=new FileReader();r.onload=e=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');let w=im.width,h=im.height;const max=600;if(w>max||h>max){if(w>h){h*=max/w;w=max;}else{w*=max/h;h=max;}}c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);cb(c.toDataURL('image/jpeg',0.7));};im.src=e.target.result;};r.readAsDataURL(file);}
+function calcAge(bdayStr){
+  try{
+    const [y,m,d]=bdayStr.split('-').map(Number);
+    const today=new Date();
+    let age=today.getFullYear()-y;
+    if(today.getMonth()+1<m || (today.getMonth()+1===m && today.getDate()<d)) age--;
+    return age;
+  }catch{return null}
+}
 function setCountryDisplay(name,code,flagImg){
   const imgUrl = flagImg || (countries.find(c=>c.code===code)?.flagImg) || SOUTH_FLAG;
   document.getElementById('countryNameMain').textContent=name;
@@ -129,6 +158,17 @@ function setCountryDisplay(name,code,flagImg){
   document.getElementById('flagMain').innerHTML=`<img src="${imgUrl}" style="width:32px;height:22px;border-radius:4px;object-fit:cover;border:1px solid rgba(255,255,255,.3)">`;
   document.getElementById('rowCountryVal').textContent=name;
   const ri=document.getElementById('rowCountryImg'); ri.src=imgUrl; ri.style.display='block';
+}
+function updateMeta(gender,bday){
+  const meta=document.getElementById('metaRow');
+  let txt='';
+  if(gender){txt+=gender+' ';}
+  if(bday){
+    const age=calcAge(bday);
+    if(age!==null){txt+=`• ${age} سنة • ${bday}`;}
+    else{txt+=`• ${bday}`;}
+  }
+  meta.textContent=txt;
 }
 function renderCountryList(filter=''){
   const list=document.getElementById('countryList'); const f=filter.trim();
@@ -159,14 +199,18 @@ function buildWheels(){
   attach(dayW, v=>selDay=v); attach(monthW, v=>selMonth=v); attach(yearW, v=>selYear=v);
 }
 function updatePreview(){const m=String(selMonth).padStart(2,'0'); const d=String(selDay).padStart(2,'0'); document.getElementById('bdayPreview').textContent=`${selYear}-${m}-${d}`;}
+
 onAuthStateChanged(auth,async u=>{
   if(!u){location.replace('/login/');return}
   cur=u; const ref=doc(db,'users',u.uid); const snap=await getDoc(ref);
   let finalId;
+  let savedGender='ذكر ♂️';
+  let savedBday='2000-01-03';
   if(!snap.exists()){
     finalId=genId(u.uid);
     await setDoc(ref,{followers:0,following:0,visitors:0,gaboId:finalId,bio:'مرحبا بكم في ملفي الشخصي 👋',country:'south-arabia',countryName:'الجنوب العربي',countryFlagImg:SOUTH_FLAG,gender:'ذكر ♂️',bday:'2000-01-03'},{merge:true});
     setCountryDisplay('الجنوب العربي','south-arabia',SOUTH_FLAG);
+    updateMeta(savedGender,savedBday);
   }else{
     finalId=snap.data().gaboId;
     if(!finalId||finalId==='00000000'||finalId==='--------'||finalId.length!==8){finalId=genId(u.uid);await setDoc(ref,{gaboId:finalId},{merge:true});}
@@ -174,20 +218,28 @@ onAuthStateChanged(auth,async u=>{
     if(d.bio){document.getElementById('bioPublic').textContent=d.bio; document.getElementById('rowBioVal').textContent=d.bio;}
     if(d.countryName){setCountryDisplay(d.countryName,d.country||'south-arabia',d.countryFlagImg||SOUTH_FLAG);}
     else{setCountryDisplay('الجنوب العربي','south-arabia',SOUTH_FLAG);}
-    if(d.gender){document.getElementById('rowGenderVal').textContent=d.gender;}
-    if(d.bday){document.getElementById('rowBdayVal').textContent=d.bday;}
+    if(d.gender){document.getElementById('rowGenderVal').textContent=d.gender; savedGender=d.gender;}
+    if(d.bday){document.getElementById('rowBdayVal').textContent=d.bday; savedBday=d.bday;}
+    updateMeta(savedGender,savedBday);
   }
   document.getElementById('idMain').textContent=finalId; document.getElementById('userId').textContent=finalId;
   document.getElementById('nameMain').textContent=u.displayName||'Taher Hammam';
   document.getElementById('avL').textContent=(u.displayName||'T')[0];
   document.getElementById('rowNameVal').textContent=u.displayName||'Taher Hammam';
   document.getElementById('rowAvLetter').textContent=(u.displayName||'T')[0];
-  onSnapshot(ref,d=>{if(d.exists()){document.getElementById('c1').textContent=d.data().followers||0;document.getElementById('c2').textContent=d.data().following||0;document.getElementById('c3').textContent=d.data().visitors||0; if(d.data().bio)document.getElementById('bioPublic').textContent=d.data().bio; if(d.data().countryName&&d.data().countryFlagImg){setCountryDisplay(d.data().countryName,d.data().country,d.data().countryFlagImg);}}});
+  onSnapshot(ref,d=>{if(d.exists()){
+    document.getElementById('c1').textContent=d.data().followers||0;document.getElementById('c2').textContent=d.data().following||0;document.getElementById('c3').textContent=d.data().visitors||0;
+    if(d.data().bio)document.getElementById('bioPublic').textContent=d.data().bio;
+    if(d.data().countryName&&d.data().countryFlagImg){setCountryDisplay(d.data().countryName,d.data().country,d.data().countryFlagImg);}
+    const g=d.data().gender||savedGender; const b=d.data().bday||savedBday;
+    if(g||b)updateMeta(g,b);
+  }});
   const photo=localStorage.getItem('gabo_photo_'+u.uid)||snap.data()?.photo;
   if(photo){const img=document.getElementById('avatarImgMain');img.src=photo;img.style.display='block';document.getElementById('avL').style.display='none';document.getElementById('rowAvImg').src=photo;document.getElementById('rowAvImg').style.display='block';document.getElementById('rowAvLetter').style.display='none';}
   const cover=localStorage.getItem('gabo_cover_'+u.uid)||snap.data()?.cover;
   if(cover){document.getElementById('coverImg').src=cover;document.getElementById('coverImg').style.display='block';document.getElementById('coverEmpty').style.display='none';}
 });
+
 document.getElementById('openEdit').onclick=()=>{pending={name:null,bio:null,bday:null,gender:null,country:null,countryName:null,countryFlagImg:null,avatar:null,cover:null,coverDeleted:false};document.getElementById('editPage').classList.add('on');};
 document.getElementById('closeEdit').onclick=()=>document.getElementById('editPage').classList.remove('on');
 document.getElementById('rowName').onclick=()=>{document.getElementById('nameModal').classList.add('on');document.getElementById('nameInput').value=document.getElementById('rowNameVal').textContent;};
@@ -211,6 +263,74 @@ document.getElementById('avatarInp').onchange=e=>{const f=e.target.files[0]; if(
 document.getElementById('addCover').onclick=()=>document.getElementById('coverInp').click();
 document.getElementById('coverInp').onchange=e=>{const f=e.target.files[0]; if(!f)return; compressImage(f,data=>{pending.cover=data; document.getElementById('coverImg').src=data; document.getElementById('coverImg').style.display='block'; document.getElementById('coverEmpty').style.display='none'; pending.coverDeleted=false; showStatus('✅ تم اختيار الغلاف');});};
 document.getElementById('delCover').onclick=()=>{pending.coverDeleted=true;pending.cover=null;document.getElementById('coverImg').style.display='none';document.getElementById('coverEmpty').style.display='flex';};
+
+// ازرار VIP والاشعارات
+document.getElementById('vipBtn').onclick=()=>{document.getElementById('vipModal').classList.add('on');};
+document.getElementById('notifBtn').onclick=async()=>{
+  if('Notification' in window){
+    const perm=await Notification.requestPermission();
+    if(perm==='granted'){
+      showStatus('🔔 تم تفعيل الإشعارات ✅');
+      localStorage.setItem('gabo_notif','on');
+      document.getElementById('notifBtn').textContent='✅ تم تفعيل الإشعارات';
+    }else{showStatus('❌ تم رفض الإشعارات');}
+  }else{showStatus('المتصفح لا يدعم الإشعارات');}
+};
+
+// ازرار الاعدادات الجديدة
+document.getElementById('rowRefreshCounters').onclick=()=>{document.getElementById('settingsModal').classList.add('on');};
+document.getElementById('btnUpdateCounters').onclick=async()=>{
+  showStatus('🔄 جاري تحديث العدادات...');
+  try{
+    const ref=doc(db,'users',cur.uid);
+    const snap=await getDoc(ref);
+    const d=snap.data();
+    document.getElementById('c1').textContent=d.followers||0;
+    document.getElementById('c2').textContent=d.following||0;
+    document.getElementById('c3').textContent=d.visitors||0;
+    showStatus('✅ تم تحديث العدادات: '+ (d.followers||0)+' متابعين');
+    document.getElementById('settingsModal').classList.remove('on');
+  }catch(e){showStatus('❌ خطأ: '+e.message);}
+};
+
+document.getElementById('rowLogout').onclick=async()=>{
+  if(confirm('هل تريد تسجيل الخروج؟')){
+    await signOut(auth);
+    location.replace('/login/');
+  }
+};
+document.getElementById('btnLogout2').onclick=async()=>{
+  if(confirm('هل تريد تسجيل الخروج؟')){
+    await signOut(auth);
+    location.replace('/login/');
+  }
+};
+
+document.getElementById('rowDeleteAccount').onclick=()=>{document.getElementById('deleteModal').classList.add('on');};
+document.getElementById('btnDelete2').onclick=()=>{document.getElementById('settingsModal').classList.remove('on');document.getElementById('deleteModal').classList.add('on');};
+
+document.getElementById('confirmDeleteAccount').onclick=async()=>{
+  const inp=document.getElementById('deleteConfirmInput').value.trim();
+  if(inp!=='حذف'){alert('اكتب كلمة حذف للتأكيد');return;}
+  try{
+    showStatus('🗑️ جاري حذف الحساب...');
+    const ref=doc(db,'users',cur.uid);
+    await deleteDoc(ref);
+    localStorage.clear();
+    await deleteUser(cur);
+    alert('تم حذف الحساب');
+    location.replace('/login/');
+  }catch(err){
+    if(err.code==='auth/requires-recent-login'){
+      alert('لأسباب أمنية، يجب تسجيل الدخول مرة أخرى قبل الحذف. سجل دخولك ثم حاول مرة أخرى');
+      await signOut(auth);
+      location.replace('/login/');
+    }else{
+      showStatus('❌ خطأ: '+err.message);
+    }
+  }
+};
+
 document.getElementById('saveAll').onclick=async()=>{
   const btn=document.getElementById('saveAll');btn.disabled=true;btn.textContent='جاري الحفظ...';showStatus('💾 جاري حفظ التغييرات...');
   try{
@@ -230,6 +350,7 @@ document.getElementById('saveAll').onclick=async()=>{
     if(pending.cover!==null){localStorage.setItem('gabo_cover_'+cur.uid,pending.cover); updates.cover=pending.cover;}
     if(pending.coverDeleted){localStorage.removeItem('gabo_cover_'+cur.uid); updates.cover=null;}
     if(Object.keys(updates).length>0){await setDoc(ref,updates,{merge:true});}
+    if(pending.gender||pending.bday){updateMeta(pending.gender||document.getElementById('rowGenderVal').textContent, pending.bday||document.getElementById('rowBdayVal').textContent);}
     showStatus('✅ تم الحفظ');btn.textContent='✅ تم الحفظ';setTimeout(()=>{document.getElementById('editPage').classList.remove('on'); location.reload();},800);
   }catch(err){showStatus('❌ خطأ: '+err.message);btn.disabled=false;btn.textContent='💾 حفظ التغييرات';}
 };
