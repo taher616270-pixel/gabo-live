@@ -13,13 +13,14 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
 .tabs button{flex:1;background:#161426;border:1px solid var(--b);color:var(--muted);padding:12px;border-radius:14px;font-weight:800;font-size:13px}
 .tabs button.on{background:var(--v);color:#fff;border-color:var(--v)}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 12px}
-.comm{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;text-align:center}
+.comm{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;text-align:center}
 .flag{width:72px;height:48px;border-radius:12px;border:1px solid #2a2840;overflow:hidden;display:block;background:#000}
 .flag img,.flag svg{width:100%;height:100%;object-fit:cover;display:block}
 .comm b{font-size:13px;display:flex;align-items:center;gap:6px;justify-content:center}
 .miniFlag{width:20px;height:13px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid #333;flex-shrink:0}
 .miniFlag img,.miniFlag svg{width:100%;height:100%;object-fit:cover;display:block}
-.comm small{color:var(--muted);font-size:11px}
+.comm small{color:var(--muted);font-size:12px;font-weight:700}
+.comm small.live{color:#a78bfa}
 .createBtn{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:var(--v);color:#fff;border:0;padding:14px 26px;border-radius:30px;font-weight:900;font-size:14px;box-shadow:0 8px 20px rgba(124,58,237,.4);z-index:999;cursor:pointer}
 .bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;z-index:9999;direction:ltr}
 .bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px}
@@ -51,28 +52,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
 <div class="top"><b>✨ GABO LIVE</b><span>🔔</span></div>
 <div class="tabs"><button class="on">المجتمعات</button><button onclick="location.href='/dm/'">شات العالم 🌍</button></div>
 
-<div id="commPage" class="grid">
-  <div class="comm" onclick="goComm('south')">
-    <div class="flag">
-      <svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-        <rect width="900" height="200" y="0" fill="#D71921"/>
-        <rect width="900" height="200" y="200" fill="#FFFFFF"/>
-        <rect width="900" height="200" y="400" fill="#000000"/>
-        <path d="M0 0 L380 300 L0 600 Z" fill="#5EB6E4"/>
-        <g transform="translate(125,300)">
-          <path d="M0 -70 L20 -22 L75 -22 L32 10 L48 65 L0 32 L-48 65 L-32 10 L-75 -22 L-20 -22 Z" fill="#D71921" stroke="white" stroke-width="10" stroke-linejoin="round"/>
-        </g>
-      </svg>
-    </div>
-    <b><span class="miniFlag"><svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="200" y="0" fill="#D71921"/><rect width="900" height="200" y="200" fill="#FFF"/><rect width="900" height="200" y="400" fill="#000"/><path d="M0 0 L380 300 L0 600 Z" fill="#5EB6E4"/><g transform="translate(125,300)"><path d="M0 -60 L17 -18 L64 -18 L27 8 L41 55 L0 25 L-41 55 L-27 8 L-64 -18 L-17 -18 Z" fill="#D71921"/></g></svg></span>الجنوب العربي</b>
-    <small>رسمي</small>
-  </div>
-  <div class="comm" onclick="goComm('sa')"><div class="flag"><img src="https://flagcdn.com/w80/sa.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/sa.png"></span>السعودية</b><small>رسمي</small></div>
-  <div class="comm" onclick="goComm('ye')"><div class="flag"><img src="https://flagcdn.com/w80/ye.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/ye.png"></span>اليمن</b><small>رسمي</small></div>
-  <div class="comm" onclick="goComm('ae')"><div class="flag"><img src="https://flagcdn.com/w80/ae.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/ae.png"></span>الإمارات</b><small>رسمي</small></div>
-  <div class="comm" onclick="goComm('om')"><div class="flag"><img src="https://flagcdn.com/w80/om.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/om.png"></span>عمان</b><small>رسمي</small></div>
-  <div class="comm" onclick="goComm('qa')"><div class="flag"><img src="https://flagcdn.com/w80/qa.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/qa.png"></span>قطر</b><small>رسمي</small></div>
-</div>
+<div id="commPage" class="grid"></div>
 
 <button class="createBtn" onclick="openCreate()">+ إنشاء مجتمع جديد</button>
 
@@ -84,7 +64,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
         <span id="imgPlus">+</span>
         <img id="imgPreview" style="display:none">
       </div>
-      <small style="color:var(--muted);font-size:11px">صورة مربعة بنفس حجم الأعلام 72x48</small>
+      <small style="color:var(--muted);font-size:11px">صورة مربعة 72x48</small>
       <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="previewImg(this)">
     </div>
     <div class="field"><label>اسم المجتمع</label><input id="commNameInput" placeholder="مثال: سواق"></div>
@@ -122,15 +102,24 @@ let uid=localStorage.getItem('gabo_uid')||null;
 let selectedFlag='south';
 let selectedImgBase64=null;
 
-const SOUTH_SVG=`<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><rect width="900" height="200" y="0" fill="#D71921"/><rect width="900" height="200" y="200" fill="#FFFFFF"/><rect width="900" height="200" y="400" fill="#000000"/><path d="M0 0 L380 300 L0 600 Z" fill="#5EB6E4"/><g transform="translate(125,300)"><path d="M0 -70 L20 -22 L75 -22 L32 10 L48 65 L0 32 L-48 65 L-32 10 L-75 -22 L-20 -22 Z" fill="#D71921" stroke="white" stroke-width="10" stroke-linejoin="round"/></g></svg>`;
+const SOUTH_SVG=`<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><rect width="900" height="200" y="0" fill="#D71921"/><rect width="900" height="200" y="200" fill="#FFF"/><rect width="900" height="200" y="400" fill="#000"/><path d="M0 0 L380 300 L0 600 Z" fill="#5EB6E4"/><g transform="translate(125,300)"><path d="M0 -70 L20 -22 L75 -22 L32 10 L48 65 L0 32 L-48 65 L-32 10 L-75 -22 L-20 -22 Z" fill="#D71921" stroke="white" stroke-width="10" stroke-linejoin="round"/></g></svg>`;
+
+const STATIC_IDS=['south','sa','ye','ae','om','qa','kw','bh'];
+const NAMES={south:'الجنوب العربي',sa:'السعودية',ye:'اليمن',ae:'الإمارات',om:'عمان',qa:'قطر',kw:'الكويت',bh:'البحرين'};
+const FLAG_HTML={
+south:SOUTH_SVG,
+sa:`<img src="https://flagcdn.com/w80/sa.png">`,
+ye:`<img src="https://flagcdn.com/w80/ye.png">`,
+ae:`<img src="https://flagcdn.com/w80/ae.png">`,
+om:`<img src="https://flagcdn.com/w80/om.png">`,
+qa:`<img src="https://flagcdn.com/w80/qa.png">`,
+kw:`<img src="https://flagcdn.com/w80/kw.png">`,
+bh:`<img src="https://flagcdn.com/w80/bh.png">`
+};
 
 onAuthStateChanged(auth,u=>{ if(u){ uid=u.uid; localStorage.setItem('gabo_uid',u.uid); }});
 
-// تصحيح المسار - كان يوديك app/community
-window.goComm=(id)=>{
-  location.href=`/community/index.html?id=${encodeURIComponent(id)}`;
-};
-
+window.goComm=(id)=>{ location.href=`/community/index.html?id=${encodeURIComponent(id)}`; };
 window.openCreate=()=>document.getElementById('createModal').classList.add('on');
 window.closeCreate=()=>document.getElementById('createModal').classList.remove('on');
 window.selectFlag=(el,flag)=>{ document.querySelectorAll('.flagOpt').forEach(e=>e.classList.remove('on')); el.classList.add('on'); selectedFlag=flag; }
@@ -142,33 +131,52 @@ window.doCreate=async()=>{
   const id=name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-أ-ي]/g,'')+'-'+Date.now().toString(36).slice(-4);
   try{
     await setDoc(doc(db,'communities',id),{name:name,flag:selectedFlag,img:selectedImgBase64||null,ownerUid:uid,members:[uid],membersCount:1,banned:[],closed:false,createdAt:serverTimestamp()});
-    closeCreate(); 
-    document.getElementById('commNameInput').value=''; 
-    selectedImgBase64=null; 
-    document.getElementById('imgPreview').style.display='none'; 
-    document.getElementById('imgPlus').style.display='block'; 
-    window.goComm(id);
+    closeCreate(); document.getElementById('commNameInput').value=''; selectedImgBase64=null; document.getElementById('imgPreview').style.display='none'; document.getElementById('imgPlus').style.display='block'; window.goComm(id);
   }catch(e){ alert('خطأ: '+e.message); }
 }
 
 const grid=document.getElementById('commPage');
-const staticHTML=grid.innerHTML;
 
+// نبني كل المجتمعات من Firestore - والرسمية نعرض عدد الأعضاء لايف
 onSnapshot(collection(db,'communities'),snap=>{
-  grid.innerHTML=staticHTML;
+  // خريطة الأعداد من Firebase
+  const counts={};
+  const customDocs=[];
   snap.forEach(d=>{
-    if(['south','sa','ye','ae','om','qa'].includes(d.id)) return;
     const data=d.data();
-    const div=document.createElement('div'); div.className='comm'; 
-    div.onclick=()=>window.goComm(d.id);
+    counts[d.id]=data.membersCount || (data.members?data.members.length:0) || 0;
+    if(!STATIC_IDS.includes(d.id)){
+      customDocs.push({id:d.id,data});
+    }
+  });
+
+  grid.innerHTML='';
+
+  // 1- المجتمعات الرسمية - يطلع عدد الأعضاء
+  ['south','sa','ye','ae','om','qa'].forEach(id=>{
+    const count=counts[id] || 0;
+    const div=document.createElement('div'); div.className='comm'; div.onclick=()=>window.goComm(id);
+    const flagContent= id==='south'?SOUTH_SVG:FLAG_HTML[id];
+    div.innerHTML=`
+      <div class="flag">${flagContent}</div>
+      <b><span class="miniFlag">${flagContent}</span>${NAMES[id]}</b>
+      <small class="${count>0?'live':''}">${count>0?count+' عضو':'رسمي - 0 عضو'}</small>
+    `;
+    grid.appendChild(div);
+  });
+
+  // 2- المجتمعات اللي أنشأها المستخدمين
+  customDocs.forEach(({id,data})=>{
+    const div=document.createElement('div'); div.className='comm'; div.onclick=()=>window.goComm(id);
     let flagHtml=''; 
     if(data.img){ flagHtml=`<div class="flag"><img src="${data.img}"></div>`; }
     else if(data.flag==='south'){ flagHtml=`<div class="flag">${SOUTH_SVG}</div>`; }
-    else{ flagHtml=`<div class="flag"><img src="https://flagcdn.com/w80/${data.flag}.png"></div>`; }
+    else{ flagHtml=`<div class="flag"><img src="https://flagcdn.com/w80/${data.flag||'sa'}.png"></div>`; }
     let miniFlag='';
     if(data.flag==='south'){ miniFlag=`<span class="miniFlag">${SOUTH_SVG}</span>`; }
-    else{ miniFlag=`<span class="miniFlag"><img src="https://flagcdn.com/w80/${data.flag}.png"></span>`; }
-    div.innerHTML=`${flagHtml}<b>${miniFlag}${data.name}</b><small>${data.membersCount||1} عضو ${data.closed?'🔒':''}</small>`;
+    else{ miniFlag=`<span class="miniFlag"><img src="https://flagcdn.com/w80/${data.flag||'sa'}.png"></span>`; }
+    const count=data.membersCount||1;
+    div.innerHTML=`${flagHtml}<b>${miniFlag}${data.name}</b><small class="live">${count} عضو</small>`;
     grid.appendChild(div);
   });
 });
