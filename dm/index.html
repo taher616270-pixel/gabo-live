@@ -7,7 +7,6 @@
 :root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;overflow:hidden;position:fixed;inset:0;display:flex;flex-direction:column}
-/* هيدر */
 .top{height:60px;min-height:60px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px;padding:0 12px;flex-shrink:0}
 .back{width:42px;height:42px;background:#1e1c2e;border:1px solid var(--b);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;cursor:pointer}
 .avatar{width:42px;height:42px;border-radius:50%;background:#2a2840;object-fit:cover}
@@ -15,60 +14,51 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;overflo
 .nameBox b{font-size:15px}.nameBox small{font-size:11px;color:#8b8ba7}
 .nameBox small.online{color:#25d366}.nameBox small.typing{color:#a78bfa;font-weight:700}
 
-/* قائمة */
-.listView{flex:1;overflow:auto;padding:12px 12px 120px}
-.chatView{flex:1;display:none;flex-direction:column;background:#050507;position:relative}
+.listView{flex:1;overflow:auto;padding:12px 12px 120px;display:flex;flex-direction:column}
+.chatView{flex:1;display:none;flex-direction:column;background:#050507;position:relative;overflow:hidden}
 .chatView.on{display:flex}
-.item{background:var(--card);border:1px solid var(--b);border-radius:16px;padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:center;cursor:pointer;position:relative}
+
+.item{background:var(--card);border:1px solid var(--b);border-radius:16px;padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:center;cursor:pointer;position:relative;flex-shrink:0}
 .item img{width:52px;height:52px;border-radius:50%;background:#2a2840;object-fit:cover}
 .item b{font-size:14px;display:block}.item small{color:#8b8ba7;font-size:12px}
 .badge{position:absolute;left:12px;background:#ff3b30;color:#fff;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
 .badge.hide{display:none}
 
-/* رسائل واتس */
-.messages{flex:1;overflow:auto;padding:12px 10px 12px;display:flex;flex-direction:column;gap:4px}
-.bubble{max-width:78%;padding:8px 12px 6px;border-radius:18px;font-size:14.5px;line-height:1.4;word-break:break-word;box-shadow:0 1px 1px rgba(0,0,0,.2)}
+.messages{flex:1;overflow:auto;padding:12px 10px;display:flex;flex-direction:column;gap:6px}
+.bubble{max-width:78%;padding:8px 12px 6px;border-radius:18px;font-size:14.5px;line-height:1.4;word-break:break-word}
 .bubble.in{align-self:flex-start;background:#1e1c2e;border:1px solid var(--b);border-top-right-radius:4px}
 .bubble.out{align-self:flex-end;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-top-left-radius:4px}
 .bubble .time{font-size:9px;opacity:.6;margin-top:4px;display:block;text-align:left;direction:ltr}
 .typingBubble{align-self:flex-start;background:#1e1c2e;padding:10px 14px;border-radius:18px;border-top-right-radius:4px;display:flex;gap:4px}
 .typingBubble span{width:5px;height:5px;background:#8b8ba7;border-radius:50%;animation:bounce 1.4s infinite}
-.typingBubble span:nth-child(2){animation-delay:.2s}.typingBubble span:nth-child(3){animation-delay:.4s}
 @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
 
-/* شريط الكتابة - ثابت داخل الدردشة */
-.inputBar{position:absolute;bottom:0;left:0;right:0;background:#11111a;border-top:1px solid var(--b);padding:8px 10px calc(8px + env(safe-area-inset-bottom));display:flex;gap:8px;align-items:center;z-index:20}
+/* شريط الكتابة - الحل النهائي */
+.inputBar{
+  height:64px;min-height:64px;flex-shrink:0;
+  background:#11111a;border-top:1px solid var(--b);
+  padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+  display:flex;gap:8px;align-items:center;
+}
 .inputWrap{flex:1;background:#1e1e2e;border:1px solid var(--b);border-radius:24px;display:flex;align-items:center;padding:4px 14px}
 .inputWrap input{flex:1;background:transparent;border:0;color:#fff;outline:none;padding:10px 0;font-size:15px}
 .sendBtn{width:44px;height:44px;min-width:44px;border-radius:50%;background:var(--v);border:0;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 
-/* زر جديد */
-.fab{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);height:52px;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;border-radius:26px;display:flex;align-items:center;gap:8px;padding:0 22px;font-size:15px;font-weight:800;z-index:19;border:0;box-shadow:0 8px 20px rgba(124,58,237,.4)}
+.fab{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);height:52px;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;border-radius:26px;display:flex;align-items:center;gap:8px;padding:0 22px;font-size:15px;font-weight:800;z-index:19;border:0}
+.fab.hide{display:none}
 
-/* الشريط السفلي - نفس حجم كل صفحات الموقع */
 .bottomNav{
   position:fixed;bottom:0;left:0;right:0;
   height:82px;min-height:82px;
   background:#0f0e18;border-top:1px solid #2a2840;
   display:flex;justify-content:space-around;align-items:flex-start;
   padding-top:8px;padding-bottom:env(safe-area-inset-bottom);
-  direction:ltr;z-index:30;flex-shrink:0
+  direction:ltr;z-index:30
 }
-.bottomNav a{
-  flex:1;text-decoration:none;color:#6b6b7a;
-  font-size:11px;font-weight:600;
-  display:flex;flex-direction:column;align-items:center;gap:5px;
-  padding:4px 0;
-}
-.bottomNav a.on{color:#fff}
-.bottomNav a .ic{font-size:24px;width:24px;height:24px;display:flex;align-items:center;justify-content:center}
-.bottomNav a.plus .ic{
-  background:var(--v);color:#fff;
-  width:56px;height:56px;border-radius:16px;
-  font-size:32px;margin-top:-18px;
-  box-shadow:0 4px 12px rgba(124,58,237,.4);
-  display:flex;align-items:center;justify-content:center
-}
+.bottomNav.hide{display:none}
+.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:11px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:5px;padding:4px 0;position:relative}
+.bottomNav a.on{color:#fff}.bottomNav a .ic{font-size:24px;width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+.bottomNav a.plus .ic{background:var(--v);color:#fff;width:56px;height:56px;border-radius:16px;font-size:32px;margin-top:-18px;box-shadow:0 4px 12px rgba(124,58,237,.4)}
 .navBadge{position:absolute;top:0;left:50%;transform:translateX(6px);background:#ff3b30;color:#fff;min-width:18px;height:18px;border-radius:9px;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #0f0e18}
 .navBadge.hide{display:none}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:100;display:none;flex-direction:column}.modal.on{display:flex}
@@ -76,16 +66,17 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;overflo
 </head>
 <body>
 <div class="top" id="listTop"><div class="back" onclick="location.href='/profile/'">‹</div><b>🔒 دردشة خاصة</b></div>
+
 <div class="listView" id="listView"><div id="chatList">جاري التحميل...</div></div>
 
 <div class="chatView" id="chatView">
   <div class="top">
     <div class="back" id="backToList">‹</div>
     <img id="chatAvatar" class="avatar" src="">
-    <div class="nameBox"><b id="chatName">...</b><small id="chatStatus">...</small></div>
+    <div class="nameBox"><b id="chatName">...</b><small id="chatStatus"></small></div>
   </div>
-  <div class="messages" id="messages" style="padding-bottom:80px"></div>
-  <div id="typingIndicator" style="padding:0 12px 6px;display:none;position:absolute;bottom:70px;left:0"><div class="typingBubble"><span></span><span></span><span></span></div></div>
+  <div class="messages" id="messages"></div>
+  <div id="typingIndicator" style="padding:0 12px 6px;display:none"><div class="typingBubble"><span></span><span></span><span></span></div></div>
   <div class="inputBar">
     <div class="inputWrap"><input id="msgInput" placeholder="اكتب رسالة..." autocomplete="off"></div>
     <button class="sendBtn" id="sendBtn">➤</button>
@@ -94,16 +85,16 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;overflo
 
 <button class="fab" id="newChatBtn">💬 دردشة جديدة</button>
 
-<div class="bottomNav">
+<div class="bottomNav" id="bottomNav">
   <a href="/profile/"><span class="ic">👤</span><span>حسابي</span></a>
-  <a class="on" id="chatTab"><span class="ic">🔒</span><span>دردشة</span><span class="navBadge hide" id="navBadge">0</span></a>
+  <a class="on"><span class="ic">🔒</span><span>دردشة</span><span class="navBadge hide" id="navBadge">0</span></a>
   <a href="/create/" class="plus"><span class="ic">+</span></a>
   <a href="/posts/"><span class="ic">📄</span><span>منشور</span></a>
   <a href="/app/"><span class="ic">🏠</span><span>الرئيسية</span></a>
 </div>
 
 <div class="modal" id="usersModal">
-  <div class="top"><input id="searchUser" placeholder="ابحث عن مستخدم..." style="flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:12px;padding:12px;color:#fff"><button id="closeModal" style="width:42px;height:42px;border-radius:50%;background:#1e1c2e;border:1px solid var(--b);color:#fff">✕</button></div>
+  <div class="top"><input id="searchUser" placeholder="ابحث..." style="flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:12px;padding:12px;color:#fff"><button id="closeModal" style="width:42px;height:42px;border-radius:50%;background:#1e1c2e;border:1px solid var(--b);color:#fff">✕</button></div>
   <div style="flex:1;overflow:auto;padding:12px" id="usersList"></div>
 </div>
 
@@ -113,10 +104,9 @@ import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/f
 import { collection, query, where, getDocs, onSnapshot, addDoc, doc, orderBy, serverTimestamp, updateDoc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 let myUid=null, currentChatId=null, unsubscribe=null, unsubscribeChat=null, currentOtherId=null, typingTimeout=null;
-let allUsers=[], chatsCache=[];
+let allUsers=[];
 
 function saveUid(uid){ myUid=uid; localStorage.setItem('gabo_uid',uid); }
-
 onAuthStateChanged(auth, async u=>{
   if(u){ saveUid(u.uid); await setOnline(u.uid); loadChats(u.uid); loadUsers(u.uid); }
   else{ const s=localStorage.getItem('gabo_uid'); if(s){ myUid=s; await setOnline(s); loadChats(s); loadUsers(s); } }
@@ -132,13 +122,12 @@ function loadChats(uid){
   onSnapshot(q, snap=>{
     const list=document.getElementById('chatList');
     if(snap.empty){ list.innerHTML='<div style="text-align:center;padding:60px;color:#888">لا توجد دردشات</div>'; document.getElementById('navBadge').classList.add('hide'); return; }
-    chatsCache=[]; list.innerHTML=''; let total=0;
+    list.innerHTML=''; let total=0;
     snap.forEach(d=>{
-      const data=d.data(); chatsCache.push({id:d.id, data});
-      const otherId=data.users.find(id=>id!==uid); const other=data.usersInfo?.[otherId]||{name:'مستخدم',photo:''};
+      const data=d.data(); const otherId=data.users.find(id=>id!==uid); const other=data.usersInfo?.[otherId]||{name:'مستخدم',photo:''};
       const unread=data.unreadCounts?.[uid]||0; total+=unread;
       const el=document.createElement('div'); el.className='item';
-      el.innerHTML=`<img src="${other.photo}" onerror="this.src=''"><div><b>${other.name}</b><small>${(data.lastMsg||'').slice(0,30)}</small></div><div class="badge ${unread?'':'hide'}">${unread}</div>`;
+      el.innerHTML=`<img src="${other.photo}" onerror="this.style.background='#2a2840'"><div><b>${other.name}</b><small>${(data.lastMsg||'').slice(0,30)}</small></div><div class="badge ${unread?'':'hide'}">${unread}</div>`;
       el.onclick=()=>openChat(d.id, other, otherId); list.appendChild(el);
     });
     const b=document.getElementById('navBadge'); if(total>0){ b.textContent=total>99?'99+':total; b.classList.remove('hide'); } else b.classList.add('hide');
@@ -149,10 +138,15 @@ async function openChat(chatId, other, otherId){
   currentChatId=chatId; currentOtherId=otherId;
   document.getElementById('chatName').textContent=other.name;
   document.getElementById('chatAvatar').src=other.photo||'';
-  document.getElementById('listView').style.display='none'; document.getElementById('listTop').style.display='none'; document.getElementById('newChatBtn').style.display='none';
+  
+  // اخفاء القائمة واظهار الدردشة + اخفاء الشريط السفلي عشان ما يغطي الكتابة
+  document.getElementById('listView').style.display='none';
+  document.getElementById('listTop').style.display='none';
+  document.getElementById('newChatBtn').classList.add('hide');
+  document.getElementById('bottomNav').classList.add('hide');
   document.getElementById('chatView').classList.add('on');
+  document.getElementById('messages').innerHTML='';
 
-  // متصل / يكتب
   const userRef=doc(db,'users',otherId);
   onSnapshot(userRef, s=>{
     if(!s.exists()) return;
@@ -166,7 +160,7 @@ async function openChat(chatId, other, otherId){
   });
 
   try{ const r=doc(db,'chats',chatId); const s=await getDoc(r); const c=s.data().unreadCounts||{}; c[myUid]=0; await updateDoc(r,{unreadCounts:c}); }catch(e){}
-  const msgs=document.getElementById('messages'); if(unsubscribe) unsubscribe(); if(unsubscribeChat) unsubscribeChat();
+  if(unsubscribe) unsubscribe(); if(unsubscribeChat) unsubscribeChat();
   const chatRef=doc(db,'chats',chatId);
   unsubscribeChat=onSnapshot(chatRef, snap=>{
     const data=snap.data(); if(!data) return;
@@ -174,6 +168,7 @@ async function openChat(chatId, other, otherId){
   });
   const q=query(collection(db,'chats',chatId,'messages'), orderBy('createdAt','asc'));
   unsubscribe=onSnapshot(q, snap=>{
+    const msgs=document.getElementById('messages');
     msgs.innerHTML=''; snap.forEach(d=>{
       const m=d.data(); const isMe=m.senderId===myUid; const date=m.createdAt?.toDate?.(); const time=date? `${date.getHours()}:${String(date.getMinutes()).padStart(2,'0')}` : '';
       if(m.text) msgs.innerHTML+=`<div class="bubble ${isMe?'out':'in'}">${m.text.replace(/</g,'&lt;')}<span class="time">${time} ${isMe?'✓✓':''}</span></div>`;
@@ -185,7 +180,9 @@ document.getElementById('backToList').onclick=()=>{
   document.getElementById('chatView').classList.remove('on');
   document.getElementById('listView').style.display='flex';
   document.getElementById('listTop').style.display='flex';
-  document.getElementById('newChatBtn').style.display='flex';
+  document.getElementById('newChatBtn').classList.remove('hide');
+  document.getElementById('bottomNav').classList.remove('hide');
+  document.getElementById('messages').innerHTML='';
   currentChatId=null; currentOtherId=null;
   if(unsubscribe) unsubscribe(); if(unsubscribeChat) unsubscribeChat();
 };
