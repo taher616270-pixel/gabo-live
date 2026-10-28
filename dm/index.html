@@ -30,12 +30,15 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 .actionBtn{background:var(--v);border:0;color:#fff;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0}
 .actionBtn.outline{background:transparent;border:1px solid var(--b);color:#fff}
 .chat{flex:1;overflow:auto;padding:76px 12px 130px 12px;display:flex;flex-direction:column;gap:10px}
-.bubble{max-width:78%;padding:10px 14px;border-radius:18px;background:#1e1c2e;border:1px solid var(--b);font-size:14px;word-break:break-word}
+.bubble{max-width:78%;padding:10px 14px;border-radius:18px;background:#1e1c2e;border:1px solid var(--b);font-size:14px;word-break:break-word;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .bubble.me{align-self:flex-end;background:var(--v);border-color:var(--v)}
-.bubble .southFlag{width:52px;height:34px;border-radius:6px;overflow:hidden;display:inline-flex;border:1px solid rgba(255,255,255,.3);vertical-align:middle}
-.bubble .southFlag svg{width:100%;height:100%;display:block}
+.bubble .flagInMsg{width:38px;height:26px;border-radius:4px;overflow:hidden;display:inline-flex;border:1px solid rgba(255,255,255,.3);vertical-align:middle;flex-shrink:0}
+.bubble .flagInMsg svg{width:100%;height:100%;display:block}
 .inputBar{position:fixed;bottom:84px;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);padding:10px;display:flex;gap:8px;z-index:20;align-items:center}
-.inputBar input{flex:1;background:#1a182a;border:1px solid var(--b);border-radius:20px;padding:12px 14px;color:#fff;outline:0;font-size:14px}
+.msgInput{flex:1;background:#1a182a;border:1px solid var(--b);border-radius:20px;padding:10px 14px;color:#fff;outline:0;font-size:14px;min-height:44px;max-height:100px;overflow-y:auto;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.msgInput:empty:before{content:attr(data-placeholder);color:#6b6b7a}
+.msgInput .inlineFlag{width:26px;height:18px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid rgba(255,255,255,.2);vertical-align:middle}
+.msgInput .inlineFlag svg{width:100%;height:100%}
 .iconBtn{width:40px;height:40px;border-radius:50%;background:#1e1c2e;border:1px solid var(--b);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;flex-shrink:0}
 .send{width:44px;height:44px;border-radius:50%;background:var(--v);border:0;color:#fff;font-size:20px;cursor:pointer;flex-shrink:0}
 .emojiPanel{position:fixed;bottom:130px;left:8px;right:8px;background:#161426;border:1px solid var(--b);border-radius:18px;max-height:340px;display:none;flex-direction:column;z-index:2000;overflow:hidden}
@@ -44,10 +47,11 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 .emojiTabs button{background:#0f0e18;border:1px solid var(--b);color:#fff;padding:6px 12px;border-radius:10px;cursor:pointer;font-size:13px;white-space:nowrap}
 .emojiTabs button.on{background:var(--v)}
 .emojiGrid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;padding:10px;overflow-y:auto}
-.emojiGrid span{font-size:24px;padding:8px;text-align:center;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.emojiGrid span{font-size:24px;padding:8px;text-align:center;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center;min-height:42px}
 .emojiGrid span:hover{background:#1e1c2e}
-.flagCustom{width:36px;height:24px;border-radius:5px;overflow:hidden;border:1px solid #666;display:inline-flex!important;cursor:pointer}
-.flagCustom svg{width:100%;height:100%;object-fit:cover}
+.flagEmoji{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:26px}
+.flagCustom{width:34px;height:24px;border-radius:4px;overflow:hidden;border:1px solid #666;display:inline-flex!important;cursor:pointer;background:#000}
+.flagCustom svg{width:100%;height:100%;object-fit:cover;display:block}
 .bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;padding-bottom:env(safe-area-inset-bottom);z-index:1000;direction:ltr}
 .bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
 .bottomNav a.on{color:#fff}
@@ -86,7 +90,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 </div>
 <div class="inputBar" id="inputBar" style="display:none">
 <button class="iconBtn" onclick="toggleEmoji()">😊</button>
-<input id="msgInput" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMsg()">
+<div id="msgInput" class="msgInput" contenteditable="true" data-placeholder="اكتب رسالة..."></div>
 <button class="send" onclick="sendMsg()">➤</button>
 </div>
 <button class="fab" id="fabBtn" onclick="openAddPeople()">+</button>
@@ -116,23 +120,65 @@ window.switchTab=(tab)=>{currentTab=tab;document.getElementById('tabChats').clas
 window.onSearch=()=>{if(currentTab==='chats')renderChats();if(currentTab==='friends')renderFriends();}
 function filterBySearch(arr){const q=document.getElementById('searchInput').value.toLowerCase().trim();if(!q)return arr;return arr.filter(u=>(u.name||'').toLowerCase().includes(q)||(u.gaboId||'').toLowerCase().includes(q));}
 
-// === اموجيات مع علم جنوب يرسل مباشرة ===
+// === اموجيات - علم الجنوب فقط في تبويب الاعلام ===
 window.toggleEmoji=()=>{const p=document.getElementById('emojiPanel');p.classList.toggle('on');if(p.classList.contains('on'))showEmojiCat(null,'smile');}
 window.showEmojiCat=(e,cat)=>{
   if(e){e.target.closest('.emojiTabs').querySelectorAll('button').forEach(b=>b.classList.remove('on'));e.target.classList.add('on');}
   const grid=document.getElementById('emojiGrid');grid.innerHTML='';
   let list=[];
   if(cat==='smile')list=['😀','😂','😍','🥰','😊','😎','🤩','😭','😢','😡','🤔','👍','👎','👏','🙏','💪','🔥','❤️','💜','✨','🎉','🥳','😴','🤤','🤫','🤐','🥺','😋','😜','🤣','😇','🤠','🥶'];
-  else if(cat==='flags')list=['🇸🇦','🇾🇪','🇦🇪','🇴🇲','🇶🇦','🇰🇼','🇧🇭','🇪🇬','🇯🇴','🇱🇧','🇵🇸','🇮🇶','🇸🇾','🇹🇷','🇵🇰','🇺🇸','🇬🇧'];
+  else if(cat==='flags')list=['🇸🇦','🇾🇪','🇦🇪','🇴🇲','🇶🇦','🇰🇼','🇧🇭','🇪🇬','🇯🇴','🇱🇧','🇵🇸','🇮🇶','🇸🇾','🇹🇷','🇵🇰','🇺🇸','🇬🇧','🇩🇪','🇫🇷','🇮🇹','🇪🇸','🇨🇦','🇦🇺','🇧🇷','🇷🇺','🇨🇳','🇯🇵','🇰🇷','🇮🇳'];
   else if(cat==='love')list=['❤️','🧡','💛','💚','💙','💜','🖤','🤍','💔','❣️','💕','💞','💓','💗','💖','💝','😘','🥰','😍','🤗','💋','💌','🌹','🌷','💐'];
-  else list=['😀','😂','❤️','🔥','👍','😍','🙏','💪','🇸🇦','🇾🇪','🏴','✨','🎉','🌟','💯','👑','💜','😎','🤩','🥳','😭','🤔','👏','🫶','🤲'];
-  list.forEach(em=>{const s=document.createElement('span');s.textContent=em;s.onclick=()=>{document.getElementById('msgInput').value+=em;document.getElementById('msgInput').focus();};grid.appendChild(s);});
-  const southSpan=document.createElement('span');southSpan.className='flagCustom';southSpan.innerHTML=SOUTH_SVG;southSpan.title='علم الجنوب - ارسال مباشر';southSpan.onclick=()=>{sendSouthFlag();document.getElementById('emojiPanel').classList.remove('on');};grid.prepend(southSpan);
+  else list=['😀','😂','❤️','🔥','👍','😍','🙏','💪','✨','🎉','🌟','💯','👑','💜','😎','🤩','🥳','😭','🤔','👏','🫶','🤲'];
+  
+  // اذا تبويب اعلام فقط اضف علم الجنوب
+  if(cat==='flags'){
+    const southSpan=document.createElement('span');
+    southSpan.className='flagCustom';
+    southSpan.innerHTML=SOUTH_SVG;
+    southSpan.title='علم الجنوب العربي';
+    southSpan.onclick=()=>{insertSouthFlagToInput();};
+    grid.appendChild(southSpan);
+  }
+  
+  list.forEach(em=>{
+    const s=document.createElement('span');
+    if(em.startsWith('🇸')||em.startsWith('🇾')||em.length>2){s.innerHTML=`<span class="flagEmoji">${em}</span>`;}
+    else{s.textContent=em;}
+    s.onclick=()=>{insertTextToInput(em);};
+    grid.appendChild(s);
+  });
 }
-window.sendSouthFlag=async()=>{
-  if(!chatId||!uid||!targetUid)return;
-  await addDoc(collection(db,'privateChats',chatId,'messages'),{text:SOUTH_PLACEHOLDER,uid:uid,createdAt:serverTimestamp()});
-  await setDoc(doc(db,'privateChats',chatId),{lastText:'🏴 علم الجنوب',lastAt:serverTimestamp(),participants:[uid,targetUid]},{merge:true});
+
+function insertTextToInput(text){
+  const input=document.getElementById('msgInput');
+  input.focus();
+  document.execCommand('insertText', false, text);
+}
+
+function insertSouthFlagToInput(){
+  const input=document.getElementById('msgInput');
+  input.focus();
+  // ادخل علم الجنوب كصورة في الكتابة - مو انجليزي
+  const span=document.createElement('span');
+  span.className='inlineFlag';
+  span.setAttribute('data-flag','south');
+  span.innerHTML=SOUTH_SVG;
+  span.contentEditable=false;
+  // ادخال في المكان الحالي
+  const sel=window.getSelection();
+  if(sel&&sel.rangeCount>0){
+    const range=sel.getRangeAt(0);
+    range.insertNode(span);
+    range.setStartAfter(span);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }else{
+    input.appendChild(span);
+  }
+  // مسافة بعده
+  document.execCommand('insertText', false, ' ');
 }
 
 async function loadChatsData(){
@@ -143,26 +189,47 @@ async function loadChatsData(){
       const data=d.data();const other=data.participants?.find(x=>x!==uid);if(!other)continue;
       let name=other.slice(0,8),photo='https://i.pravatar.cc/100?u='+other;
       try{const us=await getDoc(doc(db,'users',other));if(us.exists()){name=us.data().displayName||us.data().name||name;photo=us.data().photoURL||us.data().photo||us.data().avatar||photo;}}catch{}
-      let msgCount=0;try{const msgsSnap=await getDocs(collection(db,'privateChats',d.id,'messages'));let otherCount=0;msgsSnap.forEach(m=>{if(m.data().uid===other)otherCount++;});msgCount=otherCount>0?otherCount:msgsSnap.size;}catch{}
+      let unread=0;
+      try{
+        const lastRead = data.lastRead?.[uid]?.seconds || 0;
+        const msgsSnap=await getDocs(query(collection(db,'privateChats',d.id,'messages'), orderBy('createdAt','asc')));
+        msgsSnap.forEach(m=>{
+          const md=m.data();
+          if(md.uid===other && (md.createdAt?.seconds||0) > lastRead) unread++;
+        });
+      }catch{}
       const time=data.lastAt?new Date(data.lastAt.seconds*1000).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}):'';
-      chatsCache.push({otherUid:other,name,photo,lastText:data.lastText||'',time,lastAt:data.lastAt?.seconds||0,count:msgCount});
+      chatsCache.push({otherUid:other,name,photo,lastText:data.lastText||'',time,lastAt:data.lastAt?.seconds||0,count:unread,total:data.totalMessages||0});
     }
     chatsCache.sort((a,b)=>b.lastAt-a.lastAt);
+    const totalUnread=chatsCache.reduce((s,c)=>s+c.count,0);
     const count=chatsCache.length;
-    document.getElementById('countBadge').textContent=count;document.getElementById('countBadge').style.display=count>0?'inline-flex':'none';
-    document.getElementById('navCount').textContent=count;document.getElementById('navCount').style.display=count>0?'flex':'none';
-    document.getElementById('tabCount').textContent=count>0?`(${count})`:'';
+    document.getElementById('countBadge').textContent=totalUnread>0?totalUnread:count;
+    document.getElementById('countBadge').style.display=(totalUnread>0||count>0)?'inline-flex':'none';
+    document.getElementById('navCount').textContent=totalUnread>0?totalUnread:count;
+    document.getElementById('navCount').style.display=(totalUnread>0||count>0)?'flex':'none';
+    document.getElementById('tabCount').textContent= totalUnread>0?`(${totalUnread})` : (count>0?`(${count})`:'');
     if(currentTab==='chats')renderChats();
   });
 }
+
 function renderChats(){
   const list=document.getElementById('listView');const filtered=filterBySearch(chatsCache);list.innerHTML='';
   if(filtered.length===0){list.innerHTML='<div style="text-align:center;color:#8b8ba7;margin-top:80px">لا يوجد محادثات</div>';return;}
   filtered.forEach(c=>{
     const item=document.createElement('div');item.className='chatItem';
     const preview=c.lastText.includes('علم الجنوب')?'🏴 علم الجنوب':c.lastText;
-    item.innerHTML=`<div style="width:42px;height:42px;border-radius:50%;overflow:hidden;background:#222"><img src="${c.photo}" style="width:100%;height:100%;object-fit:cover"></div><div style="flex:1;overflow:hidden"><b style="font-size:13px">${c.name}</b><br><small style="color:#8b8ba7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block">${preview||'محادثة جديدة'}</small></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:65px"><small style="color:#8b8ba7;font-size:11px">${c.time||''}</small>${c.count>0?`<span style="background:#7c3aed;color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:12px">${c.count} رسائل</span>`:''}<div style="color:#6b6b7a">›</div></div>`;
-    item.onclick=()=>{localStorage.setItem('last_dm_uid',c.otherUid);location.href='/dm/?uid='+c.otherUid;};list.appendChild(item);
+    const badge = c.count>0? `<span style="background:#ff3b30;color:#fff;font-size:10px;font-weight:900;padding:3px 8px;border-radius:12px;min-width:22px;text-align:center">${c.count}</span>` : '';
+    item.innerHTML=`<div style="width:42px;height:42px;border-radius:50%;overflow:hidden;background:#222"><img src="${c.photo}" style="width:100%;height:100%;object-fit:cover"></div><div style="flex:1;overflow:hidden"><b style="font-size:13px">${c.name}</b><br><small style="color:#8b8ba7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block">${preview||'محادثة جديدة'}</small></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:65px"><small style="color:#8b8ba7;font-size:11px">${c.time||''}</small>${badge}<div style="color:#6b6b7a">›</div></div>`;
+    item.onclick=async()=>{
+      // لما يدخل يصفر العداد
+      const chatIdTmp=[uid,c.otherUid].sort().join('_');
+      try{
+        await setDoc(doc(db,'privateChats',chatIdTmp),{lastRead:{[uid]:serverTimestamp()}},{merge:true});
+      }catch{}
+      localStorage.setItem('last_dm_uid',c.otherUid);location.href='/dm/?uid='+c.otherUid;
+    };
+    list.appendChild(item);
   });
 }
 function renderFriends(){const list=document.getElementById('listView');const filtered=filterBySearch(friendsCache);list.innerHTML='';if(filtered.length===0){list.innerHTML='<div style="text-align:center;color:#8b8ba7;margin-top:80px">لا يوجد أصدقاء</div>';return;}filtered.forEach(u=>{const div=document.createElement('div');div.className='userItem';div.innerHTML=`<div style="width:42px;height:42px;border-radius:50%;overflow:hidden;background:#222"><img src="${u.photo}" style="width:100%;height:100%;object-fit:cover"></div><div class="info"><b>${u.name}</b><small>${u.country} • صديق ✓</small><br><small style="font-family:monospace">ID: ${u.gaboId}</small></div><button class="actionBtn" onclick="startChat('${u.uid}')">💬 راسل</button>`;list.appendChild(div);});}
@@ -171,26 +238,9 @@ window.closeAddPeople=()=>document.getElementById('addModal').classList.remove('
 async function loadAddPeople(){const list=document.getElementById('addList');list.innerHTML='<div style="text-align:center;color:#8b8ba7;margin-top:40px">جاري التحميل...</div>';try{const snap=await getDocs(query(collection(db,'users'),limit(100)));addCache=[];snap.forEach(d=>{if(d.id===uid)return;const data=d.data();addCache.push({uid:d.id,name:data.displayName||data.name||'مستخدم',photo:data.photoURL||data.photo||data.avatar||'https://i.pravatar.cc/100?u='+d.id,country:data.countryName||'',gaboId:data.gaboId||d.id.slice(0,8)});});renderAddPeople(addCache);}catch(e){list.innerHTML='<div style="color:#ef4444;text-align:center">'+e.message+'</div>';}}
 function renderAddPeople(arr){const list=document.getElementById('addList');list.innerHTML='';arr.forEach(u=>{const div=document.createElement('div');div.className='userItem';div.innerHTML=`<div style="width:42px;height:42px;border-radius:50%;overflow:hidden"><img src="${u.photo}" style="width:100%;height:100%;object-fit:cover"></div><div class="info"><b>${u.name}</b><small>${u.country}</small><br><small style="font-family:monospace">ID: ${u.gaboId}</small></div><div style="display:flex;gap:6px"><button class="actionBtn outline" id="btn_${u.uid}" onclick="followUser('${u.uid}')">+ تابع</button><button class="actionBtn" onclick="startChat('${u.uid}')">💬</button></div>`;list.appendChild(div);});}
 window.filterAdd=()=>{const q=document.getElementById('addSearch').value.toLowerCase().trim();if(!q)renderAddPeople(addCache);else renderAddPeople(addCache.filter(u=>u.name.toLowerCase().includes(q)));}
-
-window.followUser=async(otherUid)=>{
-  const btn=document.getElementById('btn_'+otherUid);if(btn){btn.textContent='...';btn.disabled=true;}
-  try{
-    await setDoc(doc(db,'users',uid),{followingList:arrayUnion(otherUid),following:arrayUnion(otherUid),followingCount:increment(1)},{merge:true});
-    await setDoc(doc(db,'users',otherUid),{followersList:arrayUnion(uid),followers:arrayUnion(uid),followersCount:increment(1)},{merge:true});
-    if(btn){btn.textContent='✓ تم';btn.style.background='#22c55e';}setTimeout(()=>loadFriendsData(),500);
-  }catch(e){alert('خطأ: '+e.message);if(btn){btn.textContent='+ تابع';btn.disabled=false;}}
-}
+window.followUser=async(otherUid)=>{const btn=document.getElementById('btn_'+otherUid);if(btn){btn.textContent='...';btn.disabled=true;}try{await setDoc(doc(db,'users',uid),{followingList:arrayUnion(otherUid),following:arrayUnion(otherUid),followingCount:increment(1)},{merge:true});await setDoc(doc(db,'users',otherUid),{followersList:arrayUnion(uid),followers:arrayUnion(uid),followersCount:increment(1)},{merge:true});if(btn){btn.textContent='✓ تم';btn.style.background='#22c55e';}setTimeout(()=>loadFriendsData(),500);}catch(e){alert('خطأ: '+e.message);if(btn){btn.textContent='+ تابع';btn.disabled=false;}}}
 window.startChat=(otherUid)=>{localStorage.setItem('last_dm_uid',otherUid);location.href='/dm/?uid='+otherUid;}
-
-async function loadFriendsData(){
-  try{
-    const mySnap=await getDoc(doc(db,'users',uid));if(!mySnap.exists())return;
-    const myData=mySnap.data();const myFollowing=myData.followingList||myData.following||[];friendsCache=[];
-    for(const fid of myFollowing){try{const fSnap=await getDoc(doc(db,'users',fid));if(!fSnap.exists())continue;const fData=fSnap.data();const theirFollowing=fData.followingList||fData.following||[];if(theirFollowing.includes(uid)){friendsCache.push({uid:fid,name:fData.displayName||fData.name||'مستخدم',photo:fData.photoURL||fData.photo||fData.avatar||'https://i.pravatar.cc/100?u='+fid,country:fData.countryName||'',gaboId:fData.gaboId||fid.slice(0,8)});}}catch{}}
-    if(currentTab==='friends')renderFriends();
-  }catch{}
-}
-
+async function loadFriendsData(){try{const mySnap=await getDoc(doc(db,'users',uid));if(!mySnap.exists())return;const myData=mySnap.data();const myFollowing=myData.followingList||myData.following||[];friendsCache=[];for(const fid of myFollowing){try{const fSnap=await getDoc(doc(db,'users',fid));if(!fSnap.exists())continue;const fData=fSnap.data();const theirFollowing=fData.followingList||fData.following||[];if(theirFollowing.includes(uid)){friendsCache.push({uid:fid,name:fData.displayName||fData.name||'مستخدم',photo:fData.photoURL||fData.photo||fData.avatar||'https://i.pravatar.cc/100?u='+fid,country:fData.countryName||'',gaboId:fData.gaboId||fid.slice(0,8)});}}catch{}}if(currentTab==='friends')renderFriends();}catch{}}
 onAuthStateChanged(auth,async u=>{
   if(!u){location.href='/login/';return}uid=u.uid;loadChatsData();loadFriendsData();
   if(targetUid){
@@ -198,7 +248,7 @@ onAuthStateChanged(auth,async u=>{
     document.getElementById('hAvatarWrap').style.display='flex';document.getElementById('hIcon').style.display='none';
     try{const snap=await getDoc(doc(db,'users',targetUid));if(snap.exists()){const d=snap.data();document.getElementById('hName').textContent=d.displayName||d.name||'مستخدم';document.getElementById('hImg').src=d.photoURL||d.photo||d.avatar||'https://i.pravatar.cc/100?u='+targetUid;document.getElementById('hStatus').textContent=d.countryName||'متصل الآن • اضغط للرجوع';document.getElementById('hStatus').onclick=()=>{localStorage.removeItem('last_dm_uid');location.href='/dm/';}}}catch{}
     chatId=[uid,targetUid].sort().join('_');
-    await setDoc(doc(db,'privateChats',chatId),{participants:[uid,targetUid],lastAt:serverTimestamp(),createdAt:serverTimestamp(),lastText:''},{merge:true});
+    await setDoc(doc(db,'privateChats',chatId),{participants:[uid,targetUid],lastAt:serverTimestamp(),createdAt:serverTimestamp(),lastText:'',lastRead:{[uid]:serverTimestamp()}},{merge:true});
     const q=query(collection(db,'privateChats',chatId,'messages'),orderBy('createdAt','asc'));
     onSnapshot(q,s=>{
       const box=document.getElementById('chatView');box.innerHTML='';
@@ -206,7 +256,7 @@ onAuthStateChanged(auth,async u=>{
       else{
         s.forEach(d=>{
           const m=d.data();const div=document.createElement('div');div.className='bubble '+(m.uid===uid?'me':'');
-          if(m.text&&m.text.includes(SOUTH_PLACEHOLDER)){div.innerHTML=m.text.replaceAll(SOUTH_PLACEHOLDER,`<span class="southFlag">${SOUTH_SVG}</span>`);}
+          if(m.text&&m.text.includes(SOUTH_PLACEHOLDER)){div.innerHTML=m.text.replaceAll(SOUTH_PLACEHOLDER,`<span class="flagInMsg">${SOUTH_SVG}</span>`);}
           else{div.textContent=m.text||'';}
           box.appendChild(div);
         });
@@ -218,10 +268,30 @@ onAuthStateChanged(auth,async u=>{
   }
 });
 window.sendMsg=async()=>{
-  const input=document.getElementById('msgInput');const t=input.value.trim();if(!t||!chatId)return;input.value='';document.getElementById('emojiPanel').classList.remove('on');
-  let preview=t;if(t.includes(SOUTH_PLACEHOLDER))preview='🏴 علم الجنوب';
-  await addDoc(collection(db,'privateChats',chatId,'messages'),{text:t,uid:uid,createdAt:serverTimestamp()});
-  await setDoc(doc(db,'privateChats',chatId),{lastText:preview,lastAt:serverTimestamp(),participants:[uid,targetUid]},{merge:true});
+  const input=document.getElementById('msgInput');
+  let html=input.innerHTML;
+  let text=input.innerText.trim();
+  // تحويل علم الجنوب في الكتابة الى placeholder للحفظ
+  if(html.includes('data-flag="south"')||html.includes('inlineFlag')){
+    text=text.replace(/ /g,' ').trim();
+    // استبدل كل علم جنوب في الانبوت ب placeholder
+    const tempDiv=document.createElement('div');tempDiv.innerHTML=html;
+    tempDiv.querySelectorAll('[data-flag="south"], .inlineFlag').forEach(el=>{el.replaceWith(SOUTH_PLACEHOLDER+' ');});
+    text=tempDiv.innerText.replace(/\s+/g,' ').trim();
+    // لو كان النص فقط اعلام جنوب
+    if(text.includes(SOUTH_PLACEHOLDER)){
+      // keep as is
+    }
+  }
+  // اذا كان الانبوت فيه صور جنوب فقط بدون نص، اعتبره جنوب
+  if(input.querySelector('[data-flag="south"]') && text===''){
+    text=SOUTH_PLACEHOLDER;
+  }
+  if(!text||!chatId)return;
+  input.innerHTML='';document.getElementById('emojiPanel').classList.remove('on');
+  let preview=text;if(text.includes(SOUTH_PLACEHOLDER))preview='🏴 علم الجنوب';
+  await addDoc(collection(db,'privateChats',chatId,'messages'),{text:text,uid:uid,createdAt:serverTimestamp()});
+  await setDoc(doc(db,'privateChats',chatId),{lastText:preview,lastAt:serverTimestamp(),participants:[uid,targetUid],totalMessages:increment(1)},{merge:true});
 }
 </script>
 </body>
