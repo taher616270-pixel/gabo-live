@@ -9,115 +9,106 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
 
-/* الهيدر ثابت ما يتحرك ابدا */
+/* هيدر ثابت ما يتحرك */
 .header{
-  height:64px;background:#0f0e18;border-bottom:1px solid var(--b);
+  height:68px;background:#0f0e18;border-bottom:1px solid var(--b);
   display:flex;align-items:center;justify-content:space-between;
   padding:0 12px;position:fixed;top:0;left:0;right:0;z-index:1000;
-  flex-shrink:0;
 }
-.headerLeft{display:flex;align-items:center;gap:10px}
-.backBtn{width:36px;height:36px;border-radius:10px;background:#161426;border:1px solid var(--b);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.commFlag{width:48px;height:32px;border-radius:8px;overflow:hidden;border:1px solid var(--b);flex-shrink:0;display:block}
+.headerLeft{display:flex;align-items:center;gap:10px;flex:1;overflow:hidden}
+.backBtn{width:38px;height:38px;border-radius:12px;background:#161426;border:1px solid var(--b);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;flex-shrink:0}
+.commFlag{width:52px;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--b);flex-shrink:0;background:#000}
 .commFlag svg,.commFlag img{width:100%;height:100%;object-fit:cover;display:block}
-.headerInfo{display:flex;flex-direction:column;gap:2px}
-.headerInfo b{font-size:14px;display:flex;align-items:center;gap:6px}
-.headerInfo small{font-size:11px;color:var(--muted)}
-.headerRight{display:flex;align-items:center;gap:8px}
-.onlineDot{width:8px;height:8px;background:#22c55e;border-radius:50%}
+.headerInfo{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:3px}
+.headerInfo b{font-size:14px;display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.headerInfo small{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.miniFlagInHeader{width:18px;height:12px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid #333;flex-shrink:0}
+.miniFlagInHeader svg,.miniFlagInHeader img{width:100%;height:100%;object-fit:cover}
 
-/* منطقة الرسائل تتحرك لحالها */
+/* الرسائل تتحرك لحالها */
 .messages{
   flex:1;overflow-y:auto;overflow-x:hidden;
-  padding:76px 12px 120px 12px;
-  display:flex;flex-direction:column;gap:10px;
-  -webkit-overflow-scrolling:touch;
+  padding:80px 12px 130px 12px;
+  display:flex;flex-direction:column;gap:14px;
 }
-.msgRow{display:flex;gap:8px;align-items:flex-end;max-width:85%}
+.msgRow{display:flex;gap:8px;align-items:flex-end;max-width:88%}
 .msgRow.me{align-self:flex-end;flex-direction:row-reverse}
 .msgRow.other{align-self:flex-start}
-.avatar{width:36px;height:36px;border-radius:50%;overflow:hidden;background:#161426;border:1px solid var(--b);flex-shrink:0;display:block}
-.avatar img{width:100%;height:100%;object-fit:cover}
-.msgContent{display:flex;flex-direction:column;gap:4px}
-.nameLine{display:flex;align-items:center;gap:4px;font-size:12px;color:#d1c7ff;font-weight:700}
-.nameLine .check{width:14px;height:14px;background:#1d9bf0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:#fff}
+.avatar{width:38px;height:38px;border-radius:50%;overflow:hidden;background:#161426;border:1px solid var(--b);flex-shrink:0}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.msgContent{display:flex;flex-direction:column;gap:4px;min-width:0}
+.nameLine{display:flex;align-items:center;gap:5px;font-size:12px;color:#c4b5fd;font-weight:800}
+.nameLine .check{width:14px;height:14px;background:#1d9bf0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:#fff;flex-shrink:0}
 .nameLine .time{font-size:10px;color:var(--muted);font-weight:400}
-.bubble{background:var(--msg);border:1px solid var(--b);padding:10px 14px;border-radius:18px 18px 4px 18px;font-size:14px;line-height:1.4;word-break:break-word}
+.bubble{padding:10px 14px;border-radius:18px 18px 4px 18px;font-size:14px;line-height:1.45;word-break:break-word;background:var(--msg);border:1px solid var(--b);max-width:100%}
 .msgRow.other .bubble{border-radius:18px 18px 18px 4px;background:#161426}
 .msgRow.me .bubble{background:var(--v);border-color:var(--v);color:#fff}
 
-/* يكتب الآن فوق زر الكتابة */
+/* يكتب الآن فوق الكتابة */
 .typingBar{
-  position:fixed;bottom:72px;left:12px;right:12px;
-  font-size:11px;color:var(--muted);display:none;z-index:50;
-  background:rgba(15,14,24,.9);padding:6px 10px;border-radius:10px;border:1px solid var(--b);
+  position:fixed;bottom:74px;left:12px;right:12px;
+  font-size:11px;color:#a78bfa;display:none;z-index:50;
+  background:rgba(22,20,38,.95);padding:7px 12px;border-radius:12px;border:1px solid var(--b);
 }
 .typingBar.on{display:block}
 
-/* شريط الكتابة ثابت تحت */
+/* لوحة ايموجي */
+.emojiPanel{
+  position:fixed;bottom:76px;left:8px;right:8px;
+  background:#161426;border:1px solid var(--b);border-radius:18px;
+  max-height:340px;display:none;flex-direction:column;z-index:2000;overflow:hidden;
+  box-shadow:0 10px 30px rgba(0,0,0,.5);
+}
+.emojiPanel.on{display:flex}
+.emojiTabs{display:flex;gap:6px;padding:10px;border-bottom:1px solid var(--b);overflow-x:auto}
+.emojiTabs button{background:#0f0e18;border:1px solid var(--b);color:#fff;padding:6px 12px;border-radius:10px;font-size:16px;cursor:pointer;white-space:nowrap}
+.emojiTabs button.on{background:var(--v);border-color:var(--v)}
+.emojiGrid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;padding:10px;overflow-y:auto}
+.emojiGrid span{font-size:24px;padding:8px;text-align:center;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.emojiGrid span:hover{background:#1e1c2e}
+.flagCustom{width:30px;height:20px;border-radius:4px;overflow:hidden;border:1px solid #444;display:inline-flex!important}
+
+/* شريط كتابة ثابت */
 .inputBar{
   position:fixed;bottom:0;left:0;right:0;
   background:#0f0e18;border-top:1px solid var(--b);
   padding:10px 12px;padding-bottom:calc(10px + env(safe-area-inset-bottom));
   display:flex;align-items:center;gap:8px;z-index:1000;
 }
-.inputWrap{flex:1;background:#161426;border:1px solid var(--b);border-radius:24px;display:flex;align-items:center;gap:6px;padding:6px 10px}
+.inputWrap{flex:1;background:#1a182a;border:1px solid var(--b);border-radius:24px;display:flex;align-items:center;gap:6px;padding:8px 14px}
 .inputWrap input{flex:1;background:transparent;border:0;outline:0;color:#fff;font-size:14px}
-.iconBtn{width:36px;height:36px;border-radius:50%;background:#1e1c2e;border:1px solid var(--b);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0}
-.sendBtn{width:42px;height:42px;border-radius:50%;background:var(--v);border:0;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0}
-
-/* لوحة الايموجي */
-.emojiPanel{
-  position:fixed;bottom:72px;left:8px;right:8px;
-  background:#161426;border:1px solid var(--b);border-radius:18px;
-  max-height:320px;display:none;flex-direction:column;z-index:2000;overflow:hidden;
-}
-.emojiPanel.on{display:flex}
-.emojiTabs{display:flex;gap:6px;padding:8px;border-bottom:1px solid var(--b);overflow-x:auto}
-.emojiTabs button{background:#0f0e18;border:1px solid var(--b);color:#fff;padding:6px 10px;border-radius:10px;font-size:14px;white-space:nowrap}
-.emojiTabs button.on{background:var(--v);border-color:var(--v)}
-.emojiGrid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;padding:10px;overflow-y:auto}
-.emojiGrid span{font-size:22px;padding:6px;text-align:center;cursor:pointer;border-radius:8px}
-.emojiGrid span:hover{background:#1e1c2e}
-.emojiGrid span.flagCustom{width:28px;height:20px;display:inline-flex;border-radius:4px;overflow:hidden;border:1px solid #333}
-.emojiGrid span.flagCustom svg{width:100%;height:100%;object-fit:cover}
+.iconBtn{width:40px;height:40px;border-radius:50%;background:#1e1c2e;border:1px solid var(--b);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;flex-shrink:0}
+.sendBtn{width:44px;height:44px;border-radius:50%;background:var(--v);border:0;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;flex-shrink:0}
 </style>
 </head>
 <body>
 
-<!-- هيدر ثابت -->
-<div class="header" id="header">
+<div class="header">
   <div class="headerLeft">
-    <div class="backBtn" onclick="history.back()">‹</div>
+    <div class="backBtn" onclick="location.href='/app/'">›</div>
     <div class="commFlag" id="commFlag"></div>
     <div class="headerInfo">
-      <b><span id="commName">مجتمع الجنوب العربي</span> <span id="commMiniFlag" style="width:18px;height:12px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid #333"></span></b>
-      <small><span id="memberCount">0 عضو</span> • <span class="onlineDot"></span> <span id="onlineCount">12k متصل</span> • رسمي</small>
+      <b><span id="commName">مجتمع الجنوب العربي</span> <span class="miniFlagInHeader" id="commMiniFlag"></span></b>
+      <small><span id="memberCount">0 عضو</span> • <span id="onlineCount">12k متصل</span> • رسمي</small>
     </div>
   </div>
-  <div class="headerRight">
-    <div class="iconBtn" onclick="location.href='/app/'">☰</div>
-  </div>
+  <div class="backBtn" style="background:#161426" onclick="location.href='/app/'">☰</div>
 </div>
 
-<!-- الرسائل -->
 <div class="messages" id="messages"></div>
+<div class="typingBar" id="typingBar">يكتب الآن...</div>
 
-<!-- يكتب الآن -->
-<div class="typingBar" id="typingBar">👤 أحمد يكتب...</div>
-
-<!-- لوحة ايموجي كاملة فيها اعلام الدول ومن ضمنها علم الجنوب -->
 <div class="emojiPanel" id="emojiPanel">
   <div class="emojiTabs">
-    <button class="on" onclick="showEmojiCat('smile')">😊</button>
-    <button onclick="showEmojiCat('flags')">🏳️</button>
-    <button onclick="showEmojiCat('hearts')">❤️</button>
-    <button onclick="showEmojiCat('hands')">👍</button>
+    <button class="on" onclick="showEmojiCat(event,'smile')">😊</button>
+    <button onclick="showEmojiCat(event,'flags')">🏳️ أعلام</button>
+    <button onclick="showEmojiCat(event,'hearts')">❤️</button>
+    <button onclick="showEmojiCat(event,'hands')">👍</button>
+    <button onclick="showEmojiCat(event,'all')">😀 كلها</button>
   </div>
   <div class="emojiGrid" id="emojiGrid"></div>
 </div>
 
-<!-- شريط كتابة ثابت -->
 <div class="inputBar">
   <button class="iconBtn" onclick="toggleEmoji()">😊</button>
   <div class="inputWrap">
@@ -129,19 +120,15 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 <script type="module">
 import { auth, db } from '/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { collection, doc, onSnapshot, addDoc, serverTimestamp, getDoc, setDoc, updateDoc, arrayUnion, increment } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { collection, doc, onSnapshot, addDoc, serverTimestamp, getDoc, setDoc, arrayUnion, increment } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-const SOUTH_SVG=`<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="200" y="0" fill="#D71921"/><rect width="900" height="200" y="200" fill="#FFF"/><rect width="900" height="200" y="400" fill="#000"/><path d="M0 0 L380 300 L0 600 Z" fill="#5EB6E4"/><g transform="translate(125,300)"><path d="M0 -70 L20 -22 L75 -22 L32 10 L48 65 L0 32 L-48 65 L-32 10 L-75 -22 L-20 -22 Z" fill="#D71921" stroke="white" stroke-width="10" stroke-linejoin="round"/></g></svg>`;
+const SOUTH_SVG=`<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><rect width="900" height="200" y="0" fill="#D71921"/><rect width="900" height="200" y="200" fill="#FFFFFF"/><rect width="900" height="200" y="400" fill="#000000"/><path d="M0 0 L380 300 L0 600 Z" fill="#5EB6E4"/><g transform="translate(125,300)"><path d="M0 -70 L20 -22 L75 -22 L32 10 L48 65 L0 32 L-48 65 L-32 10 L-75 -22 L-20 -22 Z" fill="#D71921" stroke="white" stroke-width="10" stroke-linejoin="round"/></g></svg>`;
+const SOUTH_MINI=`<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="200" y="0" fill="#D71921"/><rect width="900" height="200" y="200" fill="#FFF"/><rect width="900" height="200" y="400" fill="#000"/><path d="M0 0 L380 300 L0 600 Z" fill="#5EB6E4"/><g transform="translate(125,300)"><path d="M0 -60 L17 -18 L64 -18 L27 8 L41 55 L0 25 L-41 55 L-27 8 L-64 -18 L-17 -18 Z" fill="#D71921"/></g></svg>`;
 
-const FLAG_EMOJIS=['🇸🇦','🇾🇪','🇦🇪','🇴🇲','🇶🇦','🇰🇼','🇧🇭','🇪🇬','🇯🇴','🇱🇧','🇸🇾','🇮🇶','🇵🇸','🇺🇸','🇬🇧','🇹🇷'];
-const SMILE_EMOJIS=['😀','😂','❤️','🔥','👍','👏','😍','😭','🙏','💪','😎','🤣','🥺','😊','✨','🫡','😅','😢','🤔','👌'];
-const HEART_EMOJIS=['❤️','🧡','💛','💚','💙','💜','🤍','🖤','💔','❣️','💖','💝','💘'];
-const HAND_EMOJIS=['👍','👎','👏','🙏','💪','👌','✌️','🤝','👋','🤲','☝️'];
-
-let params=new URLSearchParams(location.search);
+const params=new URLSearchParams(location.search);
 let communityId=params.get('id')||'south';
-let uid=null, userData=null;
-let typingTimeout=null;
+let uid=localStorage.getItem('gabo_uid')||null;
+let userData=null;
 
 const commFlagEl=document.getElementById('commFlag');
 const commMiniFlagEl=document.getElementById('commMiniFlag');
@@ -149,42 +136,42 @@ const commNameEl=document.getElementById('commName');
 const memberCountEl=document.getElementById('memberCount');
 const messagesEl=document.getElementById('messages');
 const msgInput=document.getElementById('msgInput');
-const typingBar=document.getElementById('typingBar');
-const emojiPanel=document.getElementById('emojiPanel');
-const emojiGrid=document.getElementById('emojiGrid');
 
-// علم ثابت
 function setHeaderFlag(){
   if(communityId==='south'){
     commFlagEl.innerHTML=SOUTH_SVG;
-    commMiniFlagEl.innerHTML=SOUTH_SVG;
+    commMiniFlagEl.innerHTML=SOUTH_MINI;
     commNameEl.textContent='مجتمع الجنوب العربي';
   }else{
-    commFlagEl.innerHTML=`<img src="https://flagcdn.com/w80/${communityId}.png" style="width:100%;height:100%;object-fit:cover">`;
-    commMiniFlagEl.innerHTML=`<img src="https://flagcdn.com/w80/${communityId}.png" style="width:100%;height:100%;object-fit:cover">`;
-    commNameEl.textContent='مجتمع '+communityId;
+    commFlagEl.innerHTML=`<img src="https://flagcdn.com/w80/${communityId}.png">`;
+    commMiniFlagEl.innerHTML=`<img src="https://flagcdn.com/w80/${communityId}.png">`;
+    commNameEl.textContent=communityId;
   }
 }
 setHeaderFlag();
 
-// جلب بيانات المستخدم - صورة واسم كامل
 onAuthStateChanged(auth, async (u)=>{
   if(u){
     uid=u.uid;
     localStorage.setItem('gabo_uid',uid);
     try{
       const snap=await getDoc(doc(db,'users',uid));
-      if(snap.exists()) userData=snap.data();
-      else userData={displayName:u.displayName||'مستخدم', photoURL:u.photoURL||'', verified:false};
-    }catch{ userData={displayName:'مستخدم', photoURL:'', verified:false}; }
-    // انضمام للمجتمع
-    try{
-      await setDoc(doc(db,'communities',communityId),{membersCount:increment(1), members:arrayUnion(uid)}, {merge:true});
-    }catch{}
+      if(snap.exists()){
+        userData=snap.data();
+        // خزن الصورة محليا عشان تطلع بسرعة
+        if(userData.photoURL) localStorage.setItem('gabo_photo',userData.photoURL);
+        if(userData.displayName) localStorage.setItem('gabo_name',userData.displayName);
+      }else{
+        userData={displayName:u.displayName||localStorage.getItem('gabo_name')||'مستخدم', photoURL:u.photoURL||localStorage.getItem('gabo_photo')||'', verified:false};
+      }
+    }catch{
+      userData={displayName:localStorage.getItem('gabo_name')||'مستخدم', photoURL:localStorage.getItem('gabo_photo')||'', verified:false};
+    }
+    try{ await setDoc(doc(db,'communities',communityId),{membersCount:increment(1), members:arrayUnion(uid)}, {merge:true}); }catch{}
   }
 });
 
-// عرض الرسائل مع صورة الملف الشخصي والاسم فوق علامة الصح
+// الرسائل - مع صورة واسم وفوقه علامة صح
 onSnapshot(collection(db,'communities',communityId,'messages'), (snap)=>{
   const msgs=[];
   snap.forEach(d=>msgs.push({id:d.id,...d.data()}));
@@ -194,14 +181,18 @@ onSnapshot(collection(db,'communities',communityId,'messages'), (snap)=>{
     const isMe=m.uid===uid;
     const row=document.createElement('div');
     row.className='msgRow '+(isMe?'me':'other');
-    const photo=m.photoURL||'https://i.pravatar.cc/100?u='+m.uid;
-    const name=m.displayName||'مستخدم';
+    let photo=m.photoURL||m.avatar||'';
+    if(!photo || photo.length<10){
+      photo=localStorage.getItem('gabo_photo_'+m.uid)||'';
+    }
+    if(!photo) photo='https://i.pravatar.cc/100?u='+m.uid;
+    const name=m.displayName||m.name||'مستخدم';
     const verified=m.verified?`<span class="check">✓</span>`:'';
     const time=m.createdAt?new Date(m.createdAt.seconds*1000).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}):'';
     row.innerHTML=`
-      <div class="avatar"><img src="${photo}" onerror="this.src='https://i.pravatar.cc/100'"></div>
+      <div class="avatar"><img src="${photo}" onerror="this.src='https://i.pravatar.cc/100?u=${m.uid}'"></div>
       <div class="msgContent">
-        <div class="nameLine">${name} ${verified} <span class="time">${time}</span></div>
+        <div class="nameLine">${escapeHtml(name)} ${verified} <span class="time">${time}</span></div>
         <div class="bubble">${escapeHtml(m.text||'')}</div>
       </div>
     `;
@@ -210,7 +201,6 @@ onSnapshot(collection(db,'communities',communityId,'messages'), (snap)=>{
   messagesEl.scrollTop=messagesEl.scrollHeight;
 });
 
-// عدد الأعضاء
 onSnapshot(doc(db,'communities',communityId), (snap)=>{
   if(snap.exists()){
     const data=snap.data();
@@ -220,71 +210,66 @@ onSnapshot(doc(db,'communities',communityId), (snap)=>{
   }
 });
 
-function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 window.sendMsg=async ()=>{
   const text=msgInput.value.trim();
-  if(!text||!uid) return;
-  if(!userData){ alert('سجل دخول'); location.href='/login/'; return; }
+  if(!text) return;
+  if(!uid){ alert('سجل دخول'); location.href='/login/'; return; }
+  const displayName=userData?.displayName||userData?.name||localStorage.getItem('gabo_name')||'مستخدم';
+  const photoURL=userData?.photoURL||userData?.avatar||localStorage.getItem('gabo_photo')||'';
+  const verified=userData?.verified||false;
   msgInput.value='';
-  emojiPanel.classList.remove('on');
+  document.getElementById('emojiPanel').classList.remove('on');
   try{
     await addDoc(collection(db,'communities',communityId,'messages'),{
-      text:text,
-      uid:uid,
-      displayName:userData.displayName||userData.name||'مستخدم',
-      photoURL:userData.photoURL||userData.avatar||'',
-      verified:userData.verified||false,
-      createdAt:serverTimestamp()
+      text:text, uid:uid, displayName:displayName, name:displayName, photoURL:photoURL, avatar:photoURL, verified:verified, createdAt:serverTimestamp()
     });
+    if(photoURL) localStorage.setItem('gabo_photo_'+uid, photoURL);
   }catch(e){ alert(e.message); }
 }
 
 window.onTyping=()=>{
-  typingBar.classList.remove('on');
-  clearTimeout(typingTimeout);
-  // هنا تقدر ترسل حالة كتابة للفايربيس لو تبغى
-  typingTimeout=setTimeout(()=>{ typingBar.classList.remove('on'); },2000);
+  // تقدر تضيف هنا ارسال حالة كتابة
 }
-
-// ايموجي
 window.toggleEmoji=()=>{
-  emojiPanel.classList.toggle('on');
-  if(emojiPanel.classList.contains('on')) showEmojiCat('smile');
+  const p=document.getElementById('emojiPanel');
+  p.classList.toggle('on');
+  if(p.classList.contains('on')) showEmojiCat(null,'smile');
 }
-window.showEmojiCat=(cat)=>{
-  document.querySelectorAll('.emojiTabs button').forEach(b=>b.classList.remove('on'));
-  event?.target?.classList.add('on');
-  emojiGrid.innerHTML='';
-  let list=[];
-  if(cat==='smile') list=SMILE_EMOJIS;
-  if(cat==='flags') list=FLAG_EMOJIS;
-  if(cat==='hearts') list=HEART_EMOJIS;
-  if(cat==='hands') list=HAND_EMOJIS;
 
-  list.forEach(e=>{
+const SMILES=['😀','😃','😂','🤣','😍','🥰','😊','😎','😭','😢','😡','🤔','🙏','💪','👏','🔥','❤️','✨','🫡','😅','🥺','🤩','😇','🤗','😋','😜','🤪','😏'];
+const FLAGS=['🇸🇦','🇾🇪','🇦🇪','🇴🇲','🇶🇦','🇰🇼','🇧🇭','🇪🇬','🇯🇴','🇱🇧','🇸🇾','🇮🇶','🇵🇸','🇺🇸','🇬🇧','🇹🇷','🇩🇪','🇫🇷','🇮🇹','🇯🇵','🇰🇷','🇧🇷','🇦🇷'];
+const HEARTS=['❤️','🧡','💛','💚','💙','💜','🤍','🖤','💔','💖','💝','💘','💗','💓','💞'];
+const HANDS=['👍','👎','👏','🙏','💪','👌','✌️','🤝','👋','🤲','☝️','👊','✊','🤞','🫶'];
+const ALL=[...SMILES,...FLAGS,...HEARTS,...HANDS,'😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃','😉','😊','😇','🥰','😍','🤩','😘','😗','😚','😙'];
+
+window.showEmojiCat=(e,cat)=>{
+  if(e) e.target.closest('.emojiTabs').querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+  if(e) e.target.classList.add('on');
+  const grid=document.getElementById('emojiGrid');
+  grid.innerHTML='';
+  let list=SMILES;
+  if(cat==='smile') list=SMILES;
+  if(cat==='flags') list=FLAGS;
+  if(cat==='hearts') list=HEARTS;
+  if(cat==='hands') list=HANDS;
+  if(cat==='all') list=ALL;
+  list.forEach(em=>{
     const span=document.createElement('span');
-    span.textContent=e;
-    span.onclick=()=>{ msgInput.value+=e; msgInput.focus(); };
-    emojiGrid.appendChild(span);
+    span.textContent=em;
+    span.onclick=()=>{ msgInput.value+=em; msgInput.focus(); };
+    grid.appendChild(span);
   });
-  if(cat==='flags'){
-    // اضافة علم الجنوب العربي كايموجي خاص
+  if(cat==='flags' || cat==='all'){
     const span=document.createElement('span');
     span.className='flagCustom';
-    span.innerHTML=SOUTH_SVG;
+    span.innerHTML=SOUTH_MINI;
     span.title='علم الجنوب العربي';
-    span.onclick=()=>{ msgInput.value+=' [علم الجنوب] '; msgInput.focus(); };
-    emojiGrid.appendChild(span);
+    span.onclick=()=>{ msgInput.value+=' 🏴 '; msgInput.focus(); };
+    grid.appendChild(span);
   }
 }
-
-// اغلاق الايموجي عند الضغط خارج
-document.addEventListener('click',(e)=>{
-  if(!emojiPanel.contains(e.target) && !e.target.closest('.iconBtn')){
-    // emojiPanel.classList.remove('on');
-  }
-});
 </script>
 </body>
 </html>
