@@ -1,13 +1,75 @@
 <!doctype html>
-<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<style>:root{--b:#2a2840;--v:#7c3aed}*{margin:0;padding:0;box-sizing:border-box}body{background:#07060c;color:#fff;font-family:system-ui;padding-bottom:110px}.top{display:flex;justify-content:space-between;padding:14px 16px;align-items:center}.back{background:#1e1c2e;border:1px solid var(--b);padding:6px 14px;border-radius:20px;color:#fff;text-decoration:none;font-size:13px}.card{margin:16px;background:#161426;border:1px solid var(--b);border-radius:20px;padding:20px;text-align:center}.bottom{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;padding:8px 0 calc(8px + env(safe-area-inset-bottom))}.bottom a{flex:1;text-align:center;color:#6b6b7a;text-decoration:none;font-size:9px}.bottom a div{font-size:20px}.bottom a.plus div{background:var(--v);width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;margin:-18px auto 4px}</style>
-</head><body>
-<div class="top"><a class="back" href="/profile/">› رجوع</a><b>GABO VIP ✨</b></div>
-<div class="card">
-<h2>دائرتك المميزة</h2><p style="color:#a1a1aa;font-size:13px;margin-top:8px">مساحة مخصصة للمميزين</p>
-<div style="margin-top:14px;display:flex;gap:8px;justify-content:center"><button style="background:var(--v);border:0;color:#fff;padding:10px 16px;border-radius:10px">عرض الباقات ↓</button><button style="background:#2a2840;border:0;color:#fff;padding:10px 16px;border-radius:10px">انضم كضيف</button></div>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GABO VIP</title>
+<style>
+:root{--bg:#07060c;--card:#161426;--b:#2a2840;--v:#7c3aed;--gold:#fbbf24}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:120px}
+.top{padding:16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg);z-index:10;border-bottom:1px solid var(--b)}
+.top b{font-size:17px}
+.back{background:#1e1c2e;border:1px solid var(--b);color:#fff;padding:7px 16px;border-radius:20px;text-decoration:none;font-size:13px;font-weight:700}
+.hero{margin:16px;background:linear-gradient(135deg,#1a1033,#2d1a0f);border:1px solid #3a2a1a;border-radius:20px;padding:20px;text-align:center}
+.hero h1{font-size:22px}
+.hero p{font-size:12px;color:#a1a1aa;margin-top:6px}
+.plans{margin:16px;display:flex;flex-direction:column;gap:12px}
+.plan{background:var(--card);border:1px solid var(--b);border-radius:16px;padding:14px;display:flex;justify-content:space-between;align-items:center}
+.plan.gold{border-color:var(--gold);background:linear-gradient(135deg,#1a160f,#161426)}
+.plan b{font-size:14px}.plan span{font-size:11px;color:#a1a1aa;display:block;margin-top:2px}
+.plan button{background:var(--v);border:0;color:#fff;padding:8px 14px;border-radius:10px;font-weight:800;font-size:12px}
+.plan.gold button{background:var(--gold);color:#000}
+
+/* هذا هو الشريط الوحيد الصح - احذف اي شريط ثاني */
+.bottomNav{position:fixed!important;bottom:0!important;left:0!important;right:0!important;background:#0f0e18!important;border-top:1px solid var(--b)!important;display:flex!important;justify-content:space-around!important;align-items:flex-end!important;padding:8px 0 calc(10px + env(safe-area-inset-bottom))!important;z-index:9999!important;direction:ltr!important;width:100%!important}
+.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:9px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bottomNav a.on{color:#fff}
+.bottomNav a .ic{font-size:22px}
+.bottomNav a.plus .ic{background:var(--v);color:#fff;width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-20px;box-shadow:0 8px 20px rgba(124,58,237,.5)}
+
+/* اخفاء الشريط القديم اللي يسبب الانقلاب */
+.old-bar, .extra-bar, .voice-rooms{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <b>✨ GABO VIP</b>
+  <a class="back" href="/profile/">رجوع ‹</a>
 </div>
-<div class="bottom">
-<a href="/profile/"><div>👤</div>حسابي</a><a href="/dm/"><div>🔒</div>دردشة خاصة</a><a href="/create/" class="plus"><div>+</div></a><a href="/posts/"><div>📄</div>منشورات</a><a href="/app/"><div>🏠</div>الرئيسية</a>
+
+<div class="hero">
+  <h1>👑 دائرتك المميزة</h1>
+  <p>مساحة مخصصة للمميزين - الجنوب العربي</p>
+  <div style="margin-top:14px;display:flex;gap:8px;justify-content:center">
+    <button onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})" style="background:var(--v);border:0;color:#fff;padding:10px 18px;border-radius:10px;font-weight:800">عرض الباقات ↓</button>
+  </div>
 </div>
-</body></html>
+
+<div class="plans" id="plans">
+  <div class="plan gold">
+    <div><b>⭐ VIP ذهبي</b><span>بدون إعلانات + شارة ذهبية + دخول غرف VIP</span></div>
+    <button>اشترك</button>
+  </div>
+  <div class="plan">
+    <div><b>💎 VIP ماسي</b><span>كل مميزات الذهبي + دعم فني + ظهور أعلى</span></div>
+    <button>اشترك</button>
+  </div>
+  <div class="plan">
+    <div><b>🚀 دعم الجنوب</b><span>ادعم مجتمع الجنوب العربي</span></div>
+    <button>ادعم</button>
+  </div>
+</div>
+
+<!-- شريط واحد فقط وثابت -->
+<div class="bottomNav">
+  <a href="/profile/"><span class="ic">👤</span>حسابي</a>
+  <a href="/dm/"><span class="ic">🔒</span>دردشة خاصة</a>
+  <a href="/create/" class="plus"><span class="ic">+</span></a>
+  <a href="/posts/"><span class="ic">📄</span>منشورات</a>
+  <a href="/app/"><span class="ic">🏠</span>الرئيسية</a>
+</div>
+
+</body>
+</html>
