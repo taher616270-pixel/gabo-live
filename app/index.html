@@ -12,16 +12,16 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
 .tabs{display:flex;gap:8px;padding:12px 14px}
 .tabs button{flex:1;background:#161426;border:1px solid var(--b);color:var(--muted);padding:12px;border-radius:14px;font-weight:800;font-size:13px}
 .tabs button.on{background:var(--v);color:#fff;border-color:var(--v)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px}
-.comm{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;text-align:center}
-.flag{width:64px;height:40px;border-radius:8px;border:1px solid #2a2840;overflow:hidden;display:flex;background:#000;box-shadow:0 2px 8px rgba(0,0,0,.4)}
-.flag img,.flag svg{width:100%;height:100%;object-fit:cover;display:block}
-.comm b{font-size:12.5px;display:flex;align-items:center;gap:6px;justify-content:center}
-.miniFlag{width:18px;height:12px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid #333;flex-shrink:0}
-.miniFlag img,.miniFlag svg{width:100%;height:100%;object-fit:cover}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 12px}
+.comm{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;text-align:center}
+.flag{width:72px;height:48px;border-radius:12px;border:1px solid #2a2840;overflow:hidden;display:block;background:#000;flex-shrink:0;position:relative}
+.flag img,.flag svg{width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0}
+.comm b{font-size:13px;display:flex;align-items:center;gap:6px;justify-content:center}
+.miniFlag{width:18px;height:12px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid #333;flex-shrink:0;position:relative}
+.miniFlag img,.miniFlag svg{width:100%;height:100%;object-fit:cover;display:block}
 .comm small{color:var(--muted);font-size:11px}
 .createBtn{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:var(--v);color:#fff;border:0;padding:14px 26px;border-radius:30px;font-weight:900;font-size:14px;box-shadow:0 8px 20px rgba(124,58,237,.4);z-index:999;display:flex;align-items:center;gap:8px;cursor:pointer}
-.bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;z-index:9999;direction:ltr;padding-bottom:env(safe-area-inset-bottom)}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;z-index:9999;direction:ltr}
 .bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px}
 .bottomNav a.on{color:#fff}
 .bottomNav a .ic{font-size:22px;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
@@ -31,16 +31,16 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
 .modalBox{background:#161426;border:1px solid var(--b);border-radius:20px 20px 0 0;width:100%;max-width:420px;padding:16px;max-height:90vh;overflow:auto}
 .modalBox h3{text-align:center;margin-bottom:14px}
 .imgPicker{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:14px}
-.imgBox{width:64px;height:40px;border-radius:8px;border:1.5px dashed var(--v);overflow:hidden;background:#0f0e18;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.imgBox img,.imgBox svg{width:100%;height:100%;object-fit:cover}
-.imgBox span{font-size:20px;color:var(--muted)}
+.imgBox{width:72px;height:48px;border-radius:12px;border:1.5px dashed var(--v);overflow:hidden;background:#0f0e18;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.imgBox img,.imgBox svg{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.imgBox span{font-size:20px;color:var(--muted);position:relative;z-index:1}
 .field{margin-bottom:12px}
 .field label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
 .field input{width:100%;background:#0f0e18;border:1px solid var(--b);border-radius:12px;padding:12px;color:#fff;font-size:14px}
 .flagOptions{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
-.flagOpt{width:46px;height:32px;border-radius:6px;border:2px solid var(--b);overflow:hidden;cursor:pointer;display:flex}
+.flagOpt{width:50px;height:34px;border-radius:8px;border:2px solid var(--b);overflow:hidden;cursor:pointer;display:block;position:relative}
 .flagOpt.on{border-color:var(--v);box-shadow:0 0 0 2px rgba(124,58,237,.3)}
-.flagOpt img,.flagOpt svg{width:100%;height:100%;object-fit:cover}
+.flagOpt img,.flagOpt svg{width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0}
 .modalBtns{display:flex;gap:8px;margin-top:14px}
 .modalBtns button{flex:1;padding:12px;border-radius:12px;border:0;font-weight:900;font-size:14px;cursor:pointer}
 .btnCancel{background:#1e1c2e;color:#fff;border:1px solid var(--b)!important}
@@ -48,34 +48,29 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
 </style>
 </head>
 <body>
-
 <div class="top"><b>✨ GABO LIVE</b><span>🔔</span></div>
-
-<div class="tabs">
-  <button class="on">المجتمعات</button>
-  <button onclick="location.href='/dm/'">شات العالم 🌍</button>
-</div>
+<div class="tabs"><button class="on">المجتمعات</button><button onclick="location.href='/dm/'">شات العالم 🌍</button></div>
 
 <div id="commPage" class="grid">
   <div class="comm" onclick="goComm('south')">
     <div class="flag">
-      <!-- علم الجنوب العربي الصحيح - نجمة في وسط المثلث -->
-      <svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg">
-        <rect width="90" height="20" y="0" fill="#CE1126"/>
-        <rect width="90" height="20" y="20" fill="#FFFFFF"/>
-        <rect width="90" height="20" y="40" fill="#000000"/>
-        <path d="M0 0 L42 30 L0 60 Z" fill="#5AB4E8"/>
-        <g transform="translate(14,30)">
-          <path d="M0 -8 L2.1 -2.8 L8.2 -2.8 L3.3 0.6 L5 6.8 L0 3.2 L-5 6.8 L-3.3 0.6 L-8.2 -2.8 L-2.1 -2.8 Z" fill="#CE1126" stroke="white" stroke-width="0.5" stroke-linejoin="round"/>
+      <!-- علم الجنوب العربي - يملى المربع كامل -->
+      <svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="900" height="200" y="0" fill="#D71921"/>
+        <rect width="900" height="200" y="200" fill="#FFFFFF"/>
+        <rect width="900" height="200" y="400" fill="#000000"/>
+        <path d="M0 0 L380 300 L0 600 Z" fill="#4AA6E0"/>
+        <g transform="translate(125,300)">
+          <path d="M0 -70 L20 -22 L75 -22 L32 10 L48 65 L0 32 L-48 65 L-32 10 L-75 -22 L-20 -22 Z" fill="#D71921" stroke="white" stroke-width="10" stroke-linejoin="round"/>
         </g>
       </svg>
     </div>
-    <b><span class="miniFlag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#CE1126"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L42 30 L0 60 Z" fill="#5AB4E8"/><g transform="translate(14,30)"><path d="M0 -8 L2.1 -2.8 L8.2 -2.8 L3.3 0.6 L5 6.8 L0 3.2 L-5 6.8 L-3.3 0.6 L-8.2 -2.8 L-2.1 -2.8 Z" fill="#CE1126"/></g></svg></span>الجنوب العربي</b>
+    <b><span class="miniFlag"><svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><rect width="900" height="200" y="0" fill="#D71921"/><rect width="900" height="200" y="200" fill="#FFF"/><rect width="900" height="200" y="400" fill="#000"/><path d="M0 0 L380 300 L0 600 Z" fill="#4AA6E0"/><g transform="translate(125,300)"><path d="M0 -70 L20 -22 L75 -22 L32 10 L48 65 L0 32 L-48 65 L-32 10 L-75 -22 L-20 -22 Z" fill="#D71921"/></g></svg></span>الجنوب العربي</b>
     <small>رسمي</small>
   </div>
-  <div class="comm" onclick="goComm('sa')"><div class="flag"><img src="https://flagcdn.com/w80/sa.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/sa.png"></span>السعودية</b><small>رسمي</small></div>
-  <div class="comm" onclick="goComm('ye')"><div class="flag"><img src="https://flagcdn.com/w80/ye.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/ye.png"></span>اليمن</b><small>رسمي</small></div>
-  <div class="comm" onclick="goComm('ae')"><div class="flag"><img src="https://flagcdn.com/w80/ae.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/ae.png"></span>الإمارات</b><small>رسمي</small></div>
+  <div class="comm" onclick="goComm('sa')"><div class="flag"><img src="https://flagcdn.com/w360/sa.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/sa.png"></span>السعودية</b><small>رسمي</small></div>
+  <div class="comm" onclick="goComm('ye')"><div class="flag"><img src="https://flagcdn.com/w360/ye.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/ye.png"></span>اليمن</b><small>رسمي</small></div>
+  <div class="comm" onclick="goComm('ae')"><div class="flag"><img src="https://flagcdn.com/w360/ae.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/ae.png"></span>الإمارات</b><small>رسمي</small></div>
 </div>
 
 <button class="createBtn" onclick="openCreate()">+ إنشاء مجتمع جديد</button>
@@ -88,38 +83,24 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
         <span id="imgPlus">+</span>
         <img id="imgPreview" style="display:none">
       </div>
-      <small style="color:var(--muted);font-size:11px">صورة مربعة بنفس حجم الأعلام (64x40)</small>
+      <small style="color:var(--muted);font-size:11px">صورة مربعة بنفس حجم الأعلام 72x48</small>
       <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="previewImg(this)">
     </div>
+    <div class="field"><label>اسم المجتمع</label><input id="commNameInput" placeholder="مثال: سواق"></div>
     <div class="field">
-      <label>اسم المجتمع</label>
-      <input id="commNameInput" placeholder="مثال: سواق">
-    </div>
-    <div class="field">
-      <label>علم الدولة (من ضمنهم علم الجنوب بنجمة وسط المثلث)</label>
-      <div class="flagOptions" id="flagOptions">
-        <div class="flagOpt on" data-flag="south" onclick="selectFlag(this,'south')">
-          <svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg">
-            <rect width="90" height="20" y="0" fill="#CE1126"/>
-            <rect width="90" height="20" y="20" fill="#FFF"/>
-            <rect width="90" height="20" y="40" fill="#000"/>
-            <path d="M0 0 L42 30 L0 60 Z" fill="#5AB4E8"/>
-            <g transform="translate(14,30)"><path d="M0 -6.5 L1.7 -2.2 L6.6 -2.2 L2.6 0.4 L4 5 L0 2 L-4 5 L-2.6 0.4 L-6.6 -2.2 L-1.7 -2.2 Z" fill="#CE1126"/></g>
-          </svg>
-        </div>
-        <div class="flagOpt" data-flag="sa" onclick="selectFlag(this,'sa')"><img src="https://flagcdn.com/w80/sa.png"></div>
-        <div class="flagOpt" data-flag="ye" onclick="selectFlag(this,'ye')"><img src="https://flagcdn.com/w80/ye.png"></div>
-        <div class="flagOpt" data-flag="ae" onclick="selectFlag(this,'ae')"><img src="https://flagcdn.com/w80/ae.png"></div>
-        <div class="flagOpt" data-flag="om" onclick="selectFlag(this,'om')"><img src="https://flagcdn.com/w80/om.png"></div>
-        <div class="flagOpt" data-flag="qa" onclick="selectFlag(this,'qa')"><img src="https://flagcdn.com/w80/qa.png"></div>
-        <div class="flagOpt" data-flag="kw" onclick="selectFlag(this,'kw')"><img src="https://flagcdn.com/w80/kw.png"></div>
-        <div class="flagOpt" data-flag="bh" onclick="selectFlag(this,'bh')"><img src="https://flagcdn.com/w80/bh.png"></div>
+      <label>علم الدولة</label>
+      <div class="flagOptions">
+        <div class="flagOpt on" onclick="selectFlag(this,'south')"><svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><rect width="900" height="200" y="0" fill="#D71921"/><rect width="900" height="200" y="200" fill="#FFF"/><rect width="900" height="200" y="400" fill="#000"/><path d="M0 0 L380 300 L0 600 Z" fill="#4AA6E0"/><g transform="translate(125,300)"><path d="M0 -70 L20 -22 L75 -22 L32 10 L48 65 L0 32 L-48 65 L-32 10 L-75 -22 L-20 -22 Z" fill="#D71921"/></g></svg></div>
+        <div class="flagOpt" onclick="selectFlag(this,'sa')"><img src="https://flagcdn.com/w360/sa.png"></div>
+        <div class="flagOpt" onclick="selectFlag(this,'ye')"><img src="https://flagcdn.com/w360/ye.png"></div>
+        <div class="flagOpt" onclick="selectFlag(this,'ae')"><img src="https://flagcdn.com/w360/ae.png"></div>
+        <div class="flagOpt" onclick="selectFlag(this,'om')"><img src="https://flagcdn.com/w360/om.png"></div>
+        <div class="flagOpt" onclick="selectFlag(this,'qa')"><img src="https://flagcdn.com/w360/qa.png"></div>
+        <div class="flagOpt" onclick="selectFlag(this,'kw')"><img src="https://flagcdn.com/w360/kw.png"></div>
+        <div class="flagOpt" onclick="selectFlag(this,'bh')"><img src="https://flagcdn.com/w360/bh.png"></div>
       </div>
     </div>
-    <div class="modalBtns">
-      <button class="btnCancel" onclick="closeCreate()">إلغاء</button>
-      <button class="btnCreate" onclick="doCreate()">إنشاء</button>
-    </div>
+    <div class="modalBtns"><button class="btnCancel" onclick="closeCreate()">إلغاء</button><button class="btnCreate" onclick="doCreate()">إنشاء</button></div>
   </div>
 </div>
 
@@ -138,6 +119,7 @@ import { collection, onSnapshot, doc, setDoc, serverTimestamp } from 'https://ww
 let uid=localStorage.getItem('gabo_uid')||null;
 let selectedFlag='south';
 let selectedImgBase64=null;
+const SOUTH_SVG=`<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><rect width="900" height="200" y="0" fill="#D71921"/><rect width="900" height="200" y="200" fill="#FFFFFF"/><rect width="900" height="200" y="400" fill="#000000"/><path d="M0 0 L380 300 L0 600 Z" fill="#4AA6E0"/><g transform="translate(125,300)"><path d="M0 -70 L20 -22 L75 -22 L32 10 L48 65 L0 32 L-48 65 L-32 10 L-75 -22 L-20 -22 Z" fill="#D71921" stroke="white" stroke-width="10" stroke-linejoin="round"/></g></svg>`;
 onAuthStateChanged(auth,u=>{ if(u){ uid=u.uid; localStorage.setItem('gabo_uid',u.uid); }});
 window.goComm=id=>location.href=`community/index.html?id=${id}`;
 window.openCreate=()=>document.getElementById('createModal').classList.add('on');
@@ -154,7 +136,6 @@ window.doCreate=async()=>{
     closeCreate(); document.getElementById('commNameInput').value=''; selectedImgBase64=null; document.getElementById('imgPreview').style.display='none'; document.getElementById('imgPlus').style.display='block'; goComm(id);
   }catch(e){ alert('خطأ: '+e.message); }
 }
-const southFlagBig = `<svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#CE1126"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L42 30 L0 60 Z" fill="#5AB4E8"/><g transform="translate(14,30)"><path d="M0 -6.5 L1.7 -2.2 L6.6 -2.2 L2.6 0.4 L4 5 L0 2 L-4 5 L-2.6 0.4 L-6.6 -2.2 L-1.7 -2.2 Z" fill="#CE1126"/></g></svg>`;
 const grid=document.getElementById('commPage');
 onSnapshot(collection(db,'communities'),snap=>{
   grid.querySelectorAll('.userComm').forEach(e=>e.remove());
@@ -162,8 +143,8 @@ onSnapshot(collection(db,'communities'),snap=>{
     if(['south','sa','ye','ae'].includes(d.id)) return;
     const data=d.data();
     const div=document.createElement('div'); div.className='comm userComm'; div.onclick=()=>goComm(d.id);
-    let flagHtml=''; if(data.img){ flagHtml=`<div class="flag"><img src="${data.img}"></div>`; }else if(data.flag==='south'){ flagHtml=`<div class="flag">${southFlagBig}</div>`; }else{ flagHtml=`<div class="flag"><img src="https://flagcdn.com/w80/${data.flag||'sa'}.png"></div>`; }
-    let miniFlag=''; if(data.flag==='south'){ miniFlag=`<span class="miniFlag">${southFlagBig}</span>`; }else{ miniFlag=`<span class="miniFlag"><img src="https://flagcdn.com/w80/${data.flag||'sa'}.png"></span>`; }
+    let flagHtml=''; if(data.img){ flagHtml=`<div class="flag"><img src="${data.img}"></div>`; }else if(data.flag==='south'){ flagHtml=`<div class="flag">${SOUTH_SVG}</div>`; }else{ flagHtml=`<div class="flag"><img src="https://flagcdn.com/w360/${data.flag||'sa'}.png"></div>`; }
+    let miniFlag=''; if(data.flag==='south'){ miniFlag=`<span class="miniFlag">${SOUTH_SVG}</span>`; }else{ miniFlag=`<span class="miniFlag"><img src="https://flagcdn.com/w80/${data.flag||'sa'}.png"></span>`; }
     div.innerHTML=`${flagHtml}<b>${miniFlag}${data.name}</b><small>${data.membersCount||1} عضو ${data.closed?'🔒':''}</small>`; grid.appendChild(div);
   });
 });
