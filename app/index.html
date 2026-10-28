@@ -2,119 +2,171 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>المجتمع — GABO LIVE</title>
-<link rel="stylesheet" href="/assets/style/style.css">
+<title>GABO LIVE - App</title>
+<style>
+:root{--bg:#07060c;--card:#13111e;--card2:#1b192b;--b:#2a2840;--v:#7c3aed;--t:#fff;--m:#a1a1aa}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--t);font-family:system-ui;min-height:100vh;padding-bottom:90px}
+.top{position:sticky;top:0;z-index:20;background:rgba(7,6,12,.9);backdrop-filter:blur(12px);display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--b)}
+.top h1{font-size:20px;letter-spacing:.1em;font-weight:900}
+.top h1 span{color:var(--v)}
+.topBtns{display:flex;gap:8px}
+.topBtns button{background:#1e1c2e;border:1px solid var(--b);color:var(--t);padding:7px 14px;border-radius:20px;font-size:13px;cursor:pointer}
+.tabs{display:flex;gap:10px;padding:14px 16px}
+.tabs button{flex:1;padding:13px;border:none;border-radius:14px;background:var(--card);border:1px solid var(--b);color:var(--m);font-weight:800;cursor:pointer;font-size:15px}
+.tabs button.on{background:#fff;color:#000;border-color:#fff}
+.container{padding:0 16px}
+.card{background:var(--card);border:1px solid var(--b);border-radius:18px;overflow:hidden;margin-bottom:12px}
+.cardHead{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--b);color:var(--m);font-weight:700}
+.commItem{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.05)}
+.commItem:last-child{border:0}
+.commInfo h3{font-size:16px;margin-bottom:4px}
+.commInfo p{font-size:12px;color:var(--m)}
+.enterBtn{background:var(--v);color:#fff;border:none;padding:8px 18px;border-radius:10px;font-weight:800;cursor:pointer}
+.empty{text-align:center;padding:40px;color:var(--m)}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;padding:10px 0 calc(10px + env(safe-area-inset-bottom));z-index:50}
+.bottomNav button{background:none;border:none;color:var(--m);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.bottomNav button.on{color:var(--t)}
+.bottomNav button i{font-size:20px;font-style:normal}
+</style>
 </head>
 <body>
-<div class="wrap">
-  <header class="topbar">
-    <a class="brand" href="/app/">GABO LIVE ✨</a>
-    <div><a class="btn sm" href="/hosts/">مضيف؟</a> <button class="btn sm" id="logoutBtn">خروج</button></div>
-  </header>
+<div class="top">
+  <h1>✨ GABO LIVE</h1>
+  <div class="topBtns">
+    <button id="guestBtn">مضيف؟</button>
+    <button id="logoutBtn">خروج</button>
+  </div>
+</div>
 
-  <div class="seg"><button class="on" data-show="communities">🌍 المجتمعات</button><button data-show="members">👥 الأعضاء</button></div>
+<div class="tabs">
+  <button id="tabComm" class="on">🌍 المجتمعات</button>
+  <button id="tabMembers">👥 الأعضاء</button>
+</div>
 
-  <section class="page active" id="page-communities">
-    <div class="card"><h3>المجتمعات</h3><div class="list" id="communityList"><div class="empty">جاري التحميل...</div></div></div>
-    <div class="card"><h3 id="chatTitle">الشات العام</h3>
-      <div class="msgs" id="msgsBox"></div>
-      <div class="composer"><input id="msgInput" class="input" placeholder="اكتب رسالة..." maxlength="500"><button id="sendBtn" class="btn primary">↑</button></div>
+<div class="container">
+  <div class="card">
+    <div class="cardHead"><span id="listTitle">المجتمعات</span></div>
+    <div id="list"></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="cardHead">الشات العام</div>
+    <div id="chatBox" style="height:300px;overflow:auto;padding:12px"></div>
+    <div style="display:flex;gap:8px;padding:10px;border-top:1px solid var(--b)">
+      <input id="chatInput" placeholder="اكتب رسالة..." style="flex:1;background:#0e0d14;border:1px solid var(--b);border-radius:10px;padding:10px;color:#fff;outline:none">
+      <button id="sendBtn" style="background:var(--v);border:none;color:#fff;padding:10px 16px;border-radius:10px;font-weight:800">إرسال</button>
     </div>
-  </section>
+  </div>
+</div>
 
-  <section class="page" id="page-members">
-    <div class="card"><h3>كل الأعضاء</h3><div class="list" id="usersList"><div class="empty">جاري التحميل...</div></div></div>
-  </section>
+<div class="bottomNav">
+  <button class="on" onclick="location.href='/app/'"><i>🏠</i>الرئيسية</button>
+  <button onclick="location.href='/communities/'"><i>🌍</i>المجتمعات</button>
+  <button onclick="location.href='/profile/'"><i>👤</i>حسابي</button>
 </div>
 
 <script type="module">
 import { auth, db } from '/firebase-config.js';
 import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { collection, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import { mountChat, esc } from '/assets/app.js';
+import { collection, getDocs, query, orderBy, limit, addDoc, serverTimestamp, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-let currentUser = null;
+const $=s=>document.querySelector(s);
+const list=$('#list');
+const tabComm=$('#tabComm'), tabMembers=$('#tabMembers'), listTitle=$('#listTitle');
 
-// 1- تحقق تسجيل الدخول أول
-onAuthStateChanged(auth, (user) => {
-  if(!user){
-    location.replace('/login/');
-    return;
-  }
-  currentUser = user;
-  initApp(user);
+let currentUser=null;
+
+onAuthStateChanged(auth, u=>{
+  if(!u){ location.replace('/login/'); return; }
+  currentUser=u;
+  loadCommunities();
+  initChat();
 });
 
-async function initApp(user){
-  const $ = s => document.querySelector(s);
-  const $$ = (s,r=document) => [...r.querySelectorAll(s)];
+$('#logoutBtn').onclick=()=>signOut(auth).then(()=>location.replace('/login/'));
+$('#guestBtn').onclick=()=>location.href='/host/';
 
-  let current = new URLSearchParams(location.search).get('c') || 'general';
-  
-  // شغل الشات
+tabComm.onclick=()=>{ tabComm.classList.add('on'); tabMembers.classList.remove('on'); listTitle.textContent='المجتمعات'; loadCommunities(); }
+tabMembers.onclick=()=>{ tabMembers.classList.add('on'); tabComm.classList.remove('on'); listTitle.textContent='الأعضاء'; loadMembers(); }
+
+async function loadCommunities(){
+  list.innerHTML='<div class="empty">جاري تحميل المجتمعات...</div>';
   try{
-    const chat = mountChat({ box: $('#msgsBox'), input: $('#msgInput'), button: $('#sendBtn'), community: current, uid: user.uid });
-    
-    // تحميل المجتمعات
-    onSnapshot(collection(db, 'communities'), snap => {
-      const el = $('#communityList'); el.replaceChildren();
-      if (snap.empty) { el.innerHTML = '<div class="empty">لا يوجد مجتمعات بعد</div>'; return; }
-      snap.forEach(d => {
-        const c = d.data(), id = c.id || d.id;
-        const row = document.createElement('div');
-        row.className = 'item' + (id === current ? ' active' : '');
-        row.innerHTML = `<span>${esc(c.icon || '🌍')} ${esc(c.name || id)}</span><small>💬</small>`;
-        if (id === current) $('#chatTitle').textContent = c.name || id;
-        row.onclick = () => {
-          current = id; $('#chatTitle').textContent = c.name || id;
-          $$('.item', el).forEach(i => i.classList.remove('active')); row.classList.add('active');
-          chat.setCommunity(id);
-        };
-        el.append(row);
-      });
-    }, err => {
-      console.error(err);
-      $('#communityList').innerHTML = `<div class="empty">خطأ: ${err.message}</div>`;
+    const q=query(collection(db,'communities'), orderBy('createdAt','desc'), limit(20));
+    const snap=await getDocs(q);
+    if(snap.empty){
+      list.innerHTML='<div class="empty">لا يوجد مجتمعات بعد<br><button class="enterBtn" style="margin-top:10px" onclick="location.href=\'/communities/create.html\'">+ أنشئ أول مجتمع</button></div>';
+      return;
+    }
+    list.innerHTML='';
+    snap.forEach(d=>{
+      const data=d.data();
+      const div=document.createElement('div');
+      div.className='commItem';
+      div.innerHTML=`
+        <div class="commInfo">
+          <h3>${data.name || 'بدون اسم'}</h3>
+          <p>${data.description?.slice(0,60) || ''} • ${data.membersCount || 0} عضو</p>
+        </div>
+        <button class="enterBtn" onclick="enterComm('${d.id}')">دخول</button>
+      `;
+      list.appendChild(div);
     });
-
-    // تحميل الأعضاء
-    onSnapshot(collection(db, 'users'), snap => {
-      const el = $('#usersList'); el.replaceChildren();
-      snap.forEach(d => {
-        if (d.id === user.uid) return;
-        const u = d.data();
-        if (u.banned) return;
-        const row = document.createElement('div'); row.className = 'item';
-        row.innerHTML = `<span>${esc(u.name || u.email)}<br><small>${u.subscription === 'VIP' ? '♛ VIP' : ''}</small></span><small>✉</small>`;
-        row.onclick = () => (location.href = '/app/private/?to=' + d.id);
-        el.append(row);
-      });
-      if (!el.children.length) el.innerHTML = '<div class="empty">لا يوجد أعضاء آخرين بعد</div>';
-    }, err => {
-      console.error(err);
-      $('#usersList').innerHTML = `<div class="empty">خطأ: ${err.message}</div>`;
-    });
-
   }catch(e){
     console.error(e);
-    $('#communityList').innerHTML = `<div class="empty">خطأ تحميل: ${e.message}</div>`;
+    list.innerHTML=`<div class="empty" style="color:#fb7185">خطأ تحميل: ${e.message}<br>تأكد من وجود collection اسمها communities في Firestore</div>`;
   }
 }
 
-document.getElementById('logoutBtn').onclick = async () => {
-  await signOut(auth);
-  location.replace('/login/');
-};
+async function loadMembers(){
+  list.innerHTML='<div class="empty">جاري تحميل الأعضاء...</div>';
+  try{
+    const snap=await getDocs(query(collection(db,'users'), limit(20)));
+    list.innerHTML='';
+    snap.forEach(d=>{
+      const data=d.data();
+      const div=document.createElement('div');
+      div.className='commItem';
+      div.innerHTML=`
+        <div class="commInfo"><h3>${data.name||data.email}</h3><p>${data.email||''}</p></div>
+        <button class="enterBtn" style="background:#2a2840">عرض</button>
+      `;
+      list.appendChild(div);
+    });
+  }catch(e){
+    list.innerHTML=`<div class="empty" style="color:#fb7185">${e.message}</div>`;
+  }
+}
 
-// تبديل التبويبات
-document.querySelectorAll('[data-show]').forEach(btn=>{
-  btn.onclick=()=>{
-    document.querySelectorAll('[data-show]').forEach(b=>b.classList.remove('on'));
-    btn.classList.add('on');
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.getElementById('page-'+btn.dataset.show).classList.add('active');
-  };
-});
+window.enterComm=(id)=>{
+  location.href=`/community/?id=${id}`;
+}
+
+// شات عام بسيط
+function initChat(){
+  const col=collection(db,'generalChat');
+  onSnapshot(query(col, orderBy('createdAt','asc'), limit(50)), snap=>{
+    const box=$('#chatBox');
+    box.innerHTML='';
+    snap.forEach(d=>{
+      const m=d.data();
+      const el=document.createElement('div');
+      el.style.marginBottom='8px';
+      el.innerHTML=`<b style="color:var(--v)">${m.name||'مجهول'}:</b> <span style="color:#ddd">${m.text}</span>`;
+      box.appendChild(el);
+    });
+    box.scrollTop=box.scrollHeight;
+  });
+
+  $('#sendBtn').onclick=send;
+  $('#chatInput').onkeydown=e=>{ if(e.key==='Enter') send(); }
+  async function send(){
+    const txt=$('#chatInput').value.trim();
+    if(!txt || !currentUser) return;
+    $('#chatInput').value='';
+    await addDoc(col,{text:txt, name:currentUser.displayName||currentUser.email.split('@')[0], uid:currentUser.uid, createdAt:serverTimestamp()});
+  }
+}
 </script>
 </body>
 </html>
