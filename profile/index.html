@@ -84,7 +84,6 @@ body{padding-bottom:110px}
   <button class="btnFull notif" id="notifBtn">🔔 تفعيل الإشعارات</button>
   <button class="settingsBtn" id="openSettingsPage">⚙️ الإعدادات والعدادات ›</button>
 </div>
-
 <div class="editPage" id="editPage">
   <div class="editTop"><a class="backBtn" id="closeEdit">›</a><b>ملف التعريف</b><div style="width:40px"></div></div>
   <div class="coverArea">
@@ -105,7 +104,6 @@ body{padding-bottom:110px}
   </div>
   <div class="saveArea"><button class="saveBtn" id="saveAll">💾 حفظ التغييرات</button></div>
 </div>
-
 <div class="settingsPage" id="settingsPage">
   <div class="editTop"><a class="backBtn" id="closeSettings">›</a><b>الإعدادات والعدادات</b><div style="width:40px"></div></div>
   <div class="cardList">
@@ -120,7 +118,6 @@ body{padding-bottom:110px}
     <div class="row danger" id="deleteAccountBtn"><div class="left">‹</div><div class="right">🗑️ حذف الحساب نهائياً</div></div>
   </div>
 </div>
-
 <div class="modal" id="nameModal"><div class="box"><h3>✏️ الاسم المستعار</h3><input id="nameInput"><div class="actions"><button class="btnCancel" onclick="document.getElementById('nameModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="saveName">حسناً</button></div></div></div>
 <div class="modal" id="bioModal"><div class="box"><h3>✍️ التعريف الشخصي</h3><textarea id="bioInput"></textarea><div class="actions"><button class="btnCancel" onclick="document.getElementById('bioModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="confirmBio">حفظ</button></div></div></div>
 <div class="modal" id="genderModal"><div class="box"><h3>اختر الجنس</h3><div class="genderGrid"><div class="genderCard" data-g="ذكر ♂️"><span class="ico">👨</span><b>ذكر</b><br>♂️</div><div class="genderCard" data-g="أنثى ♀️"><span class="ico">👩</span><b>أنثى</b><br>♀️</div></div><div class="actions"><button class="btnCancel" onclick="document.getElementById('genderModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="confirmGender">حفظ ✅</button></div></div></div>
@@ -129,7 +126,6 @@ body{padding-bottom:110px}
 <div class="modal" id="deleteModal"><div class="box"><h3>⚠️ حذف الحساب؟</h3><p style="text-align:center;color:#d0d0e0">اكتب <b>حذف</b></p><input id="deleteConfirmInput" placeholder="اكتب حذف"><div class="actions"><button class="btnCancel" onclick="document.getElementById('deleteModal').classList.remove('on')">إلغاء</button><button class="btnDel" id="confirmDeleteAccount">حذف نهائي</button></div></div></div>
 <div class="modal" id="deactivateModal"><div class="box"><h3>⏸️ إلغاء التنشيط؟</h3><p style="text-align:center;color:#d0d0e0">سيتم إخفاء حسابك مؤقتاً</p><div class="actions"><button class="btnCancel" onclick="document.getElementById('deactivateModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="confirmDeactivate" style="background:#fbbf24">تأكيد</button></div></div></div>
 <div class="statusBar" id="statusBar"></div>
-
 <div class="bottomNav">
   <a href="/profile/" class="on"><span class="ic">👤</span><span>حسابي</span></a>
   <a href="/dm/"><span class="ic">🔒</span><span>دردشة خاصة</span><span id="navBadge" class="navBadge hide">0</span></a>
@@ -137,7 +133,6 @@ body{padding-bottom:110px}
   <a href="/posts/"><span class="ic">📄</span><span>منشورات</span></a>
   <a href="/app/"><span class="ic">🏠</span><span>الرئيسية</span></a>
 </div>
-
 <script type="module">
 import {auth,db} from '/firebase-config.js';
 import {onAuthStateChanged,updateProfile,signOut,deleteUser} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
@@ -285,7 +280,6 @@ onAuthStateChanged(auth,async u=>{
   document.getElementById('avL').textContent=(u.displayName||snap.data()?.displayName||'T')[0];
   document.getElementById('rowNameVal').textContent=u.displayName||snap.data()?.displayName||snap.data()?.name||'Taher Hammam';
   document.getElementById('rowAvLetter').textContent=(u.displayName||snap.data()?.displayName||'T')[0];
-  // === تصحيح قراءة الصورة من كل الحقول الممكنة ===
   const photo = localStorage.getItem('gabo_photo_'+u.uid) || localStorage.getItem('gabo_photo') || snap.data()?.photoURL || snap.data()?.photo || snap.data()?.avatar || u.photoURL || '';
   const cover = localStorage.getItem('gabo_cover_'+u.uid) || snap.data()?.cover || '';
   if(photo){
@@ -386,7 +380,6 @@ document.getElementById('saveAll').onclick=async()=>{
     if(pending.gender!==null)updates.gender=pending.gender;
     if(pending.country!==null){updates.country=pending.country; updates.countryName=pending.countryName; updates.countryFlagImg=pending.countryFlagImg;}
     if(pending.avatar!==null){
-      // === هنا التصليح المهم - نحفظ بكل الأسماء عشان يطلع في المجتمع ===
       localStorage.setItem('gabo_photo_'+cur.uid, pending.avatar);
       localStorage.setItem('gabo_photo', pending.avatar);
       updates.photo=pending.avatar;
