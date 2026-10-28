@@ -51,12 +51,10 @@ body{padding-bottom:110px}
 </head>
 <body>
 <div class="mainCard">
-  <!-- غلاف كبير -->
   <div class="coverMain" id="coverMain">
     <div class="placeholder">🖼️</div>
     <img id="coverMainImg">
   </div>
-  
   <div class="head">
     <div class="avatar" id="avatarMain"><img id="avatarImgMain"><span id="avL">T</span><div class="pencil" id="openEdit">✏️</div></div>
     <div class="info">
@@ -120,9 +118,8 @@ body{padding-bottom:110px}
 <div class="modal" id="genderModal"><div class="box"><h3>اختر الجنس</h3><div class="genderGrid"><div class="genderCard" data-g="ذكر ♂️"><span class="ico">👨</span><b>ذكر</b><br>♂️</div><div class="genderCard" data-g="أنثى ♀️"><span class="ico">👩</span><b>أنثى</b><br>♀️</div></div><div class="actions"><button class="btnCancel" onclick="document.getElementById('genderModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="confirmGender">حفظ ✅</button></div></div></div>
 <div class="modal" id="bdayModal"><div class="box"><h3>📅 تاريخ الميلاد</h3><div class="wheels"><div class="wheelWrap"><small>اليوم</small><div class="wheel" id="dayWheel"></div></div><div class="wheelWrap"><small>الشهر</small><div class="wheel" id="monthWheel"></div></div><div class="wheelWrap"><small>السنة</small><div class="wheel" id="yearWheel"></div></div></div><div class="bdayPreview" id="bdayPreview">2000-01-03</div><div class="actions"><button class="btnCancel" onclick="document.getElementById('bdayModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="confirmBday">حفظ ✅</button></div></div></div>
 <div class="modal" id="countryModal"><div class="box"><h3>🌍 اختر دولتك</h3><input id="countrySearch" placeholder="ابحث..."><div class="countryList" id="countryList"></div><div class="actions"><button class="btnCancel" onclick="document.getElementById('countryModal').classList.remove('on')">إغلاق</button></div></div></div>
-<div class="modal" id="vipModal"><div class="box"><h3>👑 VIP</h3><p>مزايا VIP قريباً</p><div class="actions"><button class="btnCancel" onclick="document.getElementById('vipModal').classList.remove('on')">إغلاق</button><button class="btnSave" onclick="location.href='/posts/'">المتجر</button></div></div></div>
-<div class="modal" id="deleteModal"><div class="box"><h3>⚠️ حذف الحساب؟</h3><p>اكتب <b>حذف</b></p><input id="deleteConfirmInput" placeholder="اكتب حذف"><div class="actions"><button class="btnCancel" onclick="document.getElementById('deleteModal').classList.remove('on')">إلغاء</button><button class="btnDel" id="confirmDeleteAccount">حذف نهائي</button></div></div></div>
-<div class="modal" id="deactivateModal"><div class="box"><h3>⏸️ إلغاء التنشيط؟</h3><p>سيتم إخفاء حسابك مؤقتاً</p><div class="actions"><button class="btnCancel" onclick="document.getElementById('deactivateModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="confirmDeactivate" style="background:#fbbf24">تأكيد</button></div></div></div>
+<div class="modal" id="deleteModal"><div class="box"><h3>⚠️ حذف الحساب؟</h3><p style="text-align:center;color:#d0d0e0">اكتب <b>حذف</b></p><input id="deleteConfirmInput" placeholder="اكتب حذف"><div class="actions"><button class="btnCancel" onclick="document.getElementById('deleteModal').classList.remove('on')">إلغاء</button><button class="btnDel" id="confirmDeleteAccount">حذف نهائي</button></div></div></div>
+<div class="modal" id="deactivateModal"><div class="box"><h3>⏸️ إلغاء التنشيط؟</h3><p style="text-align:center;color:#d0d0e0">سيتم إخفاء حسابك مؤقتاً</p><div class="actions"><button class="btnCancel" onclick="document.getElementById('deactivateModal').classList.remove('on')">إلغاء</button><button class="btnSave" id="confirmDeactivate" style="background:#fbbf24">تأكيد</button></div></div></div>
 <div class="statusBar" id="statusBar"></div>
 <div class="bottomNav">
   <a href="/profile/" class="on"><span class="ic">👤</span>حسابي</a>
@@ -199,7 +196,6 @@ function buildWheels(){
   attach(dayW, v=>selDay=v); attach(monthW, v=>selMonth=v); attach(yearW, v=>selYear=v);
 }
 function updatePreview(){const m=String(selMonth).padStart(2,'0'); const d=String(selDay).padStart(2,'0'); document.getElementById('bdayPreview').textContent=`${selYear}-${m}-${d}`;}
-
 function showCoverInMain(coverData){
   const coverMain = document.getElementById('coverMain');
   const img = document.getElementById('coverMainImg');
@@ -215,7 +211,6 @@ function showCoverInMain(coverData){
     coverMain.style.background='linear-gradient(135deg,#1a2a4a,#0f3460,#161426)';
   }
 }
-
 onAuthStateChanged(auth,async u=>{
   if(!u){location.replace('/login/');return}
   cur=u; const ref=doc(db,'users',u.uid); const snap=await getDoc(ref);
@@ -238,11 +233,8 @@ onAuthStateChanged(auth,async u=>{
   document.getElementById('avL').textContent=(u.displayName||'T')[0];
   document.getElementById('rowNameVal').textContent=u.displayName||'Taher Hammam';
   document.getElementById('rowAvLetter').textContent=(u.displayName||'T')[0];
-
-  // تحميل الصور المحفوظة
   const photo = localStorage.getItem('gabo_photo_'+u.uid) || snap.data()?.photo;
   const cover = localStorage.getItem('gabo_cover_'+u.uid) || snap.data()?.cover;
-  
   if(photo){
     const img=document.getElementById('avatarImgMain');img.src=photo;img.style.display='block';document.getElementById('avL').style.display='none';
     document.getElementById('rowAvImg').src=photo;document.getElementById('rowAvImg').style.display='block';document.getElementById('rowAvLetter').style.display='none';
@@ -251,20 +243,12 @@ onAuthStateChanged(auth,async u=>{
     showCoverInMain(cover);
     document.getElementById('coverImg').src=cover;document.getElementById('coverImg').style.display='block';document.getElementById('coverEmpty').style.display='none';
   }
-
   onSnapshot(ref,d=>{if(d.exists()){
     document.getElementById('c1').textContent=d.data().followers||0;document.getElementById('c2').textContent=d.data().following||0;document.getElementById('c3').textContent=d.data().visitors||0;
     document.getElementById('s_c1').textContent=d.data().followers||0;document.getElementById('s_c2').textContent=d.data().following||0;document.getElementById('s_c3').textContent=d.data().visitors||0;
-    if(d.data().photo && !photo){
-      document.getElementById('avatarImgMain').src=d.data().photo;document.getElementById('avatarImgMain').style.display='block';document.getElementById('avL').style.display='none';
-    }
-    if(d.data().cover && !cover){
-      showCoverInMain(d.data().cover);
-    }
     const g=d.data().gender||savedGender; const b=d.data().bday||savedBday; updateMeta(g,b);
   }});
 });
-
 document.getElementById('openEdit').onclick=()=>{document.getElementById('editPage').classList.add('on');};
 document.getElementById('closeEdit').onclick=()=>document.getElementById('editPage').classList.remove('on');
 document.getElementById('openSettingsPage').onclick=()=>{document.getElementById('settingsPage').classList.add('on');};
@@ -284,8 +268,6 @@ document.querySelectorAll('.genderCard').forEach(c=>{c.onclick=()=>{document.que
 document.getElementById('confirmGender').onclick=()=>{if(!tempGender)return; pending.gender=tempGender; document.getElementById('rowGenderVal').textContent=tempGender; document.getElementById('genderModal').classList.remove('on');};
 document.getElementById('rowCountry').onclick=()=>{renderCountryList('');document.getElementById('countryModal').classList.add('on');};
 document.getElementById('countrySearch').oninput=e=>renderCountryList(e.target.value);
-
-// حفظ الصور - مصلح
 document.getElementById('rowAvatar').onclick=()=>document.getElementById('avatarInp').click();
 document.getElementById('avatarInp').onchange=e=>{
   const f=e.target.files[0]; if(!f)return;
@@ -297,7 +279,7 @@ document.getElementById('avatarInp').onchange=e=>{
     document.getElementById('avatarImgMain').src=data;
     document.getElementById('avatarImgMain').style.display='block';
     document.getElementById('avL').style.display='none';
-    showStatus('✅ تم اختيار الصورة الرمزية - اضغط حفظ');
+    showStatus('✅ تم اختيار الصورة - اضغط حفظ');
   });
 };
 document.getElementById('addCover').onclick=()=>document.getElementById('coverInp').click();
@@ -318,11 +300,16 @@ document.getElementById('delCover').onclick=()=>{
   document.getElementById('coverImg').style.display='none';
   document.getElementById('coverEmpty').style.display='flex';
   showCoverInMain(null);
-  showStatus('🗑️ تم حذف الغلاف - اضغط حفظ');
 };
 
-document.getElementById('vipBtn').onclick=()=>{document.getElementById('vipModal').classList.add('on');};
-document.getElementById('notifBtn').onclick=async()=>{if('Notification' in window){const perm=await Notification.requestPermission(); if(perm==='granted'){showStatus('🔔 تم تفعيل الإشعارات');}}};
+// --- هنا التعديل المهم: الازرار تودي لصفحات ---
+document.getElementById('vipBtn').onclick=()=>{
+  location.href='/vip/';
+};
+document.getElementById('notifBtn').onclick=()=>{
+  location.href='/notifications/';
+};
+
 document.getElementById('refreshCountersBtn').onclick=()=>{showStatus('🔄 تم التحديث');};
 document.getElementById('logoutBtn').onclick=async()=>{if(confirm('تسجيل الخروج؟')){await signOut(auth); location.replace('/login/');}};
 document.getElementById('deactivateBtn').onclick=()=>{document.getElementById('deactivateModal').classList.add('on');};
@@ -357,7 +344,6 @@ document.getElementById('saveAll').onclick=async()=>{
     }
     if(Object.keys(updates).length>0){
       await setDoc(ref,updates,{merge:true});
-      showStatus('✅ تم حفظ الصور والبيانات');
     }
     btn.textContent='✅ تم الحفظ';
     setTimeout(()=>{document.getElementById('editPage').classList.remove('on'); location.reload();},1000);
