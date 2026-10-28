@@ -2,125 +2,106 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>دردشة - GABO LIVE</title>
+<title>دردشة خاصة - GABO LIVE</title>
 <style>
-:root{--bg:#050507;--card:#11111a;--b:#232334;--v:#7c3aed;--v2:#4f46e5}
+:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed}
 *{margin:0;padding:0;box-sizing:border-box}
-html{height:100%;height:100dvh}
-body{background:var(--bg);color:#fff;font-family:system-ui;height:100%;height:100dvh;display:flex;flex-direction:column;overflow:hidden;position:fixed;inset:0}
-.header{height:60px;min-height:60px;background:rgba(17,17,26,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px;padding:0 12px;z-index:10}
-.back{width:38px;height:38px;background:#1e1c2e;border:1px solid var(--b);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none}
-.avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#fbbf24);display:flex;align-items:center;justify-content:center;font-weight:900;position:relative;overflow:hidden}
-.avatar img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
-.online{position:absolute;bottom:-1px;right:-1px;width:12px;height:12px;background:#22c55e;border:2px solid var(--card);border-radius:50%}
-.info{flex:1}.info b{font-size:14px;display:block}.info small{color:#22c55e;font-size:11px}
-.actions{display:flex;gap:6px}
-.actions button{width:36px;height:36px;background:#1e1c2e;border:1px solid var(--b);border-radius:50%;color:#fff;cursor:pointer}
-.messages{flex:1;overflow-y:auto;padding:14px 12px 20px;background:radial-gradient(ellipse at top,#1a1a2e 0%,#050507 60%);display:flex;flex-direction:column;gap:8px;-webkit-overflow-scrolling:touch}
-.messages::-webkit-scrollbar{display:none}
-.dateSep{align-self:center;background:rgba(255,255,255,.08);padding:4px 12px;border-radius:20px;font-size:11px;color:#8b8ba7;margin:8px 0}
-.bubble{max-width:78%;padding:10px 14px;border-radius:18px;line-height:1.5;font-size:14px;word-wrap:break-word}
-.bubble.in{align-self:flex-start;background:#1e1e2e;border:1px solid var(--b);border-bottom-right-radius:6px}
-.bubble.out{align-self:flex-end;background:linear-gradient(135deg,#7c3aed,#4f46e5);border-bottom-left-radius:6px;box-shadow:0 4px 15px rgba(124,58,237,.3)}
-.bubble .time{font-size:10px;opacity:.6;margin-top:4px;display:flex;gap:4px}
-.bubble.out .time{justify-content:flex-end}
-.inputBar{flex-shrink:0;background:#11111a;border-top:1px solid var(--b);padding:8px 10px;padding-bottom:calc(8px + env(safe-area-inset-bottom));display:flex;gap:8px;align-items:flex-end;position:relative;z-index:20}
-.inputWrap{flex:1;background:#1e1e2e;border:1px solid var(--b);border-radius:24px;display:flex;align-items:center;padding:4px 8px;gap:6px}
-.inputWrap textarea{flex:1;background:transparent;border:0;color:#fff;outline:none;resize:none;max-height:100px;min-height:22px;font-size:14px;line-height:1.4;padding:6px 0;font-family:inherit}
-.iconBtn{width:34px;height:34px;border-radius:50%;background:transparent;border:0;color:#8b8ba7;font-size:18px;cursor:pointer}
-.sendBtn{width:44px;height:44px;min-width:44px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#4f46e5);border:0;color:#fff;font-size:18px;cursor:pointer}
-.emojiPanel{position:absolute;bottom:70px;right:10px;left:10px;background:#161626;border:1px solid var(--b);border-radius:18px;padding:10px;display:none;grid-template-columns:repeat(8,1fr);gap:6px;z-index:30}
-.emojiPanel.on{display:grid}
-.emojiPanel span{font-size:20px;text-align:center;cursor:pointer;padding:6px;border-radius:8px}
+body{background:var(--bg);color:#fff;font-family:system-ui;min-height:100vh;padding-bottom:90px}
+.top{padding:16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--b);position:sticky;top:0;background:var(--bg);z-index:10}
+.back{width:40px;height:40px;background:#1e1c2e;border:1px solid var(--b);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none}
+.list{padding:12px}
+.item{background:var(--card);border:1px solid var(--b);border-radius:14px;padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:center;cursor:pointer}
+.item img{width:48px;height:48px;border-radius:50%;object-fit:cover;background:#2a2840}
+.empty{text-align:center;padding:80px 20px;color:#8b8ba7}
+.empty .ic{font-size:60px;display:block;margin-bottom:12px}
+.fab{position:fixed;bottom:90px;left:16px;width:56px;height:56px;background:#fff;color:#000;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;box-shadow:0 4px 20px rgba(0,0,0,.5);cursor:pointer;z-index:20;border:0}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;padding:8px 0 10px;direction:ltr;z-index:30}
+.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:9px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bottomNav a.on{color:#fff}.bottomNav a .ic{font-size:22px}
+.bottomNav a.plus .ic{background:var(--v);color:#fff;width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-20px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:100;display:none;flex-direction:column}
+.modal.on{display:flex}
+.modalTop{padding:16px;display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--b);background:var(--bg)}
+.modalTop input{flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:12px;padding:12px;color:#fff;outline:none}
+.usersList{flex:1;overflow:auto;padding:12px}
+.userRow{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--b);border-radius:14px;padding:12px;margin-bottom:10px}
+.userRow img{width:50px;height:50px;border-radius:50%;object-fit:cover;background:#2a2840}
+.userRow b{font-size:14px;display:block}.userRow small{color:#8b8ba7;font-size:12px}
+.userRow .chatBtn{margin-right:auto;background:var(--v);color:#fff;border:0;padding:8px 14px;border-radius:10px;font-weight:700;cursor:pointer}
 </style>
 </head>
 <body>
-<div class="header">
-  <a href="/dm/" class="back">›</a>
-  <div class="avatar" id="avatar"><span id="avL">U</span><img id="avImg" style="display:none"><div class="online"></div></div>
-  <div class="info"><b id="name">...</b><small>● متصل الآن</small></div>
-  <div class="actions"><button>📞</button><button>🎥</button></div>
+<div class="top"><a href="/profile/" class="back">›</a><b>🔒 دردشة خاصة</b></div>
+<div class="list" id="chatList"><div style="text-align:center;padding:40px;color:#8b8ba7">جاري التحميل...</div></div>
+<button class="fab" id="newChatBtn">+</button>
+<div class="bottomNav">
+  <a href="/profile/"><span class="ic">👤</span>حسابي</a>
+  <a href="/dm/" class="on"><span class="ic">🔒</span>دردشة خاصة</a>
+  <a href="/create/" class="plus"><span class="ic">+</span></a>
+  <a href="/posts/"><span class="ic">📄</span>منشورات</a>
+  <a href="/app/"><span class="ic">🏠</span>الرئيسية</a>
 </div>
-<div class="messages" id="messages"></div>
-<div class="emojiPanel" id="emojiPanel"></div>
-<div class="inputBar">
-  <div class="inputWrap">
-    <button class="iconBtn" id="emojiBtn">😊</button>
-    <textarea id="msgInput" placeholder="اكتب رسالة..." rows="1"></textarea>
-    <button class="iconBtn" onclick="document.getElementById('fileInp').click()">📎</button>
-    <input type="file" id="fileInp" accept="image/*" hidden>
+<div class="modal" id="usersModal">
+  <div class="modalTop">
+    <input id="searchUser" placeholder="ابحث عن مستخدم...">
+    <button id="closeModal" style="width:40px;height:40px;border-radius:50%;background:#1e1c2e;border:1px solid var(--b);color:#fff">✕</button>
   </div>
-  <button class="sendBtn" id="sendBtn">➤</button>
+  <div class="usersList" id="usersList"></div>
 </div>
 <script type="module">
 import {auth,db} from '/firebase-config.js';
 import {onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import {doc,getDoc,collection,addDoc,query,orderBy,onSnapshot,serverTimestamp,updateDoc} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-let cur=null,chatId=null,otherId=null;
-const messagesEl=document.getElementById('messages');
-const input=document.getElementById('msgInput');
-const params=new URLSearchParams(location.search);
-chatId=params.get('id');
-if(!chatId) location.replace('/dm/');
+import {collection,query,where,getDocs,onSnapshot,addDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+let cur=null,allUsers=[];
+const chatList=document.getElementById('chatList');
+const usersList=document.getElementById('usersList');
 onAuthStateChanged(auth, async u=>{
   if(!u){ location.replace('/login/'); return; }
   cur=u;
-  const chatRef=doc(db,'chats',chatId);
-  const snap=await getDoc(chatRef);
-  if(!snap.exists()){ messagesEl.innerHTML='<div class="dateSep">الدردشة غير موجودة</div>'; return; }
-  const data=snap.data();
-  otherId=data.users.find(id=>id!==u.uid);
-  const otherData=data.usersInfo?.[otherId] || {};
-  document.getElementById('name').textContent=otherData.name||'مستخدم';
-  document.getElementById('avL').textContent=(otherData.name||'U')[0];
-  if(otherData.photo){ const img=document.getElementById('avImg'); img.src=otherData.photo; img.style.display='block'; document.getElementById('avL').style.display='none'; }
-  const otherSnap=await getDoc(doc(db,'users',otherId));
-  if(otherSnap.exists()){
-    const od=otherSnap.data();
-    document.getElementById('name').textContent=od.displayName||od.name||otherData.name;
-    if(od.photo){ const img=document.getElementById('avImg'); img.src=od.photo; img.style.display='block'; document.getElementById('avL').style.display='none'; }
-  }
-  listenMessages();
+  loadChats(u.uid);
+  loadAllUsers(u.uid);
 });
-function listenMessages(){
-  const q=query(collection(db,'chats',chatId,'messages'), orderBy('createdAt','asc'));
+function loadChats(uid){
+  const q=query(collection(db,'chats'), where('users','array-contains', uid));
   onSnapshot(q, snap=>{
-    messagesEl.innerHTML='';
-    let lastDate='';
-    if(snap.empty){ messagesEl.innerHTML='<div class="dateSep">ابدأ المحادثة الآن 👋</div>'; return; }
+    if(snap.empty){
+      chatList.innerHTML=`<div class="empty"><span class="ic">💬</span><b>لا توجد دردشات بعد</b><p style="margin-top:8px;font-size:13px">اضغط + تحت لبدء محادثة جديدة</p></div>`;
+      return;
+    }
+    chatList.innerHTML='';
     snap.forEach(d=>{
-      const m=d.data();
-      const dateStr=m.createdAt?.toDate ? m.createdAt.toDate().toLocaleDateString('ar-EG') : '';
-      if(dateStr && dateStr!==lastDate){ lastDate=dateStr; messagesEl.innerHTML+=`<div class="dateSep">${dateStr}</div>`; }
-      const isMe=m.senderId===cur.uid;
-      const time=m.createdAt?.toDate ? m.createdAt.toDate().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}) : 'الآن';
-      messagesEl.innerHTML+=`<div class="bubble ${isMe?'out':'in'}">${m.image?`<img src="${m.image}" style="width:100%;border-radius:12px;margin-bottom:6px;max-width:240px"><br>`:''}<div>${(m.text||'').replace(/</g,'&lt;')}</div><div class="time">${time} ${isMe? (m.read?'✓✓':'✓'):''}</div></div>`;
+      const data=d.data();
+      const otherId=data.users.find(id=>id!==uid);
+      const other=data.usersInfo?.[otherId] || {name:'مستخدم',photo:''};
+      chatList.innerHTML+=`
+        <div class="item" onclick="location.href='/dm/chat.html?id=${d.id}'">
+          <img src="${other.photo||''}" onerror="this.style.display='none'">
+          <div><b>${other.name}</b><small>${data.lastMsg||'اضغط لفتح الدردشة'}</small></div>
+        </div>`;
     });
-    setTimeout(()=>{ messagesEl.scrollTop=messagesEl.scrollHeight; },100);
   });
 }
-async function send(){
-  const text=input.value.trim(); if(!text) return;
-  input.value=''; input.style.height='22px';
-  await addDoc(collection(db,'chats',chatId,'messages'),{text:text,senderId:cur.uid,createdAt:serverTimestamp(),read:false});
-  await updateDoc(doc(db,'chats',chatId),{lastMsg:text.slice(0,40),lastAt:serverTimestamp()});
+async function loadAllUsers(myUid){
+  const snap=await getDocs(collection(db,'users'));
+  allUsers=[];
+  snap.forEach(d=>{ if(d.id!==myUid){ const data=d.data(); allUsers.push({id:d.id,name:data.displayName||'مستخدم',photo:data.photo||'',countryName:data.countryName||''}); } });
+  renderUsers(allUsers);
 }
-document.getElementById('sendBtn').onclick=send;
-input.onkeydown=e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } };
-input.oninput=()=>{ input.style.height='auto'; input.style.height=input.scrollHeight+'px'; };
-const emojis=['😂','❤️','🔥','😍','👏','😭','🥺','😊','🙏','💔','😎','🤣','✨','👑','💎','🌹','😘','🤍','💜'];
-const panel=document.getElementById('emojiPanel');
-panel.innerHTML=emojis.map(e=>`<span>${e}</span>`).join('');
-panel.querySelectorAll('span').forEach(s=>s.onclick=()=>{ input.value+=s.textContent; input.focus(); });
-document.getElementById('emojiBtn').onclick=()=>panel.classList.toggle('on');
-document.getElementById('fileInp').onchange=e=>{
-  const f=e.target.files[0]; if(!f) return;
-  const reader=new FileReader();
-  reader.onload=async(ev)=>{
-    await addDoc(collection(db,'chats',chatId,'messages'),{text:'📷 صورة',image:ev.target.result,senderId:cur.uid,createdAt:serverTimestamp()});
-    await updateDoc(doc(db,'chats',chatId),{lastMsg:'📷 صورة',lastAt:serverTimestamp()});
-  };
-  reader.readAsDataURL(f);
+function renderUsers(arr){
+  usersList.innerHTML=arr.map(u=>`<div class="userRow"><img src="${u.photo}"><div><b>${u.name}</b><small>${u.countryName}</small></div><button class="chatBtn" onclick="startChat('${u.id}')">راسل</button></div>`).join('');
+}
+document.getElementById('searchUser').oninput=e=>{ const v=e.target.value.toLowerCase(); renderUsers(allUsers.filter(u=>u.name.toLowerCase().includes(v))); };
+document.getElementById('newChatBtn').onclick=()=>{ document.getElementById('usersModal').classList.add('on'); };
+document.getElementById('closeModal').onclick=()=>{ document.getElementById('usersModal').classList.remove('on'); };
+window.startChat=async(targetId)=>{
+  const q=query(collection(db,'chats'), where('users','array-contains', cur.uid));
+  const snap=await getDocs(q);
+  let existing=null;
+  snap.forEach(d=>{ const users=d.data().users; if(users.includes(targetId) && users.length===2) existing=d.id; });
+  if(existing){ location.href='/dm/chat.html?id='+existing; return; }
+  const target=allUsers.find(u=>u.id===targetId);
+  const newChat=await addDoc(collection(db,'chats'),{users:[cur.uid,targetId],usersInfo:{[cur.uid]:{name:cur.displayName||'انا',photo:localStorage.getItem('gabo_photo_'+cur.uid)||''},[targetId]:{name:target.name,photo:target.photo}},createdAt:serverTimestamp(),lastMsg:'بدأت المحادثة',lastAt:serverTimestamp()});
+  location.href='/dm/chat.html?id='+newChat.id;
 };
 </script>
 </body>
