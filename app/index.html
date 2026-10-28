@@ -49,28 +49,25 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:96px;m
 
 <div id="commPage" class="grid">
 
-  <div class="comm" onclick="location.href='/community/?id=south'">
+  <div class="comm" onclick="goComm('south')">
     <div class="flag">
       <svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/><polygon points="20,18 22.5,24 29,24 23.8,27.8 25.3,34 20,30 14.7,34 16.2,27.8 11,24 17.5,24" fill="#D71921"/></svg>
     </div>
-    <b>
-      <span class="miniFlag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/><polygon points="20,18 22.5,24 29,24 23.8,27.8 25.3,34 20,30 14.7,34 16.2,27.8 11,24 17.5,24" fill="#D71921"/></svg></span>
-      مجتمع الجنوب العربي
-    </b>
+    <b><span class="miniFlag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/><polygon points="20,18 22.5,24 29,24 23.8,27.8 25.3,34 20,30 14.7,34 16.2,27.8 11,24 17.5,24" fill="#D71921"/></svg></span> مجتمع الجنوب العربي</b>
     <small>1.2k متواجد</small>
   </div>
 
-  <div class="comm" onclick="location.href='/community/?id=sa'">
+  <div class="comm" onclick="goComm('sa')">
     <div class="flag"><img src="https://flagcdn.com/w80/sa.png"></div>
     <b>🇸🇦 مجتمع السعودية</b><small>890 متواجد</small>
   </div>
 
-  <div class="comm" onclick="location.href='/community/?id=ye'">
+  <div class="comm" onclick="goComm('ye')">
     <div class="flag"><img src="https://flagcdn.com/w80/ye.png"></div>
     <b>🇾🇪 مجتمع اليمن</b><small>650 متواجد</small>
   </div>
 
-  <div class="comm" onclick="location.href='/community/?id=ae'">
+  <div class="comm" onclick="goComm('ae')">
     <div class="flag"><img src="https://flagcdn.com/w80/ae.png"></div>
     <b>🇦🇪 مجتمع الإمارات</b><small>420 متواجد</small>
   </div>
@@ -83,7 +80,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:96px;m
 
 <div id="worldPage" class="worldChat">
   <div class="worldBox">
-    <div id="worldMsgs" class="worldMsgs"><div class="msg">أهلا بكم في شات العالم 🌍 - الكل يقدر يدردش هنا</div></div>
+    <div id="worldMsgs" class="worldMsgs"><div class="msg">أهلا بكم في شات العالم 🌍</div></div>
     <div class="worldInput"><input id="worldInput" placeholder="اكتب رسالة..."><button onclick="sendWorld()">إرسال</button></div>
   </div>
 </div>
@@ -100,14 +97,47 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:96px;m
 import { auth, db } from '/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { collection, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
 const tabComm=document.getElementById('tabComm'), tabWorld=document.getElementById('tabWorld');
 const commPage=document.getElementById('commPage'), worldPage=document.getElementById('worldPage');
 tabComm.onclick=()=>{tabComm.classList.add('on');tabWorld.classList.remove('on');commPage.style.display='grid';worldPage.classList.remove('on')}
 tabWorld.onclick=()=>{tabWorld.classList.add('on');tabComm.classList.remove('on');commPage.style.display='none';worldPage.classList.add('on')}
-window.createComm=()=>{const name=prompt('اسم المجتمع الجديد:'); if(!name) return; const div=document.createElement('div'); div.className='comm'; div.innerHTML=`<div class="flag" style="background:#7c3aed;justify-content:center;align-items:center;color:#fff;font-weight:900">${name[0]}</div><b>${name}</b><small>مجتمع جديد</small>`; div.onclick=()=>location.href=`/community/?id=${encodeURIComponent(name)}`; commPage.insertBefore(div, commPage.lastElementChild);}
-function startBadge(uid){const b=document.getElementById('navBadge'); if(!b) return; onSnapshot(query(collection(db,'chats'), where('users','array-contains',uid)), snap=>{let t=0; snap.forEach(d=> t+= d.data().unreadCounts?.[uid]||0); if(t>0){ b.textContent=t>99?'99+':t; b.classList.remove('hide'); } else b.classList.add('hide');});}
-onAuthStateChanged(auth,u=>{ if(u){ localStorage.setItem('gabo_uid',u.uid); startBadge(u.uid); } else { location.replace('/login/'); }});
+
+// هذا اللي يصلح المشكلة
+window.goComm = (id) => {
+  // لا تحول لتسجيل دخول، روح مباشرة للمجتمع
+  location.href = `/community/?id=${id}`;
+}
+
+window.createComm=()=>{const name=prompt('اسم المجتمع الجديد:'); if(!name) return; const div=document.createElement('div'); div.className='comm'; div.innerHTML=`<div class="flag" style="background:#7c3aed;justify-content:center;align-items:center;color:#fff;font-weight:900">${name[0]}</div><b>${name}</b><small>مجتمع جديد</small>`; div.onclick=()=>goComm(encodeURIComponent(name)); commPage.insertBefore(div, commPage.lastElementChild);}
+
+function startBadge(uid){
+  const b=document.getElementById('navBadge'); if(!b) return;
+  try{
+    onSnapshot(query(collection(db,'chats'), where('users','array-contains',uid)), snap=>{
+      let t=0; snap.forEach(d=> t+= d.data().unreadCounts?.[uid]||0);
+      if(t>0){ b.textContent=t>99?'99+':t; b.classList.remove('hide'); } else b.classList.add('hide');
+    });
+  }catch(e){console.log(e)}
+}
+
+// أهم اصلاح - لا نحول لتسجيل دخول تلقائيا
+let authChecked = false;
+onAuthStateChanged(auth,u=>{
+  authChecked = true;
+  if(u){
+    localStorage.setItem('gabo_uid',u.uid);
+    startBadge(u.uid);
+  } else {
+    // لا نحول للوجن، خليه يشوف المجتمعات حتى لو مو مسجل
+    const s=localStorage.getItem('gabo_uid');
+    if(s) startBadge(s);
+  }
+});
+
+// لو كان مسجل من قبل
 const s=localStorage.getItem('gabo_uid'); if(s) startBadge(s);
+
 window.sendWorld=()=>{const inp=document.getElementById('worldInput'); if(!inp.value.trim()) return; const box=document.getElementById('worldMsgs'); const d=document.createElement('div'); d.className='msg me'; d.textContent=inp.value; box.appendChild(d); inp.value=''; box.scrollTop=box.scrollHeight;}
 </script>
 </body>
