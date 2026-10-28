@@ -9,17 +9,21 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--t);font-family:system-ui;padding-bottom:120px}
 .top{padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
-.top b{font-size:18px}.top a{background:#1e1c2e;border:1px solid var(--b);color:#fff;padding:6px 14px;border-radius:20px;text-decoration:none;font-size:13px}
-.profileCard{margin:12px 16px;background:var(--card);border:1px solid var(--b);border-radius:24px;padding:20px}
-.head{display:flex;gap:16px;align-items:center}
-.avatar{position:relative;width:84px;height:84px;border-radius:20px;background:var(--v);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;overflow:hidden;flex-shrink:0}
+.profileCard{margin:12px 16px;background:var(--card);border:1px solid var(--b);border-radius:24px;padding:20px;position:relative}
+.qalam{position:absolute;top:14px;left:14px;background:#fff;color:#000;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:800;cursor:pointer;display:flex;gap:4px;align-items:center}
+.head{display:flex;gap:16px;align-items:center;flex-direction:row-reverse}
+.avatar{position:relative;width:84px;height:84px;border-radius:22px;background:var(--v);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;overflow:hidden}
 .avatar img{width:100%;height:100%;object-fit:cover}
-.editBtn{position:absolute;bottom:-6px;right:-6px;width:30px;height:30px;background:#fff;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid var(--card);cursor:pointer}
-.nameBox{flex:1}.nameBox h2{font-size:20px;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.nameBox p{color:var(--m);font-size:12px;margin-top:4px}
-.flagImg{width:28px;height:19px;border-radius:4px;object-fit:cover;vertical-align:middle;border:1px solid rgba(255,255,255,.2)}
-.stats{display:flex;gap:8px;margin-top:18px}.stat{flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:14px;padding:10px;text-align:center}.stat b{display:block;font-size:18px}.stat span{font-size:11px;color:var(--m)}
+.nameBox{flex:1;text-align:left;direction:ltr}
+.nameBox h2{font-size:20px;font-weight:800;display:flex;align-items:center;gap:8px;justify-content:flex-start;direction:ltr}
+.nameBox p{color:var(--m);font-size:12px;margin-top:4px;direction:rtl;text-align:right}
+.flagImg{width:28px;height:19px;border-radius:4px;object-fit:cover;border:1px solid rgba(255,255,255,.2)}
+.stats{display:flex;gap:8px;margin-top:18px;direction:ltr}.stat{flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:14px;padding:10px;text-align:center}.stat b{display:block;font-size:18px}.stat span{font-size:11px;color:var(--m)}
 .bioBox{margin-top:16px;background:#0f0e18;border:1px solid var(--b);border-radius:14px;padding:12px;font-size:13px;color:var(--m);min-height:50px}
+.actions{display:flex;gap:10px;margin-top:14px}
+.btn{flex:1;padding:12px;border-radius:12px;border:0;font-weight:800;font-size:13px;cursor:pointer}
+.btn-vip{background:linear-gradient(90deg,#f59e0b,#eab308);color:#000}
+.btn-notif{background:#1e1c2e;border:1px solid var(--b);color:#fff}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:none;align-items:flex-end;z-index:100}.modal.on{display:flex}
 .sheet{background:#1a182c;border-top:1px solid var(--b);width:100%;border-radius:24px 24px 0 0;padding:20px;max-height:90vh;overflow:auto}
 .sheet input,.sheet select{width:100%;background:#0f0e18;border:1px solid var(--b);border-radius:12px;padding:14px;color:#fff;margin-top:8px}
@@ -30,40 +34,45 @@ body{background:var(--bg);color:var(--t);font-family:system-ui;padding-bottom:12
 </style>
 </head>
 <body>
-<div class="top"><b>GABO LIVE</b><a href="/app/">خروج ›</a></div>
+
 <div class="profileCard">
+  <div class="qalam" id="openEdit">✏️ قلم يكون هنا</div>
   <div class="head">
-    <div class="avatar" id="avatar"><span id="avatarLetter">G</span><div class="editBtn" id="openEdit">✏️</div></div>
+    <div class="avatar" id="avatar"><span id="avatarLetter">T</span></div>
     <div class="nameBox">
-      <h2><span id="displayName">...</span><span id="countryFlag"></span></h2>
+      <h2><span id="displayName">Taher Hammam</span><span id="countryFlag"></span></h2>
       <p>ملفك في مجتمع GABO LIVE</p>
-      <p id="email" style="margin-top:6px;font-size:11px;color:#6b6b7a"></p>
+      <p id="email" style="font-size:11px;text-decoration:underline"></p>
     </div>
   </div>
-  <div class="stats"><div class="stat"><b>1.2k</b><span>متابعين</span></div><div class="stat"><b>348</b><span>متابَع</span></div><div class="stat"><b>5.7k</b><span>زوار</span></div></div>
+  <div class="stats">
+    <div class="stat"><b id="followers">0</b><span>متابعين</span></div>
+    <div class="stat"><b id="following">0</b><span>متابَع</span></div>
+    <div class="stat"><b id="visitors">0</b><span>زوار</span></div>
+  </div>
   <div class="bioBox" id="bioText">اكتب نبذة قصيرة عنك...</div>
+  <div class="actions">
+    <button class="btn btn-vip" id="vipBtn">👑 VIP</button>
+    <button class="btn btn-notif" id="notifBtn">🔔 اشتراك الإشعارات</button>
+  </div>
 </div>
 
 <div class="modal" id="modal"><div class="sheet">
   <h3>✏️ تعديل الملف الشخصي</h3>
-  <label style="font-size:12px;color:var(--m)">صورة الملف</label>
-  <div class="upload" id="uploadBox">📷 اضغط لتغيير الصورة<input type="file" id="fileInp" accept="image/*" hidden></div>
-  <label style="font-size:12px;color:var(--m);margin-top:12px;display:block">الاسم</label><input id="editName" placeholder="اسمك">
+  <div class="upload" id="uploadBox">📷 تغيير الصورة<input type="file" id="fileInp" accept="image/*" hidden></div>
+  <label style="font-size:12px;color:var(--m);margin-top:12px;display:block">الاسم</label><input id="editName">
   <label style="font-size:12px;color:var(--m);margin-top:12px;display:block">الدولة</label>
   <select id="editCountry">
-    <option value="">بدون علم</option>
+    <option value="">بدون</option>
     <option value="south-arabia">🚩 الجنوب العربي</option>
     <option value="🇸🇦">🇸🇦 السعودية</option>
     <option value="🇾🇪">🇾🇪 اليمن</option>
     <option value="🇦🇪">🇦🇪 الإمارات</option>
     <option value="🇰🇼">🇰🇼 الكويت</option>
-    <option value="🇶🇦">🇶🇦 قطر</option>
-    <option value="🇧🇭">🇧🇭 البحرين</option>
-    <option value="🇴🇲">🇴🇲 عمان</option>
     <option value="🇪🇬">🇪🇬 مصر</option>
   </select>
-  <label style="font-size:12px;color:var(--m);margin-top:12px;display:block">نبذة عنك</label><input id="editBio" placeholder="اكتب نبذة قصيرة">
-  <div class="row"><button class="cancel" id="closeEdit">إلغاء</button><button class="ok" id="saveEdit">💾 حفظ</button></div>
+  <label style="font-size:12px;color:var(--m);margin-top:12px;display:block">نبذة</label><input id="editBio">
+  <div class="row"><button class="cancel" id="closeEdit">إلغاء</button><button class="ok" id="saveEdit">حفظ</button></div>
 </div></div>
 
 <div class="bottomNav">
@@ -75,47 +84,91 @@ body{background:var(--bg);color:var(--t);font-family:system-ui;padding-bottom:12
 </div>
 
 <script type="module">
-import { auth } from '/firebase-config.js';
+import { auth, db } from '/firebase-config.js';
 import { onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-const avatar=document.getElementById('avatar'),avatarLetter=document.getElementById('avatarLetter'),displayNameEl=document.getElementById('displayName'),emailEl=document.getElementById('email'),bioText=document.getElementById('bioText'),editName=document.getElementById('editName'),editBio=document.getElementById('editBio'),editCountry=document.getElementById('editCountry'),countryFlag=document.getElementById('countryFlag'),fileInp=document.getElementById('fileInp');
-let newPhotoData=null,currentUser=null;
-function renderFlag(val){
-  if(!val){ countryFlag.innerHTML=''; return; }
-  if(val==='south-arabia'){
-    countryFlag.innerHTML=`<img src="/assets/south-arabia.png" class="flagImg" alt="الجنوب العربي">`;
-  } else {
-    countryFlag.textContent=val;
+import { doc, getDoc, setDoc, updateDoc, increment, collection, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+let cur=null, newPhoto=null;
+const flagEl=document.getElementById('countryFlag');
+function renderFlag(v){
+  if(!v){ flagEl.innerHTML=''; return; }
+  if(v==='south-arabia'){ flagEl.innerHTML=`<img src="/assets/south-arabia.png" class="flagImg">`; }
+  else flagEl.textContent=v;
+}
+
+onAuthStateChanged(auth, async u=>{
+  if(!u){ location.replace('/login/'); return; }
+  cur=u;
+  document.getElementById('displayName').textContent=u.displayName||u.email.split('@')[0];
+  document.getElementById('avatarLetter').textContent=(u.displayName||'T')[0].toUpperCase();
+  document.getElementById('email').textContent=u.email;
+  
+  // إنشاء ملف المستخدم إذا مو موجود - يبدأ صفر
+  const userRef=doc(db,'users',u.uid);
+  const snap=await getDoc(userRef);
+  if(!snap.exists()){
+    await setDoc(userRef,{ followers:0, following:0, visitors:0, displayName:u.displayName||'', createdAt:Date.now() });
+  }
+  
+  // استماع مباشر للعدادات - تتحدث تلقائيا 0-1-2-3
+  onSnapshot(userRef, (d)=>{
+    if(d.exists()){
+      document.getElementById('followers').textContent=d.data().followers||0;
+      document.getElementById('following').textContent=d.data().following||0;
+      document.getElementById('visitors').textContent=d.data().visitors||0;
+    }
+  });
+
+  // تحميل محلي
+  const bio=localStorage.getItem('gabo_bio_'+u.uid); if(bio) document.getElementById('bioText').textContent=bio;
+  const photo=localStorage.getItem('gabo_photo_'+u.uid); if(photo) document.getElementById('avatar').innerHTML=`<img src="${photo}" style="width:100%;height:100%;object-fit:cover">`;
+  const flag=localStorage.getItem('gabo_flag_'+u.uid); if(flag){ document.getElementById('editCountry').value=flag; renderFlag(flag); }
+});
+
+// تعديل
+const modal=document.getElementById('modal');
+document.getElementById('openEdit').onclick=()=>modal.classList.add('on');
+document.getElementById('closeEdit').onclick=()=>modal.classList.remove('on');
+document.getElementById('uploadBox').onclick=()=>document.getElementById('fileInp').click();
+document.getElementById('fileInp').onchange=e=>{
+  const f=e.target.files[0]; const r=new FileReader();
+  r.onload=()=>{ newPhoto=r.result; document.getElementById('uploadBox').innerHTML=`<img src="${newPhoto}" style="width:60px;height:60px;border-radius:12px;object-fit:cover"> تم`; };
+  r.readAsDataURL(f);
+};
+document.getElementById('saveEdit').onclick=async()=>{
+  const name=document.getElementById('editName').value.trim();
+  const bio=document.getElementById('editBio').value.trim();
+  const flag=document.getElementById('editCountry').value;
+  if(name) await updateProfile(cur,{displayName:name});
+  if(newPhoto) localStorage.setItem('gabo_photo_'+cur.uid,newPhoto);
+  if(bio) localStorage.setItem('gabo_bio_'+cur.uid,bio);
+  localStorage.setItem('gabo_flag_'+cur.uid,flag);
+  renderFlag(flag);
+  location.reload();
+};
+
+// زر اشتراك الإشعارات
+document.getElementById('notifBtn').onclick=async()=>{
+  if(Notification.permission!=='granted'){ await Notification.requestPermission(); }
+  if(Notification.permission==='granted'){
+    alert('تم تفعيل الإشعارات 🔔');
+    // هنا تقدر تربط OneSignal أو FCM
+  } else { alert('فعل الإشعارات من إعدادات المتصفح'); }
+};
+document.getElementById('vipBtn').onclick=()=>{ location.href='/vip/'; };
+
+// دالة للمتابعة - استخدمها في صفحة عرض بروفايل شخص ثاني
+window.followUser = async (targetUid)=>{
+  const myRef=doc(db,'users',cur.uid);
+  const targetRef=doc(db,'users',targetUid);
+  const followDoc=doc(db,'follows',`${cur.uid}_${targetUid}`);
+  const exists=await getDoc(followDoc);
+  if(!exists.exists()){
+    await setDoc(followDoc,{ follower:cur.uid, followed:targetUid, at:Date.now() });
+    await updateDoc(targetRef,{ followers:increment(1) });
+    await updateDoc(myRef,{ following:increment(1) });
   }
 }
-onAuthStateChanged(auth,u=>{
-  if(!u){location.replace('/login/');return;}
-  currentUser=u;
-  displayNameEl.textContent=u.displayName||u.email.split('@')[0];
-  avatarLetter.textContent=(u.displayName||u.email||'G')[0].toUpperCase();
-  emailEl.textContent=u.email;
-  editName.value=u.displayName||'';
-  const savedBio=localStorage.getItem('gabo_bio_'+u.uid); if(savedBio){bioText.textContent=savedBio; editBio.value=savedBio;}
-  const savedPhoto=localStorage.getItem('gabo_photo_'+u.uid); if(savedPhoto){avatar.innerHTML=`<img src="${savedPhoto}"><div class="editBtn" id="openEdit">✏️</div>`; document.getElementById('openEdit').onclick=openModal;}
-  const savedFlag=localStorage.getItem('gabo_flag_'+u.uid); if(savedFlag){editCountry.value=savedFlag; renderFlag(savedFlag);}
-});
-function openModal(){document.getElementById('modal').classList.add('on')}
-function closeModal(){document.getElementById('modal').classList.remove('on')}
-document.getElementById('openEdit').onclick=openModal;
-document.getElementById('closeEdit').onclick=closeModal;
-document.getElementById('modal').onclick=(e)=>{if(e.target.id==='modal')closeModal();}
-document.getElementById('uploadBox').onclick=()=>fileInp.click();
-fileInp.onchange=()=>{const file=fileInp.files[0]; if(!file)return; const r=new FileReader(); r.onload=()=>{newPhotoData=r.result; document.getElementById('uploadBox').innerHTML=`<img src="${newPhotoData}" style="width:60px;height:60px;border-radius:12px;object-fit:cover"><br>تم اختيار الصورة`;}; r.readAsDataURL(file);};
-document.getElementById('saveEdit').onclick=async()=>{
-  if(!currentUser)return;
-  const name=editName.value.trim(),bio=editBio.value.trim(),flag=editCountry.value;
-  if(name && name!==currentUser.displayName) await updateProfile(currentUser,{displayName:name});
-  if(newPhotoData) localStorage.setItem('gabo_photo_'+currentUser.uid,newPhotoData);
-  if(bio){localStorage.setItem('gabo_bio_'+currentUser.uid,bio); bioText.textContent=bio;}
-  if(flag!==undefined){localStorage.setItem('gabo_flag_'+currentUser.uid,flag); renderFlag(flag);}
-  displayNameEl.textContent=name||displayNameEl.textContent;
-  if(newPhotoData) avatar.innerHTML=`<img src="${newPhotoData}"><div class="editBtn">✏️</div>`;
-  closeModal();
-};
 </script>
 </body>
 </html>
