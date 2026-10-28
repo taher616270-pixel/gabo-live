@@ -2,7 +2,7 @@
 <html dir="rtl" lang="ar">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
@@ -10,142 +10,134 @@
 </head>
 <body class="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-4">
 
-<!-- الصفحة الرئيسية -->
-<div id="mainPage" class="w-full max-w-[380px] bg-[#15151c] border border-white/10 rounded-[24px] p-6">
+<div id="mainPage" class="w-full max-w-[380px] bg-[#15151c] border border-white/10 rounded-[24px] p-6 relative z-10">
   <div class="flex justify-between items-center mb-5">
     <span class="text-[10px] text-purple-300 bg-purple-500/20 px-3 py-1 rounded-full">LIVE ●</span>
     <h1 class="font-black tracking-widest text-white text-sm">GABO LIVE</h1>
   </div>
 
   <div class="flex bg-black/50 rounded-xl p-1 mb-5">
-    <button id="tabLogin" class="flex-1 h-9 rounded-lg bg-white text-black font-bold text-sm">دخول</button>
-    <button id="tabSignup" class="flex-1 h-9 rounded-lg text-white/50 text-sm">حساب جديد</button>
+    <button type="button" id="tabLogin" class="flex-1 h-9 rounded-lg bg-white text-black font-bold text-sm">دخول</button>
+    <button type="button" id="tabSignup" class="flex-1 h-9 rounded-lg text-white/50 text-sm">حساب جديد</button>
   </div>
 
-  <!-- حقول الدخول -->
   <div id="loginFields">
-    <h2 class="text-center text-white font-bold text-[15px]">مرحبا بعودتك 👋</h2>
-    <p class="text-center text-white/40 text-[11px] mb-4">ادخل وشارك صوتك مع العالم</p>
+    <h2 class="text-center text-white font-bold">مرحبا بعودتك 👋</h2>
+    <p class="text-center text-white/40 text-[11px] mb-4">ادخل وشارك صوتك</p>
     <input id="loginEmail" type="email" placeholder="البريد الإلكتروني" class="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right text-sm outline-none mb-3">
     <input id="loginPass" type="password" placeholder="كلمة السر" class="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right text-sm outline-none mb-4">
-    <button id="loginBtn" class="w-full h-12 rounded-xl bg-[#9b6cff] text-white font-bold text-sm">دخول الى المنصة 🚀</button>
+    <button type="button" id="loginBtn" class="w-full h-12 rounded-xl bg-[#9b6cff] text-white font-bold text-sm">دخول إلى المنصة 🚀</button>
   </div>
 
-  <!-- حقول حساب جديد -->
   <div id="signupFields" class="hidden">
-    <h2 class="text-center text-white font-bold text-[15px]">إنشاء حساب جديد ✨</h2>
+    <h2 class="text-center text-white font-bold">إنشاء حساب جديد ✨</h2>
     <p class="text-center text-white/40 text-[11px] mb-4">انضم لعائلة GABO LIVE</p>
     <input id="name" type="text" placeholder="الاسم الكامل" class="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right text-sm outline-none mb-3">
     <input id="signupEmail" type="email" placeholder="البريد الإلكتروني" class="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right text-sm outline-none mb-3">
     <input id="signupPass" type="password" placeholder="كلمة السر" class="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right text-sm outline-none mb-3">
     <input id="confirmPass" type="password" placeholder="تأكيد كلمة السر" class="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right text-sm outline-none mb-4">
-    <button id="signupBtn" class="w-full h-12 rounded-xl bg-[#9b6cff] text-white font-bold text-sm">إنشاء حساب 🚀</button>
+    <button type="button" id="signupBtn" class="w-full h-12 rounded-xl bg-[#9b6cff] text-white font-bold text-sm">إنشاء حساب 🚀</button>
   </div>
 
   <div class="flex items-center gap-3 my-4">
-    <div class="h-[1px] flex-1 bg-white/10"></div>
-    <span class="text-white/30 text-[11px]">أو المتابعة عبر</span>
-    <div class="h-[1px] flex-1 bg-white/10"></div>
+    <div class="h-[1px] flex-1 bg-white/10"></div><span class="text-white/30 text-[11px]">أو المتابعة عبر</span><div class="h-[1px] flex-1 bg-white/10"></div>
   </div>
 
-  <div id="social" class="grid gap-3"></div>
-  <button id="forgotLink" class="w-full text-center text-[11px] text-white/40 mt-4 underline">نسيت كلمة السر؟ استعادة</button>
+  <div id="social" class="grid gap-3" style="position:relative; z-index:99">
+    <button type="button" id="gBtn" class="h-12 w-full rounded-xl bg-white/[0.08] border border-white/10 text-white text-sm">Google - جوجل</button>
+    <button type="button" id="aBtn" style="display:none" class="h-12 w-full rounded-xl bg-white/[0.08] border border-white/10 text-white text-sm">Apple</button>
+  </div>
+
+  <button type="button" id="forgotLink" class="w-full text-center text-[11px] text-white/40 mt-4 underline">نسيت كلمة السر؟ استعادة</button>
 </div>
 
-<!-- صفحة نسيت كلمة السر -->
 <div id="forgotPage" class="hidden w-full max-w-[380px] bg-[#15151c] border border-white/10 rounded-[24px] p-6">
-  <button id="backBtn" class="text-white/60 text-sm mb-4">← رجوع</button>
+  <button type="button" id="backBtn" class="text-white/60 text-sm mb-4">← رجوع</button>
   <h2 class="text-center text-white font-bold text-[16px] mb-2">استعادة كلمة السر 🔑</h2>
-  <p class="text-center text-white/40 text-[11px] mb-5">اكتب بريدك المسجل في الموقع فقط</p>
+  <p class="text-center text-white/40 text-[11px] mb-5">اكتب بريدك المسجل فقط - نرسل لك رابط</p>
   <input id="forgotEmail" type="email" placeholder="البريد الإلكتروني المسجل" class="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right text-sm outline-none mb-4">
-  <button id="sendResetBtn" class="w-full h-12 rounded-xl bg-[#9b6cff] text-white font-bold text-sm">إرسال رابط الاستعادة</button>
+  <button type="button" id="sendResetBtn" class="w-full h-12 rounded-xl bg-[#9b6cff] text-white font-bold text-sm">إرسال رابط الاستعادة</button>
   <p id="forgotMsg" class="text-center text-[11px] mt-3 hidden"></p>
 </div>
 
 <script>
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY_HERE",
+  apiKey: "AIzaSyDlsjB8eJzVmU0LSnzmJoQY_oJ9QhZIFjA",
   authDomain: "gabo-live.firebaseapp.com",
   projectId: "gabo-live",
+  storageBucket: "gabo-live.firebasestorage.app",
+  messagingSenderId: "610663904047",
+  appId: "1:610663904047:web:db1cc2bc62781e185ae7da",
+  measurementId: "G-38RHTREENN"
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
-auth.getRedirectResult().then(()=>{});
+auth.getRedirectResult().catch(()=>{});
 
-let isLoginMode = true;
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-
-// ازرار السوشل
-const socialDiv = document.getElementById('social');
-if(isIOS){
-  socialDiv.className = "grid grid-cols-2 gap-3";
-  socialDiv.innerHTML = `<button id="aBtn" class="h-12 rounded-xl bg-white/[0.06] border border-white/10 text-white text-sm">Apple</button><button id="gBtn" class="h-12 rounded-xl bg-white/[0.06] border border-white/10 text-white text-sm">Google</button>`;
-} else {
-  socialDiv.className = "grid grid-cols-1 gap-3";
-  socialDiv.innerHTML = `<button id="gBtn" class="h-12 rounded-xl bg-white/[0.06] border border-white/10 text-white text-sm">Google</button>`;
+const social = document.getElementById('social');
+const aBtn = document.getElementById('aBtn');
+if(isIOS){ 
+  aBtn.style.display='block'; 
+  social.className='grid grid-cols-2 gap-3'; 
+} else { 
+  social.className='grid grid-cols-1 gap-3'; 
 }
+
+function genID(){ return Math.floor(10000000 + Math.random()*90000000).toString(); }
+
+// Google - شغال الآن
 document.getElementById('gBtn').onclick = (e)=>{ e.preventDefault(); auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider()); };
-if(isIOS) document.getElementById('aBtn').onclick = (e)=>{ e.preventDefault(); auth.signInWithRedirect(new firebase.auth.OAuthProvider('apple.com')); };
+aBtn.onclick = (e)=>{ e.preventDefault(); auth.signInWithRedirect(new firebase.auth.OAuthProvider('apple.com')); };
 
-// تبديل التبويب
-tabLogin.onclick = (e)=>{ e.preventDefault(); isLoginMode=true; loginFields.classList.remove('hidden'); signupFields.classList.add('hidden'); tabLogin.className="flex-1 h-9 rounded-lg bg-white text-black font-bold text-sm"; tabSignup.className="flex-1 h-9 rounded-lg text-white/50 text-sm"; };
-tabSignup.onclick = (e)=>{ e.preventDefault(); isLoginMode=false; signupFields.classList.remove('hidden'); loginFields.classList.add('hidden'); tabSignup.className="flex-1 h-9 rounded-lg bg-white text-black font-bold text-sm"; tabLogin.className="flex-1 h-9 rounded-lg text-white/50 text-sm"; };
+// Tabs
+tabLogin.onclick = (e)=>{ e.preventDefault(); loginFields.classList.remove('hidden'); signupFields.classList.add('hidden'); tabLogin.className="flex-1 h-9 rounded-lg bg-white text-black font-bold text-sm"; tabSignup.className="flex-1 h-9 rounded-lg text-white/50 text-sm"; };
+tabSignup.onclick = (e)=>{ e.preventDefault(); signupFields.classList.remove('hidden'); loginFields.classList.add('hidden'); tabSignup.className="flex-1 h-9 rounded-lg bg-white text-black font-bold text-sm"; tabLogin.className="flex-1 h-9 rounded-lg text-white/50 text-sm"; };
 
-// توليد ID من 8 ارقام
-function generateID(){ return Math.floor(10000000 + Math.random()*90000000).toString(); }
-
-// تسجيل دخول
+// Login
 loginBtn.onclick = async (e)=>{
   e.preventDefault();
   const em=loginEmail.value.trim(), pw=loginPass.value;
-  if(!em||!pw) return alert('عبي كل الحقول');
+  if(!em||!pw) return alert('عبي البريد وكلمة السر');
   loginBtn.textContent="جاري..."; loginBtn.disabled=true;
   try{ await auth.signInWithEmailAndPassword(em,pw); location.href="/"; }
-  catch(err){ alert(err.message); loginBtn.textContent="دخول الى المنصة 🚀"; loginBtn.disabled=false; }
+  catch(err){ alert(err.message); loginBtn.textContent="دخول إلى المنصة 🚀"; loginBtn.disabled=false; }
 };
 
-// انشاء حساب جديد مع ID
+// Signup + ID 8 ارقام
 signupBtn.onclick = async (e)=>{
   e.preventDefault();
   const n=name.value.trim(), em=signupEmail.value.trim(), p1=signupPass.value, p2=confirmPass.value;
   if(!n||!em||!p1||!p2) return alert('عبي كل الحقول');
-  if(p1!==p2) return alert('كلمة السر غير متطابقة');
-  if(p1.length<6) return alert('كلمة السر لازم 6 احرف على الاقل');
+  if(p1!==p2) return alert('كلمة السر وتأكيدها غير متطابقين');
+  if(p1.length<6) return alert('كلمة السر لازم 6 احرف');
   signupBtn.textContent="جاري انشاء الحساب..."; signupBtn.disabled=true;
   try{
     const cred = await auth.createUserWithEmailAndPassword(em,p1);
-    const gaboID = generateID();
-    await db.collection('users').doc(cred.user.uid).set({
-      name: n,
-      email: em,
-      gaboId: gaboID,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    await cred.user.updateProfile({displayName: n});
-    alert(`تم انشاء حسابك! ID الخاص بك هو: ${gaboID}`);
+    const gaboID = genID();
+    await db.collection('users').doc(cred.user.uid).set({ name:n, email:em, gaboId:gaboID, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    await cred.user.updateProfile({displayName:n});
+    alert(`مبروك! حسابك انشأ بنجاح\nالـ ID الخاص بك: ${gaboID}`);
     location.href="/";
   }catch(err){ alert(err.message); signupBtn.textContent="إنشاء حساب 🚀"; signupBtn.disabled=false; }
 };
 
-// صفحات نسيت كلمة السر
+// Forgot
 forgotLink.onclick = (e)=>{ e.preventDefault(); mainPage.classList.add('hidden'); forgotPage.classList.remove('hidden'); };
 backBtn.onclick = (e)=>{ e.preventDefault(); forgotPage.classList.add('hidden'); mainPage.classList.remove('hidden'); };
 sendResetBtn.onclick = async (e)=>{
   e.preventDefault();
   const em=forgotEmail.value.trim();
   if(!em) return alert('اكتب بريدك');
-  sendResetBtn.textContent="جاري الارسال..."; sendResetBtn.disabled=true;
+  sendResetBtn.textContent="جاري..."; sendResetBtn.disabled=true;
   try{
     await auth.sendPasswordResetEmail(em);
-    forgotMsg.textContent="✅ تم ارسال رابط الاستعادة - شيك ايميلك (GABO LIVE)";
-    forgotMsg.className="text-center text-[11px] mt-3 text-green-400";
-    forgotMsg.classList.remove('hidden');
+    forgotMsg.textContent="✅ ارسلنا رابط باسم GABO LIVE - شيك ايميلك";
+    forgotMsg.className="text-center text-[11px] mt-3 text-green-400"; forgotMsg.classList.remove('hidden');
   }catch(err){
-    if(err.code==='auth/user-not-found') { forgotMsg.textContent="❌ هذا البريد غير مسجل في الموقع"; }
-    else { forgotMsg.textContent=err.message; }
-    forgotMsg.className="text-center text-[11px] mt-3 text-red-400";
-    forgotMsg.classList.remove('hidden');
+    forgotMsg.textContent = err.code==='auth/user-not-found' ? "❌ هذا البريد غير مسجل في الموقع" : err.message;
+    forgotMsg.className="text-center text-[11px] mt-3 text-red-400"; forgotMsg.classList.remove('hidden');
   }
   sendResetBtn.textContent="إرسال رابط الاستعادة"; sendResetBtn.disabled=false;
 };
