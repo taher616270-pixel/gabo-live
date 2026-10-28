@@ -4,71 +4,47 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>حسابي</title>
 <style>
-:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed;--gold:#fbbf24;--m:#8b8ba7}
+:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed;--gold:#fbbf24}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px}
 .mainCard{margin:12px;background:var(--card);border:1px solid var(--b);border-radius:22px;padding:16px}
 .head{display:flex;gap:14px;align-items:center;flex-direction:row-reverse}
 .avatar{width:78px;height:78px;border-radius:18px;background:#6d28d9;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;position:relative;overflow:hidden;flex-shrink:0}
-.avatar img{width:100%;height:100%;object-fit:cover}
-.pencil{position:absolute;bottom:-2px;right:-2px;width:26px;height:26px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;border:2px solid var(--card);cursor:pointer}
+.avatar img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:none}
+.avatar span{position:relative;z-index:1}
+.pencil{position:absolute;bottom:0;right:0;width:26px;height:26px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;border:2px solid var(--card);cursor:pointer;z-index:2}
 .info{flex:1;text-align:left;direction:ltr}
-.info .nameRow{display:flex;align-items:center;gap:6px;font-size:16px;font-weight:800}
-.flagImg{width:28px;height:19px;border-radius:4px;object-fit:cover;border:1px solid rgba(255,255,255,.2)}
-.countryRow{font-size:12px;color:#c4c4d0;margin-top:4px;display:flex;align-items:center;gap:5px;direction:rtl;text-align:right}
-.countryRow img{width:20px;height:14px;border-radius:3px;object-fit:cover}
-.idRow{font-size:11px;color:#8b8ba7;margin-top:4px;direction:ltr;text-align:left;font-family:monospace;letter-spacing:1px}
-.stats{display:flex;gap:8px;margin-top:16px}.stat{flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:14px;padding:10px;text-align:center}.stat b{font-size:18px;display:block}.stat span{font-size:11px;color:var(--m)}
-.btns{display:flex;gap:10px;margin-top:16px}
-.btn{flex:1;padding:12px;border-radius:12px;border:0;font-weight:800;font-size:12px;cursor:pointer}
-.btn.vip{background:var(--gold);color:#000}
-.btn.notif{background:#1e1c2e;border:1px solid var(--b);color:#fff}
-
-/* باقي صفحات التعديل والدول نفس الكود السابق */
-.editPage{position:fixed;inset:0;background:var(--bg);z-index:10000;display:none;overflow:auto}
-.editPage.on{display:block}
+.nameRow{display:flex;align-items:center;gap:6px;font-size:16px;font-weight:800}
+.flagImg{width:28px;height:19px;border-radius:4px;object-fit:cover;border:1px solid rgba(255,255,255,.2);vertical-align:middle}
+.countryRow{font-size:13px;color:#d0d0e0;margin-top:6px;display:flex;align-items:center;gap:6px;direction:rtl;text-align:right;font-weight:600}
+.countryRow img{width:22px;height:15px;border-radius:3px;object-fit:cover;border:1px solid rgba(255,255,255,.2)}
+.idRow{font-size:11px;color:#8b8ba7;margin-top:6px;direction:ltr;text-align:left;font-family:monospace;letter-spacing:1px}
+.stats{display:flex;gap:8px;margin-top:16px}.stat{flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:14px;padding:10px;text-align:center}.stat b{font-size:18px;display:block}.stat span{font-size:11px;color:#8b8ba7}
+.btns{display:flex;gap:10px;margin-top:16px}.btn{flex:1;padding:12px;border-radius:12px;border:0;font-weight:800;font-size:12px}.vip{background:var(--gold);color:#000}.notif{background:#1e1c2e;border:1px solid var(--b);color:#fff}
+.editPage{position:fixed;inset:0;background:var(--bg);z-index:10000;display:none;overflow:auto}.editPage.on{display:block}
 .editTop{padding:16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--b)}
 .backBtn{width:40px;height:40px;background:#1e1c2e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;border:1px solid var(--b);cursor:pointer}
-.coverArea{display:flex;gap:12px;padding:0 16px;justify-content:flex-end;margin-top:14px}
-.coverBox{width:140px;height:160px;border-radius:16px;overflow:hidden;position:relative;background:#16161f;border:1px solid var(--b)}
-.coverBox img{width:100%;height:100%;object-fit:cover}
-.coverBox.add{background:var(--card);display:flex;align-items:center;justify-content:center;border:1px dashed var(--b);cursor:pointer}
-.coverLabel{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.7);font-size:9px;padding:3px 8px;border-radius:20px}
-.coverDel{position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.6);width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.coverHint{padding:8px 16px;text-align:right;font-size:11px;color:#8b8ba7}
-.cardList{margin:14px 12px;background:var(--card);border-radius:16px;overflow:hidden;border:1px solid var(--b)}
-.row{display:flex;justify-content:space-between;align-items:center;padding:15px 14px;border-bottom:1px solid #1f1f2f;cursor:pointer}
-.row:last-child{border:0}
-.row .right{font-size:14px;font-weight:600}
-.row .left{display:flex;align-items:center;gap:6px;color:#8b8ba7;font-size:13px}
-.row .left img{width:32px;height:32px;border-radius:50%;object-fit:cover}
-.saveArea{padding:16px}.saveBtn{width:100%;background:var(--gold);color:#000;padding:15px;border-radius:14px;border:0;font-weight:900;font-size:15px;cursor:pointer}
-.bottomNav{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-end;padding:8px 0 calc(10px + env(safe-area-inset-bottom));z-index:1000;direction:ltr}
-.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:9px;display:flex;flex-direction:column;align-items:center;gap:3px}
-.bottomNav a.on{color:#fff}.bottomNav a .ic{font-size:22px}
-.bottomNav a.plus .ic{background:var(--v);color:#fff;width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-20px}
-.countryModal{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:11000;display:none;align-items:flex-end}
-.countryModal.on{display:flex}
-.countrySheet{background:#1a182c;width:100%;max-height:85vh;border-radius:24px 24px 0 0;border-top:1px solid var(--b);display:flex;flex-direction:column}
-.countryHead{padding:16px;border-bottom:1px solid var(--b);display:flex;justify-content:space-between;align-items:center}
-.searchBox{padding:12px 16px}.searchBox input{width:100%;background:#0f0e18;border:1px solid var(--b);border-radius:12px;padding:12px;color:#fff;font-size:14px}
-.countryList{overflow:auto;flex:1;padding:8px 0 20px}
-.countryItem{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;cursor:pointer;border-bottom:1px solid #1f1f2f}
-.countryItem .flag{width:32px;height:22px;border-radius:4px;object-fit:cover;display:flex;align-items:center;justify-content:center;font-size:20px;background:#0f0e18;border:1px solid rgba(255,255,255,.15)}
-.countryItem .flag img{width:100%;height:100%;object-fit:cover;border-radius:4px}
-.statusBar{position:fixed;bottom:80px;left:16px;right:16px;background:#201e32;border:1px solid var(--b);padding:12px;border-radius:12px;text-align:center;font-size:13px;display:none;z-index:10001}
-.statusBar.on{display:block}
+.coverArea{display:flex;gap:12px;padding:0 16px;justify-content:flex-end;margin-top:14px}.coverBox{width:140px;height:160px;border-radius:16px;overflow:hidden;position:relative;background:#16161f;border:1px solid var(--b)}.coverBox img{width:100%;height:100%;object-fit:cover}.coverBox.add{background:#16161f;display:flex;align-items:center;justify-content:center;border:1px dashed var(--b);cursor:pointer}.coverLabel{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.7);font-size:9px;padding:3px 8px;border-radius:20px}.coverDel{position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.6);width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer}.coverHint{padding:8px 16px;text-align:right;font-size:11px;color:#8b8ba7}
+.cardList{margin:14px 12px;background:var(--card);border-radius:16px;overflow:hidden;border:1px solid var(--b)}.row{display:flex;justify-content:space-between;align-items:center;padding:15px 14px;border-bottom:1px solid #1f1f2f;cursor:pointer}.row:last-child{border:0}.row .right{font-size:14px;font-weight:600}.row .left{display:flex;align-items:center;gap:6px;color:#8b8ba7;font-size:13px}.row .left img{width:32px;height:32px;border-radius:50%;object-fit:cover}.saveArea{padding:16px}.saveBtn{width:100%;background:var(--gold);color:#000;padding:15px;border-radius:14px;border:0;font-weight:900;font-size:15px;cursor:pointer}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-end;padding:8px 0 calc(10px + env(safe-area-inset-bottom));z-index:1000;direction:ltr}.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:9px;display:flex;flex-direction:column;align-items:center;gap:3px}.bottomNav a.on{color:#fff}.bottomNav a .ic{font-size:22px}.bottomNav a.plus .ic{background:var(--v);color:#fff;width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-20px}
+.countryModal{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:11000;display:none;align-items:flex-end}.countryModal.on{display:flex}.countrySheet{background:#1a182c;width:100%;max-height:85vh;border-radius:24px 24px 0 0;border-top:1px solid var(--b);display:flex;flex-direction:column}.countryHead{padding:16px;border-bottom:1px solid var(--b);display:flex;justify-content:space-between;align-items:center}.searchBox{padding:12px 16px}.searchBox input{width:100%;background:#0f0e18;border:1px solid var(--b);border-radius:12px;padding:12px;color:#fff;font-size:14px}.countryList{overflow:auto;flex:1;padding:8px 0 20px}.countryItem{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;cursor:pointer;border-bottom:1px solid #1f1f2f}.countryItem .flag{width:34px;height:24px;border-radius:4px;object-fit:cover;display:flex;align-items:center;justify-content:center;font-size:22px;background:#0f0e18;border:1px solid rgba(255,255,255,.15)}.countryItem .flag img{width:100%;height:100%;object-fit:cover;border-radius:4px}
+.statusBar{position:fixed;bottom:80px;left:16px;right:16px;background:#201e32;border:1px solid var(--b);padding:12px;border-radius:12px;text-align:center;font-size:13px;display:none;z-index:10001}.statusBar.on{display:block}
 </style>
 </head>
 <body>
 
 <div class="mainCard">
   <div class="head">
-    <div class="avatar" id="avatarMain"><span id="avL">T</span><div class="pencil" id="openEdit">✏️</div></div>
+    <div class="avatar" id="avatarMain">
+      <img id="avatarImgMain">
+      <span id="avL">T</span>
+      <div class="pencil" id="openEdit">✏️</div>
+    </div>
     <div class="info">
       <div class="nameRow"><span id="nameMain">Taher Hammam</span><span id="flagMain"></span></div>
-      <div class="countryRow" id="countryRow"><span id="countryNameMain">الجنوب العربي</span> <span id="countryFlagMain"></span></div>
-      <div class="idRow">ID: <span id="idMain">00000000</span></div>
+      <!-- هنا يطلع اسم الدولة والعلم تحت الاسم مباشرة -->
+      <div class="countryRow" id="countryRowMain"><span id="countryNameMain">الجنوب العربي</span><span id="countryFlagMain"></span></div>
+      <div class="idRow">ID: <span id="idMain">--------</span></div>
     </div>
   </div>
   <div class="stats">
@@ -76,14 +52,12 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px}
     <div class="stat"><b id="c2">0</b><span>متابَع</span></div>
     <div class="stat"><b id="c3">0</b><span>زوار</span></div>
   </div>
-  <!-- تم حذف خانة النبذة من هنا حسب طلبك -->
   <div class="btns">
     <button class="btn vip" onclick="location.href='/vip/'">👑 VIP</button>
     <button class="btn notif">🔔 اشتراك الإشعارات</button>
   </div>
 </div>
 
-<!-- صفحة التعديل نفسها -->
 <div class="editPage" id="editPage">
   <div class="editTop"><a class="backBtn" id="closeEdit">›</a><b>ملف التعريف</b><div style="width:40px"></div></div>
   <div class="coverArea">
@@ -98,9 +72,9 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px}
     <div class="row" id="rowBio"><div class="left"><span>‹</span> <small id="rowBioVal">اكتب لتعريف نفسك</small></div><div class="right">التعريف الشخصي</div></div>
   </div>
   <div class="cardList">
-    <div class="row"><div class="left"><small id="userId">-</small></div><div class="right">User ID</div></div>
+    <div class="row"><div class="left"><small id="userId">--------</small></div><div class="right">User ID</div></div>
     <div class="row" id="rowGender"><div class="left"><span>‹</span> <small id="rowGenderVal">ذكر ♂️</small></div><div class="right">الجنس</div></div>
-    <div class="row" id="rowCountry"><div class="left"><span>‹</span> <img id="rowCountryImg" style="width:28px;height:20px;border-radius:4px;display:none;object-fit:cover"><small id="rowCountryVal">الجنوب العربي</small></div><div class="right">الدولة</div></div>
+    <div class="row" id="rowCountry"><div class="left"><span>‹</span> <img id="rowCountryImg" style="width:28px;height:20px;border-radius:4px;display:none;object-fit:cover;border:1px solid rgba(255,255,255,.2)"> <span id="rowCountryEmoji" style="font-size:20px;display:none"></span> <small id="rowCountryVal">الجنوب العربي</small></div><div class="right">الدولة</div></div>
   </div>
   <div class="saveArea"><button class="saveBtn" id="saveAll">💾 حفظ التغييرات</button></div>
 </div>
@@ -129,10 +103,10 @@ import {onAuthStateChanged,updateProfile} from 'https://www.gstatic.com/firebase
 import {doc,getDoc,setDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 let cur=null;
-let pending={name:null,bio:null,bday:null,gender:null,country:null,countryName:null,countryFlag:null,avatar:null,cover:null,coverDeleted:false};
+let pending={name:null,bio:null,bday:null,gender:null,country:null,countryName:null,countryFlag:null,countryFlagImg:null,avatar:null,cover:null,coverDeleted:false};
 
 const countries=[
-  {code:'south-arabia',name:'الجنوب العربي',flagImg:'/assets/south-arabia.png'},
+  {code:'south-arabia',name:'الجنوب العربي',flagImg:'/assets/south-arabia.png',isImage:true},
   {code:'SA',name:'السعودية',flag:'🇸🇦'},
   {code:'YE',name:'اليمن',flag:'🇾🇪'},
   {code:'AE',name:'الإمارات',flag:'🇦🇪'},
@@ -142,16 +116,40 @@ const countries=[
   {code:'BH',name:'البحرين',flag:'🇧🇭'},
   {code:'EG',name:'مصر',flag:'🇪🇬'},
   {code:'JO',name:'الأردن',flag:'🇯🇴'},
-  {code:'PS',name:'فلسطين',flag:'🇵🇸'},
 ];
 
 function genId(uid){
-  // توليد ID ثابت من 8 أرقام من UID
-  let hash=0;
-  for(let i=0;i<uid.length;i++){hash=((hash<<5)-hash)+uid.charCodeAt(i); hash|=0;}
-  hash=Math.abs(hash);
-  const num = 10000000 + (hash % 90000000);
-  return num.toString();
+  if(!uid) return Math.floor(10000000 + Math.random()*90000000).toString();
+  let h=0; for(let i=0;i<uid.length;i++){h=(h*31 + uid.charCodeAt(i)) % 1000000000;}
+  return (10000000 + (h % 90000000)).toString().padStart(8,'0');
+}
+
+function setCountryDisplay(name, code, flagEmoji, flagImg){
+  // تحت الاسم في الرئيسية
+  const nameEl=document.getElementById('countryNameMain');
+  const flagContainer=document.getElementById('countryFlagMain');
+  const flagMain=document.getElementById('flagMain');
+  
+  nameEl.textContent=name;
+  
+  if(code==='south-arabia' || flagImg){
+    const imgPath=flagImg||'/assets/south-arabia.png';
+    flagContainer.innerHTML=`<img src="${imgPath}" style="width:22px;height:15px;border-radius:3px;object-fit:cover;border:1px solid rgba(255,255,255,.2)">`;
+    flagMain.innerHTML=`<img src="${imgPath}" class="flagImg">`;
+  }else{
+    flagContainer.textContent=flagEmoji||'';
+    flagMain.textContent=flagEmoji||'';
+  }
+
+  // في صفحة التعديل
+  document.getElementById('rowCountryVal').textContent=name;
+  const rowImg=document.getElementById('rowCountryImg');
+  const rowEmoji=document.getElementById('rowCountryEmoji');
+  if(code==='south-arabia' || flagImg){
+    rowImg.src=flagImg||'/assets/south-arabia.png'; rowImg.style.display='block'; rowEmoji.style.display='none';
+  }else{
+    rowImg.style.display='none'; rowEmoji.textContent=flagEmoji||''; rowEmoji.style.display='block';
+  }
 }
 
 function renderCountryList(filter=''){
@@ -165,73 +163,104 @@ function renderCountryList(filter=''){
         <div><div style="font-size:14px;font-weight:600">${c.name}</div><div style="font-size:11px;color:#8b8ba7">${c.code}</div></div>
       </div>
       <div>‹</div>
-    </div>
-  `).join('');
+    </div>`).join('');
   list.querySelectorAll('.countryItem').forEach(el=>{
     el.onclick=()=>{
       pending.country=el.dataset.code;
       pending.countryName=el.dataset.name;
-      pending.countryFlag=el.dataset.flagimg||el.dataset.flag;
-      document.getElementById('rowCountryVal').textContent=el.dataset.name;
-      const img=document.getElementById('rowCountryImg');
-      if(el.dataset.flagimg){img.src=el.dataset.flagimg;img.style.display='block';}
-      else{img.style.display='none';}
+      pending.countryFlag=el.dataset.flag;
+      pending.countryFlagImg=el.dataset.flagimg;
+      // تحديث فوري في صفحة التعديل فقط - ما يطلع في الرئيسية الين تحفظ
+      setCountryDisplay(pending.countryName, pending.country, pending.countryFlag, pending.countryFlagImg);
+      // لكن نرجعها للقديم في الرئيسية مؤقتا حسب شرطك "مافي شي يتغير الين اضغط حفظ"
+      // لذلك نحفظ القديم ونرجعه
+      // هنا نعرض التغيير في صفحة التعديل فقط
       document.getElementById('countryModal').classList.remove('on');
+      showStatus('✅ تم اختيار '+pending.countryName+' - اضغط حفظ');
     };
   });
 }
 
 function showStatus(t){const el=document.getElementById('statusBar');el.textContent=t;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),2500);}
 
+let originalCountry=null;
+
 onAuthStateChanged(auth,async u=>{
   if(!u){location.replace('/login/');return}
   cur=u;
-  const id=genId(u.uid);
-  // حفظ ID مرة واحدة في Firestore لو مش موجود
   const ref=doc(db,'users',u.uid);
   const snap=await getDoc(ref);
-  let storedId=id;
+  let finalId;
   if(!snap.exists()){
-    await setDoc(ref,{followers:0,following:0,visitors:0,gaboId:id});
+    finalId=genId(u.uid);
+    await setDoc(ref,{followers:0,following:0,visitors:0,gaboId:finalId});
   }else{
-    storedId=snap.data().gaboId||id;
-    if(!snap.data().gaboId) await setDoc(ref,{gaboId:id},{merge:true});
+    finalId=snap.data().gaboId;
+    if(!finalId || finalId==='00000000' || finalId.length!==8){
+      finalId=genId(u.uid);
+      await setDoc(ref,{gaboId:finalId},{merge:true});
+    }
   }
-  document.getElementById('idMain').textContent=storedId;
-  document.getElementById('userId').textContent=storedId;
+  document.getElementById('idMain').textContent=finalId;
+  document.getElementById('userId').textContent=finalId;
   document.getElementById('nameMain').textContent=u.displayName||'Taher Hammam';
   document.getElementById('avL').textContent=(u.displayName||'T')[0];
   document.getElementById('rowNameVal').textContent=u.displayName||'Taher Hammam';
   document.getElementById('rowAvLetter').textContent=(u.displayName||'T')[0];
 
-  onSnapshot(ref,d=>{if(d.exists()){document.getElementById('c1').textContent=d.data().followers||0;document.getElementById('c2').textContent=d.data().following||0;document.getElementById('c3').textContent=d.data().visitors||0;}});
+  onSnapshot(ref,d=>{if(d.exists()){document.getElementById('c1').textContent=d.data().followers||0;document.getElementById('c2').textContent=d.data().following||0;document.getElementById('c3').textContent=d.data().visitors||0; if(d.data().gaboId && d.data().gaboId!=='00000000'){document.getElementById('idMain').textContent=d.data().gaboId; document.getElementById('userId').textContent=d.data().gaboId;}}});
+
+  const photo=localStorage.getItem('gabo_photo_'+u.uid);
+  if(photo){
+    const img=document.getElementById('avatarImgMain'); img.src=photo; img.style.display='block';
+    document.getElementById('avL').style.display='none';
+    document.getElementById('rowAvImg').src=photo; document.getElementById('rowAvImg').style.display='block';
+    document.getElementById('rowAvLetter').style.display='none';
+  }
+
+  // الدولة - قراءة
+  const savedCode=localStorage.getItem('gabo_flag_'+u.uid)||'south-arabia';
+  const savedName=localStorage.getItem('gabo_flag_name_'+u.uid)||'الجنوب العربي';
+  const savedFlag=localStorage.getItem('gabo_flag_'+u.uid+'_emoji')||'';
+  const savedImg=localStorage.getItem('gabo_flag_img_'+u.uid)||'/assets/south-arabia.png';
+  
+  originalCountry={code:savedCode,name:savedName,flag:savedFlag,img:savedImg};
+  
+  const countryObj=countries.find(c=>c.code===savedCode);
+  if(countryObj){
+    setCountryDisplay(countryObj.name, countryObj.code, countryObj.flag, countryObj.flagImg);
+  }else{
+    setCountryDisplay(savedName, savedCode, savedFlag, savedImg);
+  }
 
   const bio=localStorage.getItem('gabo_bio_'+u.uid); if(bio) document.getElementById('rowBioVal').textContent=bio;
-  const photo=localStorage.getItem('gabo_photo_'+u.uid); if(photo){document.getElementById('avatarMain').innerHTML=`<img src="${photo}" style="width:100%;height:100%;object-fit:cover"><div class="pencil" id="openEdit">✏️</div>`;document.getElementById('rowAvImg').src=photo;document.getElementById('rowAvImg').style.display='block';document.getElementById('rowAvLetter').style.display='none';document.getElementById('openEdit').onclick=()=>document.getElementById('editPage').classList.add('on');}
-  const flagCode=localStorage.getItem('gabo_flag_'+u.uid)||'south-arabia';
-  const flagName=localStorage.getItem('gabo_flag_name_'+u.uid)||'الجنوب العربي';
-  const flagImg=localStorage.getItem('gabo_flag_img_'+u.uid)||'/assets/south-arabia.png';
-  const c=countries.find(x=>x.code===flagCode)||countries[0];
-  document.getElementById('countryNameMain').textContent=flagName;
-  document.getElementById('rowCountryVal').textContent=flagName;
-  document.getElementById('flagMain').innerHTML=`<img src="${c.flagImg||flagImg}" class="flagImg">`;
-  document.getElementById('countryFlagMain').innerHTML=`<img src="${c.flagImg||flagImg}" style="width:20px;height:14px;border-radius:3px;object-fit:cover">`;
-  if(c.flagImg){document.getElementById('rowCountryImg').src=c.flagImg;document.getElementById('rowCountryImg').style.display='block';}
-
+  const bday=localStorage.getItem('gabo_bday_'+u.uid); if(bday) document.getElementById('rowBdayVal').textContent=bday;
+  const gender=localStorage.getItem('gabo_gender_'+u.uid); if(gender) document.getElementById('rowGenderVal').textContent=gender;
   const cover=localStorage.getItem('gabo_cover_'+u.uid); if(cover){document.getElementById('coverImg').src=cover;document.getElementById('coverImg').style.display='block';document.getElementById('coverEmpty').style.display='none';}
 });
 
-document.getElementById('openEdit').onclick=()=>{pending={name:null,bio:null,bday:null,gender:null,country:null,countryName:null,countryFlag:null,avatar:null,cover:null,coverDeleted:false};document.getElementById('editPage').classList.add('on');};
+document.getElementById('openEdit').onclick=()=>{
+  pending={name:null,bio:null,bday:null,gender:null,country:null,countryName:null,countryFlag:null,countryFlagImg:null,avatar:null,cover:null,coverDeleted:false};
+  // لما نفتح التعديل نرجع الدولة القديمة مؤقتا
+  if(originalCountry){
+    setCountryDisplay(originalCountry.name, originalCountry.code, originalCountry.flag, originalCountry.img);
+  }
+  document.getElementById('editPage').classList.add('on');
+};
 document.getElementById('closeEdit').onclick=()=>document.getElementById('editPage').classList.remove('on');
 document.getElementById('rowCountry').onclick=()=>{renderCountryList('');document.getElementById('countryModal').classList.add('on');document.getElementById('countrySearch').value='';};
 document.getElementById('closeCountry').onclick=()=>document.getElementById('countryModal').classList.remove('on');
 document.getElementById('countrySearch').oninput=e=>renderCountryList(e.target.value);
 document.getElementById('rowName').onclick=()=>{const v=prompt('الاسم المستعار:',document.getElementById('rowNameVal').textContent);if(v!==null){pending.name=v;document.getElementById('rowNameVal').textContent=v;}};
-document.getElementById('rowBio').onclick=()=>{const v=prompt('اكتب لتعريف نفسك:',document.getElementById('rowBioVal').textContent);if(v!==null){pending.bio=v;document.getElementById('rowBioVal').textContent=v;}};
+document.getElementById('rowBio').onclick=()=>{const v=prompt('التعريف الشخصي:',document.getElementById('rowBioVal').textContent);if(v!==null){pending.bio=v;document.getElementById('rowBioVal').textContent=v;}};
 document.getElementById('rowBday').onclick=()=>{const v=prompt('عيد ميلاد YYYY-MM-DD:',document.getElementById('rowBdayVal').textContent);if(v!==null){pending.bday=v;document.getElementById('rowBdayVal').textContent=v;}};
 document.getElementById('rowGender').onclick=()=>{const v=prompt('الجنس: ذكر / أنثى',document.getElementById('rowGenderVal').textContent);if(v!==null){pending.gender=v;document.getElementById('rowGenderVal').textContent=v;}};
 document.getElementById('rowAvatar').onclick=()=>document.getElementById('avatarInp').click();
-document.getElementById('avatarInp').onchange=e=>{const fr=new FileReader();fr.onload=()=>{pending.avatar=fr.result;document.getElementById('rowAvImg').src=fr.result;document.getElementById('rowAvImg').style.display='block';document.getElementById('rowAvLetter').style.display='none';};fr.readAsDataURL(e.target.files[0]);};
+document.getElementById('avatarInp').onchange=e=>{
+  const fr=new FileReader();
+  fr.onload=()=>{pending.avatar=fr.result;document.getElementById('rowAvImg').src=fr.result;document.getElementById('rowAvImg').style.display='block';document.getElementById('rowAvLetter').style.display='none';showStatus('✅ تم اختيار الصورة - اضغط حفظ');};
+  fr.readAsDataURL(e.target.files[0]);
+};
 document.getElementById('addCover').onclick=()=>document.getElementById('coverInp').click();
 document.getElementById('coverInp').onchange=e=>{const fr=new FileReader();fr.onload=()=>{pending.cover=fr.result;document.getElementById('coverImg').src=fr.result;document.getElementById('coverImg').style.display='block';document.getElementById('coverEmpty').style.display='none';pending.coverDeleted=false;};fr.readAsDataURL(e.target.files[0]);};
 document.getElementById('delCover').onclick=()=>{pending.coverDeleted=true;pending.cover=null;document.getElementById('coverImg').style.display='none';document.getElementById('coverEmpty').style.display='flex';};
@@ -239,19 +268,28 @@ document.getElementById('delCover').onclick=()=>{pending.coverDeleted=true;pendi
 document.getElementById('saveAll').onclick=async()=>{
   const btn=document.getElementById('saveAll');btn.disabled=true;btn.textContent='جاري الحفظ...';showStatus('💾 جاري حفظ التغييرات...');
   try{
-    if(pending.name!==null) await updateProfile(cur,{displayName:pending.name});
+    if(pending.name!==null && pending.name!==cur.displayName) await updateProfile(cur,{displayName:pending.name});
     if(pending.bio!==null) localStorage.setItem('gabo_bio_'+cur.uid,pending.bio);
     if(pending.bday!==null) localStorage.setItem('gabo_bday_'+cur.uid,pending.bday);
     if(pending.gender!==null) localStorage.setItem('gabo_gender_'+cur.uid,pending.gender);
     if(pending.country!==null){
       localStorage.setItem('gabo_flag_'+cur.uid,pending.country);
-      if(pending.countryName) localStorage.setItem('gabo_flag_name_'+cur.uid,pending.countryName);
-      if(pending.countryFlag) localStorage.setItem('gabo_flag_img_'+cur.uid,pending.countryFlag);
+      localStorage.setItem('gabo_flag_name_'+cur.uid,pending.countryName);
+      if(pending.countryFlag) localStorage.setItem('gabo_flag_'+cur.uid+'_emoji',pending.countryFlag);
+      if(pending.countryFlagImg) localStorage.setItem('gabo_flag_img_'+cur.uid,pending.countryFlagImg);
+      // تحديث الرئيسية فورا بعد الحفظ
+      setCountryDisplay(pending.countryName, pending.country, pending.countryFlag, pending.countryFlagImg);
+      originalCountry={code:pending.country,name:pending.countryName,flag:pending.countryFlag,img:pending.countryFlagImg};
     }
-    if(pending.avatar!==null) localStorage.setItem('gabo_photo_'+cur.uid,pending.avatar);
+    if(pending.avatar!==null){
+      localStorage.setItem('gabo_photo_'+cur.uid,pending.avatar);
+      const img=document.getElementById('avatarImgMain'); img.src=pending.avatar; img.style.display='block';
+      document.getElementById('avL').style.display='none';
+    }
     if(pending.cover!==null) localStorage.setItem('gabo_cover_'+cur.uid,pending.cover);
     if(pending.coverDeleted) localStorage.removeItem('gabo_cover_'+cur.uid);
-    showStatus('✅ تم حفظ التغييرات');btn.textContent='✅ تم الحفظ';setTimeout(()=>{document.getElementById('editPage').classList.remove('on');location.reload();},800);
+    showStatus('✅ تم حفظ التغييرات');btn.textContent='✅ تم الحفظ';
+    setTimeout(()=>{document.getElementById('editPage').classList.remove('on');},800);
   }catch(err){showStatus('❌ خطأ: '+err.message);btn.disabled=false;btn.textContent='💾 حفظ التغييرات';}
 };
 </script>
