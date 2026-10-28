@@ -1,151 +1,125 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>اشتراك الإشعارات - GABO LIVE</title>
 <style>
-:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed;--gold:#fbbf24;--green:#22c55e}
+:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed;--gold:#fbbf24}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:#fff;font-family:system-ui;min-height:100vh;padding-bottom:80px}
+body{background:var(--bg);color:#fff;font-family:system-ui;min-height:100vh;padding-bottom:90px}
 .top{padding:16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--b);z-index:10}
 .back{width:40px;height:40px;background:#1e1c2e;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--b);cursor:pointer;color:#fff;text-decoration:none}
 .card{margin:12px;background:var(--card);border:1px solid var(--b);border-radius:18px;overflow:hidden}
-.cardTitle{padding:14px 16px;font-weight:800;border-bottom:1px solid var(--b);display:flex;justify-content:space-between;align-items:center}
 .row{display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid #1f1f2f}
 .row:last-child{border:0}
-.row .right{font-size:14px}
-.row .right small{display:block;color:#8b8ba7;font-size:11px;margin-top:4px}
-.switch{position:relative;width:48px;height:28px;flex-shrink:0}
+.switch{position:relative;width:48px;height:28px}
 .switch input{display:none}
 .slider{position:absolute;inset:0;background:#2a2840;border-radius:20px;transition:.3s;cursor:pointer}
 .slider:before{content:"";position:absolute;width:22px;height:22px;background:#fff;border-radius:50%;top:3px;right:3px;transition:.3s}
 input:checked + .slider{background:var(--gold)}
 input:checked + .slider:before{transform:translateX(-20px)}
 .mainBtn{margin:16px;width:calc(100% - 32px);background:var(--gold);color:#000;padding:14px;border-radius:14px;border:0;font-weight:900;font-size:15px;cursor:pointer}
-.mainBtn:disabled{opacity:.5}
 .status{margin:12px;background:#1e1c2e;border:1px solid var(--b);padding:12px;border-radius:12px;text-align:center;font-size:13px;display:none}
 .status.on{display:block}
-.bottomNav{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-end;padding:8px 0 calc(10px + env(safe-area-inset-bottom));z-index:1000;direction:ltr}
-.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:9px;display:flex;flex-direction:column;align-items:center;gap:3px}
-.bottomNav a.on{color:#fff}.bottomNav a .ic{font-size:22px}.bottomNav a.plus .ic{background:var(--v);color:#fff;width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-20px}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;padding:8px 0 10px;direction:ltr}
+.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:9px;display:flex;flex-direction:column;align-items:center}
 </style>
 </head>
 <body>
-<div class="top">
-  <a href="/profile/" class="back">›</a>
-  <b>🔔 اشتراك الإشعارات</b>
+<div class="top"><a href="/profile/" class="back">›</a><b>🔔 اشتراك الإشعارات</b></div>
+
+<div class="card">
+<div class="row"><div>تفعيل إشعارات المتصفح<br><small style="color:#8b8ba7" id="permText">جاري التحقق...</small></div><label class="switch"><input type="checkbox" id="master"><span class="slider"></span></label></div>
 </div>
 
 <div class="card">
-  <div class="cardTitle">
-    <span>تفعيل الإشعارات</span>
-    <span id="permStatus" style="font-size:11px;color:#8b8ba7"></span>
-  </div>
-  <div class="row">
-    <div class="right">تفعيل إشعارات المتصفح <small>لازم توافق على الإشعارات من المتصفح</small></div>
-    <label class="switch"><input type="checkbox" id="masterSwitch"><span class="slider"></span></label>
-  </div>
-</div>
-
-<div class="card">
-  <div class="cardTitle">أنواع الإشعارات</div>
-  <div class="row"><div class="right">❤️ الإعجابات <small>لما أحد يعجب بمنشورك</small></div><label class="switch"><input type="checkbox" id="n_like" checked><span class="slider"></span></label></div>
-  <div class="row"><div class="right">💬 التعليقات <small>لما أحد يعلق</small></div><label class="switch"><input type="checkbox" id="n_comment" checked><span class="slider"></span></label></div>
-  <div class="row"><div class="right">👥 متابع جديد <small>لما أحد يتابعك</small></div><label class="switch"><input type="checkbox" id="n_follow" checked><span class="slider"></span></label></div>
-  <div class="row"><div class="right">✉️ رسائل خاصة <small>رسائل الدردشة</small></div><label class="switch"><input type="checkbox" id="n_dm" checked><span class="slider"></span></label></div>
-  <div class="row"><div class="right">🔴 بث مباشر <small>لما أحد يبدأ بث</small></div><label class="switch"><input type="checkbox" id="n_live" checked><span class="slider"></span></label></div>
-  <div class="row"><div class="right">👑 VIP وعروض <small>عروض ومزايا</small></div><label class="switch"><input type="checkbox" id="n_vip"><span class="slider"></span></label></div>
+<div class="row"><div>❤️ الإعجابات</div><label class="switch"><input type="checkbox" id="n_like" checked><span class="slider"></span></label></div>
+<div class="row"><div>💬 التعليقات</div><label class="switch"><input type="checkbox" id="n_comment" checked><span class="slider"></span></label></div>
+<div class="row"><div>👥 متابع جديد</div><label class="switch"><input type="checkbox" id="n_follow" checked><span class="slider"></span></label></div>
+<div class="row"><div>✉️ رسائل خاصة</div><label class="switch"><input type="checkbox" id="n_dm" checked><span class="slider"></span></label></div>
+<div class="row"><div>🔴 بث مباشر</div><label class="switch"><input type="checkbox" id="n_live" checked><span class="slider"></span></label></div>
 </div>
 
 <button class="mainBtn" id="saveBtn">💾 حفظ الاشتراك</button>
 <button class="mainBtn" id="testBtn" style="background:#1e1c2e;color:#fff;border:1px solid var(--b);margin-top:0">🔔 جرب إشعار تجريبي</button>
-
 <div class="status" id="status"></div>
-
-<div class="bottomNav">
-  <a href="/profile/" class="on"><span class="ic">👤</span>حسابي</a>
-  <a href="/dm/"><span class="ic">🔒</span>دردشة خاصة</a>
-  <a href="/create/" class="plus"><span class="ic">+</span></a>
-  <a href="/posts/"><span class="ic">📄</span>منشورات</a>
-  <a href="/app/"><span class="ic">🏠</span>الرئيسية</a>
-</div>
 
 <script type="module">
 import {auth,db} from '/firebase-config.js';
 import {onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {doc,getDoc,setDoc} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+let cur=null, swReg=null;
+const $=id=>document.getElementById(id);
+const show=t=>{const s=$('status');s.textContent=t;s.classList.add('on');setTimeout(()=>s.classList.remove('on'),4000);}
 
-let cur=null;
-const master=document.getElementById('masterSwitch');
-const statusEl=document.getElementById('status');
-const permEl=document.getElementById('permStatus');
-
-function showStatus(t){
-  statusEl.textContent=t;
-  statusEl.classList.add('on');
-  setTimeout(()=>statusEl.classList.remove('on'),3000);
+async function initSW(){
+  if('serviceWorker' in navigator){
+    try{swReg=await navigator.serviceWorker.register('/sw.js'); console.log('SW registered');}
+    catch(e){console.log('SW fail',e)}
+  }
 }
+initSW();
 
-function updatePermText(){
-  if(!('Notification' in window)){permEl.textContent='غير مدعوم'; return}
-  if(Notification.permission==='granted'){permEl.textContent='✅ مفعّل'; master.checked=true}
-  else if(Notification.permission==='denied'){permEl.textContent='❌ مرفوض'; master.checked=false}
-  else{permEl.textContent='⏳ غير مفعل'; master.checked=false}
+function updatePerm(){
+  if(!('Notification' in window)){$('permText').textContent='المتصفح لا يدعم'; return}
+  const p=Notification.permission;
+  if(p==='granted'){$('permText').textContent='✅ مفعل'; $('master').checked=true}
+  else if(p==='denied'){$('permText').textContent='❌ مرفوض - فعله من إعدادات المتصفح'; $('master').checked=false}
+  else{$('permText').textContent='⏳ اضغط للتفعيل'; $('master').checked=false}
 }
+updatePerm();
 
-master.onchange=async()=>{
-  if(!('Notification' in window)){alert('المتصفح لا يدعم الإشعارات'); master.checked=false; return}
-  if(master.checked){
+$('master').onchange=async()=>{
+  if($('master').checked){
+    if(!('Notification' in window)){alert('لا يدعم'); return}
     const perm=await Notification.requestPermission();
-    if(perm==='granted'){showStatus('✅ تم تفعيل الإشعارات'); updatePermText();}
-    else{showStatus('❌ تم رفض الإشعارات من المتصفح'); master.checked=false; updatePermText();}
-  }else{
-    showStatus('ℹ️ لإيقاف الإشعارات احذف الإذن من إعدادات المتصفح');
-    updatePermText();
+    updatePerm();
+    if(perm==='granted') show('✅ تم تفعيل الإشعارات');
+    else{show('❌ تم الرفض - شغلها من الإعدادات > سفاري > الإشعارات'); $('master').checked=false}
   }
 };
 
 onAuthStateChanged(auth, async u=>{
   if(!u){location.replace('/login/');return}
   cur=u;
-  updatePermText();
-  const ref=doc(db,'users',u.uid);
-  const snap=await getDoc(ref);
-  if(snap.exists() && snap.data().notifications){
+  const snap=await getDoc(doc(db,'users',u.uid));
+  if(snap.exists()&&snap.data().notifications){
     const n=snap.data().notifications;
-    document.getElementById('n_like').checked=n.like!==false;
-    document.getElementById('n_comment').checked=n.comment!==false;
-    document.getElementById('n_follow').checked=n.follow!==false;
-    document.getElementById('n_dm').checked=n.dm!==false;
-    document.getElementById('n_live').checked=n.live!==false;
-    document.getElementById('n_vip').checked=n.vip===true;
+    $('n_like').checked=n.like!==false;
+    $('n_comment').checked=n.comment!==false;
+    $('n_follow').checked=n.follow!==false;
+    $('n_dm').checked=n.dm!==false;
+    $('n_live').checked=n.live!==false;
   }
 });
 
-document.getElementById('saveBtn').onclick=async()=>{
-  if(!cur) return;
+$('saveBtn').onclick=async()=>{
   const data={
-    like: document.getElementById('n_like').checked,
-    comment: document.getElementById('n_comment').checked,
-    follow: document.getElementById('n_follow').checked,
-    dm: document.getElementById('n_dm').checked,
-    live: document.getElementById('n_live').checked,
-    vip: document.getElementById('n_vip').checked,
-    master: master.checked,
-    updatedAt: new Date().toISOString()
+    like:$('n_like').checked,comment:$('n_comment').checked,
+    follow:$('n_follow').checked,dm:$('n_dm').checked,
+    live:$('n_live').checked,master:$('master').checked,
+    updatedAt:new Date().toISOString()
   };
-  try{
-    await setDoc(doc(db,'users',cur.uid),{notifications:data},{merge:true});
-    localStorage.setItem('gabo_notifications_'+cur.uid, JSON.stringify(data));
-    showStatus('✅ تم حفظ اشتراك الإشعارات');
-  }catch(e){showStatus('❌ خطأ: '+e.message)}
+  await setDoc(doc(db,'users',cur.uid),{notifications:data},{merge:true});
+  localStorage.setItem('gabo_notifications_'+cur.uid, JSON.stringify(data));
+  show('✅ تم حفظ اشتراك الإشعارات - سيصلك كل جديد');
 };
 
-document.getElementById('testBtn').onclick=()=>{
-  if(Notification.permission!=='granted'){alert('فعل الإشعارات أولاً'); return}
-  new Notification('GABO LIVE 🔔',{body:'هذا إشعار تجريبي - الإشعارات شغالة تمام! ✅', icon:'/assets/south-arabia.png.JPG'});
-  showStatus('🔔 تم إرسال إشعار تجريبي');
+$('testBtn').onclick=async()=>{
+  if(Notification.permission!=='granted'){alert('فعل الإشعارات أولاً من الزر فوق'); return}
+  // طريقة الآيفون: عن طريق Service Worker
+  if(swReg){
+    await swReg.showNotification('GABO LIVE 🔔',{
+      body:'الإشعارات شغالة تمام! ✅ هذا إشعار تجريبي',
+      icon:'/assets/south-arabia.png.JPG',
+      badge:'/assets/south-arabia.png.JPG',
+      vibrate:[200,100,200]
+    });
+    show('🔔 تم إرسال الإشعار - انظر فوق الشاشة');
+  }else{
+    new Notification('GABO LIVE 🔔',{body:'الإشعارات شغالة ✅'});
+    show('🔔 تم إرسال الإشعار');
+  }
 };
 </script>
 </body>
