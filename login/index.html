@@ -37,13 +37,12 @@ input.bad{border-color:var(--err);background:rgba(251,113,133,.08)}
 <body>
 <div class="box">
   <div class="logo"><h1>GABO <span>LIVE</span></h1></div>
-
   <div class="tabs">
     <button id="tabLogin" class="on">تسجيل دخول</button>
     <button id="tabSignup">إنشاء حساب</button>
   </div>
 
-  <!-- حق تسجيل الدخول -->
+  <!-- تسجيل دخول -->
   <div id="loginFields">
     <label>البريد الإلكتروني</label>
     <input id="l_email" type="email" placeholder="example@gmail.com" dir="ltr">
@@ -53,17 +52,17 @@ input.bad{border-color:var(--err);background:rgba(251,113,133,.08)}
     <div class="fieldErr" id="l_passErr"></div>
   </div>
 
-  <!-- حق إنشاء حساب -->
+  <!-- إنشاء حساب -->
   <div id="signupFields">
     <div class="row">
       <div>
         <label>الاسم الأول</label>
-        <input id="f_first" type="text" placeholder="محمد">
+        <input id="f_first" type="text" placeholder="">
         <div class="fieldErr" id="f_firstErr"></div>
       </div>
       <div>
         <label>اللقب</label>
-        <input id="f_last" type="text" placeholder="الغامدي">
+        <input id="f_last" type="text" placeholder="">
         <div class="fieldErr" id="f_lastErr"></div>
       </div>
     </div>
@@ -73,17 +72,16 @@ input.bad{border-color:var(--err);background:rgba(251,113,133,.08)}
     <div class="fieldErr" id="f_emailErr"></div>
 
     <label>كلمة المرور</label>
-    <input id="f_pass" type="password" placeholder="6 أحرف على الأقل">
+    <input id="f_pass" type="password" placeholder="••••••••">
     <div class="fieldErr" id="f_passErr"></div>
 
     <label>تأكيد كلمة المرور</label>
-    <input id="f_confirm" type="password" placeholder="أعد كتابة كلمة المرور">
+    <input id="f_confirm" type="password" placeholder="••••••••">
     <div class="fieldErr" id="f_confirmErr"></div>
   </div>
 
   <button class="btn" id="mainBtn">تسجيل دخول</button>
   <div class="msg" id="msg"></div>
-
   <div class="divider">أو</div>
   <button class="btn ghost" id="googleBtn"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Google</button>
   <button class="btn apple" id="appleBtn" style="margin-top:10px"> Apple</button>
@@ -93,87 +91,37 @@ input.bad{border-color:var(--err);background:rgba(251,113,133,.08)}
 import { auth, db } from '/firebase-config.js';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, OAuthProvider, signInWithPopup, getRedirectResult, updateProfile } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
 let mode='login';
 const $=s=>document.querySelector(s);
 const tabL=$('#tabLogin'), tabS=$('#tabSignup'), loginF=$('#loginFields'), signupF=$('#signupFields'), msg=$('#msg'), mainBtn=$('#mainBtn');
-
-function setMode(m){
-  mode=m;
-  tabL.classList.toggle('on',m==='login');
-  tabS.classList.toggle('on',m==='signup');
-  loginF.style.display=m==='login'?'block':'none';
-  signupF.style.display=m==='signup'?'block':'none';
-  mainBtn.textContent=m==='login'?'تسجيل دخول':'إنشاء حساب';
-  clearErr();
-}
-function clearErr(){
-  document.querySelectorAll('input').forEach(i=>i.classList.remove('bad'));
-  document.querySelectorAll('.fieldErr').forEach(e=>{e.textContent=''; e.classList.remove('show')});
-  msg.textContent=''; msg.className='msg';
-}
-function showFieldErr(inputId, errId, text){
-  const inp=$(inputId), err=$(errId);
-  inp.classList.add('bad'); err.textContent=text; err.classList.add('show');
-}
+function setMode(m){ mode=m; tabL.classList.toggle('on',m==='login'); tabS.classList.toggle('on',m==='signup'); loginF.style.display=m==='login'?'block':'none'; signupF.style.display=m==='signup'?'block':'none'; mainBtn.textContent=m==='login'?'تسجيل دخول':'إنشاء حساب'; clearErr(); }
+function clearErr(){ document.querySelectorAll('input').forEach(i=>i.classList.remove('bad')); document.querySelectorAll('.fieldErr').forEach(e=>{e.textContent=''; e.classList.remove('show')}); msg.textContent=''; msg.className='msg'; }
+function showFieldErr(inputId, errId, text){ const inp=$(inputId), err=$(errId); inp.classList.add('bad'); err.textContent=text; err.classList.add('show'); }
 tabL.onclick=()=>setMode('login'); tabS.onclick=()=>setMode('signup');
-
-async function ensureUserDoc(u, fullName=''){
-  const ref=doc(db,'users',u.uid);
-  const snap=await getDoc(ref).catch(()=>null);
-  if(!snap || !snap.exists()){
-    await setDoc(ref,{email:u.email, name:fullName || u.displayName || u.email.split('@')[0], photo:u.photoURL||'', uid:u.uid, createdAt:serverTimestamp(), banned:false});
-  }
-}
-getRedirectResult(auth).catch(()=>{});
-onAuthStateChanged(auth, async u=>{ if(u){ try{await ensureUserDoc(u)}catch{} location.replace('/app/'); } });
-
+async function ensureUserDoc(u, fullName=''){ const ref=doc(db,'users',u.uid); const snap=await getDoc(ref).catch(()=>null); if(!snap || !snap.exists()){ await setDoc(ref,{email:u.email, name:fullName || u.displayName || u.email.split('@')[0], photo:u.photoURL||'', uid:u.uid, createdAt:serverTimestamp(), banned:false}); } }
+getRedirectResult(auth).catch(()=>{}); onAuthStateChanged(auth, async u=>{ if(u){ try{await ensureUserDoc(u)}catch{} location.replace('/app/'); } });
 mainBtn.onclick=async()=>{
   clearErr();
   if(mode==='login'){
-    const email=$('#l_email').value.trim(), pass=$('#l_pass').value.trim();
-    let ok=true;
+    const email=$('#l_email').value.trim(), pass=$('#l_pass').value.trim(); let ok=true;
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ showFieldErr('#l_email','#l_emailErr','اكتب ايميل صحيح مثل name@gmail.com'); ok=false; }
     if(!pass){ showFieldErr('#l_pass','#l_passErr','اكتب كلمة المرور'); ok=false; }
-    if(!ok) return;
-    mainBtn.disabled=true; mainBtn.textContent='جاري...';
+    if(!ok) return; mainBtn.disabled=true; mainBtn.textContent='جاري...';
     try{ await signInWithEmailAndPassword(auth,email,pass); }
-    catch(e){
-      mainBtn.disabled=false; mainBtn.textContent='تسجيل دخول';
-      if(e.code==='auth/invalid-credential' || e.code==='auth/wrong-password') msg.textContent='الايميل أو الباسوورد خطأ';
-      else if(e.code==='auth/user-not-found'){ msg.textContent='الحساب غير موجود، أنشئ حساب'; setMode('signup'); }
-      else { msg.textContent='خطأ: '+e.message; }
-      msg.className='msg e';
-    }
+    catch(e){ mainBtn.disabled=false; mainBtn.textContent='تسجيل دخول'; if(e.code==='auth/invalid-credential' || e.code==='auth/wrong-password') msg.textContent='الايميل أو الباسوورد خطأ'; else if(e.code==='auth/user-not-found'){ msg.textContent='الحساب غير موجود، أنشئ حساب'; setMode('signup'); } else { msg.textContent='خطأ: '+e.message; } msg.className='msg e'; }
   }else{
-    const first=$('#f_first').value.trim(), last=$('#f_last').value.trim();
-    const email=$('#f_email').value.trim(), pass=$('#f_pass').value, confirm=$('#f_confirm').value;
-    let ok=true;
+    const first=$('#f_first').value.trim(), last=$('#f_last').value.trim(); const email=$('#f_email').value.trim(), pass=$('#f_pass').value, confirm=$('#f_confirm').value; let ok=true;
     if(first.length<2){ showFieldErr('#f_first','#f_firstErr','الاسم الأول مطلوب (حرفين على الأقل)'); ok=false; }
     if(last.length<2){ showFieldErr('#f_last','#f_lastErr','اللقب مطلوب'); ok=false; }
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ showFieldErr('#f_email','#f_emailErr','الايميل غير صحيح، لازم يكون مثل example@gmail.com'); ok=false; }
     if(pass.length<6){ showFieldErr('#f_pass','#f_passErr','كلمة المرور لازم 6 أحرف على الأقل'); ok=false; }
     if(pass!==confirm){ showFieldErr('#f_confirm','#f_confirmErr','كلمة المرور غير مطابقة، تأكد منها'); ok=false; }
     if(!ok){ msg.textContent='صلح الأخطاء اللي فوق'; msg.className='msg e'; return; }
-
     mainBtn.disabled=true; mainBtn.textContent='جاري إنشاء الحساب...';
-    try{
-      const cred=await createUserWithEmailAndPassword(auth,email,pass);
-      const fullName=first+' '+last;
-      await updateProfile(cred.user,{displayName:fullName});
-      await ensureUserDoc(cred.user,fullName);
-      msg.textContent='تم إنشاء الحساب، جاري تحويلك...'; msg.className='msg ok';
-    }catch(e){
-      mainBtn.disabled=false; mainBtn.textContent='إنشاء حساب';
-      if(e.code==='auth/email-already-in-use'){ showFieldErr('#f_email','#f_emailErr','الايميل هذا مسجل من قبل، سجل دخول'); msg.textContent='الايميل مسجل مسبقاً'; }
-      else if(e.code==='auth/invalid-email'){ showFieldErr('#f_email','#f_emailErr','صيغة الايميل غلط'); msg.textContent='الايميل غير صحيح'; }
-      else if(e.code==='auth/weak-password'){ showFieldErr('#f_pass','#f_passErr','الباسوورد ضعيف، خليه أقوى'); msg.textContent='الباسوورد ضعيف'; }
-      else { msg.textContent='خطأ: '+e.message; }
-      msg.className='msg e';
-    }
+    try{ const cred=await createUserWithEmailAndPassword(auth,email,pass); const fullName=first+' '+last; await updateProfile(cred.user,{displayName:fullName}); await ensureUserDoc(cred.user,fullName); msg.textContent='تم إنشاء الحساب، جاري تحويلك...'; msg.className='msg ok'; }
+    catch(e){ mainBtn.disabled=false; mainBtn.textContent='إنشاء حساب'; if(e.code==='auth/email-already-in-use'){ showFieldErr('#f_email','#f_emailErr','الايميل هذا مسجل من قبل، سجل دخول'); msg.textContent='الايميل مسجل مسبقاً'; } else if(e.code==='auth/invalid-email'){ showFieldErr('#f_email','#f_emailErr','صيغة الايميل غلط'); msg.textContent='الايميل غير صحيح'; } else if(e.code==='auth/weak-password'){ showFieldErr('#f_pass','#f_passErr','الباسوورد ضعيف، خليه أقوى'); msg.textContent='الباسوورد ضعيف'; } else { msg.textContent='خطأ: '+e.message; } msg.className='msg e'; }
   }
 };
-
 $('#googleBtn').onclick=async()=>{ try{ const p=new GoogleAuthProvider(); const r=await signInWithPopup(auth,p); await ensureUserDoc(r.user); } catch(e){ msg.textContent=e.code==='auth/unauthorized-domain'?'أضف gabo-live.pages.dev في Firebase > Authorized domains':e.message; msg.className='msg e'; } };
 $('#appleBtn').onclick=async()=>{ try{ const p=new OAuthProvider('apple.com'); const r=await signInWithPopup(auth,p); await ensureUserDoc(r.user); } catch(e){ msg.textContent=e.message; msg.className='msg e'; } };
 </script>
