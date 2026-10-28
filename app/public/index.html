@@ -1,25 +1,195 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>العام — GABO LIVE</title>
-<link rel="stylesheet" href="/assets/style/style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ملف التعريف</title>
+<style>
+:root{--bg:#080810;--card:#16161f;--card2:#1c1c28;--b:#2a2a3a;--v:#7c3aed;--m:#8b8ba7}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:30px}
+
+/* الصفحة الرئيسية - الملف الشخصي */
+.mainCard{margin:12px;background:#161426;border:1px solid var(--b);border-radius:22px;padding:16px}
+.head{display:flex;gap:12px;align-items:center;flex-direction:row-reverse}
+.avatar{width:74px;height:74px;border-radius:18px;background:#6d28d9;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;position:relative;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.pencil{position:absolute;bottom:0;right:0;width:24px;height:24px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;border:2px solid #161426;cursor:pointer}
+.stats{display:flex;gap:8px;margin-top:12px}.stat{flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:12px;padding:8px;text-align:center}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-end;padding:8px 0 calc(10px + env(safe-area-inset-bottom));z-index:1000;direction:ltr}
+.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:9px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bottomNav a.on{color:#fff}.bottomNav a .ic{font-size:22px}
+.bottomNav a.plus .ic{background:var(--v);color:#fff;width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-20px}
+
+/* صفحة التعديل نفس الصورة */
+.editPage{position:fixed;inset:0;background:var(--bg);z-index:10000;display:none;overflow:auto}
+.editPage.on{display:block}
+.editTop{padding:16px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,#1a1033,transparent)}
+.editTop b{font-size:18px}
+.backBtn{width:40px;height:40px;background:#1e1c2e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;text-decoration:none;color:#fff;border:1px solid var(--b)}
+
+.coverArea{display:flex;gap:12px;padding:0 16px;justify-content:flex-end;margin-top:10px}
+.coverBox{width:140px;height:160px;border-radius:16px;overflow:hidden;position:relative;background:var(--card);border:1px solid var(--b)}
+.coverBox img{width:100%;height:100%;object-fit:cover}
+.coverBox.add{background:var(--card);display:flex;align-items:center;justify-content:center;border:1px solid var(--b)}
+.coverLabel{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);font-size:10px;padding:3px 8px;border-radius:20px}
+.coverDel{position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.5);width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.coverHint{padding:10px 16px;text-align:right;font-size:11px;color:var(--m);margin-top:4px}
+
+.cardList{margin:16px;background:var(--card);border-radius:18px;overflow:hidden;border:1px solid var(--b)}
+.row{display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid #1f1f2f;cursor:pointer}
+.row:last-child{border:0}
+.row .right{font-size:15px;font-weight:600}
+.row .left{display:flex;align-items:center;gap:8px;color:#8b8ba7;font-size:14px}
+.row .left img{width:36px;height:36px;border-radius:50%;object-fit:cover}
+.row .left small{font-size:14px}
+.arrow{opacity:.4}
+
+.saveBtn{margin:20px 16px;background:#fbbf24;color:#000;padding:14px;border-radius:14px;border:0;width:calc(100% - 32px);font-weight:900;font-size:15px;cursor:pointer}
+</style>
 </head>
 <body>
-<div class="wrap">
-  <header class="topbar">
-    <a class="brand" href="/app/">GABO LIVE ✨</a>
-    <div><a class="btn sm" href="/app/">كل المجتمعات</a> <button class="btn sm" data-logout>خروج</button></div>
-  </header>
-  <div class="card"><h3>🔥 الشات العام</h3>
-    <div class="msgs" id="msgsBox"></div>
-    <div class="composer"><input id="msgInput" class="input" placeholder="اكتب رسالة..." maxlength="500"><button id="sendBtn" class="btn primary">↑</button></div>
+
+<!-- الصفحة الرئيسية -->
+<div class="mainCard">
+  <div class="head">
+    <div class="avatar" id="avatarMain"><span id="avL">T</span><div class="pencil" id="openEdit">✏️</div></div>
+    <div style="flex:1;text-align:left;direction:ltr">
+      <div style="font-size:15px;font-weight:800;display:flex;gap:6px;align-items:center"><span id="nameMain">Taher Hammam</span><span id="flagMain"></span></div>
+      <div style="font-size:11px;color:#a1a1aa;margin-top:2px;direction:rtl;text-align:right">ملفك في مجتمع GABO LIVE</div>
+      <div id="emailMain" style="font-size:10px;color:#8b8ba7;text-decoration:underline;direction:ltr;text-align:left;margin-top:2px"></div>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><b id="c1">0</b><span style="font-size:10px;color:#a1a1aa">متابعين</span></div>
+    <div class="stat"><b id="c2">0</b><span style="font-size:10px;color:#a1a1aa">متابَع</span></div>
+    <div class="stat"><b id="c3">0</b><span style="font-size:10px;color:#a1a1aa">زوار</span></div>
+  </div>
+  <div style="margin-top:12px;background:#0f0e18;border:1px solid var(--b);border-radius:12px;padding:10px;font-size:12px;color:#a1a1aa" id="bioMain">اكتب نبذة قصيرة عنك...</div>
+  <div style="display:flex;gap:8px;margin-top:10px">
+    <button style="flex:1;padding:11px;border-radius:11px;border:0;font-weight:800;font-size:12px;background:#fbbf24;color:#000" onclick="location.href='/vip/'">👑 VIP</button>
+    <button style="flex:1;padding:11px;border-radius:11px;border:1px solid var(--b);background:#1e1c2e;color:#fff;font-size:12px">🔔 اشتراك الإشعارات</button>
   </div>
 </div>
+
+<!-- صفحة التعديل نفس الصورة اللي ارسلتها -->
+<div class="editPage" id="editPage">
+  <div class="editTop">
+    <a class="backBtn" id="closeEdit">›</a>
+    <b>ملف التعريف</b>
+  </div>
+
+  <div class="coverArea">
+    <div class="coverBox" id="coverBox">
+      <span class="coverLabel">غلاف البث المباشر</span>
+      <img id="coverImg" src="https://i.ibb.co/5g8B4J3K/south.jpg" style="display:none">
+      <div id="coverEmpty" style="width:100%;height:100%;background:linear-gradient(135deg,#0f3460,#16213e);display:flex;align-items:center;justify-content:center;font-size:40px">👤</div>
+      <div class="coverDel" id="delCover">🗑️</div>
+    </div>
+    <div class="coverBox add" id="addCover">
+      <div style="text-align:center"><div style="font-size:32px">📷+</div></div>
+      <input type="file" id="coverInp" accept="image/*" hidden>
+    </div>
+  </div>
+  <div class="coverHint">استخدم صورتك كصورة غلاف لجعل ملفك التعريفي أكثر جاذبية</div>
+
+  <div class="cardList">
+    <div class="row" id="rowAvatar">
+      <div class="left"><span class="arrow">‹</span> <img id="rowAvImg" src="" style="display:none"><span id="rowAvLetter" style="width:36px;height:36px;border-radius:50%;background:#6d28d9;display:flex;align-items:center;justify-content:center;font-weight:800">T</span></div>
+      <div class="right">الصورة الرمزية</div>
+      <input type="file" id="avatarInp" accept="image/*" hidden>
+    </div>
+    <div class="row" id="rowName">
+      <div class="left"><span class="arrow">‹</span> <small id="rowNameVal">طاهر اليافعي</small></div>
+      <div class="right">الاسم المستعار</div>
+    </div>
+    <div class="row" id="rowBday">
+      <div class="left"><span class="arrow">‹</span> <small id="rowBdayVal">2000-01-03</small></div>
+      <div class="right">عيد ميلاد</div>
+    </div>
+    <div class="row" id="rowBio">
+      <div class="left"><span class="arrow">‹</span> <small id="rowBioVal">اكتب لتعريف نفسك</small></div>
+      <div class="right">التعريف الشخصي</div>
+    </div>
+  </div>
+
+  <div class="cardList">
+    <div class="row">
+      <div class="left"><small id="userId">35764978</small></div>
+      <div class="right">User ID</div>
+    </div>
+    <div class="row" id="rowGender">
+      <div class="left"><span class="arrow">‹</span> <small id="rowGenderVal">ذكر ♂️</small></div>
+      <div class="right">الجنس</div>
+    </div>
+    <div class="row" id="rowCountry">
+      <div class="left"><small id="rowCountryVal">SA</small></div>
+      <div class="right">الدولة</div>
+    </div>
+  </div>
+
+  <button class="saveBtn" id="saveAll">💾 حفظ التغييرات</button>
+  <div style="height:30px"></div>
+</div>
+
+<div class="bottomNav">
+  <a href="/profile/" class="on"><span class="ic">👤</span>حسابي</a>
+  <a href="/dm/"><span class="ic">🔒</span>دردشة خاصة</a>
+  <a href="/create/" class="plus"><span class="ic">+</span></a>
+  <a href="/posts/"><span class="ic">📄</span>منشورات</a>
+  <a href="/app/"><span class="ic">🏠</span>الرئيسية</a>
+</div>
+
 <script type="module">
-import { boot, mountChat, $ } from '/assets/app.js';
-await boot({ auth: true });
-mountChat({ box: $('#msgsBox'), input: $('#msgInput'), button: $('#sendBtn'), community: 'general' });
+import {auth,db} from '/firebase-config.js';
+import {onAuthStateChanged,updateProfile} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {doc,getDoc,setDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+let cur=null;
+onAuthStateChanged(auth,async u=>{
+  if(!u){location.replace('/login/');return}
+  cur=u;
+  document.getElementById('nameMain').textContent=u.displayName||'Taher Hammam';
+  document.getElementById('avL').textContent=(u.displayName||'T')[0];
+  document.getElementById('emailMain').textContent=u.email;
+  document.getElementById('rowNameVal').textContent=u.displayName||'طاهر اليافعي';
+  document.getElementById('rowAvLetter').textContent=(u.displayName||'T')[0];
+  document.getElementById('userId').textContent=u.uid.slice(0,8);
+  const ref=doc(db,'users',u.uid); const s=await getDoc(ref); if(!s.exists()) await setDoc(ref,{followers:0,following:0,visitors:0});
+  onSnapshot(ref,d=>{if(d.exists()){document.getElementById('c1').textContent=d.data().followers||0;document.getElementById('c2').textContent=d.data().following||0;document.getElementById('c3').textContent=d.data().visitors||0;}});
+  const p=localStorage.getItem('gabo_photo_'+u.uid); if(p){document.getElementById('avatarMain').innerHTML=`<img src="${p}" style="width:100%;height:100%;object-fit:cover"><div class="pencil" id="openEdit">✏️</div>`; document.getElementById('rowAvImg').src=p; document.getElementById('rowAvImg').style.display='block'; document.getElementById('rowAvLetter').style.display='none'; document.getElementById('openEdit').onclick=()=>document.getElementById('editPage').classList.add('on');}
+  const b=localStorage.getItem('gabo_bio_'+u.uid); if(b){document.getElementById('bioMain').textContent=b; document.getElementById('rowBioVal').textContent=b;}
+  const flag=localStorage.getItem('gabo_flag_'+u.uid); if(flag){document.getElementById('flagMain').textContent=flag==='south-arabia'?'🚩':flag; document.getElementById('rowCountryVal').textContent=flag==='south-arabia'?'الجنوب العربي':flag;}
+  const cover=localStorage.getItem('gabo_cover_'+u.uid); if(cover){document.getElementById('coverImg').src=cover; document.getElementById('coverImg').style.display='block'; document.getElementById('coverEmpty').style.display='none';}
+});
+document.getElementById('openEdit').onclick=()=>document.getElementById('editPage').classList.add('on');
+document.getElementById('closeEdit').onclick=()=>document.getElementById('editPage').classList.remove('on');
+
+// رفع الصور
+document.getElementById('addCover').onclick=()=>document.getElementById('coverInp').click();
+document.getElementById('coverInp').onchange=e=>{const fr=new FileReader();fr.onload=()=>{localStorage.setItem('gabo_cover_'+cur.uid,fr.result);document.getElementById('coverImg').src=fr.result;document.getElementById('coverImg').style.display='block';document.getElementById('coverEmpty').style.display='none';};fr.readAsDataURL(e.target.files[0]);};
+document.getElementById('rowAvatar').onclick=()=>document.getElementById('avatarInp').click();
+document.getElementById('avatarInp').onchange=e=>{const fr=new FileReader();fr.onload=()=>{localStorage.setItem('gabo_photo_'+cur.uid,fr.result);document.getElementById('rowAvImg').src=fr.result;document.getElementById('rowAvImg').style.display='block';document.getElementById('rowAvLetter').style.display='none';document.getElementById('avatarMain').innerHTML=`<img src="${fr.result}" style="width:100%;height:100%;object-fit:cover"><div class="pencil" id="openEdit">✏️</div>`;document.getElementById('editPage').classList.add('on');};fr.readAsDataURL(e.target.files[0]);};
+document.getElementById('delCover').onclick=()=>{localStorage.removeItem('gabo_cover_'+cur.uid);document.getElementById('coverImg').style.display='none';document.getElementById('coverEmpty').style.display='flex';};
+
+// تعديلات سريعة
+document.getElementById('rowName').onclick=()=>{const n=prompt('الاسم المستعار:',document.getElementById('rowNameVal').textContent);if(n){document.getElementById('rowNameVal').textContent=n;document.getElementById('nameMain').textContent=n;}};
+document.getElementById('rowBio').onclick=()=>{const b=prompt('التعريف الشخصي:',document.getElementById('rowBioVal').textContent);if(b){document.getElementById('rowBioVal').textContent=b;document.getElementById('bioMain').textContent=b;}};
+document.getElementById('rowBday').onclick=()=>{const d=prompt('تاريخ الميلاد YYYY-MM-DD:',document.getElementById('rowBdayVal').textContent);if(d)document.getElementById('rowBdayVal').textContent=d;};
+document.getElementById('rowGender').onclick=()=>{const g=prompt('الجنس: ذكر / أنثى','ذكر');if(g)document.getElementById('rowGenderVal').textContent=g+(g.includes('ذكر')?' ♂️':' ♀️');};
+document.getElementById('rowCountry').onclick=()=>{const c=prompt('الدولة: SA, YE, AE, أو south-arabia للجنوب العربي',document.getElementById('rowCountryVal').textContent);if(c){localStorage.setItem('gabo_flag_'+cur.uid,c);document.getElementById('rowCountryVal').textContent=c;document.getElementById('flagMain').textContent=c==='south-arabia'?'🚩':c;}};
+
+document.getElementById('saveAll').onclick=async()=>{
+  const btn=document.getElementById('saveAll');
+  btn.textContent='جاري الحفظ...';
+  const name=document.getElementById('rowNameVal').textContent;
+  const bio=document.getElementById('rowBioVal').textContent;
+  const flag=document.getElementById('rowCountryVal').textContent;
+  if(name) await updateProfile(cur,{displayName:name});
+  if(bio) localStorage.setItem('gabo_bio_'+cur.uid,bio);
+  localStorage.setItem('gabo_flag_'+cur.uid,flag);
+  btn.textContent='تم الحفظ ✅';
+  setTimeout(()=>{document.getElementById('editPage').classList.remove('on');location.reload();},800);
+};
 </script>
 </body>
 </html>
