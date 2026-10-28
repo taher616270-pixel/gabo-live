@@ -2,268 +2,125 @@
 <html dir="rtl" lang="ar">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0a0a0f">
-<title>GABO LIVE | تسجيل الدخول</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://cdn.tailwindcss.com"></script>
-<style type="text/tailwindcss">
-  .inp{@apply w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right text-sm outline-none mb-3 focus:border-[#9b6cff] transition-colors}
-  .btn{@apply w-full h-12 rounded-xl bg-[#9b6cff] text-white font-bold text-sm disabled:opacity-50 active:scale-[.98] transition}
-  .soc{@apply h-12 w-full rounded-xl bg-white/[0.08] border border-white/10 text-white text-sm disabled:opacity-50 active:scale-[.98] transition}
-</style>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+<script src="../firebase-config.js"></script>
 </head>
 <body class="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-4">
 
-<div id="mainPage" class="w-full max-w-[380px] bg-[#15151c] border border-white/10 rounded-[24px] p-6">
+<div id="mainPage" class="w-full max-w-[380px] bg-[#15151c] border border-white/10 rounded-[24px] p-6 relative z-10">
   <div class="flex justify-between items-center mb-5">
     <span class="text-[10px] text-purple-300 bg-purple-500/20 px-3 py-1 rounded-full">LIVE ●</span>
     <h1 class="font-black tracking-widest text-white text-sm">GABO LIVE</h1>
   </div>
 
-  <div class="flex bg-black/50 rounded-xl p-1 mb-5" role="tablist">
-    <button type="button" id="tabLogin" role="tab" class="flex-1 h-9 rounded-lg bg-white text-black font-bold text-sm">دخول</button>
-    <button type="button" id="tabSignup" role="tab" class="flex-1 h-9 rounded-lg text-white/50 text-sm">حساب جديد</button>
+  <div class="flex bg-black/50 rounded-xl p-1 mb-5">
+    <button type="button" id="tabLogin" class="flex-1 h-9 rounded-lg bg-white text-black font-bold text-sm">دخول</button>
+    <button type="button" id="tabSignup" class="flex-1 h-9 rounded-lg text-white/50 text-sm">حساب جديد</button>
   </div>
 
-  <p id="msg" role="alert" class="hidden text-center text-[12px] mb-3 rounded-lg px-3 py-2"></p>
+  <div id="loginFields">
+    <input id="loginEmail" type="email" placeholder="البريد الإلكتروني" class="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right text-sm outline-none mb-3">
+    <input id="loginPass" type="password" placeholder="كلمة السر" class="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right text-sm outline-none mb-4">
+    <button type="button" id="loginBtn" class="w-full h-12 rounded-xl bg-[#9b6cff] text-white font-bold text-sm pointer-events-auto">دخول الى المنصة 🚀</button>
+  </div>
 
-  <form id="loginFields" novalidate>
-    <h2 class="text-center text-white font-bold">مرحبا بعودتك 👋</h2>
-    <p class="text-center text-white/40 text-[11px] mb-4">ادخل وشارك صوتك</p>
-    <input id="loginEmail" type="email" autocomplete="email" inputmode="email" placeholder="البريد الإلكتروني" class="inp">
-    <input id="loginPass" type="password" autocomplete="current-password" placeholder="كلمة السر" class="inp !mb-4">
-    <button type="submit" id="loginBtn" class="btn">دخول إلى المنصة 🚀</button>
-  </form>
-
-  <form id="signupFields" class="hidden" novalidate>
-    <h2 class="text-center text-white font-bold">إنشاء حساب جديد ✨</h2>
-    <p class="text-center text-white/40 text-[11px] mb-4">انضم لعائلة GABO LIVE</p>
-    <input id="name" type="text" autocomplete="name" placeholder="الاسم الكامل" class="inp">
-    <input id="signupEmail" type="email" autocomplete="email" inputmode="email" placeholder="البريد الإلكتروني" class="inp">
-    <input id="signupPass" type="password" autocomplete="new-password" placeholder="كلمة السر (6 أحرف على الأقل)" class="inp">
-    <input id="confirmPass" type="password" autocomplete="new-password" placeholder="تأكيد كلمة السر" class="inp !mb-4">
-    <button type="submit" id="signupBtn" class="btn">إنشاء حساب 🚀</button>
-  </form>
+  <div id="signupFields" class="hidden">
+    <input id="name" type="text" placeholder="الاسم الكامل" class="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right text-sm outline-none mb-3">
+    <input id="signupEmail" type="email" placeholder="البريد الإلكتروني" class="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right text-sm outline-none mb-3">
+    <input id="signupPass" type="password" placeholder="كلمة السر" class="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right text-sm outline-none mb-3">
+    <input id="confirmPass" type="password" placeholder="تأكيد كلمة السر - لازم مطابق" class="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right text-sm outline-none mb-4">
+    <button type="button" id="signupBtn" class="w-full h-12 rounded-xl bg-[#9b6cff] text-white font-bold text-sm pointer-events-auto">إنشاء حساب 🚀</button>
+  </div>
 
   <div class="flex items-center gap-3 my-4">
-    <div class="h-px flex-1 bg-white/10"></div><span class="text-white/30 text-[11px]">أو المتابعة عبر</span><div class="h-px flex-1 bg-white/10"></div>
+    <div class="h-[1px] flex-1 bg-white/10"></div><span class="text-white/30 text-[11px]">أو</span><div class="h-[1px] flex-1 bg-white/10"></div>
   </div>
 
-  <div id="social" class="grid grid-cols-1 gap-3">
-    <button type="button" id="gBtn" class="soc">Google - جوجل</button>
-    <button type="button" id="aBtn" class="soc hidden">Apple</button>
+  <div id="social" class="grid gap-3" style="position:relative; z-index:999">
+    <button type="button" id="gBtn" class="h-12 w-full rounded-xl bg-white/[0.08] border border-white/10 text-white text-sm active:scale-95">Google</button>
+    <button type="button" id="aBtn" style="display:none" class="h-12 w-full rounded-xl bg-white/[0.08] border border-white/10 text-white text-sm active:scale-95">Apple</button>
   </div>
 
-  <button type="button" id="forgotLink" class="w-full text-center text-[11px] text-white/40 mt-4 underline">نسيت كلمة السر؟ استعادة</button>
+  <button type="button" id="forgotLink" class="w-full text-center text-[11px] text-white/40 mt-4 underline">نسيت كلمة السر؟</button>
 </div>
 
 <div id="forgotPage" class="hidden w-full max-w-[380px] bg-[#15151c] border border-white/10 rounded-[24px] p-6">
   <button type="button" id="backBtn" class="text-white/60 text-sm mb-4">← رجوع</button>
-  <h2 class="text-center text-white font-bold text-[16px] mb-2">استعادة كلمة السر 🔑</h2>
-  <p class="text-center text-white/40 text-[11px] mb-5">اكتب بريدك المسجل فقط - نرسل لك رابط</p>
-  <form id="forgotForm" novalidate>
-    <input id="forgotEmail" type="email" autocomplete="email" inputmode="email" placeholder="البريد الإلكتروني المسجل" class="inp !mb-4">
-    <button type="submit" id="sendResetBtn" class="btn">إرسال رابط الاستعادة</button>
-  </form>
+  <h2 class="text-center text-white font-bold mb-2">استعادة كلمة السر 🔑</h2>
+  <p class="text-center text-white/40 text-[11px] mb-5">اكتب بريدك المسجل فقط</p>
+  <input id="forgotEmail" type="email" placeholder="البريد المسجل" class="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right text-sm outline-none mb-4">
+  <button type="button" id="sendResetBtn" class="w-full h-12 rounded-xl bg-[#9b6cff] text-white font-bold text-sm">إرسال رابط الاستعادة</button>
   <p id="forgotMsg" class="text-center text-[11px] mt-3 hidden"></p>
 </div>
 
 <script>
-firebase.initializeApp({
-  apiKey: "AIzaSyDlsjB8eJzVmU0LSnzmJoQY_oJ9QhZIFjA",
-  authDomain: "gabo-live.firebaseapp.com",
-  projectId: "gabo-live",
-  storageBucket: "gabo-live.firebasestorage.app",
-  messagingSenderId: "610663904047",
-  appId: "1:610663904047:web:db1cc2bc62781e185ae7da",
-  measurementId: "G-38RHTREENN"
-});
+// استخدم الكونفق اللي عندك
+if(typeof firebaseConfig === 'undefined'){
+  var firebaseConfig = {
+    apiKey: "AIzaSyDlsjB8eJzVmU0LSnzmJoQY_oJ9QhZIFjA",
+    authDomain: "gabo-live.firebaseapp.com",
+    projectId: "gabo-live",
+    storageBucket: "gabo-live.firebasestorage.app",
+    messagingSenderId: "610663904047",
+    appId: "1:610663904047:web:db1cc2bc62781e185ae7da"
+  };
+}
+if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
-const $ = id => document.getElementById(id);
-const HOME = '/';
 
-let busy = true;          // يمنع التحويل قبل ما يخلص إنشاء الملف الشخصي
-let navigating = false;
+// اذا مسجل دخول حوله على app
+auth.onAuthStateChanged(user=>{ if(user) location.href = "/app/"; });
 
-function goHome(){ if (navigating) return; navigating = true; location.replace(HOME); }
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+if(isIOS){ document.getElementById('aBtn').style.display='block'; document.getElementById('social').className='grid grid-cols-2 gap-3'; }
 
-/* ---------- رسائل ---------- */
-function show(text, type){
-  const m = $('msg');
-  m.textContent = text;
-  m.className = 'text-center text-[12px] mb-3 rounded-lg px-3 py-2 ' +
-    (type === 'ok' ? 'bg-green-500/15 text-green-300' : 'bg-red-500/15 text-red-300');
-}
-function clearMsg(){ $('msg').className = 'hidden'; }
+function genID(){ return Math.floor(10000000 + Math.random()*90000000).toString(); }
 
-const ERRORS = {
-  'auth/invalid-email': 'البريد الإلكتروني غير صحيح',
-  'auth/invalid-credential': 'البريد أو كلمة السر غير صحيحة',
-  'auth/wrong-password': 'البريد أو كلمة السر غير صحيحة',
-  'auth/user-not-found': 'البريد أو كلمة السر غير صحيحة',
-  'auth/user-disabled': 'هذا الحساب موقوف',
-  'auth/email-already-in-use': 'هذا البريد مسجل من قبل، جرب تسجيل الدخول',
-  'auth/weak-password': 'كلمة السر ضعيفة، استخدم 6 أحرف على الأقل',
-  'auth/too-many-requests': 'محاولات كثيرة، انتظر شوي وجرب مرة ثانية',
-  'auth/network-request-failed': 'مشكلة بالاتصال، تأكد من الإنترنت',
-  'auth/account-exists-with-different-credential': 'هذا البريد مسجل بطريقة دخول ثانية'
-};
-const errText = e => ERRORS[e && e.code] || 'صار خطأ غير متوقع، حاول مرة ثانية';
+gBtn.onclick = e=>{ e.preventDefault(); auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider()); };
+aBtn.onclick = e=>{ e.preventDefault(); auth.signInWithRedirect(new firebase.auth.OAuthProvider('apple.com')); };
 
-function setLoading(btn, on, label){
-  btn.disabled = on;
-  if (label) btn.textContent = on ? 'جاري...' : label;
-}
+tabLogin.onclick = e=>{ e.preventDefault(); loginFields.classList.remove('hidden'); signupFields.classList.add('hidden'); };
+tabSignup.onclick = e=>{ e.preventDefault(); signupFields.classList.remove('hidden'); loginFields.classList.add('hidden'); };
 
-/* ---------- الملف الشخصي + ID فريد من 8 أرقام ---------- */
-const genID = () => String(Math.floor(10000000 + Math.random() * 90000000));
-
-async function ensureProfile(user, name){
-  const ref = db.collection('users').doc(user.uid);
-  const snap = await ref.get();
-  if (snap.exists && snap.data().gaboId) return snap.data().gaboId;
-
-  for (let i = 0; i < 6; i++){
-    const id = genID();
-    const idRef = db.collection('gaboIds').doc(id);
-    try {
-      await db.runTransaction(async t => {
-        if ((await t.get(idRef)).exists) throw new Error('taken');
-        t.set(idRef, { uid: user.uid });
-        t.set(ref, {
-          name: name || user.displayName || '',
-          email: user.email || '',
-          photoURL: user.photoURL || '',
-          gaboId: id,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
-      });
-      return id;
-    } catch (e) {
-      if (e.message !== 'taken') throw e;
-    }
-  }
-  throw new Error('id-failed');
-}
-
-/* ---------- تبويبات ---------- */
-function setTab(isLogin){
-  clearMsg();
-  $('loginFields').classList.toggle('hidden', !isLogin);
-  $('signupFields').classList.toggle('hidden', isLogin);
-  $('tabLogin').className  = 'flex-1 h-9 rounded-lg text-sm ' + (isLogin ? 'bg-white text-black font-bold' : 'text-white/50');
-  $('tabSignup').className = 'flex-1 h-9 rounded-lg text-sm ' + (isLogin ? 'text-white/50' : 'bg-white text-black font-bold');
-}
-$('tabLogin').onclick  = () => setTab(true);
-$('tabSignup').onclick = () => setTab(false);
-
-/* ---------- دخول ---------- */
-$('loginFields').onsubmit = async e => {
-  e.preventDefault(); clearMsg();
-  const em = $('loginEmail').value.trim(), pw = $('loginPass').value;
-  if (!em || !pw) return show('عبي البريد وكلمة السر');
-  setLoading($('loginBtn'), true, 'دخول إلى المنصة 🚀');
-  busy = true;
-  try {
-    const { user } = await auth.signInWithEmailAndPassword(em, pw);
-    await ensureProfile(user).catch(() => {});
-    goHome();
-  } catch (err) {
-    busy = false;
-    show(errText(err));
-    setLoading($('loginBtn'), false, 'دخول إلى المنصة 🚀');
-  }
-};
-
-/* ---------- حساب جديد ---------- */
-$('signupFields').onsubmit = async e => {
-  e.preventDefault(); clearMsg();
-  const n = $('name').value.trim(), em = $('signupEmail').value.trim();
-  const p1 = $('signupPass').value, p2 = $('confirmPass').value;
-  if (!n || !em || !p1 || !p2) return show('عبي كل الحقول');
-  if (p1 !== p2) return show('كلمة السر وتأكيدها غير متطابقين');
-  if (p1.length < 6) return show('كلمة السر لازم 6 أحرف على الأقل');
-
-  setLoading($('signupBtn'), true, 'إنشاء حساب 🚀');
-  busy = true;
-  try {
-    const { user } = await auth.createUserWithEmailAndPassword(em, p1);
-    await user.updateProfile({ displayName: n });
-    const id = await ensureProfile(user, n);
-    show('مبروك! حسابك انشأ بنجاح. الـ ID الخاص بك: ' + id, 'ok');
-    setTimeout(goHome, 1800);
-  } catch (err) {
-    busy = false;
-    show(errText(err));
-    setLoading($('signupBtn'), false, 'إنشاء حساب 🚀');
-  }
-};
-
-/* ---------- Google / Apple ---------- */
-async function socialSignIn(provider){
-  clearMsg(); busy = true;
-  $('gBtn').disabled = $('aBtn').disabled = true;
-  try {
-    const { user } = await auth.signInWithPopup(provider);
-    await ensureProfile(user);
-    goHome();
-  } catch (err) {
-    if (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment') {
-      return auth.signInWithRedirect(provider);   // احتياطي للمتصفحات اللي تمنع النوافذ
-    }
-    busy = false;
-    $('gBtn').disabled = $('aBtn').disabled = false;
-    if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') show(errText(err));
-  }
-}
-$('gBtn').onclick = () => socialSignIn(new firebase.auth.GoogleAuthProvider());
-$('aBtn').onclick = () => {
-  const p = new firebase.auth.OAuthProvider('apple.com');
-  p.addScope('email'); p.addScope('name');
-  socialSignIn(p);
-};
-
-const isApple = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-if (isApple){
-  $('aBtn').classList.remove('hidden');
-  $('social').className = 'grid grid-cols-2 gap-3';
-}
-
-/* ---------- استعادة كلمة السر ---------- */
-$('forgotLink').onclick = () => { $('mainPage').classList.add('hidden'); $('forgotPage').classList.remove('hidden'); };
-$('backBtn').onclick    = () => { $('forgotPage').classList.add('hidden'); $('mainPage').classList.remove('hidden'); };
-
-$('forgotForm').onsubmit = async e => {
+loginBtn.onclick = async e=>{
   e.preventDefault();
-  const em = $('forgotEmail').value.trim(), fm = $('forgotMsg');
-  if (!em) return;
-  setLoading($('sendResetBtn'), true, 'إرسال رابط الاستعادة');
-  try {
-    await auth.sendPasswordResetEmail(em);
-    fm.textContent = '✅ ارسلنا رابط باسم GABO LIVE - شيك ايميلك';
-    fm.className = 'text-center text-[11px] mt-3 text-green-400';
-  } catch (err) {
-    fm.textContent = err.code === 'auth/user-not-found' ? '❌ هذا البريد غير مسجل في الموقع' : errText(err);
-    fm.className = 'text-center text-[11px] mt-3 text-red-400';
-  }
-  setLoading($('sendResetBtn'), false, 'إرسال رابط الاستعادة');
+  const em=loginEmail.value.trim(), pw=loginPass.value;
+  if(!em||!pw) return alert('عبي الحقول');
+  loginBtn.textContent="جاري..."; loginBtn.disabled=true;
+  try{ await auth.signInWithEmailAndPassword(em,pw); location.href="/app/"; }
+  catch(err){ alert(err.message); loginBtn.textContent="دخول الى المنصة 🚀"; loginBtn.disabled=false; }
 };
 
-/* ---------- رجوع من Google/Apple (redirect) + المستخدم المسجل مسبقاً ---------- */
-auth.getRedirectResult()
-  .then(async r => { if (r && r.user) { await ensureProfile(r.user); goHome(); } })
-  .catch(err => { if (err && err.code) show(errText(err)); })
-  .finally(() => {
-    busy = false;
-    if (auth.currentUser) goHome();
-  });
+signupBtn.onclick = async e=>{
+  e.preventDefault();
+  const n=name.value.trim(), em=signupEmail.value.trim(), p1=signupPass.value, p2=confirmPass.value;
+  if(!n||!em||!p1||!p2) return alert('عبي كل الحقول');
+  if(p1!==p2) return alert('كلمة السر غير متطابقة - لازم تكتبها نفس الشي مرتين');
+  signupBtn.textContent="جاري..."; signupBtn.disabled=true;
+  try{
+    const cred = await auth.createUserWithEmailAndPassword(em,p1);
+    const gaboID = genID();
+    await db.collection('users').doc(cred.user.uid).set({ name:n, email:em, gaboId:gaboID, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    await cred.user.updateProfile({displayName:n});
+    alert('تم انشاء حسابك! ID: '+gaboID);
+    location.href="/app/";
+  }catch(err){ alert(err.message); signupBtn.textContent="إنشاء حساب 🚀"; signupBtn.disabled=false; }
+};
 
-auth.onAuthStateChanged(u => { if (u && !busy) goHome(); });
+forgotLink.onclick = e=>{ e.preventDefault(); mainPage.classList.add('hidden'); forgotPage.classList.remove('hidden'); };
+backBtn.onclick = e=>{ e.preventDefault(); forgotPage.classList.add('hidden'); mainPage.classList.remove('hidden'); };
+sendResetBtn.onclick = async e=>{
+  e.preventDefault();
+  const em=forgotEmail.value.trim();
+  if(!em) return alert('اكتب بريدك');
+  try{ await auth.sendPasswordResetEmail(em); forgotMsg.textContent="✅ ارسلنا رابط - شيك ايميلك"; forgotMsg.className="text-center text-[11px] mt-3 text-green-400"; forgotMsg.classList.remove('hidden'); }
+  catch(err){ forgotMsg.textContent = err.code==='auth/user-not-found' ? "❌ البريد غير مسجل" : err.message; forgotMsg.className="text-center text-[11px] mt-3 text-red-400"; forgotMsg.classList.remove('hidden'); }
+};
 </script>
 </body>
 </html>
