@@ -8,10 +8,9 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
 .header{height:64px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px;padding:0 12px;position:fixed;top:0;left:0;right:0;z-index:10}
-.back{width:36px;height:36px;background:#161426;border:1px solid var(--b);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;z-index:5}
+.back{width:36px;height:36px;background:#161426;border:1px solid var(--b);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px}
 .headerAvatar{width:40px;height:40px;border-radius:50%;overflow:hidden;background:#222;flex-shrink:0;border:1px solid var(--b)}
-.headerAvatar img{width:100%;height:100%;object-fit:cover;display:block}
-.headerIcon{width:40px;height:40px;border-radius:50%;background:#1e1c32;border:1px solid var(--b);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.headerAvatar img{width:100%;height:100%;object-fit:cover}
 .hInfo{flex:1;overflow:hidden}
 .badge{font-size:11px;background:#ff3b30;color:#fff;min-width:20px;height:20px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px;font-weight:900}
 .tabs{position:fixed;top:64px;left:0;right:0;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;z-index:9;padding:0 12px;gap:12px}
@@ -26,14 +25,13 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 .chat{flex:1;overflow:auto;padding:76px 12px 130px 12px;display:flex;flex-direction:column;gap:10px}
 .bubble{max-width:78%;padding:10px 14px;border-radius:18px;background:#1e1c2e;border:1px solid var(--b);font-size:14px;word-break:break-word;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .bubble.me{align-self:flex-end;background:var(--v);border-color:var(--v)}
-.southFlag{width:32px;height:22px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid rgba(255,255,255,.3);flex-shrink:0}
+.southFlag{width:28px;height:18px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid rgba(255,255,255,.3);flex-shrink:0}
 .southFlag svg{width:100%;height:100%;display:block}
 .inputBar{position:fixed;bottom:84px;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);padding:10px;display:flex;gap:8px;z-index:20;align-items:center}
-.inputWrap{flex:1;background:#1a182a;border:1px solid var(--b);border-radius:20px;padding:8px 12px;min-height:44px;max-height:90px;overflow-y:auto;display:flex;align-items:center;flex-wrap:wrap;gap:4px}
+.inputWrap{flex:1;background:#1a182a;border:1px solid var(--b);border-radius:20px;padding:8px 12px;min-height:44px;max-height:90px;overflow-y:auto;display:block;outline:0;line-height:24px;font-size:16px;color:#fff}
 .inputWrap:empty:before{content:attr(data-placeholder);color:#6b6b7a}
-.inputWrap .txt{color:#fff;font-size:16px;line-height:22px;white-space:pre-wrap;word-break:break-word}
-.inputWrap .flagInInput{width:22px;height:15px;border-radius:2px;overflow:hidden;display:inline-block;vertical-align:middle;border:1px solid rgba(255,255,255,.4);margin:0 2px;flex-shrink:0}
-.inputWrap .flagInInput svg{width:100%;height:100%;display:block}
+.flagInInput{width:22px;height:14px;border-radius:2px;overflow:hidden;display:inline-block;vertical-align:middle;border:1px solid rgba(255,255,255,.4);margin:0 2px}
+.flagInInput svg{width:100%;height:100%;display:block}
 .iconBtn{width:40px;height:40px;border-radius:50%;background:#1e1c2e;border:1px solid var(--b);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;flex-shrink:0}
 .send{width:44px;height:44px;border-radius:50%;background:var(--v);border:0;color:#fff;font-size:20px;cursor:pointer;flex-shrink:0}
 .emojiPanel{position:fixed;bottom:130px;left:8px;right:8px;background:#161426;border:1px solid var(--b);border-radius:18px;max-height:340px;display:none;flex-direction:column;z-index:2000;overflow:hidden}
@@ -60,15 +58,11 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 </style>
 </head>
 <body>
-<div class="header">
-<div class="back" onclick="handleBack()">‹</div>
-<div class="headerAvatar" id="hAvatarWrap" style="display:none"><img id="hImg"></div>
-<div class="headerIcon" id="hIcon">💬</div>
-<div class="hInfo"><b><span id="hName">دردشة خاصة</span> <span id="countBadge" class="badge" style="display:none">0</span></b><small id="hStatus">محادثاتي • أصدقائي</small></div>
-</div>
+<div class="header"><div class="back" onclick="handleBack()">‹</div><div class="headerAvatar" id="hAvatarWrap" style="display:none"><img id="hImg"></div><div class="headerIcon" id="hIcon">💬</div><div class="hInfo"><b><span id="hName">دردشة خاصة</span> <span id="countBadge" class="badge" style="display:none">0</span></b><small id="hStatus">محادثاتي • أصدقائي</small></div></div>
 <div class="tabs" id="tabs"><button id="tabChats" class="on" onclick="switchTab('chats')">💬 محادثاتي <span id="tabCount"></span></button><button id="tabFriends" onclick="switchTab('friends')">👥 أصدقائي</button></div>
 <div class="searchBox" id="searchBox"><input id="searchInput" placeholder="🔍 بحث..." oninput="onSearch()"></div>
-<div class="list" id="listView"></div><div class="chat" id="chatView" style="display:none"></div>
+<div class="list" id="listView"><div style="text-align:center;color:#8b8ba7;margin-top:60px">جاري التحميل...</div></div>
+<div class="chat" id="chatView" style="display:none"></div>
 <div class="emojiPanel" id="emojiPanel"><div class="emojiTabs"><button class="on" onclick="showEmojiCat(event,'smile')">😊 وجوه</button><button onclick="showEmojiCat(event,'flags')">🏳️ أعلام</button><button onclick="showEmojiCat(event,'love')">❤️ حب</button></div><div class="emojiGrid" id="emojiGrid"></div></div>
 <div class="inputBar" id="inputBar" style="display:none"><button class="iconBtn" onclick="toggleEmoji()">😊</button><div id="inputWrap" class="inputWrap" contenteditable="true" data-placeholder="اكتب رسالة..."></div><button class="send" onclick="sendMsg()">➤</button></div>
 <button class="fab" id="fabBtn" onclick="openAddPeople()">+</button>
@@ -83,44 +77,27 @@ const SOUTH_PH='[[SOUTH_FLAG]]';
 let uid=null,targetUid=null,chatId=null,currentTab='chats',chatsCache=[],friendsCache=[],addCache=[];
 function getTargetUid(){const p=new URLSearchParams(location.search);return p.get('uid')||p.get('id')||localStorage.getItem('last_dm_uid');}
 targetUid=getTargetUid();
-window.handleBack=()=>{if(document.getElementById('chatView').style.display==='flex'){localStorage.removeItem('last_dm_uid');location.href='/dm/';}else if(history.length>1)history.back();else location.href='/app/';}
+window.handleBack=()=>{if(document.getElementById('chatView').style.display==='flex'){localStorage.removeItem('last_dm_uid');location.href='/dm/';}else location.href='/app/';}
 window.switchTab=(tab)=>{currentTab=tab;document.getElementById('tabChats').classList.toggle('on',tab==='chats');document.getElementById('tabFriends').classList.toggle('on',tab==='friends');if(tab==='chats')renderChats();if(tab==='friends')renderFriends();}
 window.onSearch=()=>{if(currentTab==='chats')renderChats();if(currentTab==='friends')renderFriends();}
 function filterBySearch(arr){const q=document.getElementById('searchInput').value.toLowerCase().trim();if(!q)return arr;return arr.filter(u=>(u.name||'').toLowerCase().includes(q));}
-
-window.toggleEmoji=()=>{const p=document.getElementById('emojiPanel');p.classList.toggle('on');if(p.classList.contains('on'))showEmojiCat(null,'smile');}
+window.toggleEmoji=()=>{document.getElementById('emojiPanel').classList.toggle('on');if(document.getElementById('emojiPanel').classList.contains('on'))showEmojiCat(null,'smile');}
 window.showEmojiCat=(e,cat)=>{
   if(e){e.target.closest('.emojiTabs').querySelectorAll('button').forEach(b=>b.classList.remove('on'));e.target.classList.add('on');}
   const grid=document.getElementById('emojiGrid');grid.innerHTML='';
-  let flags=['🇸🇦','🇾🇪','🇦🇪','🇴🇲','🇶🇦','🇰🇼','🇧🇭','🇪🇬','🇯🇴','🇱🇧','🇵🇸','🇮🇶','🇸🇾','🇹🇷','🇵🇰','🇺🇸','🇬🇧','🇩🇪','🇫🇷','🇮🇹','🇪🇸','🇨🇦','🇦🇺','🇧🇷','🇷🇺','🇨🇳','🇯🇵','🇰🇷','🇮🇳','🇸🇴'];
-  let smile=['😀','😂','😍','🥰','😊','😎','🤩','😭','😢','😡','🤔','👍','👎','👏','🙏','💪','🔥','❤️','💜','✨','🎉','🥳','😴','🤤','🤫','🤐','🥺','😋','😜','🤣','😇','🤠'];
-  let love=['❤️','🧡','💛','💚','💙','💜','🖤','🤍','💔','❣️','💕','💞','💓','💗','💖','💝','😘','🥰','😍','🤗','💋','💌','🌹','🌷','💐'];
+  let flags=['🇸🇦','🇾🇪','🇦🇪','🇴🇲','🇶🇦','🇰🇼','🇧🇭','🇪🇬','🇯🇴','🇱🇧','🇵🇸','🇮🇶','🇸🇾','🇹🇷','🇵🇰','🇺🇸','🇬🇧','🇩🇪','🇫🇷','🇮🇹','🇪🇸','🇨🇦','🇦🇺','🇧🇷','🇷🇺','🇨🇳','🇯🇵','🇰🇷','🇮🇳'];
+  let smile=['😀','😂','😍','🥰','😊','😎','🤩','😭','😢','😡','🤔','👍','👎','👏','🙏','💪','🔥','❤️','💜','✨','🎉','🥳'];
+  let love=['❤️','🧡','💛','💚','💙','💜','🖤','🤍','💔','❣️','💕','💞','💓','💗','💖','💝','😘','🥰','😍','🤗','💋','💌','🌹'];
   let list = cat==='smile'?smile : cat==='love'?love : flags;
-  list.forEach(em=>{
-    const d=document.createElement('div');d.className='eItem';d.textContent=em;
-    d.onclick=()=>insertText(em);
-    grid.appendChild(d);
-  });
+  list.forEach(em=>{const d=document.createElement('div');d.className='eItem';d.textContent=em;d.onclick=()=>{document.getElementById('inputWrap').focus();document.execCommand('insertText',false,em);};grid.appendChild(d);});
   if(cat==='flags'){
-    const south=document.createElement('div');south.className='eItem';
-    south.innerHTML=`<span class="flagBox">${SOUTH_SVG}</span>`;
-    south.onclick=()=>insertSouth();
+    const south=document.createElement('div');south.className='eItem';south.innerHTML=`<span class="flagBox">${SOUTH_SVG}</span>`;
+    south.onclick=()=>{const w=document.getElementById('inputWrap');w.focus();document.execCommand('insertHTML',false,`<span class="flagInInput" data-south="1">${SOUTH_SVG}</span>&nbsp;`);};
     grid.insertBefore(south, grid.children[2]||null);
   }
 }
-function insertText(text){
-  const wrap=document.getElementById('inputWrap');
-  wrap.focus();
-  document.execCommand('insertText',false,text);
-}
-function insertSouth(){
-  const wrap=document.getElementById('inputWrap');
-  wrap.focus();
-  const html=`<span class="flagInInput" data-south="1">${SOUTH_SVG}</span>&nbsp;`;
-  document.execCommand('insertHTML',false,html);
-  wrap.focus();
-}
 
+// تحميل المحادثات بدون جلب الرسائل - سريع
 async function loadChatsData(){
   const q=query(collection(db,'privateChats'),where('participants','array-contains',uid));
   onSnapshot(q,async snap=>{
@@ -129,7 +106,7 @@ async function loadChatsData(){
       const data=d.data();const other=data.participants?.find(x=>x!==uid);if(!other)continue;
       let name=other.slice(0,8),photo='https://i.pravatar.cc/100?u='+other;
       try{const us=await getDoc(doc(db,'users',other));if(us.exists()){name=us.data().displayName||us.data().name||name;photo=us.data().photoURL||us.data().photo||us.data().avatar||photo;}}catch{}
-      let unread=0;try{const lastRead=data.lastRead?.[uid]?.seconds||0;const msgsSnap=await getDocs(query(collection(db,'privateChats',d.id,'messages'),orderBy('createdAt','asc')));msgsSnap.forEach(m=>{if(m.data().uid===other && (m.data().createdAt?.seconds||0)>lastRead)unread++;});}catch{}
+      const unread=data.unread?.[uid]||0;
       const time=data.lastAt?new Date(data.lastAt.seconds*1000).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}):'';
       chatsCache.push({otherUid:other,name,photo,lastText:data.lastText||'',time,lastAt:data.lastAt?.seconds||0,count:unread});
     }
@@ -143,20 +120,20 @@ async function loadChatsData(){
 }
 function renderChats(){
   const list=document.getElementById('listView');const filtered=filterBySearch(chatsCache);list.innerHTML='';
-  if(filtered.length===0){list.innerHTML='<div style="text-align:center;color:#8b8ba7;margin-top:80px">لا يوجد محادثات</div>';return;}
+  if(filtered.length===0){list.innerHTML='<div style="text-align:center;color:#8b8ba7;margin-top:80px">لا يوجد محادثات<br><button onclick="openAddPeople()" style="margin-top:12px;background:#7c3aed;border:0;color:#fff;padding:10px 18px;border-radius:20px">+ إضافة أشخاص</button></div>';return;}
   filtered.forEach(c=>{
     const item=document.createElement('div');item.className='chatItem';
     const preview=c.lastText.includes('علم الجنوب')?'🏴 علم الجنوب':c.lastText;
     const badge=c.count>0?`<span style="background:#ff3b30;color:#fff;font-size:10px;font-weight:900;padding:3px 8px;border-radius:12px;min-width:22px;text-align:center">${c.count}</span>`:'';
     item.innerHTML=`<div style="width:42px;height:42px;border-radius:50%;overflow:hidden;background:#222"><img src="${c.photo}" style="width:100%;height:100%;object-fit:cover"></div><div style="flex:1;overflow:hidden"><b style="font-size:13px">${c.name}</b><br><small style="color:#8b8ba7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block">${preview||'محادثة جديدة'}</small></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:65px"><small style="color:#8b8ba7;font-size:11px">${c.time||''}</small>${badge}<div style="color:#6b6b7a">›</div></div>`;
-    item.onclick=async()=>{const tmp=[uid,c.otherUid].sort().join('_');try{await setDoc(doc(db,'privateChats',tmp),{lastRead:{[uid]:serverTimestamp()}},{merge:true});}catch{}localStorage.setItem('last_dm_uid',c.otherUid);location.href='/dm/?uid='+c.otherUid;};
+    item.onclick=async()=>{const tmp=[uid,c.otherUid].sort().join('_');try{await setDoc(doc(db,'privateChats',tmp),{unread:{[uid]:0},lastRead:{[uid]:serverTimestamp()}},{merge:true});}catch{}localStorage.setItem('last_dm_uid',c.otherUid);location.href='/dm/?uid='+c.otherUid;};
     list.appendChild(item);
   });
 }
 function renderFriends(){const list=document.getElementById('listView');const f=filterBySearch(friendsCache);list.innerHTML='';if(f.length===0){list.innerHTML='<div style="text-align:center;color:#8b8ba7;margin-top:80px">لا يوجد أصدقاء</div>';return;}f.forEach(u=>{const div=document.createElement('div');div.className='userItem';div.innerHTML=`<div style="width:42px;height:42px;border-radius:50%;overflow:hidden;background:#222"><img src="${u.photo}" style="width:100%;height:100%;object-fit:cover"></div><div class="info"><b>${u.name}</b><small>${u.country} • صديق ✓</small></div><button class="actionBtn" onclick="startChat('${u.uid}')">💬 راسل</button>`;list.appendChild(div);});}
 window.openAddPeople=()=>{document.getElementById('addModal').classList.add('on');loadAddPeople();}
 window.closeAddPeople=()=>document.getElementById('addModal').classList.remove('on');
-async function loadAddPeople(){const list=document.getElementById('addList');list.innerHTML='<div style="text-align:center;color:#8b8ba7;margin-top:40px">جاري التحميل...</div>';try{const snap=await getDocs(query(collection(db,'users'),limit(100)));addCache=[];snap.forEach(d=>{if(d.id===uid)return;const data=d.data();addCache.push({uid:d.id,name:data.displayName||data.name||'مستخدم',photo:data.photoURL||data.photo||data.avatar||'https://i.pravatar.cc/100?u='+d.id,country:data.countryName||''});});renderAddPeople(addCache);}catch(e){list.innerHTML='<div style="color:#ef4444;text-align:center">'+e.message+'</div>';}}
+async function loadAddPeople(){const list=document.getElementById('addList');list.innerHTML='<div style="text-align:center;color:#8b8ba7;margin-top:40px">جاري التحميل...</div>';try{const snap=await getDocs(query(collection(db,'users'),limit(80)));addCache=[];snap.forEach(d=>{if(d.id===uid)return;const data=d.data();addCache.push({uid:d.id,name:data.displayName||data.name||'مستخدم',photo:data.photoURL||data.photo||data.avatar||'https://i.pravatar.cc/100?u='+d.id,country:data.countryName||''});});renderAddPeople(addCache);}catch(e){list.innerHTML='<div style="color:#ef4444;text-align:center">'+e.message+'</div>';}}
 function renderAddPeople(arr){const list=document.getElementById('addList');list.innerHTML='';arr.forEach(u=>{const div=document.createElement('div');div.className='userItem';div.innerHTML=`<div style="width:42px;height:42px;border-radius:50%;overflow:hidden"><img src="${u.photo}" style="width:100%;height:100%;object-fit:cover"></div><div class="info"><b>${u.name}</b><small>${u.country}</small></div><div style="display:flex;gap:6px"><button class="actionBtn outline" id="btn_${u.uid}" onclick="followUser('${u.uid}')">+ تابع</button><button class="actionBtn" onclick="startChat('${u.uid}')">💬</button></div>`;list.appendChild(div);});}
 window.filterAdd=()=>{const q=document.getElementById('addSearch').value.toLowerCase().trim();if(!q)renderAddPeople(addCache);else renderAddPeople(addCache.filter(u=>u.name.toLowerCase().includes(q)));}
 window.followUser=async(otherUid)=>{const btn=document.getElementById('btn_'+otherUid);if(btn){btn.textContent='...';btn.disabled=true;}try{await setDoc(doc(db,'users',uid),{followingList:arrayUnion(otherUid),following:arrayUnion(otherUid),followingCount:increment(1)},{merge:true});await setDoc(doc(db,'users',otherUid),{followersList:arrayUnion(uid),followers:arrayUnion(uid),followersCount:increment(1)},{merge:true});if(btn){btn.textContent='✓ تم';btn.style.background='#22c55e';}setTimeout(()=>loadFriendsData(),500);}catch(e){alert(e.message);if(btn){btn.textContent='+ تابع';btn.disabled=false;}}}
@@ -170,11 +147,11 @@ onAuthStateChanged(auth,async u=>{
     document.getElementById('hAvatarWrap').style.display='flex';document.getElementById('hIcon').style.display='none';
     try{const snap=await getDoc(doc(db,'users',targetUid));if(snap.exists()){const d=snap.data();document.getElementById('hName').textContent=d.displayName||d.name||'مستخدم';document.getElementById('hImg').src=d.photoURL||d.photo||d.avatar||'https://i.pravatar.cc/100?u='+targetUid;document.getElementById('hStatus').textContent=d.countryName||'متصل الآن';}}catch{}
     chatId=[uid,targetUid].sort().join('_');
-    await setDoc(doc(db,'privateChats',chatId),{participants:[uid,targetUid],lastAt:serverTimestamp(),createdAt:serverTimestamp(),lastText:'',lastRead:{[uid]:serverTimestamp()}},{merge:true});
+    await setDoc(doc(db,'privateChats',chatId),{participants:[uid,targetUid],lastAt:serverTimestamp(),createdAt:serverTimestamp(),lastText:'',unread:{[uid]:0}},{merge:true});
     const q=query(collection(db,'privateChats',chatId,'messages'),orderBy('createdAt','asc'));
     onSnapshot(q,s=>{
       const box=document.getElementById('chatView');box.innerHTML='';
-      if(s.empty){box.innerHTML='<div style="text-align:center;color:#6b6b7a;margin-top:60px">ابدأ المحادثة 👋</div>';}
+      if(s.empty){box.innerHTML='<div style="text-align:center;color:#6b6b7a;margin-top:60px">ابدأ المحادثة 👋<br>اضغط 😊 ثم أعلام ثم علم الجنوب</div>';}
       else{s.forEach(d=>{const m=d.data();const div=document.createElement('div');div.className='bubble '+(m.uid===uid?'me':'');if(m.text&&m.text.includes(SOUTH_PH)){div.innerHTML=m.text.replaceAll(SOUTH_PH,`<span class="southFlag">${SOUTH_SVG}</span>`);}else{div.textContent=m.text||'';}box.appendChild(div);});}
       box.scrollTop=box.scrollHeight;
     });
@@ -193,7 +170,7 @@ window.sendMsg=async()=>{
   wrap.innerHTML='';document.getElementById('emojiPanel').classList.remove('on');
   let preview=text.includes(SOUTH_PH)?'🏴 علم الجنوب':text;
   await addDoc(collection(db,'privateChats',chatId,'messages'),{text:text,uid:uid,createdAt:serverTimestamp()});
-  await setDoc(doc(db,'privateChats',chatId),{lastText:preview,lastAt:serverTimestamp(),participants:[uid,targetUid],totalMessages:increment(1)},{merge:true});
+  await setDoc(doc(db,'privateChats',chatId),{lastText:preview,lastAt:serverTimestamp(),participants:[uid,targetUid],unread:{[targetUid]:increment(1),[uid]:0}},{merge:true});
   wrap.focus();
 }
 </script>
