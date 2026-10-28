@@ -67,11 +67,11 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
     <b><span class="miniFlag"><svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="200" y="0" fill="#D71921"/><rect width="900" height="200" y="200" fill="#FFF"/><rect width="900" height="200" y="400" fill="#000"/><path d="M0 0 L380 300 L0 600 Z" fill="#5EB6E4"/><g transform="translate(125,300)"><path d="M0 -60 L17 -18 L64 -18 L27 8 L41 55 L0 25 L-41 55 L-27 8 L-64 -18 L-17 -18 Z" fill="#D71921"/></g></svg></span>الجنوب العربي</b>
     <small>رسمي</small>
   </div>
-  <div class="comm" onclick="goComm('sa')"><div class="flag"><img src="https://flagcdn.com/w80/sa.png" loading="eager"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/sa.png"></span>السعودية</b><small>رسمي</small></div>
-  <div class="comm" onclick="goComm('ye')"><div class="flag"><img src="https://flagcdn.com/w80/ye.png" loading="eager"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/ye.png"></span>اليمن</b><small>رسمي</small></div>
-  <div class="comm" onclick="goComm('ae')"><div class="flag"><img src="https://flagcdn.com/w80/ae.png" loading="eager"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/ae.png"></span>الإمارات</b><small>رسمي</small></div>
-  <div class="comm" onclick="goComm('om')"><div class="flag"><img src="https://flagcdn.com/w80/om.png" loading="eager"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/om.png"></span>عمان</b><small>رسمي</small></div>
-  <div class="comm" onclick="goComm('qa')"><div class="flag"><img src="https://flagcdn.com/w80/qa.png" loading="eager"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/qa.png"></span>قطر</b><small>رسمي</small></div>
+  <div class="comm" onclick="goComm('sa')"><div class="flag"><img src="https://flagcdn.com/w80/sa.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/sa.png"></span>السعودية</b><small>رسمي</small></div>
+  <div class="comm" onclick="goComm('ye')"><div class="flag"><img src="https://flagcdn.com/w80/ye.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/ye.png"></span>اليمن</b><small>رسمي</small></div>
+  <div class="comm" onclick="goComm('ae')"><div class="flag"><img src="https://flagcdn.com/w80/ae.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/ae.png"></span>الإمارات</b><small>رسمي</small></div>
+  <div class="comm" onclick="goComm('om')"><div class="flag"><img src="https://flagcdn.com/w80/om.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/om.png"></span>عمان</b><small>رسمي</small></div>
+  <div class="comm" onclick="goComm('qa')"><div class="flag"><img src="https://flagcdn.com/w80/qa.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/qa.png"></span>قطر</b><small>رسمي</small></div>
 </div>
 
 <button class="createBtn" onclick="openCreate()">+ إنشاء مجتمع جديد</button>
@@ -126,7 +126,11 @@ const SOUTH_SVG=`<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" p
 
 onAuthStateChanged(auth,u=>{ if(u){ uid=u.uid; localStorage.setItem('gabo_uid',u.uid); }});
 
-window.goComm=id=>location.href=`community/index.html?id=${id}`;
+// تصحيح المسار - كان يوديك app/community
+window.goComm=(id)=>{
+  location.href=`/community/index.html?id=${encodeURIComponent(id)}`;
+};
+
 window.openCreate=()=>document.getElementById('createModal').classList.add('on');
 window.closeCreate=()=>document.getElementById('createModal').classList.remove('on');
 window.selectFlag=(el,flag)=>{ document.querySelectorAll('.flagOpt').forEach(e=>e.classList.remove('on')); el.classList.add('on'); selectedFlag=flag; }
@@ -138,7 +142,12 @@ window.doCreate=async()=>{
   const id=name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-أ-ي]/g,'')+'-'+Date.now().toString(36).slice(-4);
   try{
     await setDoc(doc(db,'communities',id),{name:name,flag:selectedFlag,img:selectedImgBase64||null,ownerUid:uid,members:[uid],membersCount:1,banned:[],closed:false,createdAt:serverTimestamp()});
-    closeCreate(); document.getElementById('commNameInput').value=''; selectedImgBase64=null; document.getElementById('imgPreview').style.display='none'; document.getElementById('imgPlus').style.display='block'; goComm(id);
+    closeCreate(); 
+    document.getElementById('commNameInput').value=''; 
+    selectedImgBase64=null; 
+    document.getElementById('imgPreview').style.display='none'; 
+    document.getElementById('imgPlus').style.display='block'; 
+    window.goComm(id);
   }catch(e){ alert('خطأ: '+e.message); }
 }
 
@@ -150,7 +159,8 @@ onSnapshot(collection(db,'communities'),snap=>{
   snap.forEach(d=>{
     if(['south','sa','ye','ae','om','qa'].includes(d.id)) return;
     const data=d.data();
-    const div=document.createElement('div'); div.className='comm'; div.onclick=()=>goComm(d.id);
+    const div=document.createElement('div'); div.className='comm'; 
+    div.onclick=()=>window.goComm(d.id);
     let flagHtml=''; 
     if(data.img){ flagHtml=`<div class="flag"><img src="${data.img}"></div>`; }
     else if(data.flag==='south'){ flagHtml=`<div class="flag">${SOUTH_SVG}</div>`; }
