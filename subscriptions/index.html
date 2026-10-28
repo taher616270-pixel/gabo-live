@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>اشتراك الإشعارات - GABO LIVE</title>
+<style>
+:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed;--gold:#fbbf24;--green:#22c55e}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:#fff;font-family:system-ui;min-height:100vh;padding-bottom:90px}
+.top{padding:16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--b);z-index:10}
+.back{width:40px;height:40px;background:#1e1c2e;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--b);cursor:pointer;color:#fff;text-decoration:none;font-size:20px}
+.hero{margin:16px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:20px;padding:20px;text-align:center}
+.hero h1{font-size:20px;margin-bottom:6px}
+.hero p{color:#d8d0ff;font-size:13px;line-height:1.6}
+.plans{margin:12px;display:flex;flex-direction:column;gap:12px}
+.plan{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:16px;position:relative;overflow:hidden}
+.plan.vip{border:2px solid var(--gold);background:linear-gradient(180deg,#1e1a0f,#161426)}
+.plan.active{border-color:var(--green);background:#162016}
+.badge{position:absolute;top:12px;left:12px;background:var(--gold);color:#000;font-size:10px;padding:4px 8px;border-radius:20px;font-weight:800}
+.badge.free{background:#2a2840;color:#fff}
+.badge.new{background:var(--green);color:#fff}
+.planHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.planHead h3{font-size:16px}
+.price{font-size:22px;font-weight:900}.price small{font-size:12px;color:#8b8ba7;font-weight:400}
+.features{list-style:none;margin:12px 0}
+.features li{padding:8px 0;font-size:13px;color:#c4c4d0;display:flex;gap:8px;border-bottom:1px solid #1f1f2f}
+.features li:last-child{border:0}
+.btn{width:100%;padding:13px;border-radius:12px;border:0;font-weight:800;font-size:14px;cursor:pointer;margin-top:10px}
+.btnGold{background:var(--gold);color:#000}
+.btnPurple{background:var(--v);color:#fff}
+.btnDark{background:#1e1c2e;border:1px solid var(--b);color:#fff}
+.btnGreen{background:var(--green);color:#fff}
+.status{margin:12px;background:#1e1c2e;border:1px solid var(--b);padding:12px;border-radius:12px;text-align:center;font-size:13px;display:none}
+.status.on{display:block}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;padding:8px 0 10px;direction:ltr}
+.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:9px;display:flex;flex-direction:column;align-items:center}
+</style>
+</head>
+<body>
+<div class="top"><a href="/profile/" class="back">›</a><b>🔔 اشتراك الإشعارات</b></div>
+
+<div class="hero">
+<h1>🔔 ابقى على اطلاع دائم</h1>
+<p>اشترك ليصلك كل جديد: إعجابات، تعليقات، متابعين، رسائل، والبث المباشر</p>
+</div>
+
+<div class="plans">
+
+<div class="plan active" id="planFree">
+<span class="badge free">مجاني</span>
+<div class="planHead"><h3>🆓 الباقة المجانية</h3><div class="price">0 <small>ريال / شهر</small></div></div>
+<ul class="features">
+<li>✅ إشعارات الإعجابات والتعليقات</li>
+<li>✅ إشعار متابع جديد</li>
+<li>❌ بدون إشعارات الرسائل الخاصة</li>
+<li>❌ بدون إشعارات البث المباشر</li>
+</ul>
+<button class="btn btnDark" onclick="selectPlan('free')">مفعل حالياً ✓</button>
+</div>
+
+<div class="plan vip" id="planPro">
+<span class="badge">الأكثر طلباً 🔥</span>
+<div class="planHead"><h3>⭐ باقة برو</h3><div class="price">9.99 <small>ريال / شهر</small></div></div>
+<ul class="features">
+<li>✅ كل إشعارات المجانية</li>
+<li>✅ إشعارات الرسائل الخاصة فوري</li>
+<li>✅ إشعارات البث المباشر</li>
+<li>✅ إشعار عند زيارة ملفك</li>
+<li>✅ بدون إعلانات</li>
+</ul>
+<button class="btn btnGold" onclick="selectPlan('pro')">اشترك الآن - 9.99 ر.س</button>
+</div>
+
+<div class="plan" id="planVip">
+<span class="badge new">جديد 👑</span>
+<div class="planHead"><h3>👑 باقة VIP</h3><div class="price">29.99 <small>ريال / شهر</small></div></div>
+<ul class="features">
+<li>✅ كل مميزات باقة برو</li>
+<li>✅ تاج VIP ذهبي في ملفك</li>
+<li>✅ ظهور ملفك في المقدمة</li>
+<li>✅ إشعارات مخصصة بصوت خاص</li>
+<li>✅ دعم فني خاص 24/7</li>
+</ul>
+<button class="btn btnPurple" onclick="selectPlan('vip')">اشترك VIP - 29.99 ر.س</button>
+</div>
+
+</div>
+
+<div class="status" id="status"></div>
+
+<div style="margin:16px">
+<button class="btn btnDark" onclick="location.href='/notifications/'">⚙️ إعدادات تفعيل الإشعارات ›</button>
+</div>
+
+<script type="module">
+import {auth,db} from '/firebase-config.js';
+import {onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {doc,getDoc,setDoc} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+let cur=null;
+const $=id=>document.getElementById(id);
+function show(t){const s=$('status');s.textContent=t;s.classList.add('on');setTimeout(()=>s.classList.remove('on'),4000)}
+
+onAuthStateChanged(auth, async u=>{
+  if(!u){location.replace('/login/');return}
+  cur=u;
+  const snap=await getDoc(doc(db,'users',u.uid));
+  if(snap.exists() && snap.data().subPlan){
+    const p=snap.data().subPlan;
+    document.querySelectorAll('.plan').forEach(el=>el.classList.remove('active'));
+    if(p==='pro') {$('planPro').classList.add('active');}
+    else if(p==='vip') {$('planVip').classList.add('active');}
+    else {$('planFree').classList.add('active');}
+  }
+});
+
+window.selectPlan=async(plan)=>{
+  if(!cur) return;
+  if(plan==='free'){
+    await setDoc(doc(db,'users',cur.uid),{subPlan:'free', subUpdated:new Date().toISOString()},{merge:true});
+    show('✅ تم تفعيل الباقة المجانية');
+    location.reload();
+    return;
+  }
+  // هنا تربط بوابة دفع مستقبلاً - الآن نحفظ كطلب
+  await setDoc(doc(db,'users',cur.uid),{subPlanRequest:plan, subPlan:'free', subRequestedAt:new Date().toISOString()},{merge:true});
+  show(`🔔 تم إرسال طلب اشتراك ${plan} - سيتم تفعيله قريباً! تواصل مع الإدارة`);
+  
+  // للتجربة فعلها مباشرة
+  if(confirm(`هل تريد تفعيل باقة ${plan} تجريبياً الآن؟`)){
+    await setDoc(doc(db,'users',cur.uid),{subPlan:plan, subUpdated:new Date().toISOString()},{merge:true});
+    show(`✅ تم تفعيل باقة ${plan.toUpperCase()} بنجاح!`);
+    setTimeout(()=>location.reload(),1000);
+  }
+}
+</script>
+</body>
+</html>
