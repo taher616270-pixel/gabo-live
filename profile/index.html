@@ -58,7 +58,7 @@ body{padding-bottom:110px}
   <div class="head">
     <div class="avatar" id="avatarMain"><img id="avatarImgMain"><span id="avL">T</span><div class="pencil" id="openEdit">✏️</div></div>
     <div class="info">
-      <div class="nameRow"><span id="nameMain">Taher Hammam</span><span id="flagMain"></span></div>
+      <div class="nameRow"><span id="nameMain">Taher </span><span id="flagMain"></span></div>
       <div class="countryRow">
         <span id="countryFlagMain"><img src="/assets/south-arabia.png.JPG" style="width:26px;height:18px;border-radius:3px"></span>
         <span id="countryNameMain">الجنوب العربي</span>
@@ -67,7 +67,7 @@ body{padding-bottom:110px}
       <div class="idRow">ID: <span id="idMain">--------</span></div>
     </div>
   </div>
-  <div class="bioPublic" id="bioPublic">مرحبا بكم في ملفي الشخصي 👋</div>
+  <div class="bioPublic" id="bioPublic">مرحبا بك في ملفك الشخصي 👋</div>
 
   <div class="stats">
     <div class="stat"><b id="c1">0</b><span>متابعين</span></div>
@@ -394,5 +394,6 @@ document.getElementById('saveAll').onclick=async()=>{
   }catch(err){showStatus('❌ خطأ: '+err.message);btn.disabled=false;btn.textContent='💾 حفظ التغييرات';}
 };
 </script>
+<script type="module" src="/js/nav-badge.js"></script>
 </body>
 </html>
