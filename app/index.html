@@ -10,84 +10,41 @@
 body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:96px;min-height:100vh}
 .top{height:56px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;padding:0 14px;position:sticky;top:0;z-index:50}
 .tabs{display:flex;gap:8px;padding:12px 14px}
-.tabs button{flex:1;background:#161426;border:1px solid var(--b);color:var(--muted);padding:12px;border-radius:14px;font-weight:800;font-size:13px}
+.tabs button{flex:1;background:#161426;border:1px solid var(--b);color:var(--muted);padding:12px;border-radius:14px;font-weight:800}
 .tabs button.on{background:var(--v);color:#fff;border-color:var(--v)}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px}
-.comm{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;text-align:center}
-.flag{width:64px;height:40px;border-radius:8px;border:1px solid #2a2840;overflow:hidden;display:flex;box-shadow:0 2px 8px rgba(0,0,0,.4);background:#000}
+.comm{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;text-align:center;position:relative}
+.flag{width:64px;height:40px;border-radius:8px;border:1px solid #2a2840;overflow:hidden;display:flex;background:#000}
 .flag img,.flag svg{width:100%;height:100%;object-fit:cover;display:block}
-.comm b{font-size:13px;display:flex;align-items:center;gap:6px;justify-content:center;flex-wrap:wrap}
-.miniFlag{width:18px;height:12px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid #333;flex-shrink:0}
+.comm b{font-size:12px;display:flex;align-items:center;gap:5px;justify-content:center}
+.miniFlag{width:18px;height:12px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid #333}
 .comm small{color:var(--muted);font-size:11px}
+.comm .owner{position:absolute;top:6px;left:6px;background:var(--v);font-size:9px;padding:2px 6px;border-radius:6px}
 .comm.create{border:1.5px dashed var(--v);justify-content:center}
-.worldChat{padding:12px;display:none}
-.worldChat.on{display:block}
-.worldBox{background:var(--card);border:1px solid var(--b);border-radius:18px;height:62vh;display:flex;flex-direction:column}
-.worldMsgs{flex:1;padding:12px;overflow:auto;display:flex;flex-direction:column;gap:8px}
-.msg{background:#1e1c2e;padding:8px 12px;border-radius:12px;font-size:13px;align-self:flex-start}
-.msg.me{background:var(--v);align-self:flex-end}
-.worldInput{display:flex;gap:8px;padding:10px;border-top:1px solid var(--b)}
-.worldInput input{flex:1;background:#0f0e18;border:1px solid var(--b);border-radius:10px;padding:10px;color:#fff}
-.worldInput button{background:var(--v);border:0;color:#fff;padding:10px 14px;border-radius:10px;font-weight:800}
-.bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;z-index:9999;direction:ltr;padding-bottom:env(safe-area-inset-bottom)}
-.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;z-index:9999;direction:ltr}
+.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px}
 .bottomNav a.on{color:#fff}
 .bottomNav a .ic{font-size:22px;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
-.bottomNav a.plus .ic{background:var(--v);color:#fff;width:56px;height:56px;border-radius:16px;font-size:30px;margin-top:-16px;box-shadow:0 6px 18px rgba(124,58,237,.45)}
-.navBadge{position:absolute;top:-4px;right:14px;background:#ff3b30;color:#fff;min-width:18px;height:18px;border-radius:9px;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #0f0e18}
-.navBadge.hide{display:none}
+.bottomNav a.plus .ic{background:var(--v);color:#fff;width:56px;height:56px;border-radius:16px;font-size:30px;margin-top:-16px}
 </style>
 </head>
 <body>
-
-<div class="top"><b>✨ GABO LIVE</b><span>🔔</span></div>
-
-<div class="tabs">
-  <button id="tabComm" class="on">المجتمعات</button>
-  <button id="tabWorld">شات العالم 🌍</button>
-</div>
+<div class="top"><b>✨ GABO LIVE</b><span onclick="location.href='/profile/'">👤</span></div>
+<div class="tabs"><button class="on">المجتمعات</button><button onclick="location.href='/dm/'">شات العالم 🌍</button></div>
 
 <div id="commPage" class="grid">
-
-  <div class="comm" onclick="goComm('south')">
-    <div class="flag">
-      <svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/><polygon points="20,18 22.5,24 29,24 23.8,27.8 25.3,34 20,30 14.7,34 16.2,27.8 11,24 17.5,24" fill="#D71921"/></svg>
-    </div>
-    <b><span class="miniFlag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/><polygon points="20,18 22.5,24 29,24 23.8,27.8 25.3,34 20,30 14.7,34 16.2,27.8 11,24 17.5,24" fill="#D71921"/></svg></span> مجتمع الجنوب العربي</b>
-    <small>1.2k متواجد</small>
-  </div>
-
-  <div class="comm" onclick="goComm('sa')">
-    <div class="flag"><img src="https://flagcdn.com/w80/sa.png"></div>
-    <b>🇸🇦 مجتمع السعودية</b><small>890 متواجد</small>
-  </div>
-
-  <div class="comm" onclick="goComm('ye')">
-    <div class="flag"><img src="https://flagcdn.com/w80/ye.png"></div>
-    <b>🇾🇪 مجتمع اليمن</b><small>650 متواجد</small>
-  </div>
-
-  <div class="comm" onclick="goComm('ae')">
-    <div class="flag"><img src="https://flagcdn.com/w80/ae.png"></div>
-    <b>🇦🇪 مجتمع الإمارات</b><small>420 متواجد</small>
-  </div>
-
-  <div class="comm create" onclick="createComm()">
-    <div class="flag" style="background:#1e1c2e;justify-content:center;align-items:center;font-size:24px">+</div>
-    <b>إنشاء مجتمع جديد</b><small>اختر اسم وصورة</small>
-  </div>
-</div>
-
-<div id="worldPage" class="worldChat">
-  <div class="worldBox">
-    <div id="worldMsgs" class="worldMsgs"><div class="msg">أهلا بكم في شات العالم 🌍</div></div>
-    <div class="worldInput"><input id="worldInput" placeholder="اكتب رسالة..."><button onclick="sendWorld()">إرسال</button></div>
-  </div>
+  <!-- المجتمعات الثابتة -->
+  <div class="comm" onclick="goComm('south')"><div class="flag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/><polygon points="20,18 22.5,24 29,24 23.8,27.8 25.3,34 20,30 14.7,34 16.2,27.8 11,24 17.5,24" fill="#D71921"/></svg></div><b><span class="miniFlag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/></svg></span>الجنوب العربي</b><small>رسمي</small></div>
+  <div class="comm" onclick="goComm('sa')"><div class="flag"><img src="https://flagcdn.com/w80/sa.png"></div><b>🇸🇦 السعودية</b><small>رسمي</small></div>
+  <div class="comm" onclick="goComm('ye')"><div class="flag"><img src="https://flagcdn.com/w80/ye.png"></div><b>🇾🇪 اليمن</b><small>رسمي</small></div>
+  <div class="comm" onclick="goComm('ae')"><div class="flag"><img src="https://flagcdn.com/w80/ae.png"></div><b>🇦🇪 الإمارات</b><small>رسمي</small></div>
+  
+  <div class="comm create" onclick="createComm()"><div class="flag" style="background:#1e1c2e;justify-content:center;align-items:center;font-size:26px">+</div><b>إنشاء مجتمع جديد</b><small>الكل يقدر ينشئ</small></div>
 </div>
 
 <div class="bottomNav">
   <a href="/profile/"><span class="ic">👤</span><span>حسابي</span></a>
-  <a href="/dm/"><span class="ic">🔒</span><span>دردشة خاصة</span><span id="navBadge" class="navBadge hide">0</span></a>
+  <a href="/dm/"><span class="ic">🔒</span><span>خاص</span></a>
   <a href="#" class="plus" onclick="createComm();return false"><span class="ic">+</span></a>
   <a href="/posts/"><span class="ic">📄</span><span>منشورات</span></a>
   <a href="/app/" class="on"><span class="ic">🏠</span><span>الرئيسية</span></a>
@@ -96,49 +53,61 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:96px;m
 <script type="module">
 import { auth, db } from '/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { collection, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { collection, addDoc, onSnapshot, serverTimestamp, doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-const tabComm=document.getElementById('tabComm'), tabWorld=document.getElementById('tabWorld');
-const commPage=document.getElementById('commPage'), worldPage=document.getElementById('worldPage');
-tabComm.onclick=()=>{tabComm.classList.add('on');tabWorld.classList.remove('on');commPage.style.display='grid';worldPage.classList.remove('on')}
-tabWorld.onclick=()=>{tabWorld.classList.add('on');tabComm.classList.remove('on');commPage.style.display='none';worldPage.classList.add('on')}
+let uid = localStorage.getItem('gabo_uid') || null;
+let uname = localStorage.getItem('gabo_name') || 'مستخدم';
 
-// هذا اللي يصلح المشكلة
-window.goComm = (id) => {
-  // لا تحول لتسجيل دخول، روح مباشرة للمجتمع
-  location.href = `/community/?id=${id}`;
-}
-
-window.createComm=()=>{const name=prompt('اسم المجتمع الجديد:'); if(!name) return; const div=document.createElement('div'); div.className='comm'; div.innerHTML=`<div class="flag" style="background:#7c3aed;justify-content:center;align-items:center;color:#fff;font-weight:900">${name[0]}</div><b>${name}</b><small>مجتمع جديد</small>`; div.onclick=()=>goComm(encodeURIComponent(name)); commPage.insertBefore(div, commPage.lastElementChild);}
-
-function startBadge(uid){
-  const b=document.getElementById('navBadge'); if(!b) return;
-  try{
-    onSnapshot(query(collection(db,'chats'), where('users','array-contains',uid)), snap=>{
-      let t=0; snap.forEach(d=> t+= d.data().unreadCounts?.[uid]||0);
-      if(t>0){ b.textContent=t>99?'99+':t; b.classList.remove('hide'); } else b.classList.add('hide');
-    });
-  }catch(e){console.log(e)}
-}
-
-// أهم اصلاح - لا نحول لتسجيل دخول تلقائيا
-let authChecked = false;
-onAuthStateChanged(auth,u=>{
-  authChecked = true;
-  if(u){
-    localStorage.setItem('gabo_uid',u.uid);
-    startBadge(u.uid);
-  } else {
-    // لا نحول للوجن، خليه يشوف المجتمعات حتى لو مو مسجل
-    const s=localStorage.getItem('gabo_uid');
-    if(s) startBadge(s);
-  }
+onAuthStateChanged(auth, u=>{
+  if(u){ uid=u.uid; localStorage.setItem('gabo_uid', u.uid); }
 });
 
-// لو كان مسجل من قبل
-const s=localStorage.getItem('gabo_uid'); if(s) startBadge(s);
+window.goComm = (id) => location.href = `/community/?id=${id}`;
 
-window.sendWorld=()=>{const inp=document.getElementById('worldInput'); if(!inp.value.trim()) return; const box=document.getElementById('worldMsgs'); const d=document.createElement('div'); d.className='msg me'; d.textContent=inp.value; box.appendChild(d); inp.value=''; box.scrollTop=box.scrollHeight;}
+// تحميل المجتمعات اللي انشأها الناس
+const grid = document.getElementById('commPage');
+onSnapshot(collection(db,'communities'), snap=>{
+  // احذف القديمة اللي من الناس
+  grid.querySelectorAll('.userComm').forEach(e=>e.remove());
+  snap.forEach(d=>{
+    const data=d.data();
+    if(['south','sa','ye','ae'].includes(d.id)) return;
+    const div=document.createElement('div');
+    div.className='comm userComm';
+    div.onclick=()=>goComm(d.id);
+    const isOwner = data.ownerUid===uid;
+    div.innerHTML=`
+      ${isOwner?'<span class="owner">مالك</span>':''}
+      <div class="flag" style="background:${data.color||'#7c3aed'};justify-content:center;align-items:center;color:#fff;font-weight:900;font-size:20px">${(data.name||'M')[0]}</div>
+      <b>${data.name}</b>
+      <small>${data.membersCount||0} عضو ${data.closed?'🔒 مغلق':''}</small>
+    `;
+    grid.insertBefore(div, grid.lastElementChild);
+  });
+});
+
+window.createComm = async () => {
+  if(!uid){ alert('سجل دخول أول'); location.href='/login/'; return; }
+  const name = prompt('اسم المجتمع الجديد:');
+  if(!name) return;
+  const color = '#'+Math.floor(Math.random()*16777215).toString(16);
+  const id = name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-أ-ي]/g,'') + '-' + Date.now().toString(36).slice(-4);
+  try{
+    await setDoc(doc(db,'communities',id),{
+      name:name,
+      ownerUid:uid,
+      ownerName:uname,
+      color:color,
+      members:[uid],
+      membersCount:1,
+      banned:[],
+      closed:false,
+      createdAt:serverTimestamp()
+    });
+    alert('تم إنشاء '+name);
+    goComm(id);
+  }catch(e){ alert('خطأ: '+e.message); }
+}
 </script>
 </body>
 </html>
