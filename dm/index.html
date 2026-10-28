@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>دردشة خاصة - GABO LIVE</title>
+<style>
+:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:#fff;font-family:system-ui;min-height:100vh}
+.top{padding:16px;display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--b);position:sticky;top:0;background:var(--bg);z-index:10}
+.back{width:40px;height:40px;background:#1e1c2e;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;border:1px solid var(--b)}
+.list{padding:12px}
+.item{background:var(--card);border:1px solid var(--b);border-radius:14px;padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:center;cursor:pointer}
+.item img{width:48px;height:48px;border-radius:50%;object-fit:cover}
+.item b{display:block}
+.item small{color:#8b8ba7}
+.empty{text-align:center;padding:60px 20px;color:#8b8ba7}
+.empty .ic{font-size:50px;display:block;margin-bottom:12px}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;padding:8px 0 10px;direction:ltr}
+.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:9px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bottomNav a.on{color:#fff}
+.bottomNav a .ic{font-size:22px}
+.bottomNav a.plus .ic{background:var(--v);color:#fff;width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-20px}
+.loading{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:12px}
+</style>
+</head>
+<body>
+<div class="loading" id="loading"><b style="font-size:20px">GABO <span style="color:#7c3aed">LIVE</span></b><small style="color:#8b8ba7">جاري التحقق من تسجيل الدخول...</small></div>
+
+<div class="top"><a href="/profile/" class="back">›</a><b>🔒 دردشة خاصة</b></div>
+<div class="list" id="list"></div>
+
+<div class="bottomNav">
+  <a href="/profile/"><span class="ic">👤</span>حسابي</a>
+  <a href="/dm/" class="on"><span class="ic">🔒</span>دردشة خاصة</a>
+  <a href="/create/" class="plus"><span class="ic">+</span></a>
+  <a href="/posts/"><span class="ic">📄</span>منشورات</a>
+  <a href="/app/"><span class="ic">🏠</span>الرئيسية</a>
+</div>
+
+<script type="module">
+import {auth,db} from '/firebase-config.js';
+import {onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {setPersistence,browserLocalPersistence} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {collection,query,where,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const loading = document.getElementById('loading');
+const list = document.getElementById('list');
+let authChecked = false;
+
+// مهم: ثبت تسجيل الدخول
+try{ await setPersistence(auth, browserLocalPersistence); }catch(e){}
+
+onAuthStateChanged(auth, (u)=>{
+  if(authChecked) return;
+  if(!u){
+    // انتظر ثانيتين قبل الطرد - عشان Firebase يلحق يحمل
+    setTimeout(()=>{
+      if(!auth.currentUser){
+        location.replace('/login/');
+      }
+    }, 2000);
+    return;
+  }
+  authChecked = true;
+  loading.style.display='none';
+  
+  // عرض الدردشات
+  const q = query(collection(db,'chats'), where('users','array-contains', u.uid));
+  onSnapshot(q, (snap)=>{
+    if(snap.empty){
+      list.innerHTML = `<div class="empty"><span class="ic">💬</span><b>لا توجد دردشات بعد</b><small>ابدأ محادثة جديدة من ملفات الأشخاص</small></div>`;
+      return;
+    }
+    list.innerHTML = '';
+    snap.forEach(doc=>{
+      const d = doc.data();
+      list.innerHTML += `
+        <div class="item" onclick="location.href='/dm/chat.html?id=${doc.id}'">
+          <img src="${d.photo||''}" onerror="this.style.display='none'">
+          <div><b>${d.name||'مستخدم'}</b><small>${d.lastMsg||'...'}</small></div>
+        </div>`;
+    });
+  });
+});
+</script>
+</body>
+</html>
