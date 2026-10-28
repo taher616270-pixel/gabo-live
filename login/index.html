@@ -17,7 +17,7 @@ body{background:var(--bg);color:var(--t);font-family:system-ui;min-height:100vh;
 .row{display:flex;gap:10px}
 .row>div{flex:1}
 label{display:block;margin:10px 0 6px;color:var(--m);font-size:13px}
-input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--b);background:#0e0d14;color:#fff;outline:none;font-size:14px;transition:.2s}
+input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--b);background:#0e0d14;color:#fff;outline:none;font-size:14px}
 input:focus{border-color:var(--v)}
 input.bad{border-color:var(--err);background:rgba(251,113,133,.08)}
 .btn{width:100%;padding:14px;border:none;border-radius:12px;background:var(--v);color:#fff;font-weight:800;font-size:16px;cursor:pointer;margin-top:14px}
@@ -26,7 +26,7 @@ input.bad{border-color:var(--err);background:rgba(251,113,133,.08)}
 .btn.apple{background:#000;border:1px solid var(--b);color:#fff;display:flex;align-items:center;justify-content:center;gap:8px}
 .divider{display:flex;align-items:center;gap:10px;margin:18px 0;color:var(--m);font-size:12px}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--b)}
-.msg{text-align:center;font-size:13px;margin-top:12px;min-height:18px;line-height:1.5}
+.msg{text-align:center;font-size:13px;margin-top:12px;min-height:18px}
 .msg.e{color:var(--err)} .msg.ok{color:#4ade80}
 .fieldErr{font-size:11px;color:var(--err);margin-top:4px;display:none}
 .fieldErr.show{display:block}
@@ -42,7 +42,6 @@ input.bad{border-color:var(--err);background:rgba(251,113,133,.08)}
     <button id="tabSignup">إنشاء حساب</button>
   </div>
 
-  <!-- تسجيل دخول -->
   <div id="loginFields">
     <label>البريد الإلكتروني</label>
     <input id="l_email" type="email" placeholder="example@gmail.com" dir="ltr">
@@ -52,7 +51,6 @@ input.bad{border-color:var(--err);background:rgba(251,113,133,.08)}
     <div class="fieldErr" id="l_passErr"></div>
   </div>
 
-  <!-- إنشاء حساب -->
   <div id="signupFields">
     <div class="row">
       <div>
@@ -66,15 +64,12 @@ input.bad{border-color:var(--err);background:rgba(251,113,133,.08)}
         <div class="fieldErr" id="f_lastErr"></div>
       </div>
     </div>
-
     <label>البريد الإلكتروني</label>
     <input id="f_email" type="email" placeholder="example@gmail.com" dir="ltr">
     <div class="fieldErr" id="f_emailErr"></div>
-
     <label>كلمة المرور</label>
     <input id="f_pass" type="password" placeholder="••••••••">
     <div class="fieldErr" id="f_passErr"></div>
-
     <label>تأكيد كلمة المرور</label>
     <input id="f_confirm" type="password" placeholder="••••••••">
     <div class="fieldErr" id="f_confirmErr"></div>
@@ -89,7 +84,7 @@ input.bad{border-color:var(--err);background:rgba(251,113,133,.08)}
 
 <script type="module">
 import { auth, db } from '/firebase-config.js';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, OAuthProvider, signInWithPopup, getRedirectResult, updateProfile } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, OAuthProvider, signInWithPopup, updateProfile } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 let mode='login';
 const $=s=>document.querySelector(s);
@@ -99,31 +94,44 @@ function clearErr(){ document.querySelectorAll('input').forEach(i=>i.classList.r
 function showFieldErr(inputId, errId, text){ const inp=$(inputId), err=$(errId); inp.classList.add('bad'); err.textContent=text; err.classList.add('show'); }
 tabL.onclick=()=>setMode('login'); tabS.onclick=()=>setMode('signup');
 async function ensureUserDoc(u, fullName=''){ const ref=doc(db,'users',u.uid); const snap=await getDoc(ref).catch(()=>null); if(!snap || !snap.exists()){ await setDoc(ref,{email:u.email, name:fullName || u.displayName || u.email.split('@')[0], photo:u.photoURL||'', uid:u.uid, createdAt:serverTimestamp(), banned:false}); } }
-getRedirectResult(auth).catch(()=>{}); onAuthStateChanged(auth, async u=>{ if(u){ try{await ensureUserDoc(u)}catch{} location.replace('/app/'); } });
+onAuthStateChanged(auth, async u=>{ if(u){ try{await ensureUserDoc(u)}catch{} location.replace('/app/'); } });
 mainBtn.onclick=async()=>{
   clearErr();
   if(mode==='login'){
     const email=$('#l_email').value.trim(), pass=$('#l_pass').value.trim(); let ok=true;
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ showFieldErr('#l_email','#l_emailErr','اكتب ايميل صحيح مثل name@gmail.com'); ok=false; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ showFieldErr('#l_email','#l_emailErr','اكتب ايميل صحيح'); ok=false; }
     if(!pass){ showFieldErr('#l_pass','#l_passErr','اكتب كلمة المرور'); ok=false; }
     if(!ok) return; mainBtn.disabled=true; mainBtn.textContent='جاري...';
     try{ await signInWithEmailAndPassword(auth,email,pass); }
-    catch(e){ mainBtn.disabled=false; mainBtn.textContent='تسجيل دخول'; if(e.code==='auth/invalid-credential' || e.code==='auth/wrong-password') msg.textContent='الايميل أو الباسوورد خطأ'; else if(e.code==='auth/user-not-found'){ msg.textContent='الحساب غير موجود، أنشئ حساب'; setMode('signup'); } else { msg.textContent='خطأ: '+e.message; } msg.className='msg e'; }
+    catch(e){ mainBtn.disabled=false; mainBtn.textContent='تسجيل دخول'; msg.textContent=e.code==='auth/invalid-credential'?'الايميل أو الباسوورد خطأ':e.message; msg.className='msg e'; }
   }else{
     const first=$('#f_first').value.trim(), last=$('#f_last').value.trim(); const email=$('#f_email').value.trim(), pass=$('#f_pass').value, confirm=$('#f_confirm').value; let ok=true;
-    if(first.length<2){ showFieldErr('#f_first','#f_firstErr','الاسم الأول مطلوب (حرفين على الأقل)'); ok=false; }
+    if(first.length<2){ showFieldErr('#f_first','#f_firstErr','الاسم الأول مطلوب'); ok=false; }
     if(last.length<2){ showFieldErr('#f_last','#f_lastErr','اللقب مطلوب'); ok=false; }
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ showFieldErr('#f_email','#f_emailErr','الايميل غير صحيح، لازم يكون مثل example@gmail.com'); ok=false; }
-    if(pass.length<6){ showFieldErr('#f_pass','#f_passErr','كلمة المرور لازم 6 أحرف على الأقل'); ok=false; }
-    if(pass!==confirm){ showFieldErr('#f_confirm','#f_confirmErr','كلمة المرور غير مطابقة، تأكد منها'); ok=false; }
-    if(!ok){ msg.textContent='صلح الأخطاء اللي فوق'; msg.className='msg e'; return; }
-    mainBtn.disabled=true; mainBtn.textContent='جاري إنشاء الحساب...';
-    try{ const cred=await createUserWithEmailAndPassword(auth,email,pass); const fullName=first+' '+last; await updateProfile(cred.user,{displayName:fullName}); await ensureUserDoc(cred.user,fullName); msg.textContent='تم إنشاء الحساب، جاري تحويلك...'; msg.className='msg ok'; }
-    catch(e){ mainBtn.disabled=false; mainBtn.textContent='إنشاء حساب'; if(e.code==='auth/email-already-in-use'){ showFieldErr('#f_email','#f_emailErr','الايميل هذا مسجل من قبل، سجل دخول'); msg.textContent='الايميل مسجل مسبقاً'; } else if(e.code==='auth/invalid-email'){ showFieldErr('#f_email','#f_emailErr','صيغة الايميل غلط'); msg.textContent='الايميل غير صحيح'; } else if(e.code==='auth/weak-password'){ showFieldErr('#f_pass','#f_passErr','الباسوورد ضعيف، خليه أقوى'); msg.textContent='الباسوورد ضعيف'; } else { msg.textContent='خطأ: '+e.message; } msg.className='msg e'; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ showFieldErr('#f_email','#f_emailErr','الايميل غير صحيح'); ok=false; }
+    if(pass.length<6){ showFieldErr('#f_pass','#f_passErr','6 أحرف على الأقل'); ok=false; }
+    if(pass!==confirm){ showFieldErr('#f_confirm','#f_confirmErr','غير مطابقة'); ok=false; }
+    if(!ok){ msg.textContent='صلح الأخطاء'; msg.className='msg e'; return; }
+    mainBtn.disabled=true; mainBtn.textContent='جاري...';
+    try{ const cred=await createUserWithEmailAndPassword(auth,email,pass); const fullName=first+' '+last; await updateProfile(cred.user,{displayName:fullName}); await ensureUserDoc(cred.user,fullName); msg.textContent='تم! جاري تحويلك...'; msg.className='msg ok'; }
+    catch(e){ mainBtn.disabled=false; mainBtn.textContent='إنشاء حساب'; msg.textContent=e.code==='auth/email-already-in-use'?'الايميل مسجل من قبل':e.message; msg.className='msg e'; }
   }
 };
-$('#googleBtn').onclick=async()=>{ try{ const p=new GoogleAuthProvider(); const r=await signInWithPopup(auth,p); await ensureUserDoc(r.user); } catch(e){ msg.textContent=e.code==='auth/unauthorized-domain'?'أضف gabo-live.pages.dev في Firebase > Authorized domains':e.message; msg.className='msg e'; } };
-$('#appleBtn').onclick=async()=>{ try{ const p=new OAuthProvider('apple.com'); const r=await signInWithPopup(auth,p); await ensureUserDoc(r.user); } catch(e){ msg.textContent=e.message; msg.className='msg e'; } };
+$('#googleBtn').onclick=async()=>{
+  msg.textContent='جاري فتح Google...'; msg.className='msg';
+  try{
+    const p=new GoogleAuthProvider(); p.setCustomParameters({prompt:'select_account'});
+    const r=await signInWithPopup(auth,p); await ensureUserDoc(r.user);
+  }catch(e){
+    if(e.code==='auth/popup-closed-by-user') msg.textContent='أغلقت نافذة Google';
+    else if(e.code==='auth/popup-blocked') msg.textContent='اسمح بالنوافذ المنبثقة';
+    else msg.textContent='خطأ: '+e.message;
+    msg.className='msg e';
+  }
+};
+$('#appleBtn').onclick=async()=>{
+  msg.textContent='Apple قريباً - استخدم Google حالياً'; msg.className='msg e';
+};
 </script>
 </body>
 </html>
