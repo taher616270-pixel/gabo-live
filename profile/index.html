@@ -20,13 +20,15 @@ body{padding-bottom:110px}
 .nameRow{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:800}
 .countryRow{display:flex;align-items:center;gap:14px;direction:rtl;text-align:right;font-weight:600;margin-top:6px;font-size:14px;color:#d0d0e0;flex-wrap:wrap}
 .countryRow img{width:26px;height:18px;border-radius:3px;object-fit:cover;border:1px solid rgba(255,255,255,.25)}
-.metaInline{display:inline-flex;align-items:center;gap:14px;font-weight:800;font-size:13px}
+.metaInline{display:inline-flex;align-items:center;gap:12px;font-weight:800;font-size:13px}
 .metaInline .male{color:#3b82f6}
 .metaInline .female{color:#ff6b9d}
 .metaInline .age{color:#fbbf24}
 .idRow{font-size:11px;color:#8b8ba7;margin-top:8px;direction:ltr;text-align:left;font-family:monospace;letter-spacing:1px}
 .bioPublic{margin:12px 16px;background:#1e1c2e;border:1px solid var(--b);border-radius:12px;padding:12px;font-size:13px;color:#c4c4d0;line-height:1.6;min-height:45px}
-.stats{display:flex;gap:8px;margin:16px}.stat{flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:14px;padding:10px;text-align:center}.stat b{font-size:18px;display:block}.stat span{font-size:11px;color:#8b8ba7}
+.extraSubsWrap{margin:0 16px 12px 16px}
+.extraSubsBtn{width:100%;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;padding:13px;border-radius:14px;border:0;font-weight:800;font-size:14px;cursor:pointer}
+.stats{display:flex;gap:8px;margin:0 16px 16px}.stat{flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:14px;padding:10px;text-align:center}.stat b{font-size:18px;display:block}.stat span{font-size:11px;color:#8b8ba7}
 .btns{display:flex;gap:10px;margin:0 16px 12px}.btn{flex:1;padding:12px;border-radius:12px;border:0;font-weight:800;font-size:12px;cursor:pointer}.vip{background:var(--gold);color:#000}.notif{background:#1e1c2e;border:1px solid var(--b);color:#fff}
 .settingsBtn{width:calc(100% - 32px);margin:0 16px 16px;background:#1e1c2e;border:1px solid var(--b);color:#fff;padding:12px;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;text-align:center;display:block}
 .editPage, .settingsPage{position:fixed;inset:0;background:var(--bg);z-index:10000;display:none;overflow:auto}.editPage.on, .settingsPage.on{display:block}
@@ -68,12 +70,18 @@ body{padding-bottom:110px}
     </div>
   </div>
   <div class="bioPublic" id="bioPublic">مرحبا بكم في ملفي الشخصي 👋</div>
+
+  <!-- زر جديد فوق العدادات -->
+  <div class="extraSubsWrap">
+    <button id="extraSubsBtn" class="extraSubsBtn">🔔 اشتراك الإشعارات ›</button>
+  </div>
+
   <div class="stats">
     <div class="stat"><b id="c1">0</b><span>متابعين</span></div>
     <div class="stat"><b id="c2">0</b><span>متابَع</span></div>
     <div class="stat"><b id="c3">0</b><span>زوار</span></div>
   </div>
-  <div class="btns"><button class="btn vip" id="vipBtn">👑 VIP</button><button class="btn notif" id="notifBtn">🔔 اشتراك الإشعارات</button></div>
+  <div class="btns"><button class="btn vip" id="vipBtn">👑 VIP</button><button class="btn notif" id="notifBtn">🔔 تفعيل الإشعارات</button></div>
   <button class="settingsBtn" id="openSettingsPage">⚙️ الإعدادات والعدادات ›</button>
 </div>
 
@@ -302,12 +310,15 @@ document.getElementById('delCover').onclick=()=>{
   showCoverInMain(null);
 };
 
-// --- هنا التعديل المهم: الازرار تودي لصفحات ---
+// --- الأزرار المطلوبة ---
 document.getElementById('vipBtn').onclick=()=>{
   location.href='/vip/';
 };
 document.getElementById('notifBtn').onclick=()=>{
   location.href='/notifications/';
+};
+document.getElementById('extraSubsBtn').onclick=()=>{
+  location.href='/subscriptions/';
 };
 
 document.getElementById('refreshCountersBtn').onclick=()=>{showStatus('🔄 تم التحديث');};
