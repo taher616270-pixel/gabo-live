@@ -7,66 +7,26 @@
 <style>
 body{
   margin:0;
-  min-height:100vh;
+  height:100vh;
   background:#08050f;
   display:flex;
   align-items:center;
   justify-content:center;
   font-family:system-ui;
+  overflow:hidden;
 }
-.box{width:90%;max-width:380px;text-align:center}
+.box{text-align:center}
 .logo{
-  font-size:44px;
+  font-size:48px;
   font-weight:900;
-  color:#fff;
-  letter-spacing:4px;
-  animation: updown 2s infinite;
+  letter-spacing:5px;
+  background:linear-gradient(90deg,#7c3aed,#f59e0b,#c084fc,#7c3aed);
+  background-size:200% auto;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:shine 1.5s linear infinite, scale 0.8s ease-in-out infinite alternate;
 }
-@keyframes updown{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-10px)}
-}
-.logo span{color:#8b5cf6}
-.search{
-  margin-top:30px;
-  background:#1a1628;
-  border:1px solid #333;
-  border-radius:20px;
-  padding:14px;
-  display:flex;
-  gap:10px;
-}
-.search input{
-  flex:1;
-  background:transparent;
-  border:0;
-  outline:0;
-  color:#fff;
-  font-size:16px;
-}
-.btn{
-  margin-top:14px;
-  width:100%;
-  padding:14px;
-  border:0;
-  border-radius:14px;
-  background:#7c3aed;
-  color:#fff;
-  font-weight:800;
-  font-size:16px;
-}
-</style>
-</head>
-<body>
-<div class="box">
-  <div class="logo">GABO <span>LIVE</span></div>
-  <p style="color:#888;font-size:12px;letter-spacing:3px">LIVE AUDIO COMMUNITY</p>
-  
-  <div class="search">
-    <span>🔍</span>
-    <input id="q" placeholder="ابحث عن مجتمع، غرفة...">
-  </div>
-  <button class="btn" onclick="location.href='/login/'">دخول</button>
-</div>
-</body>
-</html>
+@keyframes shine{to{background-position:200% center}}
+@keyframes scale{from{transform:scale(1)}to{transform:scale(1.08)}}
+.sub{color:#aaa3bd;margin-top:8px;letter-spacing:4px;font-size:13px;opacity:0;animation:fadein 1s forwards 0.5s}
+@keyframes fade
