@@ -1,50 +1,25 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GABO LIVE - العام</title>
-<style>
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#0a0812;color:#f8f7ff;font-family:system-ui;padding-bottom:80px}
-.wrap{width:min(1200px,calc(100% - 16px));margin:auto}
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 0;position:sticky;top:0;background:#0a0812cc;backdrop-filter:blur(10px);z-index:10}
-.brand{color:#c4b5fd;font-weight:900;text-decoration:none;font-size:20px}
-.page{display:none}.page.active{display:block}
-.card{background:rgba(17,12,29,.95);border:1px solid rgba(196,181,253,.2);border-radius:16px;display:flex;flex-direction:column;overflow:hidden;margin-top:12px}
-.card h3{margin:0;padding:14px;border-bottom:1px solid #ffffff12;font-size:14px;color:#c4b5fd}
-.list{overflow:auto;max-height:70vh}.item{padding:12px 14px;cursor:pointer;border-bottom:1px solid #ffffff08;display:flex;justify-content:space-between}
-.item.active{background:#7c3aed33}
-.msgs{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:55vh;max-height:65vh}
-.msg{padding:10px 14px;border-radius:16px;max-width:85%;background:#ffffff12}.msg.me{align-self:flex-end;background:linear-gradient(135deg,#7c3aed,#5b21b6)}
-.input-area{display:flex;gap:8px;padding:12px;border-top:1px solid #ffffff12;position:sticky;bottom:0;background:#110c1d}
-input{flex:1;background:#0d0b15;border:1px solid #ffffff22;border-radius:12px;padding:12px;color:#fff;outline:none}
-button{border-radius:12px;padding:11px 16px;border:0;background:#211638;color:#fff;cursor:pointer;font-weight:700}.primary{background:linear-gradient(135deg,#7c3aed,#5b21b6)}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(15,12,24,.98);border-top:1px solid #ffffff18;display:flex;justify-content:space-around;padding:8px 0 12px;z-index:100;backdrop-filter:blur(20px)}
-.bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:2px;color:#aaa3bd;text-decoration:none;font-size:11px;padding:6px 16px;border-radius:12px;cursor:pointer}
-.bottom-nav a.active{color:#c4b5fd;background:#7c3aed22}.bottom-nav b{font-size:20px}
-</style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>العام — GABO LIVE</title>
+<link rel="stylesheet" href="/assets/style/style.css">
 </head>
 <body>
 <div class="wrap">
-<div class="topbar"><a class="brand" href="/">GABO LIVE ✨</a><button id="logoutBtn" style="padding:6px 12px;font-size:12px">خروج</button></div>
-
-<div class="page active" id="page-public">
-<div class="card"><h3 id="chatTitle">الشات العام - public</h3><div class="msgs" id="msgsBox"></div><div class="input-area"><input id="msgInput" placeholder="اكتب رسالة..."><button id="sendBtn" class="primary">↑</button></div></div>
+  <header class="topbar">
+    <a class="brand" href="/app/">GABO LIVE ✨</a>
+    <div><a class="btn sm" href="/app/">كل المجتمعات</a> <button class="btn sm" data-logout>خروج</button></div>
+  </header>
+  <div class="card"><h3>🔥 الشات العام</h3>
+    <div class="msgs" id="msgsBox"></div>
+    <div class="composer"><input id="msgInput" class="input" placeholder="اكتب رسالة..." maxlength="500"><button id="sendBtn" class="btn primary">↑</button></div>
+  </div>
 </div>
-<div class="page" id="page-communities">
-<div class="card"><h3>🌍 كل المجتمعات</h3><div class="list" id="communityList"></div></div>
-</div>
-</div>
-
-<nav class="bottom-nav" id="bottomNav">
-<a data-page="public" class="active"><b>⌂</b><span>العام</span></a>
-<a data-page="communities"><b>🌍</b><span>المجتمعات</span></a>
-<a href="/app/"><b>♬</b><span>المجتمع</span></a>
-<a href="/profile/"><b>◉</b><span>حسابي</span></a>
-</nav>
-
 <script type="module">
-import {auth,db} from "/firebase-config.js";
-import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import {collection,addDoc,query,where,orderBy,onSnapshot,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-let me=null;let currentId='general';let unsub=null;
-function showPage(id){document
+import { boot, mountChat, $ } from '/assets/app.js';
+await boot({ auth: true });
+mountChat({ box: $('#msgsBox'), input: $('#msgInput'), button: $('#sendBtn'), community: 'general' });
+</script>
+</body>
+</html>
