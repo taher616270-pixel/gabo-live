@@ -3,43 +3,81 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>الرئيسية - GABO LIVE</title>
+<title>GABO LIVE</title>
 <style>
-:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed}
+:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed;--muted:#8b8ba7}
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{background:var(--bg);color:#fff;font-family:system-ui;min-height:100vh}
+body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:96px;min-height:100vh}
 
-.top{height:60px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:sticky;top:0;z-index:10}
-.top b{font-size:16px}
+.top{height:56px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;padding:0 14px;position:sticky;top:0;z-index:50}
+.top b{font-size:15px;font-weight:800}
 
-.feed{padding:12px;display:flex;flex-direction:column;gap:12px}
-.post{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:14px}
-.post .head{display:flex;gap:10px;align-items:center;margin-bottom:10px}
-.post .avatar{width:42px;height:42px;border-radius:50%;background:#2a2840}
-.post .content{font-size:14px;line-height:1.6;color:#d0d0e0}
+.tabs{display:flex;gap:8px;padding:12px 14px}
+.tabs button{flex:1;background:#161426;border:1px solid var(--b);color:var(--muted);padding:10px;border-radius:12px;font-weight:700;font-size:13px}
+.tabs button.on{background:var(--v);border-color:var(--v);color:#fff}
+
+.feed{padding:0 12px 12px;display:flex;flex-direction:column;gap:10px}
+.card{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:14px}
+.card .h{display:flex;gap:10px;align-items:center}
+.card .av{width:40px;height:40px;border-radius:50%;background:#2a2840}
+.card .txt{margin-top:10px;font-size:13px;line-height:1.6;color:#d2d2e6}
+
+/* الشريط - ثابت داخل الصفحة */
+.bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom));z-index:9999;direction:ltr}
+.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
+.bottomNav a.on{color:#fff}
+.bottomNav a .ic{font-size:22px;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+.bottomNav a.plus .ic{background:var(--v);color:#fff;width:56px;height:56px;border-radius:16px;font-size:30px;margin-top:-16px;box-shadow:0 6px 18px rgba(124,58,237,.45)}
+.navBadge{position:absolute;top:-4px;right:14px;background:#ff3b30;color:#fff;min-width:18px;height:18px;border-radius:9px;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #0f0e18}
+.navBadge.hide{display:none}
 </style>
 </head>
 <body>
 
-<div class="top">
-  <b>🏠 GABO LIVE</b>
-  <a href="/notifications/" style="width:40px;height:40px;background:#1e1c2e;border:1px solid var(--b);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none">🔔</a>
+<div class="top"><b>✨ GABO LIVE</b><a href="/notifications/" style="text-decoration:none;font-size:18px">🔔</a></div>
+
+<div class="tabs">
+  <button class="on" id="t1">المجتمع</button>
+  <button id="t2">المجتمعات</button>
 </div>
 
 <div class="feed" id="feed">
-  <div class="post">
-    <div class="head"><div class="avatar"></div><div><b>مرحبا بك 👋</b><br><small style="color:#8b8ba7">GABO LIVE</small></div></div>
-    <div class="content">هذه الصفحة الرئيسية - المنشورات ستظهر هنا</div>
+  <div class="card">
+    <div class="h"><div class="av"></div><div><b style="font-size:13px">أهلا بك في GABO</b><br><small style="color:var(--muted)">الآن</small></div></div>
+    <div class="txt">هذه هي الصفحة الرئيسية الجديدة - المنشورات ستظهر هنا تلقائيا</div>
   </div>
 </div>
 
-<script type="module">
-import { auth } from '/firebase-config.js';
-import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+<!-- الشريط داخل الصفحة - مستحيل يختفي -->
+<div class="bottomNav">
+  <a href="/profile/"><span class="ic">👤</span><span>حسابي</span></a>
+  <a href="/dm/"><span class="ic">🔒</span><span>دردشة خاصة</span><span id="navBadge" class="navBadge hide">0</span></a>
+  <a href="/create/" class="plus"><span class="ic">+</span></a>
+  <a href="/posts/"><span class="ic">📄</span><span>منشورات</span></a>
+  <a href="/app/" class="on"><span class="ic">🏠</span><span>الرئيسية</span></a>
+</div>
 
-onAuthStateChanged(auth, u=>{
-  if(!u) location.replace('/login/');
+<script type="module">
+import { auth, db } from '/firebase-config.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { collection, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+function startBadge(uid){
+  const b=document.getElementById('navBadge'); if(!b) return;
+  onSnapshot(query(collection(db,'chats'), where('users','array-contains',uid)), snap=>{
+    let t=0; snap.forEach(d=> t+= d.data().unreadCounts?.[uid]||0);
+    if(t>0){ b.textContent=t>99?'99+':t; b.classList.remove('hide'); } else b.classList.add('hide');
+  });
+}
+onAuthStateChanged(auth,u=>{
+  if(!u){ location.replace('/login/'); return; }
+  localStorage.setItem('gabo_uid',u.uid); startBadge(u.uid);
 });
+const s=localStorage.getItem('gabo_uid'); if(s) startBadge(s);
+
+// تبديل التابات
+t1.onclick=()=>{t1.classList.add('on'); t2.classList.remove('on')}
+t2.onclick=()=>{t2.classList.add('on'); t1.classList.remove('on')}
 </script>
 
 </body>
