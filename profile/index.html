@@ -3,41 +3,69 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>حسابي - GABO LIVE</title>
+<title>حسابي</title>
 <style>
-:root{--bg:#07060c;--card:#13111e;--b:#2a2840;--v:#7c3aed;--t:#fff;--m:#a1a1aa}
+:root{--bg:#07060c;--card:#161426;--b:#2a2840;--v:#7c3aed;--t:#fff;--m:#a1a1aa}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--t);font-family:system-ui;min-height:100vh;padding-bottom:120px}
-.top{padding:14px 16px;border-bottom:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:rgba(7,6,12,.9);backdrop-filter:blur(10px);z-index:10}
-.card{margin:20px 16px;background:var(--card);border:1px solid var(--b);border-radius:20px;padding:20px;text-align:center}
-.inp{width:100%;background:#1b192b;border:1px solid var(--b);border-radius:12px;padding:14px;color:#fff;margin-top:10px;text-align:right}
-.btnV{background:var(--v);color:#fff;border:0;width:100%;padding:14px;border-radius:14px;margin-top:16px;font-weight:800;font-size:15px}
-.tabs{display:flex;gap:8px;justify-content:center;margin-top:14px}
-.tabs button{background:#1b192b;border:1px solid var(--b);color:var(--m);padding:8px 18px;border-radius:20px}
-.tabs button.on{background:#fff;color:#000}
-.bottomNav{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-end;padding:8px 0 calc(10px + env(safe-area-inset-bottom));z-index:9999}
-.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:4px}
-.bottomNav a.on{color:#fff}
-.bottomNav a .ic{font-size:22px}
-.bottomNav a.plus .ic{background:var(--v);color:#fff;width:58px;height:58px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-20px;box-shadow:0 8px 24px rgba(124,58,237,.5)}
+body{background:var(--bg);color:var(--t);font-family:system-ui;padding-bottom:120px}
+.top{padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.top b{font-size:18px}.top a{background:#1e1c2e;border:1px solid var(--b);color:#fff;padding:6px 14px;border-radius:20px;text-decoration:none;font-size:13px}
+.profileCard{margin:12px 16px;background:var(--card);border:1px solid var(--b);border-radius:24px;padding:20px}
+.head{display:flex;gap:16px;align-items:center}
+.avatar{position:relative;width:84px;height:84px;border-radius:20px;background:var(--v);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;overflow:hidden;flex-shrink:0}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.editBtn{position:absolute;bottom:-6px;right:-6px;width:30px;height:30px;background:#fff;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid var(--card);cursor:pointer}
+.nameBox{flex:1}.nameBox h2{font-size:20px;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nameBox p{color:var(--m);font-size:12px;margin-top:4px}
+.flagImg{width:28px;height:19px;border-radius:4px;object-fit:cover;vertical-align:middle;border:1px solid rgba(255,255,255,.2)}
+.stats{display:flex;gap:8px;margin-top:18px}.stat{flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:14px;padding:10px;text-align:center}.stat b{display:block;font-size:18px}.stat span{font-size:11px;color:var(--m)}
+.bioBox{margin-top:16px;background:#0f0e18;border:1px solid var(--b);border-radius:14px;padding:12px;font-size:13px;color:var(--m);min-height:50px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:none;align-items:flex-end;z-index:100}.modal.on{display:flex}
+.sheet{background:#1a182c;border-top:1px solid var(--b);width:100%;border-radius:24px 24px 0 0;padding:20px;max-height:90vh;overflow:auto}
+.sheet input,.sheet select{width:100%;background:#0f0e18;border:1px solid var(--b);border-radius:12px;padding:14px;color:#fff;margin-top:8px}
+.sheet .row{display:flex;gap:10px;margin-top:14px}.sheet .row button{flex:1;padding:14px;border-radius:12px;border:0;font-weight:800}.cancel{background:#2a2840;color:#fff}.ok{background:var(--v);color:#fff}
+.upload{border:1px dashed var(--b);border-radius:12px;padding:18px;text-align:center;color:var(--m);margin-top:10px;cursor:pointer}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-end;padding:8px 0 calc(10px + env(safe-area-inset-bottom));z-index:50}
+.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:4px}.bottomNav a.on{color:#fff}.bottomNav a .ic{font-size:22px}.bottomNav a.plus .ic{background:var(--v);color:#fff;width:58px;height:58px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-20px}
 </style>
 </head>
 <body>
-<div class="top"><a href="/app/" style="background:#1e1c2e;border:1px solid var(--b);color:#fff;padding:6px 12px;border-radius:12px;text-decoration:none">‹ خروج</a><b>GABO LIVE</b><span></span></div>
-
-<div class="card">
-  <div style="display:flex;justify-content:space-between;align-items:center"><h2>حسابي</h2><div style="width:44px;height:44px;background:var(--v);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900">G</div></div>
-  <p style="color:var(--m);font-size:12px;text-align:right;margin-top:4px">ملفك في مجتمع GABO LIVE</p>
-  <input id="name" class="inp" placeholder="اسمك">
-  <label style="display:block;text-align:right;color:var(--m);font-size:11px;margin-top:12px">البريد الإلكتروني</label>
-  <input id="email" class="inp" disabled>
-  <label style="display:block;text-align:right;color:var(--m);font-size:11px;margin-top:12px">نبذة عنك</label>
-  <textarea id="bio" class="inp" rows="3" placeholder="اكتب نبذة قصيرة"></textarea>
-  <button class="btnV" id="save">💾 حفظ الملف</button>
-  <div class="tabs"><button class="on">الملف</button><button>الإعدادات</button></div>
+<div class="top"><b>GABO LIVE</b><a href="/app/">خروج ›</a></div>
+<div class="profileCard">
+  <div class="head">
+    <div class="avatar" id="avatar"><span id="avatarLetter">G</span><div class="editBtn" id="openEdit">✏️</div></div>
+    <div class="nameBox">
+      <h2><span id="displayName">...</span><span id="countryFlag"></span></h2>
+      <p>ملفك في مجتمع GABO LIVE</p>
+      <p id="email" style="margin-top:6px;font-size:11px;color:#6b6b7a"></p>
+    </div>
+  </div>
+  <div class="stats"><div class="stat"><b>1.2k</b><span>متابعين</span></div><div class="stat"><b>348</b><span>متابَع</span></div><div class="stat"><b>5.7k</b><span>زوار</span></div></div>
+  <div class="bioBox" id="bioText">اكتب نبذة قصيرة عنك...</div>
 </div>
 
-<!-- نفس الشريط اللي في الرئيسية بالضبط -->
+<div class="modal" id="modal"><div class="sheet">
+  <h3>✏️ تعديل الملف الشخصي</h3>
+  <label style="font-size:12px;color:var(--m)">صورة الملف</label>
+  <div class="upload" id="uploadBox">📷 اضغط لتغيير الصورة<input type="file" id="fileInp" accept="image/*" hidden></div>
+  <label style="font-size:12px;color:var(--m);margin-top:12px;display:block">الاسم</label><input id="editName" placeholder="اسمك">
+  <label style="font-size:12px;color:var(--m);margin-top:12px;display:block">الدولة</label>
+  <select id="editCountry">
+    <option value="">بدون علم</option>
+    <option value="south-arabia">🚩 الجنوب العربي</option>
+    <option value="🇸🇦">🇸🇦 السعودية</option>
+    <option value="🇾🇪">🇾🇪 اليمن</option>
+    <option value="🇦🇪">🇦🇪 الإمارات</option>
+    <option value="🇰🇼">🇰🇼 الكويت</option>
+    <option value="🇶🇦">🇶🇦 قطر</option>
+    <option value="🇧🇭">🇧🇭 البحرين</option>
+    <option value="🇴🇲">🇴🇲 عمان</option>
+    <option value="🇪🇬">🇪🇬 مصر</option>
+  </select>
+  <label style="font-size:12px;color:var(--m);margin-top:12px;display:block">نبذة عنك</label><input id="editBio" placeholder="اكتب نبذة قصيرة">
+  <div class="row"><button class="cancel" id="closeEdit">إلغاء</button><button class="ok" id="saveEdit">💾 حفظ</button></div>
+</div></div>
+
 <div class="bottomNav">
   <a href="/profile/" class="on"><span class="ic">👤</span>حسابي</a>
   <a href="/dm/"><span class="ic">🔒</span>دردشة خاصة</a>
@@ -48,19 +76,46 @@ body{background:var(--bg);color:var(--t);font-family:system-ui;min-height:100vh;
 
 <script type="module">
 import { auth } from '/firebase-config.js';
-import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-let authReady=false;
-onAuthStateChanged(auth, u=>{
-  authReady=true;
-  if(!u){
-    // انتظر ثانية عشان ما يصير لوب
-    setTimeout(()=>{ if(authReady) location.replace('/login/'); }, 800);
-    return;
+import { onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+const avatar=document.getElementById('avatar'),avatarLetter=document.getElementById('avatarLetter'),displayNameEl=document.getElementById('displayName'),emailEl=document.getElementById('email'),bioText=document.getElementById('bioText'),editName=document.getElementById('editName'),editBio=document.getElementById('editBio'),editCountry=document.getElementById('editCountry'),countryFlag=document.getElementById('countryFlag'),fileInp=document.getElementById('fileInp');
+let newPhotoData=null,currentUser=null;
+function renderFlag(val){
+  if(!val){ countryFlag.innerHTML=''; return; }
+  if(val==='south-arabia'){
+    countryFlag.innerHTML=`<img src="/assets/south-arabia.png" class="flagImg" alt="الجنوب العربي">`;
+  } else {
+    countryFlag.textContent=val;
   }
-  document.getElementById('name').value = u.displayName || '';
-  document.getElementById('email').value = u.email || '';
+}
+onAuthStateChanged(auth,u=>{
+  if(!u){location.replace('/login/');return;}
+  currentUser=u;
+  displayNameEl.textContent=u.displayName||u.email.split('@')[0];
+  avatarLetter.textContent=(u.displayName||u.email||'G')[0].toUpperCase();
+  emailEl.textContent=u.email;
+  editName.value=u.displayName||'';
+  const savedBio=localStorage.getItem('gabo_bio_'+u.uid); if(savedBio){bioText.textContent=savedBio; editBio.value=savedBio;}
+  const savedPhoto=localStorage.getItem('gabo_photo_'+u.uid); if(savedPhoto){avatar.innerHTML=`<img src="${savedPhoto}"><div class="editBtn" id="openEdit">✏️</div>`; document.getElementById('openEdit').onclick=openModal;}
+  const savedFlag=localStorage.getItem('gabo_flag_'+u.uid); if(savedFlag){editCountry.value=savedFlag; renderFlag(savedFlag);}
 });
-document.getElementById('save').onclick=()=>{ alert('تم الحفظ ✅'); };
+function openModal(){document.getElementById('modal').classList.add('on')}
+function closeModal(){document.getElementById('modal').classList.remove('on')}
+document.getElementById('openEdit').onclick=openModal;
+document.getElementById('closeEdit').onclick=closeModal;
+document.getElementById('modal').onclick=(e)=>{if(e.target.id==='modal')closeModal();}
+document.getElementById('uploadBox').onclick=()=>fileInp.click();
+fileInp.onchange=()=>{const file=fileInp.files[0]; if(!file)return; const r=new FileReader(); r.onload=()=>{newPhotoData=r.result; document.getElementById('uploadBox').innerHTML=`<img src="${newPhotoData}" style="width:60px;height:60px;border-radius:12px;object-fit:cover"><br>تم اختيار الصورة`;}; r.readAsDataURL(file);};
+document.getElementById('saveEdit').onclick=async()=>{
+  if(!currentUser)return;
+  const name=editName.value.trim(),bio=editBio.value.trim(),flag=editCountry.value;
+  if(name && name!==currentUser.displayName) await updateProfile(currentUser,{displayName:name});
+  if(newPhotoData) localStorage.setItem('gabo_photo_'+currentUser.uid,newPhotoData);
+  if(bio){localStorage.setItem('gabo_bio_'+currentUser.uid,bio); bioText.textContent=bio;}
+  if(flag!==undefined){localStorage.setItem('gabo_flag_'+currentUser.uid,flag); renderFlag(flag);}
+  displayNameEl.textContent=name||displayNameEl.textContent;
+  if(newPhotoData) avatar.innerHTML=`<img src="${newPhotoData}"><div class="editBtn">✏️</div>`;
+  closeModal();
+};
 </script>
 </body>
 </html>
