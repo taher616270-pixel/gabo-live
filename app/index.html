@@ -9,7 +9,7 @@
 <div class="wrap">
   <header class="topbar">
     <a class="brand" href="/app/">GABO LIVE ✨</a>
-    <div><a class="btn sm" data-go="hosts" href="/hosts/">مضيف؟</a> <button class="btn sm" data-logout>خروج</button></div>
+    <div><a class="btn sm" href="/hosts/">مضيف؟</a> <button class="btn sm" id="logoutBtn">خروج</button></div>
   </header>
 
   <div class="seg"><button class="on" data-show="communities">🌍 المجتمعات</button><button data-show="members">👥 الأعضاء</button></div>
@@ -28,47 +28,93 @@
 </div>
 
 <script type="module">
-import { db, boot, me, mountChat, $, esc, toast } from '/assets/app.js';
-import { collection, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { auth, db } from '/firebase-config.js';
+import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { collection, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { mountChat, esc } from '/assets/app.js';
 
-await boot({ auth: true });
+let currentUser = null;
 
-let current = new URLSearchParams(location.search).get('c') || 'general';
-const chat = mountChat({ box: $('#msgsBox'), input: $('#msgInput'), button: $('#sendBtn'), community: current });
+// 1- تحقق تسجيل الدخول أول
+onAuthStateChanged(auth, (user) => {
+  if(!user){
+    location.replace('/login/');
+    return;
+  }
+  currentUser = user;
+  initApp(user);
+});
 
-onSnapshot(collection(db, 'communities'), snap => {
-  const el = $('#communityList'); el.replaceChildren();
-  if (snap.empty) { el.innerHTML = '<div class="empty">لا يوجد مجتمعات بعد</div>'; return; }
-  snap.forEach(d => {
-    const c = d.data(), id = c.id || d.id;
-    const row = document.createElement('div');
-    row.className = 'item' + (id === current ? ' active' : '');
-    row.innerHTML = `<span>${esc(c.icon || '🌍')} ${esc(c.name || id)}</span><small>💬</small>`;
-    if (id === current) $('#chatTitle').textContent = c.name || id;
-    row.onclick = () => {
-      current = id; $('#chatTitle').textContent = c.name || id;
-      $$('.item', el).forEach(i => i.classList.remove('active')); row.classList.add('active');
-      chat.setCommunity(id);
-    };
-    el.append(row);
-  });
-}, () => toast('تعذر تحميل المجتمعات', 'error'));
+async function initApp(user){
+  const $ = s => document.querySelector(s);
+  const $$ = (s,r=document) => [...r.querySelectorAll(s)];
 
-onSnapshot(collection(db, 'users'), snap => {
-  const el = $('#usersList'); el.replaceChildren();
-  snap.forEach(d => {
-    if (d.id === me.uid) return;
-    const u = d.data();
-    if (u.banned) return;
-    const row = document.createElement('div'); row.className = 'item';
-    row.innerHTML = `<span>${esc(u.name || u.email)}<br><small>${u.subscription === 'VIP' ? '♛ VIP' : ''}</small></span><small>✉</small>`;
-    row.onclick = () => (location.href = '/app/private/?to=' + d.id);
-    el.append(row);
-  });
-  if (!el.children.length) el.innerHTML = '<div class="empty">لا يوجد أعضاء آخرين بعد</div>';
-}, () => toast('تعذر تحميل الأعضاء', 'error'));
+  let current = new URLSearchParams(location.search).get('c') || 'general';
+  
+  // شغل الشات
+  try{
+    const chat = mountChat({ box: $('#msgsBox'), input: $('#msgInput'), button: $('#sendBtn'), community: current, uid: user.uid });
+    
+    // تحميل المجتمعات
+    onSnapshot(collection(db, 'communities'), snap => {
+      const el = $('#communityList'); el.replaceChildren();
+      if (snap.empty) { el.innerHTML = '<div class="empty">لا يوجد مجتمعات بعد</div>'; return; }
+      snap.forEach(d => {
+        const c = d.data(), id = c.id || d.id;
+        const row = document.createElement('div');
+        row.className = 'item' + (id === current ? ' active' : '');
+        row.innerHTML = `<span>${esc(c.icon || '🌍')} ${esc(c.name || id)}</span><small>💬</small>`;
+        if (id === current) $('#chatTitle').textContent = c.name || id;
+        row.onclick = () => {
+          current = id; $('#chatTitle').textContent = c.name || id;
+          $$('.item', el).forEach(i => i.classList.remove('active')); row.classList.add('active');
+          chat.setCommunity(id);
+        };
+        el.append(row);
+      });
+    }, err => {
+      console.error(err);
+      $('#communityList').innerHTML = `<div class="empty">خطأ: ${err.message}</div>`;
+    });
 
-function $$(s, r = document) { return [...r.querySelectorAll(s)]; }
+    // تحميل الأعضاء
+    onSnapshot(collection(db, 'users'), snap => {
+      const el = $('#usersList'); el.replaceChildren();
+      snap.forEach(d => {
+        if (d.id === user.uid) return;
+        const u = d.data();
+        if (u.banned) return;
+        const row = document.createElement('div'); row.className = 'item';
+        row.innerHTML = `<span>${esc(u.name || u.email)}<br><small>${u.subscription === 'VIP' ? '♛ VIP' : ''}</small></span><small>✉</small>`;
+        row.onclick = () => (location.href = '/app/private/?to=' + d.id);
+        el.append(row);
+      });
+      if (!el.children.length) el.innerHTML = '<div class="empty">لا يوجد أعضاء آخرين بعد</div>';
+    }, err => {
+      console.error(err);
+      $('#usersList').innerHTML = `<div class="empty">خطأ: ${err.message}</div>`;
+    });
+
+  }catch(e){
+    console.error(e);
+    $('#communityList').innerHTML = `<div class="empty">خطأ تحميل: ${e.message}</div>`;
+  }
+}
+
+document.getElementById('logoutBtn').onclick = async () => {
+  await signOut(auth);
+  location.replace('/login/');
+};
+
+// تبديل التبويبات
+document.querySelectorAll('[data-show]').forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll('[data-show]').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-'+btn.dataset.show).classList.add('active');
+  };
+});
 </script>
 </body>
 </html>
