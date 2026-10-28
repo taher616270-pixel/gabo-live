@@ -1,7 +1,6 @@
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 export const firebaseConfig = {
   apiKey: "AIzaSyDlsjB8eJzVmU0LSnzmJoQY_oJ9QhZIFjA",
@@ -13,19 +12,9 @@ export const firebaseConfig = {
   measurementId: "G-38RHTREENN"
 };
 
-// منع إعادة التهيئة - يحل مشكلة الصفحات المنعزلة
 export const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-// 1. ثبات الجلسة بين الصفحات المنعزلة
-setPersistence(auth, browserLocalPersistence).catch(console.warn);
-
-// 2. تخزين مؤقت للفايرستور - يسرع التنقل بين الصفحات
-enableIndexedDbPersistence(db).catch(e=>{
-  if(e.code !== 'failed-precondition') console.warn('persistence:',e.code);
-});
-
-// 3. Analytics فقط إذا مدعوم
-export let analytics = null;
-isSupported().then(s=>{ if(s) analytics = getAnalytics(app); });
+// تثبيت تسجيل الدخول
+setPersistence(auth, browserLocalPersistence).catch(()=>{});
