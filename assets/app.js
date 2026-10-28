@@ -1,94 +1,147 @@
-import { firebaseConfig } from '../firebase-config.js';
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, signInAnonymously, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import { getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, query, where, orderBy, limit, onSnapshot, serverTimestamp, getDocs } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+// GABO LIVE - المحرك المشترك لكل الصفحات (حراسة الدخول، التنقل، الشات)
+import { auth, db } from '/firebase-config.js';
+import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { doc, getDoc, collection, addDoc, query, where, orderBy, limitToLast, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+export { auth, db };
 
-// ===== نظام الصفحات المنعزلة =====
-window.showPage = function(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  const target = document.getElementById('page-'+id);
-  if(target) target.classList.add('active');
-  document.querySelectorAll('.bottom-nav a[data-page]').forEach(a=>a.classList.remove('active'));
-  document.querySelector(`.bottom-nav a[data-page="${id}"]`)?.classList.add('active');
-  window.scrollTo(0,0);
+/* ---------- المسارات: كل صفحة تعرف الباقي بالاسم ---------- */
+export const ROUTES = {
+  home: '/', login: '/login/', app: '/app/', public: '/app/public/',
+  private: '/app/private/', profile: '/profile/', hosts: '/hosts/', vip: '/vip/', admin: '/admin/'
+};
+export function go(target, replace) {
+  const url = ROUTES[target] || target;
+  replace ? location.replace(url) : location.assign(url);
+}
+// الصفحة اللي كان رايحها المستخدم قبل ما نحوله للدخول
+export function safeNext() {
+  const n = new URLSearchParams(location.search).get('next');
+  return n && /^\/(?!\/)/.test(n) ? n : ROUTES.app;
 }
 
-const defaults = {publicChat:true,voiceRooms:true,privateChat:true,launchAlerts:true,hostRegistration:true,vipFounders:true,userProfiles:true,googleLogin:true,giftReactions:true,maintenanceMode:false};
-const defaultEmail = {provider:'google_script',urls:{},apiKeys:{},activeUrl:''};
-const defaultAgora = {enabled:false,provider:'agora',appId:'',voiceRooms:[{name:'القبو العام',active:true}]};
-
-let flags={...defaults}, remote={buttons:[],theme:{primaryColor:'#7c3aed',background:'#08070d'}}, emailConfig={...defaultEmail}, agoraConfig={...defaultAgora}, currentUser=null, unsubs=[];
-const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
-const path=location.pathname.replace(/\/$/,'')||'/';
-
-function toast(msg,kind=''){let el=$('#toast');if(!el){el=document.createElement('div');el.id='toast';el.className='toast';document.body.append(el)}el.className='toast '+kind;el.textContent=msg;clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.remove(),3600)}
-function safeText(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function goto(url){location.href=url}
-function userName(){return currentUser?.displayName||currentUser?.email?.split('@')[0]||'مستخدم'}
-function getFlag(name){return flags[name]!==false}
-
-function startListeners(){
- unsubs.forEach(fn=>fn()); unsubs=[];
- unsubs.push(onSnapshot(doc(db,'settings','featureFlags'),s=>{if(s.exists())flags={...defaults,...s.data()};applyFlags();},e=>console.warn(e)));
- unsubs.push(onSnapshot(doc(db,'remote_config','main'),s=>{if(s.exists())remote={...remote,...s.data()};applyTheme();},e=>console.warn(e)));
- unsubs.push(onSnapshot(doc(db,'settings','agoraConfig'),s=>{if(s.exists())agoraConfig={...defaultAgora,...s.data()};window.GABO_AGORA_CONFIG=agoraConfig;renderVoiceRooms();},e=>console.warn(e)));
+/* ---------- ادوات ---------- */
+export const $ = (s, r = document) => r.querySelector(s);
+export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+export const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+export function toast(msg, kind = '') {
+  $('#toast')?.remove();
+  const el = Object.assign(document.createElement('div'), { id: 'toast', className: 'toast ' + kind, textContent: msg });
+  document.body.append(el);
+  setTimeout(() => el.remove(), 3500);
+}
+export function showPage(id) {
+  $$('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + id));
+  $$('[data-show]').forEach(b => b.classList.toggle('on', b.dataset.show === id));
+  scrollTo(0, 0);
 }
 
-function applyFlags(){ $$('[data-flag]').forEach(el=>{const f=el.dataset.flag;el.classList.toggle('hidden',!getFlag(f));}); }
-function applyTheme(){const t=remote.theme||{};if(t.primaryColor)document.documentElement.style.setProperty('--purple',t.primaryColor);if(t.background)document.documentElement.style.setProperty('--bg',t.background);}
+/* ---------- المستخدم والصلاحيات ---------- */
+export let me = null;
+export let myProfile = {};
+const never = new Promise(() => {});
 
-function bindLogin(){
- $('#googleLogin')?.addEventListener('click', async ()=>{
-  try{await signInWithPopup(auth,new GoogleAuthProvider());goto('/app/');}catch(e){toast(e.message,'error')}
- });
- $('#loginForm')?.addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  const email=$('#loginEmail')?.value, pass=$('#loginPassword')?.value;
-  try{await signInWithEmailAndPassword(auth,email,pass);goto('/app/');}catch(err){toast('خطأ تسجيل الدخول','error')}
- });
- $('#logoutBtn')?.addEventListener('click', async ()=>{await signOut(auth);goto('/');});
+export function currentUser() {
+  return new Promise(res => { const off = onAuthStateChanged(auth, u => { off(); res(u); }); });
+}
+export async function getProfile(uid) {
+  const s = await getDoc(doc(db, 'users', uid));
+  return s.exists() ? s.data() : {};
+}
+export const userName = () => myProfile.name || me?.displayName || me?.email?.split('@')[0] || 'مستخدم';
+
+export async function requireAuth() {
+  const u = await currentUser();
+  if (!u) { go(ROUTES.login + '?next=' + encodeURIComponent(location.pathname + location.search), true); await never; }
+  me = u;
+  myProfile = await getProfile(u.uid).catch(() => ({}));
+  if (myProfile.banned) { await signOut(auth); go(ROUTES.login + '?banned=1', true); await never; }
+  return u;
+}
+export async function requireAdmin() {
+  const u = await requireAuth();
+  if (myProfile.isAdmin !== true) { go('app', true); await never; }
+  return u;
+}
+export async function logout() { await signOut(auth); go('login', true); }
+
+/* ---------- شريط التنقل السفلي (تتحكم فيه لوحة الادمن من site_config) ---------- */
+const DEFAULT_NAV = [
+  { icon: '⌂', label: 'الرئيسية', path: '/app/' },
+  { icon: '🌍', label: 'العام', path: '/app/public/' },
+  { icon: '✉', label: 'الخاص', path: '/app/private/' },
+  { icon: '♛', label: 'VIP', path: '/vip/' },
+  { icon: '◉', label: 'حسابي', path: '/profile/' }
+];
+const fixPath = p => (p === '/' ? '/app/' : p);
+
+function drawNav(items) {
+  let nav = $('#bottomNav');
+  if (!nav) { nav = Object.assign(document.createElement('nav'), { id: 'bottomNav', className: 'bottom-nav' }); document.body.append(nav); }
+  const here = location.pathname.replace(/index\.html$/, '').replace(/([^/])$/, '$1/');
+  let best = -1, len = 0;
+  items.forEach((n, i) => { const p = fixPath(n.path); if (here.startsWith(p) && p.length > len) { best = i; len = p.length; } });
+  nav.innerHTML = items.map((n, i) =>
+    `<a href="${esc(fixPath(n.path))}" class="${i === best ? 'active' : ''}"><b>${esc(n.icon)}</b><span>${esc(n.label)}</span></a>`).join('');
+}
+async function mountNav() {
+  drawNav(DEFAULT_NAV);
+  try {
+    await currentUser();
+    const s = await getDoc(doc(db, 'site_config', 'main'));
+    const nav = s.exists() && s.data().bottomNav;
+    if (Array.isArray(nav) && nav.length) drawNav(nav.filter(n => n.visible !== false).sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
+  } catch (e) { /* نبقى على الافتراضي */ }
 }
 
-function renderVoiceRooms(){
- const box=$('#voiceRoomsList'); if(!box) return;
- const rooms=(agoraConfig.voiceRooms||[]).filter(r=>r.active!==false);
- box.innerHTML=rooms.map(r=>`<div class="list-item"><b>${safeText(r.name)}</b><button class="btn primary small">دخول</button></div>`).join('')||'<div class="empty">لا غرف</div>';
-}
-
-function bindPublicChat(){
- const box=$('#publicMessages'),form=$('#publicSendForm'); if(!box||!form) return;
- unsubs.push(onSnapshot(query(collection(db,'publicMessages'),orderBy('createdAt','desc'),limit(80)),s=>{
-  box.innerHTML=s.docs.reverse().map(d=>{const m=d.data();return `<div class="message ${m.uid===currentUser?.uid?'mine':''}"><b>${safeText(m.name)}</b><div>${safeText(m.text)}</div></div>`}).join('')||'<div class="empty">ابدأ الحديث</div>';
-  box.scrollTop=box.scrollHeight;
- }));
- form.addEventListener('submit',async e=>{e.preventDefault();const inp=$('#publicMessageText'),text=inp.value.trim();if(!text||!currentUser) return;await addDoc(collection(db,'publicMessages'),{uid:currentUser.uid,name:userName(),text,createdAt:serverTimestamp()});inp.value='';});
-}
-
-function initialize(){
- // تفعيل أزرار الصفحات المنعزلة
- $$('.bottom-nav a[data-page]').forEach(a=>{
-  a.addEventListener('click',(e)=>{
-   e.preventDefault();
-   showPage(a.dataset.page);
+/* ---------- تشغيل الصفحة: boot({auth:true}) او boot({admin:true}) او boot() للصفحات المفتوحة ---------- */
+export async function boot(opt = {}) {
+  document.addEventListener('click', e => {
+    const g = e.target.closest('[data-go]');
+    if (g) { e.preventDefault(); return go(g.dataset.go); }
+    const s = e.target.closest('[data-show]');
+    if (s) { e.preventDefault(); return showPage(s.dataset.show); }
+    if (e.target.closest('[data-logout]')) { e.preventDefault(); logout(); }
   });
- });
-
- startListeners();
- bindLogin();
- bindPublicChat();
- onAuthStateChanged(auth, async u=>{
-  currentUser=u;
-  if(u){
-   try{await setDoc(doc(db,'profiles',u.uid),{uid:u.uid,email:u.email||'',emailLower:(u.email||'').toLowerCase(),displayName:u.displayName||u.email?.split('@')[0]||'مستخدم',updatedAt:serverTimestamp()},{merge:true})}catch(e){}
-   $$('[data-user-name]').forEach(el=>el.textContent=userName());
-  } else {
-   if(path.startsWith('/app')||path.startsWith('/profile')||path.startsWith('/admin')) goto('/login/');
-  }
- });
+  mountNav();
+  let u;
+  if (opt.admin) u = await requireAdmin();
+  else if (opt.auth) u = await requireAuth();
+  else { u = await currentUser(); if (u) { me = u; myProfile = await getProfile(u.uid).catch(() => ({})); } }
+  $$('[data-user-name]').forEach(el => (el.textContent = userName()));
+  $$('[data-admin-only]').forEach(el => el.classList.toggle('hidden', myProfile.isAdmin !== true));
+  return u;
 }
 
-initialize();
+/* ---------- شات مجتمع (يستخدم في /app/ و /app/public/) ---------- */
+export function mountChat({ box, input, button, community = 'general' }) {
+  let cid = community, unsub = null;
+  function listen() {
+    unsub?.();
+    const q = query(collection(db, 'messages'), where('communityId', '==', cid), orderBy('createdAt', 'asc'), limitToLast(100));
+    unsub = onSnapshot(q, snap => {
+      box.replaceChildren();
+      if (snap.empty) { box.append(Object.assign(document.createElement('div'), { className: 'empty', textContent: 'ابدأ الحديث 👋' })); return; }
+      snap.forEach(d => {
+        const m = d.data();
+        const row = Object.assign(document.createElement('div'), { className: 'msg' + (m.from === me?.uid ? ' me' : '') });
+        row.append(Object.assign(document.createElement('b'), { textContent: m.fromName || m.name || '' }),
+                   Object.assign(document.createElement('div'), { textContent: m.text }));
+        box.append(row);
+      });
+      box.scrollTop = box.scrollHeight;
+    }, e => toast('تعذر تحميل الرسائل', 'error'));
+  }
+  async function send() {
+    const text = input.value.trim().slice(0, 500);
+    if (!text || !me) return;
+    input.value = '';
+    try {
+      await addDoc(collection(db, 'messages'), { communityId: cid, from: me.uid, fromName: userName(), name: userName(), text, createdAt: serverTimestamp() });
+    } catch (e) { toast('تعذر الارسال', 'error'); input.value = text; }
+  }
+  button.onclick = send;
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+  listen();
+  return { setCommunity(id) { cid = id; listen(); }, stop() { unsub?.(); } };
+}
