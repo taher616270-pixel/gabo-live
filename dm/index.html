@@ -9,10 +9,13 @@
 body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
 .header{height:64px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px;padding:0 12px;position:fixed;top:0;left:0;right:0;z-index:10}
 .back{width:36px;height:36px;background:#161426;border:1px solid var(--b);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px}
-.headerIcon{width:38px;height:38px;border-radius:50%;background:#1e1c32;border:1px solid var(--b);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.headerAvatar{width:40px;height:40px;border-radius:50%;overflow:hidden;background:#222;flex-shrink:0;border:1px solid var(--b)}
+.headerAvatar img{width:100%;height:100%;object-fit:cover;display:block}
+.headerIcon{width:40px;height:40px;border-radius:50%;background:#1e1c32;border:1px solid var(--b);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .hInfo{flex:1;overflow:hidden}
-.hInfo b{font-size:14px;display:flex;align-items:center;gap:6px}
-.hInfo small{font-size:11px;color:var(--muted)}
+.hInfo b{font-size:14px;display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hInfo small{font-size:11px;color:var(--muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{font-size:11px;background:#ff3b30;color:#fff;min-width:20px;height:20px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px;font-weight:900}
 .tabs{position:fixed;top:64px;left:0;right:0;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;z-index:9;padding:0 12px;gap:12px}
 .tabs button{flex:1;background:transparent;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:12px 0;font-size:13px;font-weight:800;cursor:pointer}
 .tabs button.on{color:#fff;border-bottom-color:var(--v)}
@@ -27,6 +30,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 .userItem small{color:var(--muted);font-size:11px}
 .actionBtn{background:var(--v);border:0;color:#fff;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0}
 .actionBtn.outline{background:transparent;border:1px solid var(--b);color:#fff}
+.actionBtn:disabled{opacity:.5}
 .chat{flex:1;overflow:auto;padding:76px 12px 90px 12px;display:flex;flex-direction:column;gap:10px}
 .bubble{max-width:78%;padding:10px 14px;border-radius:18px;background:#1e1c2e;border:1px solid var(--b);font-size:14px;word-break:break-word}
 .bubble.me{align-self:flex-end;background:var(--v);border-color:var(--v)}
@@ -38,9 +42,10 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 .bottomNav a.on{color:#fff}
 .bottomNav a .ic{font-size:22px;line-height:1;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
 .bottomNav a.plus .ic{background:var(--v);color:#fff;width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-16px;box-shadow:0 4px 12px rgba(124,58,237,.4)}
+.bottomNav .badgeNav{position:absolute;top:-2px;right:10px;background:#ff3b30;color:#fff;min-width:18px;height:18px;border-radius:9px;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #0f0e18}
 .fab{position:fixed;bottom:96px;left:16px;width:56px;height:56px;border-radius:50%;background:var(--v);border:0;color:#fff;font-size:28px;display:flex;align-items:center;justify-content:center;z-index:50;box-shadow:0 4px 16px rgba(124,58,237,.5);cursor:pointer}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:10000;display:none;padding:0}
-.modal.on{display:flex;flex-direction:column}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:10000;display:none;padding:0;flex-direction:column}
+.modal.on{display:flex}
 .modalTop{height:60px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px;padding:0 12px}
 .modalList{flex:1;overflow:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
 </style>
@@ -48,37 +53,36 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 <body>
 <div class="header">
 <div class="back" onclick="handleBack()">‹</div>
+<div class="headerAvatar" id="hAvatarWrap" style="display:none"><img id="hImg"></div>
 <div class="headerIcon" id="hIcon">💬</div>
-<div class="hInfo"><b><span id="hName">دردشة خاصة</span> <span id="notifBadge" style="display:none;background:#ff3b30;color:#fff;font-size:10px;padding:2px 6px;border-radius:10px">0</span></b><small id="hStatus">محادثاتي</small></div>
+<div class="hInfo"><b><span id="hName">دردشة خاصة</span> <span id="countBadge" class="badge" style="display:none">0</span></b><small id="hStatus">محادثاتي • أصدقائي</small></div>
 </div>
 
 <div class="tabs" id="tabs">
-<button id="tabChats" class="on" onclick="switchTab('chats')">💬 محادثاتي</button>
+<button id="tabChats" class="on" onclick="switchTab('chats')">💬 محادثاتي <span id="tabCount"></span></button>
 <button id="tabFriends" onclick="switchTab('friends')">👥 أصدقائي</button>
 </div>
 
-<div class="searchBox" id="searchBox"><input id="searchInput" placeholder="🔍 بحث باسم الشخص..." oninput="onSearch()"></div>
+<div class="searchBox" id="searchBox"><input id="searchInput" placeholder="🔍 بحث..." oninput="onSearch()"></div>
 
 <div class="list" id="listView"></div>
 <div class="chat" id="chatView" style="display:none"></div>
 <div class="inputBar" id="inputBar" style="display:none"><input id="msgInput" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMsg()"><button class="send" onclick="sendMsg()">➤</button></div>
 
-<button class="fab" id="fabBtn" onclick="openAddPeople()" title="إضافة أشخاص">+</button>
+<button class="fab" id="fabBtn" onclick="openAddPeople()">+</button>
 
 <div class="bottomNav">
   <a href="/profile/"><span class="ic">👤</span><span>حسابي</span></a>
-  <a href="/dm/" class="on"><span class="ic">🔒</span><span>خاص</span></a>
+  <a href="/dm/" class="on"><span class="ic">🔒</span><span>خاص</span><span id="navCount" class="badgeNav" style="display:none">0</span></a>
   <a href="/create/" class="plus"><span class="ic">+</span></a>
   <a href="/posts/"><span class="ic">📄</span><span>منشورات</span></a>
   <a href="/app/"><span class="ic">🏠</span><span>الرئيسية</span></a>
 </div>
 
-<!-- مودال إضافة أشخاص -->
 <div class="modal" id="addModal">
   <div class="modalTop">
     <div class="back" onclick="closeAddPeople()">‹</div>
     <b>إضافة أشخاص</b>
-    <small style="margin-right:auto;color:#8b8ba7">تابع وارسل لهم</small>
   </div>
   <div style="padding:10px"><input id="addSearch" placeholder="🔍 ابحث..." oninput="filterAdd()" style="width:100%;background:#1a182a;border:1px solid #2a2840;border-radius:20px;padding:10px 14px;color:#fff;outline:0"></div>
   <div class="modalList" id="addList"></div>
@@ -87,9 +91,9 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 <script type="module">
 import {auth,db} from '/firebase-config.js';
 import {onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import {doc,getDoc,setDoc,collection,addDoc,serverTimestamp,onSnapshot,query,orderBy,where,getDocs,limit,arrayUnion} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import {doc,getDoc,setDoc,collection,addDoc,serverTimestamp,onSnapshot,query,orderBy,where,getDocs,limit,arrayUnion,increment} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-let uid=null, targetUid=null, chatId=null, currentTab='chats', allUsersCache=[], friendsCache=[], chatsCache=[];
+let uid=null, targetUid=null, chatId=null, currentTab='chats', chatsCache=[], friendsCache=[], addCache=[];
 function getTargetUid(){
   const p=new URLSearchParams(location.search);
   return p.get('uid') || p.get('id') || localStorage.getItem('last_dm_uid');
@@ -111,16 +115,14 @@ window.switchTab=(tab)=>{
   if(tab==='chats') renderChats();
   if(tab==='friends') renderFriends();
 }
-
 window.onSearch=()=>{
   if(currentTab==='chats') renderChats();
   if(currentTab==='friends') renderFriends();
 }
-
 function filterBySearch(arr){
   const q=document.getElementById('searchInput').value.toLowerCase().trim();
   if(!q) return arr;
-  return arr.filter(u=> (u.name||'').toLowerCase().includes(q) || (u.gaboId||'').includes(q) );
+  return arr.filter(u=> (u.name||'').toLowerCase().includes(q) || (u.gaboId||'').toLowerCase().includes(q) );
 }
 
 function renderChats(){
@@ -134,18 +136,17 @@ function renderChats(){
   filtered.forEach(c=>{
     const item=document.createElement('div');
     item.className='chatItem';
-    item.innerHTML=`<div style="width:42px;height:42px;border-radius:50%;overflow:hidden;background:#222"><img src="${c.photo}" style="width:100%;height:100%;object-fit:cover"></div><div style="flex:1;overflow:hidden"><b style="font-size:13px">${c.name}</b><br><small style="color:#8b8ba7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block">${c.lastText||'اضغط لفتح المحادثة'}</small></div><div style="color:#6b6b7a">‹</div>`;
+    item.innerHTML=`<div style="width:42px;height:42px;border-radius:50%;overflow:hidden;background:#222"><img src="${c.photo}" style="width:100%;height:100%;object-fit:cover"></div><div style="flex:1;overflow:hidden"><b style="font-size:13px">${c.name}</b><br><small style="color:#8b8ba7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block">${c.lastText||'محادثة جديدة'}</small></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><small style="color:#6b6b7a;font-size:10px">${c.time||''}</small><div style="color:#6b6b7a">‹</div></div>`;
     item.onclick=()=>{localStorage.setItem('last_dm_uid', c.otherUid); location.href='/dm/?uid='+c.otherUid;};
     list.appendChild(item);
   });
 }
-
 function renderFriends(){
   const list=document.getElementById('listView');
   const filtered=filterBySearch(friendsCache);
   list.innerHTML='';
   if(filtered.length===0){
-    list.innerHTML='<div style="text-align:center;color:#8b8ba7;margin-top:80px;line-height:1.8">لا يوجد أصدقاء بعد<br>الأصدقاء هم اللي ضايفين بعض<br><small>تابع شخص وهو يتابعك</small><br><button onclick="openAddPeople()" style="margin-top:12px;background:#7c3aed;border:0;color:#fff;padding:10px 18px;border-radius:20px">+ إضافة أشخاص</button></div>';
+    list.innerHTML='<div style="text-align:center;color:#8b8ba7;margin-top:80px;line-height:1.8">لا يوجد أصدقاء بعد<br>الأصدقاء هم اللي تتابعون بعض</div>';
     return;
   }
   filtered.forEach(u=>{
@@ -156,37 +157,28 @@ function renderFriends(){
   });
 }
 
-window.openAddPeople=()=>{
-  document.getElementById('addModal').classList.add('on');
-  loadAddPeople();
-}
-window.closeAddPeople=()=>{document.getElementById('addModal').classList.remove('on');}
+window.openAddPeople=()=>{document.getElementById('addModal').classList.add('on'); loadAddPeople();}
+window.closeAddPeople=()=>document.getElementById('addModal').classList.remove('on');
 
-let addPeopleCache=[];
 async function loadAddPeople(){
   const list=document.getElementById('addList');
   list.innerHTML='<div style="text-align:center;color:#8b8ba7;margin-top:40px">جاري التحميل...</div>';
   try{
-    const snap=await getDocs(query(collection(db,'users'), limit(80)));
-    addPeopleCache=[];
+    const snap=await getDocs(query(collection(db,'users'), limit(100)));
+    addCache=[];
     snap.forEach(d=>{
       if(d.id===uid) return;
       const data=d.data();
-      // لا تطلع اللي هم اصدقاء بالفعل
-      if(friendsCache.find(f=>f.uid===d.id)) return;
-      addPeopleCache.push({
+      addCache.push({
         uid:d.id,
         name:data.displayName||data.name||'مستخدم',
         photo:data.photoURL||data.photo||data.avatar||'https://i.pravatar.cc/100?u='+d.id,
         country:data.countryName||'',
-        gaboId:data.gaboId||d.id.slice(0,8),
-        following:data.following||0
+        gaboId:data.gaboId||d.id.slice(0,8)
       });
     });
-    renderAddPeople(addPeopleCache);
-  }catch(e){
-    list.innerHTML='<div style="color:#ef4444;text-align:center">خطأ: '+e.message+'</div>';
-  }
+    renderAddPeople(addCache);
+  }catch(e){list.innerHTML='<div style="color:#ef4444;text-align:center">'+e.message+'</div>';}
 }
 function renderAddPeople(arr){
   const list=document.getElementById('addList');
@@ -194,26 +186,39 @@ function renderAddPeople(arr){
   arr.forEach(u=>{
     const div=document.createElement('div');
     div.className='userItem';
-    div.innerHTML=`<div style="width:42px;height:42px;border-radius:50%;overflow:hidden"><img src="${u.photo}" style="width:100%;height:100%;object-fit:cover"></div><div class="info"><b>${u.name}</b><small>${u.country}</small><br><small style="font-family:monospace">ID: ${u.gaboId}</small></div><div style="display:flex;gap:6px"><button class="actionBtn outline" onclick="followUser('${u.uid}')">+ تابع</button><button class="actionBtn" onclick="startChat('${u.uid}')">💬</button></div>`;
+    div.innerHTML=`<div style="width:42px;height:42px;border-radius:50%;overflow:hidden"><img src="${u.photo}" style="width:100%;height:100%;object-fit:cover"></div><div class="info"><b>${u.name}</b><small>${u.country}</small><br><small style="font-family:monospace">ID: ${u.gaboId}</small></div><div style="display:flex;gap:6px"><button class="actionBtn outline" id="btn_${u.uid}" onclick="followUser('${u.uid}')">+ تابع</button><button class="actionBtn" onclick="startChat('${u.uid}')">💬</button></div>`;
     list.appendChild(div);
   });
 }
 window.filterAdd=()=>{
   const q=document.getElementById('addSearch').value.toLowerCase().trim();
-  if(!q) renderAddPeople(addPeopleCache);
-  else renderAddPeople(addPeopleCache.filter(u=>u.name.toLowerCase().includes(q)));
+  if(!q) renderAddPeople(addCache);
+  else renderAddPeople(addCache.filter(u=>u.name.toLowerCase().includes(q)));
 }
 
+// متابعة - مصحح 100%
 window.followUser=async(otherUid)=>{
+  const btn=document.getElementById('btn_'+otherUid);
+  if(btn) {btn.textContent='...'; btn.disabled=true;}
   try{
     const myRef=doc(db,'users',uid);
-    await setDoc(myRef,{following:arrayUnion(otherUid), followingCount:1},{merge:true});
+    await setDoc(myRef,{
+      followingList: arrayUnion(otherUid),
+      following: arrayUnion(otherUid),
+      followingCount: increment(1)
+    },{merge:true});
     const otherRef=doc(db,'users',otherUid);
-    await setDoc(otherRef,{followers:arrayUnion(uid)},{merge:true});
-    alert('تمت المتابعة ✅');
-    // اعادة تحميل الاصدقاء
-    loadFriendsData();
-  }catch(e){alert(e.message)}
+    await setDoc(otherRef,{
+      followersList: arrayUnion(uid),
+      followers: arrayUnion(uid),
+      followersCount: increment(1)
+    },{merge:true});
+    if(btn){btn.textContent='✓ تم'; btn.style.background='#22c55e';}
+    setTimeout(()=>loadFriendsData(),500);
+  }catch(e){
+    alert('خطأ: '+e.message);
+    if(btn){btn.textContent='+ تابع'; btn.disabled=false;}
+  }
 }
 
 window.startChat=(otherUid)=>{
@@ -222,28 +227,31 @@ window.startChat=(otherUid)=>{
 }
 
 async function loadChatsData(){
-  try{
-    const q=query(collection(db,'privateChats'), where('participants','array-contains', uid));
-    onSnapshot(q, async snap=>{
-      chatsCache=[];
-      for(const d of snap.docs){
-        const data=d.data();
-        const other=data.participants?.find(x=>x!==uid);
-        if(!other) continue;
-        let name=other.slice(0,8), photo='https://i.pravatar.cc/100?u='+other;
-        try{
-          const us=await getDoc(doc(db,'users',other));
-          if(us.exists()){name=us.data().displayName||us.data().name||name; photo=us.data().photoURL||us.data().photo||photo;}
-        }catch{}
-        chatsCache.push({otherUid:other, name, photo, lastText:data.lastText||'', lastAt:data.lastAt?.seconds||0});
-      }
-      chatsCache.sort((a,b)=>b.lastAt-a.lastAt);
-      if(currentTab==='chats') renderChats();
-      // اشعار عدد المحادثات
-      const badge=document.getElementById('notifBadge');
-      if(chatsCache.length>0){badge.textContent=chatsCache.length; badge.style.display='inline-block';}
-    });
-  }catch{}
+  const q=query(collection(db,'privateChats'), where('participants','array-contains', uid));
+  onSnapshot(q, async snap=>{
+    chatsCache=[];
+    for(const d of snap.docs){
+      const data=d.data();
+      const other=data.participants?.find(x=>x!==uid);
+      if(!other) continue;
+      let name=other.slice(0,8), photo='https://i.pravatar.cc/100?u='+other;
+      try{
+        const us=await getDoc(doc(db,'users',other));
+        if(us.exists()){name=us.data().displayName||us.data().name||name; photo=us.data().photoURL||us.data().photo||us.data().avatar||photo;}
+      }catch{}
+      const time = data.lastAt ? new Date(data.lastAt.seconds*1000).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}) : '';
+      chatsCache.push({otherUid:other, name, photo, lastText:data.lastText||'', time, lastAt:data.lastAt?.seconds||0});
+    }
+    chatsCache.sort((a,b)=>b.lastAt-a.lastAt);
+    // عداد الرسائل فوق
+    const count=chatsCache.length;
+    document.getElementById('countBadge').textContent=count;
+    document.getElementById('countBadge').style.display= count>0?'inline-flex':'none';
+    document.getElementById('navCount').textContent=count;
+    document.getElementById('navCount').style.display= count>0?'flex':'none';
+    document.getElementById('tabCount').textContent= count>0?`(${count})`:'';
+    if(currentTab==='chats') renderChats();
+  });
 }
 
 async function loadFriendsData(){
@@ -251,20 +259,19 @@ async function loadFriendsData(){
     const mySnap=await getDoc(doc(db,'users',uid));
     if(!mySnap.exists()) return;
     const myData=mySnap.data();
-    const myFollowing=myData.following||[];
+    const myFollowing=myData.followingList||myData.following||[];
     friendsCache=[];
     for(const fid of myFollowing){
       try{
         const fSnap=await getDoc(doc(db,'users',fid));
         if(!fSnap.exists()) continue;
         const fData=fSnap.data();
-        const theirFollowing=fData.following||[];
-        // اذا هو متابعك انت كمان => صديق
+        const theirFollowing=fData.followingList||fData.following||[];
         if(theirFollowing.includes(uid)){
           friendsCache.push({
             uid:fid,
             name:fData.displayName||fData.name||'مستخدم',
-            photo:fData.photoURL||fData.photo||'https://i.pravatar.cc/100?u='+fid,
+            photo:fData.photoURL||fData.photo||fData.avatar||'https://i.pravatar.cc/100?u='+fid,
             country:fData.countryName||'',
             gaboId:fData.gaboId||fid.slice(0,8)
           });
@@ -278,39 +285,40 @@ async function loadFriendsData(){
 onAuthStateChanged(auth, async u=>{
   if(!u){location.href='/login/';return}
   uid=u.uid;
-  
-  // تحميل البيانات
   loadChatsData();
   loadFriendsData();
 
   if(targetUid){
-    // وضع محادثة مباشرة - هذا يصلح مشكلة عدم الحفظ
     document.getElementById('tabs').style.display='none';
     document.getElementById('searchBox').style.display='none';
     document.getElementById('fabBtn').style.display='none';
-    document.getElementById('hIcon').textContent='💬';
-    chatId=[uid,targetUid].sort().join('_');
     document.getElementById('listView').style.display='none';
     document.getElementById('chatView').style.display='flex';
     document.getElementById('inputBar').style.display='flex';
+    
+    // رجع صورة الشخص فوق
+    const avatarWrap=document.getElementById('hAvatarWrap');
+    const icon=document.getElementById('hIcon');
+    avatarWrap.style.display='flex';
+    icon.style.display='none';
     
     try{
       const snap=await getDoc(doc(db,'users',targetUid));
       if(snap.exists()){
         const d=snap.data();
         document.getElementById('hName').textContent=d.displayName||d.name||'مستخدم';
-        document.getElementById('hStatus').textContent='متصل • اضغط للرجوع';
-        document.getElementById('hStatus').style.cursor='pointer';
+        document.getElementById('hImg').src=d.photoURL||d.photo||d.avatar||'https://i.pravatar.cc/100?u='+targetUid;
+        document.getElementById('hStatus').textContent=d.countryName||'متصل الآن • اضغط للرجوع';
         document.getElementById('hStatus').onclick=()=>{localStorage.removeItem('last_dm_uid'); location.href='/dm/';}
       }
     }catch{}
 
-    // مهم: انشاء المحادثة حتى تنحفظ في محادثاتي
+    chatId=[uid,targetUid].sort().join('_');
+    // ** اصلاح الحفظ: ينشئ المحادثة فورا **
     await setDoc(doc(db,'privateChats',chatId),{
       participants:[uid,targetUid],
-      participantsSorted:[uid,targetUid].sort(),
-      createdAt:serverTimestamp(),
       lastAt:serverTimestamp(),
+      createdAt:serverTimestamp(),
       lastText:''
     },{merge:true});
     
@@ -337,6 +345,8 @@ onAuthStateChanged(auth, async u=>{
     document.getElementById('chatView').style.display='none';
     document.getElementById('inputBar').style.display='none';
     document.getElementById('listView').style.display='flex';
+    document.getElementById('hAvatarWrap').style.display='none';
+    document.getElementById('hIcon').style.display='flex';
     document.getElementById('hIcon').textContent='💬';
     document.getElementById('hName').textContent='دردشة خاصة';
     document.getElementById('hStatus').textContent='محادثاتي • أصدقائي';
@@ -349,14 +359,11 @@ window.sendMsg=async()=>{
   const t=input.value.trim();
   if(!t || !chatId) return;
   input.value='';
-  // حفظ الرسالة
   await addDoc(collection(db,'privateChats',chatId,'messages'),{text:t, uid:uid, createdAt:serverTimestamp()});
-  // تحديث اخر رسالة عشان تطلع في محادثاتي - هذا كان الخطأ
   await setDoc(doc(db,'privateChats',chatId),{
     lastText:t,
     lastAt:serverTimestamp(),
-    participants:[uid,targetUid],
-    participantsSorted:[uid,targetUid].sort()
+    participants:[uid,targetUid]
   },{merge:true});
 }
 </script>
