@@ -15,8 +15,9 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:96px;m
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px}
 .comm{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;text-align:center}
 .flag{width:64px;height:40px;border-radius:8px;border:1px solid #2a2840;overflow:hidden;display:flex;box-shadow:0 2px 8px rgba(0,0,0,.4);background:#000}
-.flag img{width:100%;height:100%;object-fit:cover;display:block}
-.comm b{font-size:13px}
+.flag img,.flag svg{width:100%;height:100%;object-fit:cover;display:block}
+.comm b{font-size:13px;display:flex;align-items:center;gap:6px;justify-content:center;flex-wrap:wrap}
+.miniFlag{width:18px;height:12px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid #333;flex-shrink:0}
 .comm small{color:var(--muted);font-size:11px}
 .comm.create{border:1.5px dashed var(--v);justify-content:center}
 .worldChat{padding:12px;display:none}
@@ -47,33 +48,31 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:96px;m
 </div>
 
 <div id="commPage" class="grid">
-  <!-- الجنوب العربي - SVG داخلي ما يحتاج صور خارجية -->
+
   <div class="comm" onclick="location.href='/community/?id=south'">
     <div class="flag">
-      <svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-        <rect width="90" height="20" y="0" fill="#D71921"/>
-        <rect width="90" height="20" y="20" fill="#FFFFFF"/>
-        <rect width="90" height="20" y="40" fill="#000000"/>
-        <path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/>
-        <polygon points="20,18 22.5,24 29,24 23.8,27.8 25.3,34 20,30 14.7,34 16.2,27.8 11,24 17.5,24" fill="#D71921"/>
-      </svg>
+      <svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/><polygon points="20,18 22.5,24 29,24 23.8,27.8 25.3,34 20,30 14.7,34 16.2,27.8 11,24 17.5,24" fill="#D71921"/></svg>
     </div>
-    <b>مجتمع الجنوب العربي</b><small>1.2k متواجد</small>
+    <b>
+      <span class="miniFlag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/><polygon points="20,18 22.5,24 29,24 23.8,27.8 25.3,34 20,30 14.7,34 16.2,27.8 11,24 17.5,24" fill="#D71921"/></svg></span>
+      مجتمع الجنوب العربي
+    </b>
+    <small>1.2k متواجد</small>
   </div>
 
   <div class="comm" onclick="location.href='/community/?id=sa'">
-    <div class="flag"><img src="https://flagcdn.com/w80/sa.png" alt="SA"></div>
-    <b>مجتمع السعودية 🇸🇦</b><small>890 متواجد</small>
+    <div class="flag"><img src="https://flagcdn.com/w80/sa.png"></div>
+    <b>🇸🇦 مجتمع السعودية</b><small>890 متواجد</small>
   </div>
 
   <div class="comm" onclick="location.href='/community/?id=ye'">
-    <div class="flag"><img src="https://flagcdn.com/w80/ye.png" alt="YE"></div>
-    <b>مجتمع اليمن 🇾🇪</b><small>650 متواجد</small>
+    <div class="flag"><img src="https://flagcdn.com/w80/ye.png"></div>
+    <b>🇾🇪 مجتمع اليمن</b><small>650 متواجد</small>
   </div>
 
   <div class="comm" onclick="location.href='/community/?id=ae'">
-    <div class="flag"><img src="https://flagcdn.com/w80/ae.png" alt="AE"></div>
-    <b>مجتمع الإمارات 🇦🇪</b><small>420 متواجد</small>
+    <div class="flag"><img src="https://flagcdn.com/w80/ae.png"></div>
+    <b>🇦🇪 مجتمع الإمارات</b><small>420 متواجد</small>
   </div>
 
   <div class="comm create" onclick="createComm()">
@@ -101,35 +100,15 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:96px;m
 import { auth, db } from '/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { collection, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
 const tabComm=document.getElementById('tabComm'), tabWorld=document.getElementById('tabWorld');
 const commPage=document.getElementById('commPage'), worldPage=document.getElementById('worldPage');
 tabComm.onclick=()=>{tabComm.classList.add('on');tabWorld.classList.remove('on');commPage.style.display='grid';worldPage.classList.remove('on')}
 tabWorld.onclick=()=>{tabWorld.classList.add('on');tabComm.classList.remove('on');commPage.style.display='none';worldPage.classList.add('on')}
-
-window.createComm=()=>{
-  const name=prompt('اسم المجتمع الجديد:'); if(!name) return;
-  const div=document.createElement('div'); div.className='comm';
-  div.innerHTML=`<div class="flag" style="background:#7c3aed;justify-content:center;align-items:center;color:#fff;font-weight:900">${name[0]}</div><b>${name}</b><small>مجتمع جديد</small>`;
-  div.onclick=()=>location.href=`/community/?id=${encodeURIComponent(name)}`;
-  commPage.insertBefore(div, commPage.lastElementChild);
-}
-
-function startBadge(uid){
-  const b=document.getElementById('navBadge'); if(!b) return;
-  onSnapshot(query(collection(db,'chats'), where('users','array-contains',uid)), snap=>{
-    let t=0; snap.forEach(d=> t+= d.data().unreadCounts?.[uid]||0);
-    if(t>0){ b.textContent=t>99?'99+':t; b.classList.remove('hide'); } else b.classList.add('hide');
-  });
-}
+window.createComm=()=>{const name=prompt('اسم المجتمع الجديد:'); if(!name) return; const div=document.createElement('div'); div.className='comm'; div.innerHTML=`<div class="flag" style="background:#7c3aed;justify-content:center;align-items:center;color:#fff;font-weight:900">${name[0]}</div><b>${name}</b><small>مجتمع جديد</small>`; div.onclick=()=>location.href=`/community/?id=${encodeURIComponent(name)}`; commPage.insertBefore(div, commPage.lastElementChild);}
+function startBadge(uid){const b=document.getElementById('navBadge'); if(!b) return; onSnapshot(query(collection(db,'chats'), where('users','array-contains',uid)), snap=>{let t=0; snap.forEach(d=> t+= d.data().unreadCounts?.[uid]||0); if(t>0){ b.textContent=t>99?'99+':t; b.classList.remove('hide'); } else b.classList.add('hide');});}
 onAuthStateChanged(auth,u=>{ if(u){ localStorage.setItem('gabo_uid',u.uid); startBadge(u.uid); } else { location.replace('/login/'); }});
 const s=localStorage.getItem('gabo_uid'); if(s) startBadge(s);
-
-window.sendWorld=()=>{
-  const inp=document.getElementById('worldInput'); if(!inp.value.trim()) return;
-  const box=document.getElementById('worldMsgs'); const d=document.createElement('div'); d.className='msg me'; d.textContent=inp.value;
-  box.appendChild(d); inp.value=''; box.scrollTop=box.scrollHeight;
-}
+window.sendWorld=()=>{const inp=document.getElementById('worldInput'); if(!inp.value.trim()) return; const box=document.getElementById('worldMsgs'); const d=document.createElement('div'); d.className='msg me'; d.textContent=inp.value; box.appendChild(d); inp.value=''; box.scrollTop=box.scrollHeight;}
 </script>
 </body>
 </html>
