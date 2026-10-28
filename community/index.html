@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>المجتمع</title>
+<style>
+:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed;--muted:#8b8ba7;--red:#ff3b30}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:#fff;font-family:system-ui;min-height:100vh;padding-bottom:90px}
+.top{height:56px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px;padding:0 12px;position:sticky;top:0;z-index:100}
+.top button{background:#161426;border:1px solid var(--b);color:#fff;padding:8px 12px;border-radius:10px}
+.head{background:var(--card);border-bottom:1px solid var(--b);padding:14px;display:flex;align-items:center;gap:12px}
+.flag{width:64px;height:42px;border-radius:8px;overflow:hidden;border:1px solid var(--b);background:#000;display:flex}
+.flag img,.flag svg{width:100%;height:100%;object-fit:cover}
+.adminPanel{background:#1a1830;border:1px solid var(--b);margin:10px;border-radius:14px;padding:10px;display:none}
+.adminPanel.on{display:block}
+.adminPanel b{color:var(--v);font-size:12px}
+.adminBtns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.adminBtns button{padding:8px 10px;border-radius:8px;border:1px solid var(--b);font-size:11px;font-weight:800;cursor:pointer}
+.btn-red{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-yellow{background:#ffb800;color:#000}
+.btn-green{background:#1f9d5c;color:#fff}
+.btn-gray{background:#161426;color:#fff}
+.members{padding:10px}
+.member{background:#161426;border:1px solid var(--b);border-radius:10px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.member small{color:var(--muted)}
+.msgs{padding:12px;display:flex;flex-direction:column;gap:8px;min-height:40vh}
+.msg{background:#1e1c2e;padding:10px 14px;border-radius:14px;max-width:80%;align-self:flex-start;position:relative}
+.msg.me{background:var(--v);align-self:flex-end}
+.msg .meta{font-size:9px;color:#ccc;margin-top:4px;display:flex;gap:6px}
+.inputBar{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);padding:10px;display:flex;gap:8px;z-index:60}
+.inputBar input{flex:1;background:#161426;border:1px solid var(--b);border-radius:12px;padding:12px;color:#fff}
+.inputBar button{background:var(--v);border:0;color:#fff;padding:12px 18px;border-radius:12px;font-weight:900}
+.inputBar.disabled{opacity:.5;pointer-events:none}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <button onclick="location.href='/app/'">← رجوع</button>
+  <b id="commTitle">المجتمع</b>
+  <span style="margin-right:auto" id="adminBadge"></span>
+</div>
+
+<div class="head">
+  <div class="flag" id="flagBox"></div>
+  <div>
+    <b id="commName" style="font-size:16px">...</b>
+    <small id="commInfo" style="color:var(--muted)">...</small>
+  </div>
+  <button onclick="joinComm()" id="joinBtn" style="margin-right:auto;background:var(--v);border:0;color:#fff;padding:8px 14px;border-radius:10px;font-weight:800;display:none">انضمام</button>
+</div>
+
+<div id="adminPanel" class="adminPanel">
+  <b>⚙️ لوحة تحكم المالك</b>
+  <div class="adminBtns">
+    <button class="btn-yellow" onclick="toggleClose()">🔒 قفل/فتح الدردشة</button>
+    <button class="btn-green" onclick="showMembers()">👥 الأعضاء والطرد</button>
+    <button class="btn-red" onclick="deleteComm()">🗑️ حذف المجتمع</button>
+  </div>
+  <div id="membersList" class="members" style="display:none"></div>
+</div>
+
+<div class="msgs" id="msgs"></div>
+
+<div class="inputBar" id="inputBar">
+  <input id="msgInput" placeholder="اكتب رسالة...">
+  <button onclick="sendMsg()">إرسال</button>
+</div>
+
+<script type="module">
+import { auth, db } from '/firebase-config.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { collection, addDoc, doc, getDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp, arrayUnion, arrayRemove, increment } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const params=new URLSearchParams(location.search);
+const commId=params.get('id')||'south';
+const names={south:'مجتمع الجنوب العربي',sa:'مجتمع السعودية',ye:'مجتمع اليمن',ae:'مجتمع الإمارات'};
+const flagSVGs={
+  south:`<svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/><polygon points="20,18 22.5,24 29,24 23.8,27.8 25.3,34 20,30 14.7,34 16.2,27.8 11,24 17.5,24" fill="#D71921"/></svg>`,
+  sa:`<img src="https://flagcdn.com/w80/sa.png">`, ye:`<img src="https://flagcdn.com/w80/ye.png">`, ae:`<img src="https://flagcdn.com/w80/ae.png">`
+};
+
+let uid=localStorage.getItem('gabo_uid'), uname=localStorage.getItem('gabo_name')||'مستخدم', isOwner=false, commData=null, isBanned=false;
+
+document.getElementById('commTitle').textContent=names[commId]||commId;
+document.getElementById('commName').textContent=names[commId]||commId;
+document.getElementById('flagBox').innerHTML=flagSVGs[commId]||`<div style="width:100%;height:100%;background:#7c3aed;display:flex;align-items:center;justify-content:center;font-weight:900">${(names[commId]||commId)[0]}</div>`;
+
+onAuthStateChanged(auth, async u=>{
+  if(u){ uid=u.uid; localStorage.setItem('gabo_uid',u.uid); uname=u.displayName||uname; loadComm(); }
+  else{ loadComm(); }
+});
+
+async function loadComm(){
+  if(['south','sa','ye','ae'].includes(commId)){
+    document.getElementById('commInfo').textContent='مجتمع رسمي - 1.2k عضو';
+    startChat();
+    return;
+  }
+  const ref=doc(db,'communities',commId);
+  onSnapshot(ref, snap=>{
+    if(!snap.exists()){ document.getElementById('commInfo').textContent='المجتمع غير موجود'; return; }
+    commData=snap.data();
+    document.getElementById('commName').textContent=commData.name;
+    document.getElementById('commTitle').textContent=commData.name;
+    document.getElementById('flagBox').innerHTML=`<div style="width:100%;height:100%;background:${commData.color};display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px">${commData.name[0]}</div>`;
+    document.getElementById('commInfo').textContent=`${commData.membersCount||0} عضو - المالك: ${commData.ownerName||''} ${commData.closed?'🔒 مغلق':''}`;
+    isOwner=commData.ownerUid===uid;
+    isBanned=commData.banned?.includes(uid);
+    if(isOwner){
+      document.getElementById('adminPanel').classList.add('on');
+      document.getElementById('adminBadge').textContent='👑 مالك';
+    }
+    if(isBanned){
+      document.getElementById('inputBar').classList.add('disabled');
+      document.getElementById('msgInput').placeholder='تم طردك من المجتمع';
+    }else if(commData.closed && !isOwner){
+      document.getElementById('inputBar').classList.add('disabled');
+      document.getElementById('msgInput').placeholder='الدردشة مقفلة من المالك';
+    }else{
+      document.getElementById('inputBar').classList.remove('disabled');
+    }
+    const isMember=commData.members?.includes(uid);
+    document.getElementById('joinBtn').style.display=(!isMember && uid)?'block':'none';
+    startChat();
+  });
+}
+
+window.joinComm=async()=>{
+  if(!uid){ location.href='/login/'; return; }
+  await updateDoc(doc(db,'communities',commId),{members:arrayUnion(uid), membersCount:increment(1)});
+}
+
+let unsub=null;
+function startChat(){
+  if(unsub) unsub();
+  const box=document.getElementById('msgs');
+  const q=query(collection(db,'communities',commId,'messages'), orderBy('time','asc'));
+  unsub=onSnapshot(q, snap=>{
+    box.innerHTML='';
+    if(snap.empty){ box.innerHTML='<div class="msg">مرحبا بكم 👋 ابدأ أول رسالة</div>'; return; }
+    snap.forEach(d=>{
+      const data=d.data();
+      const el=document.createElement('div');
+      el.className='msg'+(data.uid===uid?' me':'');
+      el.innerHTML=`${data.text}<div class="meta"><span>${data.name||''}</span><span onclick="if(isOwner && '${data.uid}'!=='${uid}')kickUser('${data.uid}')" style="color:#ff9">${isOwner?'[طرد]':''}</span></div>`;
+      box.appendChild(el);
+    });
+    window.scrollTo(0,document.body.scrollHeight);
+  });
+}
+
+window.sendMsg=async()=>{
+  const inp=document.getElementById('msgInput'); const txt=inp.value.trim(); if(!txt) return;
+  if(commData?.closed && !isOwner){ alert('الدردشة مقفلة'); return; }
+  if(isBanned){ alert('تم طردك'); return; }
+  inp.value='';
+  const box=document.getElementById('msgs'); const el=document.createElement('div'); el.className='msg me'; el.textContent=txt; box.appendChild(el); window.scrollTo(0,document.body.scrollHeight);
+  try{ await addDoc(collection(db,'communities',commId,'messages'),{text:txt,uid:uid||'guest',name:uname,time:serverTimestamp()}); }catch(e){ console.log(e); }
+}
+
+// لوحة المالك
+window.toggleClose=async()=>{
+  if(!isOwner) return;
+  await updateDoc(doc(db,'communities',commId),{closed:!commData.closed});
+}
+window.deleteComm=async()=>{
+  if(!isOwner) return;
+  if(!confirm('متأكد تبي تحذف المجتمع نهائيا؟')) return;
+  await deleteDoc(doc(db,'communities',commId));
+  alert('تم الحذف'); location.href='/app/';
+}
+window.showMembers=()=>{
+  const list=document.getElementById('membersList');
+  list.style.display=list.style.display==='none'?'block':'none';
+  list.innerHTML='';
+  (commData.members||[]).forEach(m=>{
+    const div=document.createElement('div'); div.className='member';
+    div.innerHTML=`<small>${m===commData.ownerUid?'👑 مالك - ':''}${m}</small><button class="btn-red" style="padding:4px 8px;border-radius:6px;border:0" onclick="kickUser('${m}')">طرد</button>`;
+    list.appendChild(div);
+  });
+}
+window.kickUser=async(targetUid)=>{
+  if(!isOwner || targetUid===uid) return;
+  if(!confirm('تطرد '+targetUid+' ؟')) return;
+  await updateDoc(doc(db,'communities',commId),{
+    members:arrayRemove(targetUid),
+    banned:arrayUnion(targetUid),
+    membersCount:increment(-1)
+  });
+  alert('تم الطرد');
+}
+
+document.getElementById('msgInput').addEventListener('keydown',e=>{ if(e.key==='Enter') sendMsg(); });
+loadComm();
+</script>
+</body>
+</html>
