@@ -3,198 +3,288 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>المجتمع</title>
+<title>مجتمع الجنوب العربي</title>
 <style>
-:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed;--muted:#8b8ba7;--red:#ff3b30}
+:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed;--muted:#8b8ba7;--msg:#1e1c32}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:#fff;font-family:system-ui;min-height:100vh;padding-bottom:90px}
-.top{height:56px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px;padding:0 12px;position:sticky;top:0;z-index:100}
-.top button{background:#161426;border:1px solid var(--b);color:#fff;padding:8px 12px;border-radius:10px}
-.head{background:var(--card);border-bottom:1px solid var(--b);padding:14px;display:flex;align-items:center;gap:12px}
-.flag{width:64px;height:42px;border-radius:8px;overflow:hidden;border:1px solid var(--b);background:#000;display:flex}
-.flag img,.flag svg{width:100%;height:100%;object-fit:cover}
-.adminPanel{background:#1a1830;border:1px solid var(--b);margin:10px;border-radius:14px;padding:10px;display:none}
-.adminPanel.on{display:block}
-.adminPanel b{color:var(--v);font-size:12px}
-.adminBtns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-.adminBtns button{padding:8px 10px;border-radius:8px;border:1px solid var(--b);font-size:11px;font-weight:800;cursor:pointer}
-.btn-red{background:var(--red);color:#fff;border-color:var(--red)}
-.btn-yellow{background:#ffb800;color:#000}
-.btn-green{background:#1f9d5c;color:#fff}
-.btn-gray{background:#161426;color:#fff}
-.members{padding:10px}
-.member{background:#161426;border:1px solid var(--b);border-radius:10px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.member small{color:var(--muted)}
-.msgs{padding:12px;display:flex;flex-direction:column;gap:8px;min-height:40vh}
-.msg{background:#1e1c2e;padding:10px 14px;border-radius:14px;max-width:80%;align-self:flex-start;position:relative}
-.msg.me{background:var(--v);align-self:flex-end}
-.msg .meta{font-size:9px;color:#ccc;margin-top:4px;display:flex;gap:6px}
-.inputBar{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);padding:10px;display:flex;gap:8px;z-index:60}
-.inputBar input{flex:1;background:#161426;border:1px solid var(--b);border-radius:12px;padding:12px;color:#fff}
-.inputBar button{background:var(--v);border:0;color:#fff;padding:12px 18px;border-radius:12px;font-weight:900}
-.inputBar.disabled{opacity:.5;pointer-events:none}
+body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+
+/* الهيدر ثابت ما يتحرك ابدا */
+.header{
+  height:64px;background:#0f0e18;border-bottom:1px solid var(--b);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 12px;position:fixed;top:0;left:0;right:0;z-index:1000;
+  flex-shrink:0;
+}
+.headerLeft{display:flex;align-items:center;gap:10px}
+.backBtn{width:36px;height:36px;border-radius:10px;background:#161426;border:1px solid var(--b);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.commFlag{width:48px;height:32px;border-radius:8px;overflow:hidden;border:1px solid var(--b);flex-shrink:0;display:block}
+.commFlag svg,.commFlag img{width:100%;height:100%;object-fit:cover;display:block}
+.headerInfo{display:flex;flex-direction:column;gap:2px}
+.headerInfo b{font-size:14px;display:flex;align-items:center;gap:6px}
+.headerInfo small{font-size:11px;color:var(--muted)}
+.headerRight{display:flex;align-items:center;gap:8px}
+.onlineDot{width:8px;height:8px;background:#22c55e;border-radius:50%}
+
+/* منطقة الرسائل تتحرك لحالها */
+.messages{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  padding:76px 12px 120px 12px;
+  display:flex;flex-direction:column;gap:10px;
+  -webkit-overflow-scrolling:touch;
+}
+.msgRow{display:flex;gap:8px;align-items:flex-end;max-width:85%}
+.msgRow.me{align-self:flex-end;flex-direction:row-reverse}
+.msgRow.other{align-self:flex-start}
+.avatar{width:36px;height:36px;border-radius:50%;overflow:hidden;background:#161426;border:1px solid var(--b);flex-shrink:0;display:block}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.msgContent{display:flex;flex-direction:column;gap:4px}
+.nameLine{display:flex;align-items:center;gap:4px;font-size:12px;color:#d1c7ff;font-weight:700}
+.nameLine .check{width:14px;height:14px;background:#1d9bf0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:#fff}
+.nameLine .time{font-size:10px;color:var(--muted);font-weight:400}
+.bubble{background:var(--msg);border:1px solid var(--b);padding:10px 14px;border-radius:18px 18px 4px 18px;font-size:14px;line-height:1.4;word-break:break-word}
+.msgRow.other .bubble{border-radius:18px 18px 18px 4px;background:#161426}
+.msgRow.me .bubble{background:var(--v);border-color:var(--v);color:#fff}
+
+/* يكتب الآن فوق زر الكتابة */
+.typingBar{
+  position:fixed;bottom:72px;left:12px;right:12px;
+  font-size:11px;color:var(--muted);display:none;z-index:50;
+  background:rgba(15,14,24,.9);padding:6px 10px;border-radius:10px;border:1px solid var(--b);
+}
+.typingBar.on{display:block}
+
+/* شريط الكتابة ثابت تحت */
+.inputBar{
+  position:fixed;bottom:0;left:0;right:0;
+  background:#0f0e18;border-top:1px solid var(--b);
+  padding:10px 12px;padding-bottom:calc(10px + env(safe-area-inset-bottom));
+  display:flex;align-items:center;gap:8px;z-index:1000;
+}
+.inputWrap{flex:1;background:#161426;border:1px solid var(--b);border-radius:24px;display:flex;align-items:center;gap:6px;padding:6px 10px}
+.inputWrap input{flex:1;background:transparent;border:0;outline:0;color:#fff;font-size:14px}
+.iconBtn{width:36px;height:36px;border-radius:50%;background:#1e1c2e;border:1px solid var(--b);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0}
+.sendBtn{width:42px;height:42px;border-radius:50%;background:var(--v);border:0;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0}
+
+/* لوحة الايموجي */
+.emojiPanel{
+  position:fixed;bottom:72px;left:8px;right:8px;
+  background:#161426;border:1px solid var(--b);border-radius:18px;
+  max-height:320px;display:none;flex-direction:column;z-index:2000;overflow:hidden;
+}
+.emojiPanel.on{display:flex}
+.emojiTabs{display:flex;gap:6px;padding:8px;border-bottom:1px solid var(--b);overflow-x:auto}
+.emojiTabs button{background:#0f0e18;border:1px solid var(--b);color:#fff;padding:6px 10px;border-radius:10px;font-size:14px;white-space:nowrap}
+.emojiTabs button.on{background:var(--v);border-color:var(--v)}
+.emojiGrid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;padding:10px;overflow-y:auto}
+.emojiGrid span{font-size:22px;padding:6px;text-align:center;cursor:pointer;border-radius:8px}
+.emojiGrid span:hover{background:#1e1c2e}
+.emojiGrid span.flagCustom{width:28px;height:20px;display:inline-flex;border-radius:4px;overflow:hidden;border:1px solid #333}
+.emojiGrid span.flagCustom svg{width:100%;height:100%;object-fit:cover}
 </style>
 </head>
 <body>
 
-<div class="top">
-  <button onclick="location.href='/app/'">← رجوع</button>
-  <b id="commTitle">المجتمع</b>
-  <span style="margin-right:auto" id="adminBadge"></span>
-</div>
-
-<div class="head">
-  <div class="flag" id="flagBox"></div>
-  <div>
-    <b id="commName" style="font-size:16px">...</b>
-    <small id="commInfo" style="color:var(--muted)">...</small>
+<!-- هيدر ثابت -->
+<div class="header" id="header">
+  <div class="headerLeft">
+    <div class="backBtn" onclick="history.back()">‹</div>
+    <div class="commFlag" id="commFlag"></div>
+    <div class="headerInfo">
+      <b><span id="commName">مجتمع الجنوب العربي</span> <span id="commMiniFlag" style="width:18px;height:12px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid #333"></span></b>
+      <small><span id="memberCount">0 عضو</span> • <span class="onlineDot"></span> <span id="onlineCount">12k متصل</span> • رسمي</small>
+    </div>
   </div>
-  <button onclick="joinComm()" id="joinBtn" style="margin-right:auto;background:var(--v);border:0;color:#fff;padding:8px 14px;border-radius:10px;font-weight:800;display:none">انضمام</button>
-</div>
-
-<div id="adminPanel" class="adminPanel">
-  <b>⚙️ لوحة تحكم المالك</b>
-  <div class="adminBtns">
-    <button class="btn-yellow" onclick="toggleClose()">🔒 قفل/فتح الدردشة</button>
-    <button class="btn-green" onclick="showMembers()">👥 الأعضاء والطرد</button>
-    <button class="btn-red" onclick="deleteComm()">🗑️ حذف المجتمع</button>
+  <div class="headerRight">
+    <div class="iconBtn" onclick="location.href='/app/'">☰</div>
   </div>
-  <div id="membersList" class="members" style="display:none"></div>
 </div>
 
-<div class="msgs" id="msgs"></div>
+<!-- الرسائل -->
+<div class="messages" id="messages"></div>
 
-<div class="inputBar" id="inputBar">
-  <input id="msgInput" placeholder="اكتب رسالة...">
-  <button onclick="sendMsg()">إرسال</button>
+<!-- يكتب الآن -->
+<div class="typingBar" id="typingBar">👤 أحمد يكتب...</div>
+
+<!-- لوحة ايموجي كاملة فيها اعلام الدول ومن ضمنها علم الجنوب -->
+<div class="emojiPanel" id="emojiPanel">
+  <div class="emojiTabs">
+    <button class="on" onclick="showEmojiCat('smile')">😊</button>
+    <button onclick="showEmojiCat('flags')">🏳️</button>
+    <button onclick="showEmojiCat('hearts')">❤️</button>
+    <button onclick="showEmojiCat('hands')">👍</button>
+  </div>
+  <div class="emojiGrid" id="emojiGrid"></div>
+</div>
+
+<!-- شريط كتابة ثابت -->
+<div class="inputBar">
+  <button class="iconBtn" onclick="toggleEmoji()">😊</button>
+  <div class="inputWrap">
+    <input id="msgInput" placeholder="اكتب رسالة..." oninput="onTyping()" onkeydown="if(event.key==='Enter')sendMsg()">
+  </div>
+  <button class="sendBtn" onclick="sendMsg()">➤</button>
 </div>
 
 <script type="module">
 import { auth, db } from '/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { collection, addDoc, doc, getDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp, arrayUnion, arrayRemove, increment } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { collection, doc, onSnapshot, addDoc, serverTimestamp, getDoc, setDoc, updateDoc, arrayUnion, increment } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-const params=new URLSearchParams(location.search);
-const commId=params.get('id')||'south';
-const names={south:'مجتمع الجنوب العربي',sa:'مجتمع السعودية',ye:'مجتمع اليمن',ae:'مجتمع الإمارات'};
-const flagSVGs={
-  south:`<svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/><polygon points="20,18 22.5,24 29,24 23.8,27.8 25.3,34 20,30 14.7,34 16.2,27.8 11,24 17.5,24" fill="#D71921"/></svg>`,
-  sa:`<img src="https://flagcdn.com/w80/sa.png">`, ye:`<img src="https://flagcdn.com/w80/ye.png">`, ae:`<img src="https://flagcdn.com/w80/ae.png">`
-};
+const SOUTH_SVG=`<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="200" y="0" fill="#D71921"/><rect width="900" height="200" y="200" fill="#FFF"/><rect width="900" height="200" y="400" fill="#000"/><path d="M0 0 L380 300 L0 600 Z" fill="#5EB6E4"/><g transform="translate(125,300)"><path d="M0 -70 L20 -22 L75 -22 L32 10 L48 65 L0 32 L-48 65 L-32 10 L-75 -22 L-20 -22 Z" fill="#D71921" stroke="white" stroke-width="10" stroke-linejoin="round"/></g></svg>`;
 
-let uid=localStorage.getItem('gabo_uid'), uname=localStorage.getItem('gabo_name')||'مستخدم', isOwner=false, commData=null, isBanned=false;
+const FLAG_EMOJIS=['🇸🇦','🇾🇪','🇦🇪','🇴🇲','🇶🇦','🇰🇼','🇧🇭','🇪🇬','🇯🇴','🇱🇧','🇸🇾','🇮🇶','🇵🇸','🇺🇸','🇬🇧','🇹🇷'];
+const SMILE_EMOJIS=['😀','😂','❤️','🔥','👍','👏','😍','😭','🙏','💪','😎','🤣','🥺','😊','✨','🫡','😅','😢','🤔','👌'];
+const HEART_EMOJIS=['❤️','🧡','💛','💚','💙','💜','🤍','🖤','💔','❣️','💖','💝','💘'];
+const HAND_EMOJIS=['👍','👎','👏','🙏','💪','👌','✌️','🤝','👋','🤲','☝️'];
 
-document.getElementById('commTitle').textContent=names[commId]||commId;
-document.getElementById('commName').textContent=names[commId]||commId;
-document.getElementById('flagBox').innerHTML=flagSVGs[commId]||`<div style="width:100%;height:100%;background:#7c3aed;display:flex;align-items:center;justify-content:center;font-weight:900">${(names[commId]||commId)[0]}</div>`;
+let params=new URLSearchParams(location.search);
+let communityId=params.get('id')||'south';
+let uid=null, userData=null;
+let typingTimeout=null;
 
-onAuthStateChanged(auth, async u=>{
-  if(u){ uid=u.uid; localStorage.setItem('gabo_uid',u.uid); uname=u.displayName||uname; loadComm(); }
-  else{ loadComm(); }
+const commFlagEl=document.getElementById('commFlag');
+const commMiniFlagEl=document.getElementById('commMiniFlag');
+const commNameEl=document.getElementById('commName');
+const memberCountEl=document.getElementById('memberCount');
+const messagesEl=document.getElementById('messages');
+const msgInput=document.getElementById('msgInput');
+const typingBar=document.getElementById('typingBar');
+const emojiPanel=document.getElementById('emojiPanel');
+const emojiGrid=document.getElementById('emojiGrid');
+
+// علم ثابت
+function setHeaderFlag(){
+  if(communityId==='south'){
+    commFlagEl.innerHTML=SOUTH_SVG;
+    commMiniFlagEl.innerHTML=SOUTH_SVG;
+    commNameEl.textContent='مجتمع الجنوب العربي';
+  }else{
+    commFlagEl.innerHTML=`<img src="https://flagcdn.com/w80/${communityId}.png" style="width:100%;height:100%;object-fit:cover">`;
+    commMiniFlagEl.innerHTML=`<img src="https://flagcdn.com/w80/${communityId}.png" style="width:100%;height:100%;object-fit:cover">`;
+    commNameEl.textContent='مجتمع '+communityId;
+  }
+}
+setHeaderFlag();
+
+// جلب بيانات المستخدم - صورة واسم كامل
+onAuthStateChanged(auth, async (u)=>{
+  if(u){
+    uid=u.uid;
+    localStorage.setItem('gabo_uid',uid);
+    try{
+      const snap=await getDoc(doc(db,'users',uid));
+      if(snap.exists()) userData=snap.data();
+      else userData={displayName:u.displayName||'مستخدم', photoURL:u.photoURL||'', verified:false};
+    }catch{ userData={displayName:'مستخدم', photoURL:'', verified:false}; }
+    // انضمام للمجتمع
+    try{
+      await setDoc(doc(db,'communities',communityId),{membersCount:increment(1), members:arrayUnion(uid)}, {merge:true});
+    }catch{}
+  }
 });
 
-async function loadComm(){
-  if(['south','sa','ye','ae'].includes(commId)){
-    document.getElementById('commInfo').textContent='مجتمع رسمي - 1.2k عضو';
-    startChat();
-    return;
+// عرض الرسائل مع صورة الملف الشخصي والاسم فوق علامة الصح
+onSnapshot(collection(db,'communities',communityId,'messages'), (snap)=>{
+  const msgs=[];
+  snap.forEach(d=>msgs.push({id:d.id,...d.data()}));
+  msgs.sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
+  messagesEl.innerHTML='';
+  msgs.forEach(m=>{
+    const isMe=m.uid===uid;
+    const row=document.createElement('div');
+    row.className='msgRow '+(isMe?'me':'other');
+    const photo=m.photoURL||'https://i.pravatar.cc/100?u='+m.uid;
+    const name=m.displayName||'مستخدم';
+    const verified=m.verified?`<span class="check">✓</span>`:'';
+    const time=m.createdAt?new Date(m.createdAt.seconds*1000).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}):'';
+    row.innerHTML=`
+      <div class="avatar"><img src="${photo}" onerror="this.src='https://i.pravatar.cc/100'"></div>
+      <div class="msgContent">
+        <div class="nameLine">${name} ${verified} <span class="time">${time}</span></div>
+        <div class="bubble">${escapeHtml(m.text||'')}</div>
+      </div>
+    `;
+    messagesEl.appendChild(row);
+  });
+  messagesEl.scrollTop=messagesEl.scrollHeight;
+});
+
+// عدد الأعضاء
+onSnapshot(doc(db,'communities',communityId), (snap)=>{
+  if(snap.exists()){
+    const data=snap.data();
+    const count=data.membersCount|| (data.members?data.members.length:0) || 0;
+    memberCountEl.textContent=count+' عضو';
+    if(data.name) commNameEl.textContent=data.name;
   }
-  const ref=doc(db,'communities',commId);
-  onSnapshot(ref, snap=>{
-    if(!snap.exists()){ document.getElementById('commInfo').textContent='المجتمع غير موجود'; return; }
-    commData=snap.data();
-    document.getElementById('commName').textContent=commData.name;
-    document.getElementById('commTitle').textContent=commData.name;
-    document.getElementById('flagBox').innerHTML=`<div style="width:100%;height:100%;background:${commData.color};display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px">${commData.name[0]}</div>`;
-    document.getElementById('commInfo').textContent=`${commData.membersCount||0} عضو - المالك: ${commData.ownerName||''} ${commData.closed?'🔒 مغلق':''}`;
-    isOwner=commData.ownerUid===uid;
-    isBanned=commData.banned?.includes(uid);
-    if(isOwner){
-      document.getElementById('adminPanel').classList.add('on');
-      document.getElementById('adminBadge').textContent='👑 مالك';
-    }
-    if(isBanned){
-      document.getElementById('inputBar').classList.add('disabled');
-      document.getElementById('msgInput').placeholder='تم طردك من المجتمع';
-    }else if(commData.closed && !isOwner){
-      document.getElementById('inputBar').classList.add('disabled');
-      document.getElementById('msgInput').placeholder='الدردشة مقفلة من المالك';
-    }else{
-      document.getElementById('inputBar').classList.remove('disabled');
-    }
-    const isMember=commData.members?.includes(uid);
-    document.getElementById('joinBtn').style.display=(!isMember && uid)?'block':'none';
-    startChat();
-  });
-}
+});
 
-window.joinComm=async()=>{
-  if(!uid){ location.href='/login/'; return; }
-  await updateDoc(doc(db,'communities',commId),{members:arrayUnion(uid), membersCount:increment(1)});
-}
+function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-let unsub=null;
-function startChat(){
-  if(unsub) unsub();
-  const box=document.getElementById('msgs');
-  const q=query(collection(db,'communities',commId,'messages'), orderBy('time','asc'));
-  unsub=onSnapshot(q, snap=>{
-    box.innerHTML='';
-    if(snap.empty){ box.innerHTML='<div class="msg">مرحبا بكم 👋 ابدأ أول رسالة</div>'; return; }
-    snap.forEach(d=>{
-      const data=d.data();
-      const el=document.createElement('div');
-      el.className='msg'+(data.uid===uid?' me':'');
-      el.innerHTML=`${data.text}<div class="meta"><span>${data.name||''}</span><span onclick="if(isOwner && '${data.uid}'!=='${uid}')kickUser('${data.uid}')" style="color:#ff9">${isOwner?'[طرد]':''}</span></div>`;
-      box.appendChild(el);
+window.sendMsg=async ()=>{
+  const text=msgInput.value.trim();
+  if(!text||!uid) return;
+  if(!userData){ alert('سجل دخول'); location.href='/login/'; return; }
+  msgInput.value='';
+  emojiPanel.classList.remove('on');
+  try{
+    await addDoc(collection(db,'communities',communityId,'messages'),{
+      text:text,
+      uid:uid,
+      displayName:userData.displayName||userData.name||'مستخدم',
+      photoURL:userData.photoURL||userData.avatar||'',
+      verified:userData.verified||false,
+      createdAt:serverTimestamp()
     });
-    window.scrollTo(0,document.body.scrollHeight);
-  });
+  }catch(e){ alert(e.message); }
 }
 
-window.sendMsg=async()=>{
-  const inp=document.getElementById('msgInput'); const txt=inp.value.trim(); if(!txt) return;
-  if(commData?.closed && !isOwner){ alert('الدردشة مقفلة'); return; }
-  if(isBanned){ alert('تم طردك'); return; }
-  inp.value='';
-  const box=document.getElementById('msgs'); const el=document.createElement('div'); el.className='msg me'; el.textContent=txt; box.appendChild(el); window.scrollTo(0,document.body.scrollHeight);
-  try{ await addDoc(collection(db,'communities',commId,'messages'),{text:txt,uid:uid||'guest',name:uname,time:serverTimestamp()}); }catch(e){ console.log(e); }
+window.onTyping=()=>{
+  typingBar.classList.remove('on');
+  clearTimeout(typingTimeout);
+  // هنا تقدر ترسل حالة كتابة للفايربيس لو تبغى
+  typingTimeout=setTimeout(()=>{ typingBar.classList.remove('on'); },2000);
 }
 
-// لوحة المالك
-window.toggleClose=async()=>{
-  if(!isOwner) return;
-  await updateDoc(doc(db,'communities',commId),{closed:!commData.closed});
+// ايموجي
+window.toggleEmoji=()=>{
+  emojiPanel.classList.toggle('on');
+  if(emojiPanel.classList.contains('on')) showEmojiCat('smile');
 }
-window.deleteComm=async()=>{
-  if(!isOwner) return;
-  if(!confirm('متأكد تبي تحذف المجتمع نهائيا؟')) return;
-  await deleteDoc(doc(db,'communities',commId));
-  alert('تم الحذف'); location.href='/app/';
-}
-window.showMembers=()=>{
-  const list=document.getElementById('membersList');
-  list.style.display=list.style.display==='none'?'block':'none';
-  list.innerHTML='';
-  (commData.members||[]).forEach(m=>{
-    const div=document.createElement('div'); div.className='member';
-    div.innerHTML=`<small>${m===commData.ownerUid?'👑 مالك - ':''}${m}</small><button class="btn-red" style="padding:4px 8px;border-radius:6px;border:0" onclick="kickUser('${m}')">طرد</button>`;
-    list.appendChild(div);
+window.showEmojiCat=(cat)=>{
+  document.querySelectorAll('.emojiTabs button').forEach(b=>b.classList.remove('on'));
+  event?.target?.classList.add('on');
+  emojiGrid.innerHTML='';
+  let list=[];
+  if(cat==='smile') list=SMILE_EMOJIS;
+  if(cat==='flags') list=FLAG_EMOJIS;
+  if(cat==='hearts') list=HEART_EMOJIS;
+  if(cat==='hands') list=HAND_EMOJIS;
+
+  list.forEach(e=>{
+    const span=document.createElement('span');
+    span.textContent=e;
+    span.onclick=()=>{ msgInput.value+=e; msgInput.focus(); };
+    emojiGrid.appendChild(span);
   });
-}
-window.kickUser=async(targetUid)=>{
-  if(!isOwner || targetUid===uid) return;
-  if(!confirm('تطرد '+targetUid+' ؟')) return;
-  await updateDoc(doc(db,'communities',commId),{
-    members:arrayRemove(targetUid),
-    banned:arrayUnion(targetUid),
-    membersCount:increment(-1)
-  });
-  alert('تم الطرد');
+  if(cat==='flags'){
+    // اضافة علم الجنوب العربي كايموجي خاص
+    const span=document.createElement('span');
+    span.className='flagCustom';
+    span.innerHTML=SOUTH_SVG;
+    span.title='علم الجنوب العربي';
+    span.onclick=()=>{ msgInput.value+=' [علم الجنوب] '; msgInput.focus(); };
+    emojiGrid.appendChild(span);
+  }
 }
 
-document.getElementById('msgInput').addEventListener('keydown',e=>{ if(e.key==='Enter') sendMsg(); });
-loadComm();
+// اغلاق الايموجي عند الضغط خارج
+document.addEventListener('click',(e)=>{
+  if(!emojiPanel.contains(e.target) && !e.target.closest('.iconBtn')){
+    // emojiPanel.classList.remove('on');
+  }
+});
 </script>
 </body>
 </html>
