@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>دردشة - GABO LIVE</title>
+<style>
+:root{--bg:#050507;--card:#11111a;--b:#232334;--v:#7c3aed;--v2:#4f46e5}
+*{margin:0;padding:0;box-sizing:border-box}
+html{height:100%;height:100dvh}
+body{background:var(--bg);color:#fff;font-family:system-ui;height:100%;height:100dvh;display:flex;flex-direction:column;overflow:hidden;position:fixed;inset:0}
+.header{height:60px;min-height:60px;background:rgba(17,17,26,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px;padding:0 12px;z-index:10}
+.back{width:40px;height:40px;background:#1e1c2e;border:1px solid var(--b);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;cursor:pointer}
+.avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#fbbf24);display:flex;align-items:center;justify-content:center;font-weight:900;position:relative;overflow:hidden;flex-shrink:0}
+.avatar img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:none}
+.online{position:absolute;bottom:0;right:0;width:11px;height:11px;background:#22c55e;border:2px solid var(--card);border-radius:50%}
+.info{flex:1;overflow:hidden}
+.info b{font-size:14px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info small{color:#22c55e;font-size:11px}
+.actions{display:flex;gap:6px}
+.actions button{width:36px;height:36px;background:#1e1c2e;border:1px solid var(--b);border-radius:50%;color:#fff;cursor:pointer}
+.messages{flex:1;overflow-y:auto;padding:14px 12px 20px;background:radial-gradient(ellipse at top,#1a1a2e 0%,#050507 60%);display:flex;flex-direction:column;gap:8px;-webkit-overflow-scrolling:touch}
+.messages::-webkit-scrollbar{display:none}
+.dateSep{align-self:center;background:rgba(255,255,255,.08);padding:4px 12px;border-radius:20px;font-size:11px;color:#8b8ba7;margin:8px 0}
+.bubble{max-width:78%;padding:10px 14px;border-radius:18px;line-height:1.5;font-size:14px;word-wrap:break-word;animation:pop .2s ease}
+@keyframes pop{0%{transform:scale(.9);opacity:0}100%{transform:scale(1);opacity:1}}
+.bubble.in{align-self:flex-start;background:#1e1e2e;border:1px solid var(--b);border-bottom-right-radius:6px}
+.bubble.out{align-self:flex-end;background:linear-gradient(135deg,#7c3aed,#4f46e5);border-bottom-left-radius:6px;box-shadow:0 4px 15px rgba(124,58,237,.3)}
+.bubble .time{font-size:10px;opacity:.6;margin-top:4px;display:flex;gap:4px}
+.bubble.out .time{justify-content:flex-end}
+.inputBar{flex-shrink:0;background:#11111a;border-top:1px solid var(--b);padding:8px 10px;padding-bottom:calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;align-items:flex-end;z-index:20}
+.inputWrap{flex:1;background:#1e1e2e;border:1px solid var(--b);border-radius:24px;display:flex;align-items:center;padding:4px 8px;gap:6px}
+.inputWrap textarea{flex:1;background:transparent;border:0;color:#fff;outline:none;resize:none;max-height:100px;min-height:22px;font-size:14px;line-height:1.4;padding:6px 0;font-family:inherit}
+.iconBtn{width:34px;height:34px;border-radius:50%;background:transparent;border:0;color:#8b8ba7;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.sendBtn{width:44px;height:44px;min-width:44px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#4f46e5);border:0;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.emojiPanel{position:absolute;bottom:70px;right:10px;left:10px;background:#161626;border:1px solid var(--b);border-radius:18px;padding:10px;display:none;grid-template-columns:repeat(8,1fr);gap:6px;z-index:30;max-height:200px;overflow:auto}
+.emojiPanel.on{display:grid}
+.emojiPanel span{font-size:20px;text-align:center;cursor:pointer;padding:6px;border-radius:8px}
+.emojiPanel span:hover{background:#2a2840}
+</style>
+</head>
+<body>
+<div class="header">
+  <button class="back" onclick="goBack()">›</button>
+  <div class="avatar" id="avatar"><span id="avL">U</span><img id="avImg"><div class="online"></div></div>
+  <div class="info"><b id="name">جاري التحميل...</b><small>● متصل الآن</small></div>
+  <div class="actions"><button onclick="alert('قريباً 📞')">📞</button><button onclick="alert('قريباً 🎥')">🎥</button></div>
+</div>
+<div class="messages" id="messages"><div class="dateSep">جاري تحميل الرسائل...</div></div>
+<div class="emojiPanel" id="emojiPanel"></div>
+<div class="inputBar">
+  <div class="inputWrap">
+    <button class="iconBtn" id="emojiBtn">😊</button>
+    <textarea id="msgInput" placeholder="اكتب رسالة..." rows="1"></textarea>
+    <button class="iconBtn" onclick="document.getElementById('fileInp').click()">📎</button>
+    <input type="file" id="fileInp" accept="image/*" hidden>
+  </div>
+  <button class="sendBtn" id="sendBtn">➤</button>
+</div>
+<script type="module">
+import {auth,db} from '/firebase-config.js';
+import {onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {doc,getDoc,collection,addDoc,query,orderBy,onSnapshot,serverTimestamp,updateDoc} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+let cur=null,chatId=null,otherId=null;
+const messagesEl=document.getElementById('messages');
+const input=document.getElementById('msgInput');
+const params=new URLSearchParams(location.search);
+chatId=params.get('id');
+
+if(!chatId){ location.replace('/dm/'); }
+
+onAuthStateChanged(auth, async u=>{
+  if(!u){ location.replace('/login/'); return; }
+  cur=u;
+  const chatRef=doc(db,'chats',chatId);
+  const snap=await getDoc(chatRef);
+  if(!snap.exists()){
+    messagesEl.innerHTML='<div class="dateSep">الدردشة غير موجودة - ارجع واختر مستخدم</div>';
+    return;
+  }
+  const data=snap.data();
+  if(!data.users.includes(u.uid)){
+    messagesEl.innerHTML='<div class="dateSep">ليس لديك صلاحية لهذه الدردشة</div>';
+    return;
+  }
+  otherId=data.users.find(id=>id!==u.uid);
+  const otherData=data.usersInfo?.[otherId] || {name:'مستخدم',photo:''};
+  document.getElementById('name').textContent=otherData.name||'مستخدم';
+  document.getElementById('avL').textContent=(otherData.name||'U')[0].toUpperCase();
+  if(otherData.photo){
+    const img=document.getElementById('avImg');
+    img.src=otherData.photo; img.style.display='block';
+    document.getElementById('avL').style.display='none';
+  }
+  // جلب معلومات احدث من users
+  try{
+    const otherSnap=await getDoc(doc(db,'users',otherId));
+    if(otherSnap.exists()){
+      const od=otherSnap.data();
+      document.getElementById('name').textContent=od.displayName||od.name||otherData.name;
+      if(od.photo){
+        const img=document.getElementById('avImg');
+        img.src=od.photo; img.style.display='block';
+        document.getElementById('avL').style.display='none';
+      }
+    }
+  }catch(e){}
+  listenMessages();
+});
+
+function listenMessages(){
+  const q=query(collection(db,'chats',chatId,'messages'), orderBy('createdAt','asc'));
+  onSnapshot(q, snap=>{
+    messagesEl.innerHTML='';
+    let lastDate='';
+    if(snap.empty){
+      messagesEl.innerHTML='<div class="dateSep">ابدأ المحادثة الآن 👋</div>';
+      return;
+    }
+    snap.forEach(d=>{
+      const m=d.data();
+      const dateObj=m.createdAt?.toDate ? m.createdAt.toDate() : null;
+      const dateStr=dateObj ? dateObj.toLocaleDateString('ar-EG') : '';
+      if(dateStr && dateStr!==lastDate){ lastDate=dateStr; messagesEl.innerHTML+=`<div class="dateSep">${dateStr}</div>`; }
+      const isMe=m.senderId===cur.uid;
+      const time=dateObj ? dateObj.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}) : 'الآن';
+      const safeText=(m.text||'').replace(/</g,'&lt;');
+      messagesEl.innerHTML+=`<div class="bubble ${isMe?'out':'in'}">${m.image?`<img src="${m.image}" style="width:100%;border-radius:12px;margin-bottom:6px;max-width:240px"><br>`:''}<div>${safeText}</div><div class="time">${time} ${isMe? (m.read?'✓✓':'✓'):''}</div></div>`;
+    });
+    setTimeout(()=>{ messagesEl.scrollTop=messagesEl.scrollHeight; },100);
+  });
+}
+
+async function send(){
+  const text=input.value.trim();
+  if(!text || !cur) return;
+  input.value=''; input.style.height='22px';
+  try{
+    await addDoc(collection(db,'chats',chatId,'messages'),{text:text,senderId:cur.uid,createdAt:serverTimestamp(),read:false});
+    await updateDoc(doc(db,'chats',chatId),{lastMsg:text.slice(0,40),lastAt:serverTimestamp()});
+  }catch(e){ alert('خطأ: '+e.message); }
+}
+
+document.getElementById('sendBtn').onclick=send;
+input.onkeydown=e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } };
+input.oninput=()=>{ input.style.height='auto'; input.style.height=Math.min(input.scrollHeight,100)+'px'; };
+
+// زر الرجوع المصحح
+window.goBack=()=>{
+  if(history.length>1){ history.back(); setTimeout(()=>{ if(location.pathname.includes('chat.html')) location.href='/dm/'; },800); }
+  else{ location.href='/dm/'; }
+};
+
+// ايموجي
+const emojis=['😂','❤️','🔥','😍','👏','😭','🥺','😊','🙏','💔','😎','🤣','✨','👑','💎','🌹','😘','🤍','💜'];
+const panel=document.getElementById('emojiPanel');
+panel.innerHTML=emojis.map(e=>`<span>${e}</span>`).join('');
+panel.querySelectorAll('span').forEach(s=>s.onclick=()=>{ input.value+=s.textContent; input.focus(); panel.classList.remove('on'); });
+document.getElementById('emojiBtn').onclick=()=>panel.classList.toggle('on');
+document.addEventListener('click',e=>{ if(!panel.contains(e.target) && e.target.id!=='emojiBtn') panel.classList.remove('on'); });
+
+// صورة
+document.getElementById('fileInp').onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const reader=new FileReader();
+  reader.onload=async(ev)=>{
+    try{
+      await addDoc(collection(db,'chats',chatId,'messages'),{text:'📷 صورة',image:ev.target.result,senderId:cur.uid,createdAt:serverTimestamp()});
+      await updateDoc(doc(db,'chats',chatId),{lastMsg:'📷 صورة',lastAt:serverTimestamp()});
+    }catch(err){ alert(err.message); }
+  };
+  reader.readAsDataURL(f);
+};
+</script>
+</body>
+</html>
