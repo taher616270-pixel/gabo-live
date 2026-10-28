@@ -1,111 +1,128 @@
-<!doctype html><html lang="ar" dir="rtl"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>الدخول — GABO LIVE</title>
-<link rel="stylesheet" href="/assets/style/style.css">
-<style>
-body{min-height:100vh;display:grid;place-items:center;background:#08070d;color:#fff;font-family:system-ui;padding:20px}
-.card{width:min(440px,100%);background:rgba(17,12,29,.9);border:1px solid #ffffff20;border-radius:20px;padding:26px}
-.page{display:none}.page.active{display:block}
-input{width:100%;padding:12px;border-radius:12px;border:1px solid #ffffff22;background:#0d0b15;color:#fff;margin:8px 0 14px}
-.btn{width:100%;padding:13px;border-radius:12px;border:0;cursor:pointer;font-weight:800;margin-top:8px}
-.btn.primary{background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff}
-.btn.ghost{background:transparent;border:1px solid #ffffff20;color:#aaa3bd}
-.tabs{display:flex;gap:8px;margin-bottom:18px}
-.tabs button{flex:1}
-.tabs button.active{background:#7c3aed;color:#fff}
-.muted{color:#aaa3bd;font-size:13px;text-align:center;margin-top:12px;cursor:pointer}
-.error{color:#fb7185;font-size:13px;margin:6px 0}
-.success{color:#4ade80;font-size:13px;margin:6px 0}
-</style></head><body>
-<div class="card">
-<div class="tabs">
-<button class="btn ghost active" id="t-login" onclick="show('login')">دخول</button>
-<button class="btn ghost" id="t-signup" onclick="show('signup')">حساب جديد</button>
-</div>
+'use client'
+import { useState, useEffect } from 'react'
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  OAuthProvider,
+  sendPasswordResetEmail
+} from 'firebase/auth'
+import { auth } from '@/lib/firebase' // غير المسار حسب مشروعك
+import { useRouter } from 'next/navigation'
 
-<!-- صفحة 1: دخول -->
-<div class="page active" id="p-login">
-<h3>مرحباً بعودتك 👋</h3>
-<div id="err-login" class="error"></div>
-<input id="l-email" type="email" placeholder="البريد">
-<input id="l-pass" type="password" placeholder="كلمة السر">
-<button class="btn primary" onclick="doLogin()">دخول</button>
-<p class="muted" onclick="show('forgot')">نسيت كلمة السر؟</p>
-</div>
+export default function LoginPage() {
+  const [isLogin, setIsLogin] = useState(true)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [isIOS, setIsIOS] = useState(false)
+  const router = useRouter()
 
-<!-- صفحة 2: انشاء حساب منعزلة -->
-<div class="page" id="p-signup">
-<h3>إنشاء حساب جديد ✨</h3>
-<div id="err-signup" class="error"></div>
-<div id="ok-signup" class="success"></div>
-<input id="s-name" placeholder="اسمك">
-<input id="s-email" type="email" placeholder="البريد">
-<input id="s-pass" type="password" placeholder="كلمة سر (6+ أحرف)">
-<button class="btn primary" onclick="doSignup()">إنشاء حساب</button>
-<p class="muted" onclick="show('login')">عندك حساب؟ سجل دخول</p>
-</div>
+  // كشف الايفون
+  useEffect(() => {
+    const ua = navigator.userAgent
+    const ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+    setIsIOS(ios)
+  }, [])
 
-<!-- صفحة 3: نسيت كلمة السر منعزلة -->
-<div class="page" id="p-forgot">
-<h3>إعادة تعيين 🔑</h3>
-<div id="err-forgot" class="error"></div>
-<div id="ok-forgot" class="success"></div>
-<p style="color:#aaa3bd;font-size:14px">سنرسل رابط إعادة التعيين لبريدك</p>
-<input id="f-email" type="email" placeholder="بريدك المسجل">
-<button class="btn primary" onclick="doForgot()">إرسال الرابط</button>
-<p class="muted" onclick="show('login')">← رجوع للدخول</p>
-</div>
+  // 1- زر دخول الى المنصة (ايميل وباسورد)
+  const handleEmailAuth = async () => {
+    if(!email || !password) return alert('عبي البريد وكلمة السر')
+    setLoading(true)
+    try {
+      if(isLogin) {
+        await signInWithEmailAndPassword(auth, email, password)
+      } else {
+        await createUserWithEmailAndPassword(auth, email, password)
+      }
+      router.push('/')
+    } catch (e:any) {
+      alert(e.message)
+    }
+    setLoading(false)
+  }
 
-</div>
-<script type="module">
-import { auth, db } from "/assets/firebase-config.js";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  // 2- زر Google
+  const handleGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider()
+      await signInWithPopup(auth, provider)
+      router.push('/')
+    } catch (e:any) { alert(e.message) }
+  }
 
-window.show = (id)=>{
- document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
- document.getElementById('p-'+id).classList.add('active');
- document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
- const tb = document.getElementById('t-'+id);
- if(tb) tb.classList.add('active');
+  // 3- زر Apple (يشتغل فقط على الايفون)
+  const handleApple = async () => {
+    try {
+      const provider = new OAuthProvider('apple.com')
+      await signInWithPopup(auth, provider)
+      router.push('/')
+    } catch (e:any) { alert(e.message) }
+  }
+
+  // 4- نسيت كلمة السر
+  const handleForgot = async () => {
+    if(!email) return alert('اكتب بريدك أول في الخانة فوق')
+    try {
+      await sendPasswordResetEmail(auth, email)
+      alert('أرسلنا لك رابط إعادة التعيين - شيك إيميلك باسم GABO LIVE')
+    } catch (e:any) { alert(e.message) }
+  }
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-4">
+      <div className="w-full max-w-[380px] bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-2xl border border-white/10 rounded-[24px] p-6 shadow-2xl">
+        
+        {/* الهيدر */}
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-500/20 text-[10px] text-purple-300">
+            LIVE <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-pulse"></div>
+          </div>
+          <h1 className="font-black tracking-[0.2em] text-white">GABO LIVE</h1>
+        </div>
+
+        {/* تبويب دخول / حساب جديد */}
+        <div className="flex bg-black/30 rounded-xl p-1 mb-6">
+          <button onClick={()=>setIsLogin(true)} className={`flex-1 h-9 rounded-lg text-sm transition ${isLogin ? 'bg-white text-black font-bold' : 'text-white/50'}`}>دخول</button>
+          <button onClick={()=>setIsLogin(false)} className={`flex-1 h-9 rounded-lg text-sm transition ${!isLogin ? 'bg-white text-black font-bold' : 'text-white/50'}`}>حساب جديد</button>
+        </div>
+
+        <h2 className="text-center text-white font-bold text-lg">👋 مرحباً بعودتك</h2>
+        <p className="text-center text-white/40 text-xs mb-5">ادخل وشارك صوتك مع العالم</p>
+
+        {/* الحقول */}
+        <div className="space-y-3">
+          <div className="relative">
+            <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="البريد الإلكتروني" className="w-full h-12 pr-10 pl-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right placeholder:text-white/30 outline-none focus:border-purple-500/50" />
+            <span className="absolute right-3 top-3.5 text-white/30">📧</span>
+          </div>
+          <div className="relative">
+            <input value={password} onChange={e=>setPassword(e.target.value)} type="password" placeholder="كلمة السر" className="w-full h-12 pr-10 pl-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right placeholder:text-white/30 outline-none focus:border-purple-500/50" />
+            <span className="absolute right-3 top-3.5 text-white/30">🔒</span>
+          </div>
+
+          <button onClick={handleEmailAuth} disabled={loading} className="w-full h-12 rounded-xl bg-gradient-to-r from-[#8a5cff] to-[#b48aff] text-white font-bold hover:opacity-90 transition">
+            {loading ? 'جاري...' : '🚀 دخول إلى المنصة'}
+          </button>
+        </div>
+
+        <div className="flex items-center gap-3 my-4">
+          <div className="h-[1px] flex-1 bg-white/10"></div>
+          <span className="text-white/30 text-[11px]">أو المتابعة عبر</span>
+          <div className="h-[1px] flex-1 bg-white/10"></div>
+        </div>
+
+        {/* ازرار السوشل */}
+        <div className={`grid gap-3 ${isIOS ? 'grid-cols-2' : 'grid-cols-1'}`}>
+          <button onClick={handleGoogle} className="h-12 rounded-xl bg-white/[0.06] border border-white/10 text-white text-sm">Google</button>
+          {isIOS && <button onClick={handleApple} className="h-12 rounded-xl bg-white/[0.06] border border-white/10 text-white text-sm">Apple</button>}
+        </div>
+
+        <button onClick={handleForgot} className="w-full text-center text-[11px] text-purple-300/70 mt-4 hover:text-purple-300">
+          نسيت كلمة السر؟ استعادة
+        </button>
+      </div>
+    </div>
+  )
 }
-
-window.doLogin = async()=>{
- const e=document.getElementById('l-email').value.trim();
- const p=document.getElementById('l-pass').value;
- const err=document.getElementById('err-login');
- if(!e||!p){err.textContent='أكمل البيانات';return}
- try{ await signInWithEmailAndPassword(auth,e,p); location.href='/app/public/'; }
- catch(ex){ err.textContent=ex.message; }
-}
-
-window.doSignup = async()=>{
- const name=document.getElementById('s-name').value.trim();
- const e=document.getElementById('s-email').value.trim();
- const p=document.getElementById('s-pass').value;
- const err=document.getElementById('err-signup');
- const ok=document.getElementById('ok-signup');
- err.textContent=''; ok.textContent='';
- if(!name||!e||p.length<6){err.textContent='أكمل البيانات (كلمة السر 6+ أحرف)';return}
- try{
-  const cred=await createUserWithEmailAndPassword(auth,e,p);
-  await updateProfile(cred.user,{displayName:name});
-  await setDoc(doc(db,'users',cred.user.uid),{name,email:e,createdAt:serverTimestamp(),role:'user'},{merge:true});
-  ok.textContent='تم إنشاء حسابك ✅ جاري الدخول...';
-  setTimeout(()=>location.href='/app/public/',900);
- }catch(ex){ err.textContent=ex.message; }
-}
-
-window.doForgot = async()=>{
- const e=document.getElementById('f-email').value.trim();
- const err=document.getElementById('err-forgot');
- const ok=document.getElementById('ok-forgot');
- err.textContent=''; ok.textContent='';
- if(!e){err.textContent='أدخل بريدك';return}
- try{
-  await sendPasswordResetEmail(auth,e);
-  ok.textContent='تم إرسال رابط إعادة التعيين 📩 تفقد بريدك';
- }catch(ex){ err.textContent=ex.message; }
-}
-</script>
-</body></html>
