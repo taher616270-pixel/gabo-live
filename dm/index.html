@@ -8,11 +8,11 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
 .header{height:64px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px;padding:0 12px;position:fixed;top:0;left:0;right:0;z-index:10}
-.back{width:36px;height:36px;background:#161426;border:1px solid var(--b);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px}
+.back{width:36px;height:36px;background:#161426;border:1px solid var(--b);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;z-index:5}
 .headerAvatar{width:40px;height:40px;border-radius:50%;overflow:hidden;background:#222;flex-shrink:0;border:1px solid var(--b)}
 .headerAvatar img{width:100%;height:100%;object-fit:cover;display:block}
 .headerIcon{width:40px;height:40px;border-radius:50%;background:#1e1c32;border:1px solid var(--b);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.hInfo{flex:1;overflow:hidden;cursor:pointer}
+.hInfo{flex:1;overflow:hidden}
 .badge{font-size:11px;background:#ff3b30;color:#fff;min-width:20px;height:20px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px;font-weight:900}
 .tabs{position:fixed;top:64px;left:0;right:0;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;z-index:9;padding:0 12px;gap:12px}
 .tabs button{flex:1;background:transparent;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:12px 0;font-size:13px;font-weight:800;cursor:pointer}
@@ -22,19 +22,18 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 .list{flex:1;overflow:auto;padding:156px 10px 90px 10px;display:flex;flex-direction:column;gap:8px}
 .chatItem{background:var(--card);border:1px solid var(--b);border-radius:14px;padding:12px;display:flex;gap:10px;align-items:center;cursor:pointer}
 .userItem{background:var(--card);border:1px solid var(--b);border-radius:14px;padding:12px;display:flex;gap:12px;align-items:center}
-.userItem .info{flex:1;overflow:hidden}
 .actionBtn{background:var(--v);border:0;color:#fff;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0}
-.actionBtn.outline{background:transparent;border:1px solid var(--b);color:#fff}
 .chat{flex:1;overflow:auto;padding:76px 12px 130px 12px;display:flex;flex-direction:column;gap:10px}
 .bubble{max-width:78%;padding:10px 14px;border-radius:18px;background:#1e1c2e;border:1px solid var(--b);font-size:14px;word-break:break-word;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .bubble.me{align-self:flex-end;background:var(--v);border-color:var(--v)}
-.southFlag{width:32px;height:22px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid rgba(255,255,255,.3);flex-shrink:0;vertical-align:middle}
+.southFlag{width:32px;height:22px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid rgba(255,255,255,.3);flex-shrink:0}
 .southFlag svg{width:100%;height:100%;display:block}
 .inputBar{position:fixed;bottom:84px;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);padding:10px;display:flex;gap:8px;z-index:20;align-items:center}
-.msgBox{flex:1;background:#1a182a;border:1px solid var(--b);border-radius:20px;padding:10px 14px;min-height:44px;max-height:90px;overflow-y:auto;display:flex;align-items:center;flex-wrap:wrap;gap:2px;line-height:22px;outline:0}
-.msgBox:empty:before{content:attr(data-placeholder);color:#6b6b7a;pointer-events:none}
-.msgBox .inlineSouth{width:22px;height:15px;border-radius:2px;overflow:hidden;display:inline-block;vertical-align:middle;border:1px solid rgba(255,255,255,.3);margin:0 2px}
-.msgBox .inlineSouth svg{width:100%;height:100%;display:block}
+.inputWrap{flex:1;background:#1a182a;border:1px solid var(--b);border-radius:20px;padding:8px 12px;min-height:44px;max-height:90px;overflow-y:auto;display:flex;align-items:center;flex-wrap:wrap;gap:4px}
+.inputWrap:empty:before{content:attr(data-placeholder);color:#6b6b7a}
+.inputWrap .txt{color:#fff;font-size:16px;line-height:22px;white-space:pre-wrap;word-break:break-word}
+.inputWrap .flagInInput{width:22px;height:15px;border-radius:2px;overflow:hidden;display:inline-block;vertical-align:middle;border:1px solid rgba(255,255,255,.4);margin:0 2px;flex-shrink:0}
+.inputWrap .flagInInput svg{width:100%;height:100%;display:block}
 .iconBtn{width:40px;height:40px;border-radius:50%;background:#1e1c2e;border:1px solid var(--b);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;flex-shrink:0}
 .send{width:44px;height:44px;border-radius:50%;background:var(--v);border:0;color:#fff;font-size:20px;cursor:pointer;flex-shrink:0}
 .emojiPanel{position:fixed;bottom:130px;left:8px;right:8px;background:#161426;border:1px solid var(--b);border-radius:18px;max-height:340px;display:none;flex-direction:column;z-index:2000;overflow:hidden}
@@ -45,8 +44,8 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 .emojiGrid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;padding:8px;overflow-y:auto}
 .emojiGrid .eItem{font-size:22px;padding:8px;text-align:center;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center;min-height:40px}
 .emojiGrid .eItem:hover{background:#1e1c2e}
-.flagSvg{width:28px;height:19px;border-radius:3px;overflow:hidden;border:1px solid #555;display:block;background:#000}
-.flagSvg svg{width:100%;height:100%;display:block}
+.flagBox{width:28px;height:19px;border-radius:3px;overflow:hidden;border:1px solid #555;background:#000;display:block}
+.flagBox svg{width:100%;height:100%;display:block}
 .bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;z-index:1000;direction:ltr}
 .bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
 .bottomNav a.on{color:#fff}
@@ -65,13 +64,13 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 <div class="back" onclick="handleBack()">‹</div>
 <div class="headerAvatar" id="hAvatarWrap" style="display:none"><img id="hImg"></div>
 <div class="headerIcon" id="hIcon">💬</div>
-<div class="hInfo" id="hInfoClick"><b><span id="hName">دردشة خاصة</span> <span id="countBadge" class="badge" style="display:none">0</span></b><small id="hStatus">محادثاتي • أصدقائي</small></div>
+<div class="hInfo"><b><span id="hName">دردشة خاصة</span> <span id="countBadge" class="badge" style="display:none">0</span></b><small id="hStatus">محادثاتي • أصدقائي</small></div>
 </div>
 <div class="tabs" id="tabs"><button id="tabChats" class="on" onclick="switchTab('chats')">💬 محادثاتي <span id="tabCount"></span></button><button id="tabFriends" onclick="switchTab('friends')">👥 أصدقائي</button></div>
 <div class="searchBox" id="searchBox"><input id="searchInput" placeholder="🔍 بحث..." oninput="onSearch()"></div>
 <div class="list" id="listView"></div><div class="chat" id="chatView" style="display:none"></div>
-<div class="emojiPanel" id="emojiPanel"><div class="emojiTabs"><button class="on" onclick="showEmojiCat(event,'smile')">😊 وجوه</button><button onclick="showEmojiCat(event,'flags')">🏳️ أعلام</button><button onclick="showEmojiCat(event,'love')">❤️ حب</button><button onclick="showEmojiCat(event,'all')">✨ الكل</button></div><div class="emojiGrid" id="emojiGrid"></div></div>
-<div class="inputBar" id="inputBar" style="display:none"><button class="iconBtn" onclick="toggleEmoji()">😊</button><div id="msgBox" class="msgBox" contenteditable="true" data-placeholder="اكتب رسالة..."></div><button class="send" onclick="sendMsg()">➤</button></div>
+<div class="emojiPanel" id="emojiPanel"><div class="emojiTabs"><button class="on" onclick="showEmojiCat(event,'smile')">😊 وجوه</button><button onclick="showEmojiCat(event,'flags')">🏳️ أعلام</button><button onclick="showEmojiCat(event,'love')">❤️ حب</button></div><div class="emojiGrid" id="emojiGrid"></div></div>
+<div class="inputBar" id="inputBar" style="display:none"><button class="iconBtn" onclick="toggleEmoji()">😊</button><div id="inputWrap" class="inputWrap" contenteditable="true" data-placeholder="اكتب رسالة..."></div><button class="send" onclick="sendMsg()">➤</button></div>
 <button class="fab" id="fabBtn" onclick="openAddPeople()">+</button>
 <div class="bottomNav"><a href="/profile/"><span class="ic">👤</span><span>حسابي</span></a><a href="/dm/" class="on"><span class="ic">🔒</span><span>خاص</span><span id="navCount" class="badgeNav" style="display:none">0</span></a><a href="/create/" class="plus"><span class="ic">+</span></a><a href="/posts/"><span class="ic">📄</span><span>منشورات</span></a><a href="/app/"><span class="ic">🏠</span><span>الرئيسية</span></a></div>
 <div class="modal" id="addModal"><div class="modalTop"><div class="back" onclick="closeAddPeople()">‹</div><b>إضافة أشخاص</b></div><div style="padding:10px"><input id="addSearch" placeholder="🔍 ابحث..." oninput="filterAdd()" style="width:100%;background:#1a182a;border:1px solid #2a2840;border-radius:20px;padding:10px 14px;color:#fff;outline:0"></div><div class="modalList" id="addList"></div></div>
@@ -89,86 +88,37 @@ window.switchTab=(tab)=>{currentTab=tab;document.getElementById('tabChats').clas
 window.onSearch=()=>{if(currentTab==='chats')renderChats();if(currentTab==='friends')renderFriends();}
 function filterBySearch(arr){const q=document.getElementById('searchInput').value.toLowerCase().trim();if(!q)return arr;return arr.filter(u=>(u.name||'').toLowerCase().includes(q));}
 
-window.toggleEmoji=()=>{document.getElementById('emojiPanel').classList.toggle('on');if(document.getElementById('emojiPanel').classList.contains('on'))showEmojiCat(null,'smile');}
+window.toggleEmoji=()=>{const p=document.getElementById('emojiPanel');p.classList.toggle('on');if(p.classList.contains('on'))showEmojiCat(null,'smile');}
 window.showEmojiCat=(e,cat)=>{
   if(e){e.target.closest('.emojiTabs').querySelectorAll('button').forEach(b=>b.classList.remove('on'));e.target.classList.add('on');}
   const grid=document.getElementById('emojiGrid');grid.innerHTML='';
-  let flags=['🇸🇦','🇾🇪','🇦🇪','🇴🇲','🇶🇦','🇰🇼','🇧🇭','🇪🇬','🇯🇴','🇱🇧','🇵🇸','🇮🇶','🇸🇾','🇹🇷','🇵🇰','🇺🇸','🇬🇧','🇩🇪','🇫🇷','🇮🇹','🇪🇸','🇨🇦','🇦🇺','🇧🇷','🇷🇺','🇨🇳','🇯🇵','🇰🇷','🇮🇳','🇸🇴','🇸🇩'];
-  let smile=['😀','😂','😍','🥰','😊','😎','🤩','😭','😢','😡','🤔','👍','👎','👏','🙏','💪','🔥','❤️','💜','✨','🎉','🥳','😴','🤤','🤫','🤐','🥺','😋','😜','🤣','😇','🤠','🥶'];
+  let flags=['🇸🇦','🇾🇪','🇦🇪','🇴🇲','🇶🇦','🇰🇼','🇧🇭','🇪🇬','🇯🇴','🇱🇧','🇵🇸','🇮🇶','🇸🇾','🇹🇷','🇵🇰','🇺🇸','🇬🇧','🇩🇪','🇫🇷','🇮🇹','🇪🇸','🇨🇦','🇦🇺','🇧🇷','🇷🇺','🇨🇳','🇯🇵','🇰🇷','🇮🇳','🇸🇴'];
+  let smile=['😀','😂','😍','🥰','😊','😎','🤩','😭','😢','😡','🤔','👍','👎','👏','🙏','💪','🔥','❤️','💜','✨','🎉','🥳','😴','🤤','🤫','🤐','🥺','😋','😜','🤣','😇','🤠'];
   let love=['❤️','🧡','💛','💚','💙','💜','🖤','🤍','💔','❣️','💕','💞','💓','💗','💖','💝','😘','🥰','😍','🤗','💋','💌','🌹','🌷','💐'];
-  let list = cat==='smile'?smile : cat==='love'?love : cat==='flags'?flags : [...smile,...love];
+  let list = cat==='smile'?smile : cat==='love'?love : flags;
   list.forEach(em=>{
     const d=document.createElement('div');d.className='eItem';d.textContent=em;
-    d.onclick=()=>insertEmoji(em);
+    d.onclick=()=>insertText(em);
     grid.appendChild(d);
   });
   if(cat==='flags'){
     const south=document.createElement('div');south.className='eItem';
-    south.innerHTML=`<span class="flagSvg">${SOUTH_SVG}</span>`;
-    south.onclick=()=>insertSouthFlag();
-    // ترتيب مثل باقي الاعلام - ثالث واحد
+    south.innerHTML=`<span class="flagBox">${SOUTH_SVG}</span>`;
+    south.onclick=()=>insertSouth();
     grid.insertBefore(south, grid.children[2]||null);
   }
 }
-
-function placeCaretAtEnd(el){
-  el.focus();
-  const range=document.createRange();
-  range.selectNodeContents(el);
-  range.collapse(false);
-  const sel=window.getSelection();
-  sel.removeAllRanges();
-  sel.addRange(range);
+function insertText(text){
+  const wrap=document.getElementById('inputWrap');
+  wrap.focus();
+  document.execCommand('insertText',false,text);
 }
-function insertEmoji(text){
-  const box=document.getElementById('msgBox');
-  box.focus();
-  const sel=window.getSelection();
-  if(!sel||sel.rangeCount===0){box.appendChild(document.createTextNode(text));placeCaretAtEnd(box);return;}
-  const range=sel.getRangeAt(0);
-  // اذا المؤشر برا الصندوق، حطه بالاخير
-  if(!box.contains(range.commonAncestorContainer)){
-    placeCaretAtEnd(box);
-    document.execCommand('insertText',false,text);
-    return;
-  }
-  range.deleteContents();
-  range.insertNode(document.createTextNode(text));
-  range.collapse(false);
-  sel.removeAllRanges();sel.addRange(range);
-  box.focus();
-}
-function insertSouthFlag(){
-  const box=document.getElementById('msgBox');
-  box.focus();
-  const span=document.createElement('span');
-  span.className='inlineSouth';
-  span.setAttribute('data-south','1');
-  span.innerHTML=SOUTH_SVG;
-  span.contentEditable=false;
-  const sel=window.getSelection();
-  if(!sel||sel.rangeCount===0){
-    box.appendChild(span);
-    box.appendChild(document.createTextNode('\u00A0'));
-    placeCaretAtEnd(box);
-    return;
-  }
-  let range=sel.getRangeAt(0);
-  if(!box.contains(range.commonAncestorContainer)){
-    box.appendChild(span);
-    box.appendChild(document.createTextNode('\u00A0'));
-    placeCaretAtEnd(box);
-    return;
-  }
-  range.deleteContents();
-  range.insertNode(span);
-  // مسافة بعد العلم عشان تقدر تكتب جنبه مباشرة
-  const space=document.createTextNode('\u00A0');
-  span.after(space);
-  range.setStartAfter(space);
-  range.collapse(true);
-  sel.removeAllRanges();sel.addRange(range);
-  box.focus();
+function insertSouth(){
+  const wrap=document.getElementById('inputWrap');
+  wrap.focus();
+  const html=`<span class="flagInInput" data-south="1">${SOUTH_SVG}</span>&nbsp;`;
+  document.execCommand('insertHTML',false,html);
+  wrap.focus();
 }
 
 async function loadChatsData(){
@@ -215,11 +165,6 @@ async function loadFriendsData(){try{const mySnap=await getDoc(doc(db,'users',ui
 
 onAuthStateChanged(auth,async u=>{
   if(!u){location.href='/login/';return}uid=u.uid;loadChatsData();loadFriendsData();
-  // زر البروفايل ما يرجع للخاص
-  document.getElementById('hInfoClick').onclick=()=>{
-    if(targetUid){location.href='/profile/?uid='+targetUid;}
-    else{location.href='/profile/';}
-  };
   if(targetUid){
     document.getElementById('tabs').style.display='none';document.getElementById('searchBox').style.display='none';document.getElementById('fabBtn').style.display='none';document.getElementById('listView').style.display='none';document.getElementById('chatView').style.display='flex';document.getElementById('inputBar').style.display='flex';
     document.getElementById('hAvatarWrap').style.display='flex';document.getElementById('hIcon').style.display='none';
@@ -239,19 +184,17 @@ onAuthStateChanged(auth,async u=>{
 });
 
 window.sendMsg=async()=>{
-  const box=document.getElementById('msgBox');
-  if(!box||!chatId)return;
-  // حول اعلام الجنوب في الكتابة الى placeholder
-  const clone=box.cloneNode(true);
-  clone.querySelectorAll('[data-south]').forEach(el=>{el.replaceWith(SOUTH_PH);});
+  const wrap=document.getElementById('inputWrap');
+  if(!wrap||!chatId)return;
+  const clone=wrap.cloneNode(true);
+  clone.querySelectorAll('[data-south]').forEach(el=>el.replaceWith(SOUTH_PH));
   let text=clone.innerText.replace(/\u00A0/g,' ').trim();
-  // اذا فاضي
   if(!text) return;
-  box.innerHTML='';document.getElementById('emojiPanel').classList.remove('on');
+  wrap.innerHTML='';document.getElementById('emojiPanel').classList.remove('on');
   let preview=text.includes(SOUTH_PH)?'🏴 علم الجنوب':text;
   await addDoc(collection(db,'privateChats',chatId,'messages'),{text:text,uid:uid,createdAt:serverTimestamp()});
   await setDoc(doc(db,'privateChats',chatId),{lastText:preview,lastAt:serverTimestamp(),participants:[uid,targetUid],totalMessages:increment(1)},{merge:true});
-  box.focus();
+  wrap.focus();
 }
 </script>
 </body>
