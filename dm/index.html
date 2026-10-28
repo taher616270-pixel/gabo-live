@@ -14,31 +14,52 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 .hInfo{flex:1;overflow:hidden}
 .hInfo b{font-size:14px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hInfo small{font-size:11px;color:var(--muted)}
-.list{flex:1;overflow:auto;padding:76px 10px 90px 10px;display:flex;flex-direction:column;gap:8px}
+.tabs{position:fixed;top:64px;left:0;right:0;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;z-index:9;padding:0 12px;gap:12px}
+.tabs button{flex:1;background:transparent;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:12px 0;font-size:13px;font-weight:800;cursor:pointer}
+.tabs button.on{color:#fff;border-bottom-color:var(--v)}
+.searchBox{position:fixed;top:106px;left:0;right:0;background:var(--bg);padding:8px 12px;z-index:8}
+.searchBox input{width:100%;background:#1a182a;border:1px solid var(--b);border-radius:20px;padding:10px 14px;color:#fff;outline:0;font-size:13px}
+.list{flex:1;overflow:auto;padding:156px 10px 90px 10px;display:flex;flex-direction:column;gap:8px}
 .chatItem{background:var(--card);border:1px solid var(--b);border-radius:14px;padding:12px;display:flex;gap:10px;align-items:center;cursor:pointer}
+.chatItem:hover{border-color:var(--v)}
+.userItem{background:var(--card);border:1px solid var(--b);border-radius:14px;padding:12px;display:flex;gap:12px;align-items:center}
+.userItem .info{flex:1;overflow:hidden}
+.userItem b{font-size:13px;display:block}
+.userItem small{color:var(--muted);font-size:11px}
+.addBtn{background:var(--v);border:0;color:#fff;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0}
 .chat{flex:1;overflow:auto;padding:76px 12px 90px 12px;display:flex;flex-direction:column;gap:10px}
 .bubble{max-width:78%;padding:10px 14px;border-radius:18px;background:#1e1c2e;border:1px solid var(--b);font-size:14px;word-break:break-word}
 .bubble.me{align-self:flex-end;background:var(--v);border-color:var(--v)}
 .inputBar{position:fixed;bottom:84px;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);padding:10px;display:flex;gap:8px;z-index:20}
 .inputBar input{flex:1;background:#1a182a;border:1px solid var(--b);border-radius:20px;padding:12px 14px;color:#fff;outline:0;font-size:14px}
 .send{width:44px;height:44px;border-radius:50%;background:var(--v);border:0;color:#fff;font-size:20px;cursor:pointer;flex-shrink:0}
-/* شريط تحت */
 .bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;padding-bottom:env(safe-area-inset-bottom);z-index:1000;direction:ltr}
 .bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
 .bottomNav a.on{color:#fff}
 .bottomNav a .ic{font-size:22px;line-height:1;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
 .bottomNav a.plus .ic{background:var(--v);color:#fff;width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-16px;box-shadow:0 4px 12px rgba(124,58,237,.4)}
+.fab{position:fixed;bottom:96px;left:16px;width:56px;height:56px;border-radius:50%;background:var(--v);border:0;color:#fff;font-size:28px;display:flex;align-items:center;justify-content:center;z-index:50;box-shadow:0 4px 16px rgba(124,58,237,.5);cursor:pointer}
 </style>
 </head>
 <body>
 <div class="header">
-<div class="back" onclick="if(history.length>1)history.back();else location.href='/app/'">‹</div>
+<div class="back" onclick="if(document.getElementById('chatView').style.display==='flex'){localStorage.removeItem('last_dm_uid'); location.href='/dm/';}else if(history.length>1)history.back();else location.href='/app/'">‹</div>
 <div class="avatar" id="hAvatar"><img id="hImg"></div>
 <div class="hInfo"><b id="hName">دردشة خاصة</b><small id="hStatus">محادثاتي</small></div>
 </div>
+
+<div class="tabs" id="tabs">
+<button id="tabChats" class="on" onclick="switchTab('chats')">💬 محادثاتي</button>
+<button id="tabUsers" onclick="switchTab('users')">👥 إضافة أشخاص</button>
+</div>
+
+<div class="searchBox" id="searchBox"><input id="searchInput" placeholder="🔍 ابحث عن اسم شخص..." oninput="filterUsers()"></div>
+
 <div class="list" id="listView"></div>
 <div class="chat" id="chatView" style="display:none"></div>
 <div class="inputBar" id="inputBar" style="display:none"><input id="msgInput" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMsg()"><button class="send" onclick="sendMsg()">➤</button></div>
+
+<button class="fab" id="fabBtn" onclick="switchTab('users')" title="إضافة أشخاص">+</button>
 
 <div class="bottomNav">
   <a href="/profile/"><span class="ic">👤</span><span>حسابي</span></a>
@@ -51,54 +72,141 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 <script type="module">
 import {auth,db} from '/firebase-config.js';
 import {onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import {doc,getDoc,setDoc,collection,addDoc,serverTimestamp,onSnapshot,query,orderBy,where} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import {doc,getDoc,setDoc,collection,addDoc,serverTimestamp,onSnapshot,query,orderBy,where,getDocs,limit} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-let uid=null, targetUid=null, chatId=null;
-
-// يقرأ الـ uid من كل الاحتمالات
+let uid=null, targetUid=null, chatId=null, currentTab='chats', allUsers=[];
 function getTargetUid(){
   const p=new URLSearchParams(location.search);
   return p.get('uid') || p.get('id') || localStorage.getItem('last_dm_uid');
 }
 targetUid=getTargetUid();
 
+window.switchTab=(tab)=>{
+  currentTab=tab;
+  document.getElementById('tabChats').classList.toggle('on', tab==='chats');
+  document.getElementById('tabUsers').classList.toggle('on', tab==='users');
+  document.getElementById('searchBox').style.display = (tab==='users' || tab==='chats') ? 'block' : 'none';
+  if(tab==='chats') loadChats();
+  if(tab==='users') loadAllUsers();
+}
+
+window.filterUsers=()=>{
+  const q=document.getElementById('searchInput').value.trim().toLowerCase();
+  const filtered = !q ? allUsers : allUsers.filter(u=> (u.name||'').toLowerCase().includes(q) );
+  renderUsers(filtered);
+}
+
+function renderUsers(users){
+  const list=document.getElementById('listView');
+  list.innerHTML='';
+  if(users.length===0){
+    list.innerHTML='<div style="text-align:center;color:#8b8ba7;margin-top:60px">لا يوجد نتائج</div>';
+    return;
+  }
+  users.forEach(u=>{
+    if(u.uid===uid) return;
+    const div=document.createElement('div');
+    div.className='userItem';
+    div.innerHTML=`<div class="avatar"><img src="${u.photo}"></div><div class="info"><b>${u.name}</b><small>${u.country} ${u.verified? ' ✓':''}</small><br><small style="font-family:monospace">ID: ${u.gaboId}</small></div><button class="addBtn" onclick="startChat('${u.uid}')">💬 خاص</button>`;
+    list.appendChild(div);
+  });
+}
+
+async function loadAllUsers(){
+  const list=document.getElementById('listView');
+  list.innerHTML='<div style="text-align:center;color:#8b8ba7;margin-top:40px">جاري تحميل كل الأشخاص...</div>';
+  try{
+    const snap=await getDocs(query(collection(db,'users'), limit(100)));
+    allUsers=[];
+    snap.forEach(d=>{
+      const data=d.data();
+      allUsers.push({
+        uid:d.id,
+        name:data.displayName||data.name||'مستخدم',
+        photo:data.photoURL||data.photo||data.avatar||'https://i.pravatar.cc/100?u='+d.id,
+        country:data.countryName||data.country||'',
+        gaboId:data.gaboId||d.id.slice(0,8),
+        verified:data.verified||false
+      });
+    });
+    renderUsers(allUsers);
+  }catch(e){
+    list.innerHTML='<div style="text-align:center;color:#ef4444;margin-top:40px">خطأ: '+e.message+'</div>';
+  }
+}
+
+function loadChats(){
+  const list=document.getElementById('listView');
+  list.innerHTML='<div style="text-align:center;color:#8b8ba7;margin-top:40px">جاري التحميل...</div>';
+  try{
+    const q=query(collection(db,'privateChats'), where('participants','array-contains', uid));
+    onSnapshot(q, async snap=>{
+      list.innerHTML='';
+      if(snap.empty){
+        list.innerHTML='<div style="text-align:center;color:#8b8ba7;margin-top:80px;line-height:1.8">لا يوجد محادثات بعد<br><button onclick="switchTab(\'users\')" style="margin-top:12px;background:#7c3aed;border:0;color:#fff;padding:10px 18px;border-radius:20px">👥 إضافة أشخاص</button></div>';
+        return;
+      }
+      // فلترة بالبحث
+      const searchQ=document.getElementById('searchInput').value.toLowerCase();
+      for(const d of snap.docs){
+        const data=d.data();
+        const other=data.participants?.find(x=>x!==uid);
+        if(!other) continue;
+        let name=other.slice(0,8), photo='https://i.pravatar.cc/100?u='+other;
+        try{
+          const us=await getDoc(doc(db,'users',other));
+          if(us.exists()){name=us.data().displayName||us.data().name||name; photo=us.data().photoURL||us.data().photo||photo;}
+        }catch{}
+        if(searchQ && !name.toLowerCase().includes(searchQ)) continue;
+        const item=document.createElement('div');
+        item.className='chatItem';
+        item.innerHTML=`<div class="avatar"><img src="${photo}"></div><div style="flex:1;overflow:hidden"><b style="font-size:13px">${name}</b><br><small style="color:#8b8ba7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block">${data.lastText||'اضغط لفتح المحادثة'}</small></div><div style="color:#6b6b7a">‹</div>`;
+        item.onclick=()=>startChat(other);
+        list.appendChild(item);
+      }
+      if(list.innerHTML==='') list.innerHTML='<div style="text-align:center;color:#8b8ba7;margin-top:40px">لا يوجد نتائج</div>';
+    });
+  }catch(e){
+    list.innerHTML='<div style="color:#ef4444;text-align:center;margin-top:20px">خطأ: '+e.message+'</div>';
+  }
+}
+
+window.startChat=(otherUid)=>{
+  localStorage.setItem('last_dm_uid', otherUid);
+  location.href='/dm/?uid='+otherUid;
+}
+
 onAuthStateChanged(auth, async u=>{
   if(!u){location.href='/login/';return}
   uid=u.uid;
   
   if(targetUid){
-    // حفظه عشان لو انعاد تحميل الصفحة
+    // وضع محادثة مباشرة
+    document.getElementById('tabs').style.display='none';
+    document.getElementById('searchBox').style.display='none';
+    document.getElementById('fabBtn').style.display='none';
     localStorage.setItem('last_dm_uid', targetUid);
     chatId=[uid,targetUid].sort().join('_');
     document.getElementById('listView').style.display='none';
     document.getElementById('chatView').style.display='flex';
     document.getElementById('inputBar').style.display='flex';
-    
     try{
       const snap=await getDoc(doc(db,'users',targetUid));
       if(snap.exists()){
         const d=snap.data();
         document.getElementById('hName').textContent=d.displayName||d.name||'مستخدم';
         document.getElementById('hImg').src=d.photoURL||d.photo||d.avatar||'https://i.pravatar.cc/100?u='+targetUid;
-        document.getElementById('hStatus').textContent=d.countryName||'متصل الآن • اضغط رجوع لمحادثاتي';
-        document.getElementById('hStatus').style.cursor='pointer';
+        document.getElementById('hStatus').textContent='اضغط للرجوع • '+ (d.countryName||'');
         document.getElementById('hStatus').onclick=()=>{localStorage.removeItem('last_dm_uid'); location.href='/dm/';}
-      }else{
-        document.getElementById('hName').textContent='مستخدم';
-        document.getElementById('hStatus').textContent=targetUid.slice(0,10);
       }
     }catch{}
-
-    // انشاء الشات لو مو موجود
     await setDoc(doc(db,'privateChats',chatId),{participants:[uid,targetUid], createdAt:serverTimestamp(), lastAt:serverTimestamp()},{merge:true});
-    
-    // استماع الرسائل
     const q=query(collection(db,'privateChats',chatId,'messages'),orderBy('createdAt','asc'));
     onSnapshot(q, s=>{
       const box=document.getElementById('chatView');
       box.innerHTML='';
       if(s.empty){
-        box.innerHTML='<div style="text-align:center;color:#6b6b7a;margin-top:60px;font-size:13px">لا يوجد رسائل بعد<br>ابدأ المحادثة 👋</div>';
+        box.innerHTML='<div style="text-align:center;color:#6b6b7a;margin-top:60px">لا يوجد رسائل بعد<br>ابدأ المحادثة 👋</div>';
       }else{
         s.forEach(d=>{
           const m=d.data();
@@ -111,41 +219,16 @@ onAuthStateChanged(auth, async u=>{
       box.scrollTop=box.scrollHeight;
     });
   }else{
-    // قائمة محادثاتي
-    document.getElementById('hName').textContent='دردشة خاصة';
-    document.getElementById('hStatus').textContent='محادثاتي';
+    // وضع القائمة
+    document.getElementById('tabs').style.display='flex';
+    document.getElementById('searchBox').style.display='block';
     document.getElementById('chatView').style.display='none';
     document.getElementById('inputBar').style.display='none';
     document.getElementById('listView').style.display='flex';
-    
-    try{
-      const q=query(collection(db,'privateChats'), where('participants','array-contains', uid));
-      onSnapshot(q, async snap=>{
-        const list=document.getElementById('listView');
-        list.innerHTML='';
-        if(snap.empty){
-          list.innerHTML='<div style="text-align:center;color:#8b8ba7;margin-top:80px;line-height:1.8">لا يوجد محادثات بعد<br>ادخل أي مجتمع واضغط على صورة أي شخص<br>ثم اضغط 💬 دردشة خاصة</div>';
-          return;
-        }
-        for(const d of snap.docs){
-          const data=d.data();
-          const other=data.participants?.find(x=>x!==uid);
-          if(!other) continue;
-          let name=other.slice(0,8), photo='https://i.pravatar.cc/100?u='+other;
-          try{
-            const us=await getDoc(doc(db,'users',other));
-            if(us.exists()){name=us.data().displayName||us.data().name||name; photo=us.data().photoURL||us.data().photo||photo;}
-          }catch{}
-          const item=document.createElement('div');
-          item.className='chatItem';
-          item.innerHTML=`<div class="avatar"><img src="${photo}"></div><div style="flex:1;overflow:hidden"><b style="font-size:13px">${name}</b><br><small style="color:#8b8ba7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block">${data.lastText||'محادثة خاصة'}</small></div><div style="color:#6b6b7a">‹</div>`;
-          item.onclick=()=>{localStorage.setItem('last_dm_uid', other); location.href='/dm/?uid='+other;};
-          list.appendChild(item);
-        }
-      });
-    }catch(e){
-      document.getElementById('listView').innerHTML='<div style="color:#ef4444;text-align:center;margin-top:20px">خطأ: '+e.message+'<br>تأكد من قوانين Firestore</div>';
-    }
+    document.getElementById('hName').textContent='دردشة خاصة';
+    document.getElementById('hStatus').textContent='محادثاتي';
+    document.getElementById('hImg').src='https://i.pravatar.cc/100?u='+uid;
+    switchTab('chats');
   }
 });
 
