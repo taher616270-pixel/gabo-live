@@ -1,128 +1,94 @@
-'use client'
-import { useState, useEffect } from 'react'
-import { 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-  OAuthProvider,
-  sendPasswordResetEmail
-} from 'firebase/auth'
-import { auth } from '@/lib/firebase' // غير المسار حسب مشروعك
-import { useRouter } from 'next/navigation'
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+</head>
+<body class="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-4">
 
-export default function LoginPage() {
-  const [isLogin, setIsLogin] = useState(true)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [isIOS, setIsIOS] = useState(false)
-  const router = useRouter()
+<div class="w-full max-w-[380px] bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-2xl border border-white/10 rounded-[24px] p-6">
+  <div class="flex justify-between items-center mb-6">
+    <div class="text-[10px] text-purple-300 bg-purple-500/20 px-3 py-1 rounded-full">LIVE ●</div>
+    <h1 class="font-black tracking-[0.2em] text-white">GABO LIVE</h1>
+  </div>
 
-  // كشف الايفون
-  useEffect(() => {
-    const ua = navigator.userAgent
-    const ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-    setIsIOS(ios)
-  }, [])
+  <div class="flex bg-black/30 rounded-xl p-1 mb-6">
+    <button id="tabLogin" class="flex-1 h-9 rounded-lg bg-white text-black font-bold text-sm">دخول</button>
+    <button id="tabSignup" class="flex-1 h-9 rounded-lg text-white/50 text-sm">حساب جديد</button>
+  </div>
 
-  // 1- زر دخول الى المنصة (ايميل وباسورد)
-  const handleEmailAuth = async () => {
-    if(!email || !password) return alert('عبي البريد وكلمة السر')
-    setLoading(true)
-    try {
-      if(isLogin) {
-        await signInWithEmailAndPassword(auth, email, password)
-      } else {
-        await createUserWithEmailAndPassword(auth, email, password)
-      }
-      router.push('/')
-    } catch (e:any) {
-      alert(e.message)
-    }
-    setLoading(false)
-  }
+  <h2 class="text-center text-white font-bold">👋 مرحباً بعودتك</h2>
+  <p class="text-center text-white/40 text-xs mb-5">ادخل وشارك صوتك مع العالم</p>
 
-  // 2- زر Google
-  const handleGoogle = async () => {
-    try {
-      const provider = new GoogleAuthProvider()
-      await signInWithPopup(auth, provider)
-      router.push('/')
-    } catch (e:any) { alert(e.message) }
-  }
+  <input id="email" placeholder="البريد الإلكتروني" class="w-full h-12 pr-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right outline-none mb-3">
+  <input id="password" type="password" placeholder="كلمة السر" class="w-full h-12 pr-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right outline-none mb-3">
 
-  // 3- زر Apple (يشتغل فقط على الايفون)
-  const handleApple = async () => {
-    try {
-      const provider = new OAuthProvider('apple.com')
-      await signInWithPopup(auth, provider)
-      router.push('/')
-    } catch (e:any) { alert(e.message) }
-  }
+  <button id="mainBtn" class="w-full h-12 rounded-xl bg-gradient-to-r from-[#8a5cff] to-[#b48aff] text-white font-bold">🚀 دخول إلى المنصة</button>
 
-  // 4- نسيت كلمة السر
-  const handleForgot = async () => {
-    if(!email) return alert('اكتب بريدك أول في الخانة فوق')
-    try {
-      await sendPasswordResetEmail(auth, email)
-      alert('أرسلنا لك رابط إعادة التعيين - شيك إيميلك باسم GABO LIVE')
-    } catch (e:any) { alert(e.message) }
-  }
+  <div class="flex items-center gap-3 my-4">
+    <div class="h-[1px] flex-1 bg-white/10"></div>
+    <span class="text-white/30 text-[11px]">أو المتابعة عبر</span>
+    <div class="h-[1px] flex-1 bg-white/10"></div>
+  </div>
 
-  return (
-    <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-4">
-      <div className="w-full max-w-[380px] bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-2xl border border-white/10 rounded-[24px] p-6 shadow-2xl">
-        
-        {/* الهيدر */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-500/20 text-[10px] text-purple-300">
-            LIVE <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-pulse"></div>
-          </div>
-          <h1 className="font-black tracking-[0.2em] text-white">GABO LIVE</h1>
-        </div>
+  <div id="social" class="grid gap-3"></div>
 
-        {/* تبويب دخول / حساب جديد */}
-        <div className="flex bg-black/30 rounded-xl p-1 mb-6">
-          <button onClick={()=>setIsLogin(true)} className={`flex-1 h-9 rounded-lg text-sm transition ${isLogin ? 'bg-white text-black font-bold' : 'text-white/50'}`}>دخول</button>
-          <button onClick={()=>setIsLogin(false)} className={`flex-1 h-9 rounded-lg text-sm transition ${!isLogin ? 'bg-white text-black font-bold' : 'text-white/50'}`}>حساب جديد</button>
-        </div>
+  <button id="forgot" class="w-full text-center text-[11px] text-purple-300/70 mt-4">نسيت كلمة السر؟ استعادة</button>
+</div>
 
-        <h2 className="text-center text-white font-bold text-lg">👋 مرحباً بعودتك</h2>
-        <p className="text-center text-white/40 text-xs mb-5">ادخل وشارك صوتك مع العالم</p>
+<script>
+// --- Firebase حقك ---
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "gabo-live.firebaseapp.com",
+  projectId: "gabo-live",
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 
-        {/* الحقول */}
-        <div className="space-y-3">
-          <div className="relative">
-            <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="البريد الإلكتروني" className="w-full h-12 pr-10 pl-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right placeholder:text-white/30 outline-none focus:border-purple-500/50" />
-            <span className="absolute right-3 top-3.5 text-white/30">📧</span>
-          </div>
-          <div className="relative">
-            <input value={password} onChange={e=>setPassword(e.target.value)} type="password" placeholder="كلمة السر" className="w-full h-12 pr-10 pl-4 rounded-xl bg-white/[0.06] border border-white/10 text-white text-right placeholder:text-white/30 outline-none focus:border-purple-500/50" />
-            <span className="absolute right-3 top-3.5 text-white/30">🔒</span>
-          </div>
+let isLogin = true;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-          <button onClick={handleEmailAuth} disabled={loading} className="w-full h-12 rounded-xl bg-gradient-to-r from-[#8a5cff] to-[#b48aff] text-white font-bold hover:opacity-90 transition">
-            {loading ? 'جاري...' : '🚀 دخول إلى المنصة'}
-          </button>
-        </div>
-
-        <div className="flex items-center gap-3 my-4">
-          <div className="h-[1px] flex-1 bg-white/10"></div>
-          <span className="text-white/30 text-[11px]">أو المتابعة عبر</span>
-          <div className="h-[1px] flex-1 bg-white/10"></div>
-        </div>
-
-        {/* ازرار السوشل */}
-        <div className={`grid gap-3 ${isIOS ? 'grid-cols-2' : 'grid-cols-1'}`}>
-          <button onClick={handleGoogle} className="h-12 rounded-xl bg-white/[0.06] border border-white/10 text-white text-sm">Google</button>
-          {isIOS && <button onClick={handleApple} className="h-12 rounded-xl bg-white/[0.06] border border-white/10 text-white text-sm">Apple</button>}
-        </div>
-
-        <button onClick={handleForgot} className="w-full text-center text-[11px] text-purple-300/70 mt-4 hover:text-purple-300">
-          نسيت كلمة السر؟ استعادة
-        </button>
-      </div>
-    </div>
-  )
+// رسم الأزرار حسب الجهاز
+const socialDiv = document.getElementById('social');
+if(isIOS){
+  socialDiv.className = "grid grid-cols-2 gap-3";
+  socialDiv.innerHTML = `<button id="gBtn" class="h-12 rounded-xl bg-white/[0.06] border border-white/10 text-white text-sm">Google</button><button id="aBtn" class="h-12 rounded-xl bg-white/[0.06] border border-white/10 text-white text-sm">Apple</button>`;
+  document.getElementById('aBtn').onclick = () => {
+    const p = new firebase.auth.OAuthProvider('apple.com'); auth.signInWithPopup(p).then(()=>location.href='/');
+  };
+} else {
+  socialDiv.className = "grid grid-cols-1 gap-3";
+  socialDiv.innerHTML = `<button id="gBtn" class="h-12 rounded-xl bg-white/[0.06] border border-white/10 text-white text-sm">Google</button>`;
 }
+document.getElementById('gBtn').onclick = () => {
+  const p = new firebase.auth.GoogleAuthProvider(); auth.signInWithPopup(p).then(()=>location.href='/');
+};
+
+// تبويب
+tabLogin.onclick = ()=>{isLogin=true; tabLogin.className="flex-1 h-9 rounded-lg bg-white text-black font-bold text-sm"; tabSignup.className="flex-1 h-9 rounded-lg text-white/50 text-sm"};
+tabSignup.onclick = ()=>{isLogin=false; tabSignup.className="flex-1 h-9 rounded-lg bg-white text-black font-bold text-sm"; tabLogin.className="flex-1 h-9 rounded-lg text-white/50 text-sm"};
+
+// دخول
+mainBtn.onclick = async ()=>{
+  const e = email.value, p = password.value;
+  if(!e||!p) return alert('عبي البريد والباسورد');
+  try{
+    if(isLogin) await auth.signInWithEmailAndPassword(e,p);
+    else await auth.createUserWithEmailAndPassword(e,p);
+    location.href='/';
+  }catch(err){alert(err.message)}
+};
+
+// نسيت
+forgot.onclick = async ()=>{
+  if(!email.value) return alert('اكتب ايميلك فوق اول');
+  await auth.sendPasswordResetEmail(email.value);
+  alert('ارسلنا رابط باسم GABO LIVE - شيك ايميلك');
+};
+</script>
+</body>
+</html>
