@@ -13,7 +13,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
 .tabs button{flex:1;background:#161426;border:1px solid var(--b);color:var(--muted);padding:12px;border-radius:14px;font-weight:800;font-size:13px}
 .tabs button.on{background:var(--v);color:#fff;border-color:var(--v)}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px}
-.comm{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;text-align:center;position:relative}
+.comm{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;text-align:center}
 .flag{width:64px;height:40px;border-radius:8px;border:1px solid #2a2840;overflow:hidden;display:flex;background:#000;box-shadow:0 2px 8px rgba(0,0,0,.4)}
 .flag img,.flag svg{width:100%;height:100%;object-fit:cover;display:block}
 .comm b{font-size:12.5px;display:flex;align-items:center;gap:6px;justify-content:center}
@@ -26,8 +26,6 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
 .bottomNav a.on{color:#fff}
 .bottomNav a .ic{font-size:22px;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
 .bottomNav a.plus .ic{background:var(--v);color:#fff;width:56px;height:56px;border-radius:16px;font-size:30px;margin-top:-16px}
-
-/* نافذة الانشاء */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:none;align-items:flex-end;justify-content:center;padding:12px}
 .modal.on{display:flex}
 .modalBox{background:#161426;border:1px solid var(--b);border-radius:20px 20px 0 0;width:100%;max-width:420px;padding:16px;max-height:90vh;overflow:auto}
@@ -38,9 +36,9 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
 .imgBox span{font-size:20px;color:var(--muted)}
 .field{margin-bottom:12px}
 .field label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
-.field input,.field select{width:100%;background:#0f0e18;border:1px solid var(--b);border-radius:12px;padding:12px;color:#fff;font-size:14px}
+.field input{width:100%;background:#0f0e18;border:1px solid var(--b);border-radius:12px;padding:12px;color:#fff;font-size:14px}
 .flagOptions{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
-.flagOpt{width:46px;height:32px;border-radius:6px;border:2px solid var(--b);overflow:hidden;cursor:pointer;display:flex;position:relative}
+.flagOpt{width:46px;height:32px;border-radius:6px;border:2px solid var(--b);overflow:hidden;cursor:pointer;display:flex}
 .flagOpt.on{border-color:var(--v);box-shadow:0 0 0 2px rgba(124,58,237,.3)}
 .flagOpt img,.flagOpt svg{width:100%;height:100%;object-fit:cover}
 .modalBtns{display:flex;gap:8px;margin-top:14px}
@@ -59,10 +57,20 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
 </div>
 
 <div id="commPage" class="grid">
-  <!-- ثوابت -->
   <div class="comm" onclick="goComm('south')">
-    <div class="flag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/><polygon points="20,18 22.5,24 29,24 23.8,27.8 25.3,34 20,30 14.7,34 16.2,27.8 11,24 17.5,24" fill="#D71921"/></svg></div>
-    <b><span class="miniFlag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/></svg></span>الجنوب العربي</b>
+    <div class="flag">
+      <!-- علم الجنوب العربي الصحيح - نجمة في وسط المثلث -->
+      <svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg">
+        <rect width="90" height="20" y="0" fill="#CE1126"/>
+        <rect width="90" height="20" y="20" fill="#FFFFFF"/>
+        <rect width="90" height="20" y="40" fill="#000000"/>
+        <path d="M0 0 L42 30 L0 60 Z" fill="#5AB4E8"/>
+        <g transform="translate(14,30)">
+          <path d="M0 -8 L2.1 -2.8 L8.2 -2.8 L3.3 0.6 L5 6.8 L0 3.2 L-5 6.8 L-3.3 0.6 L-8.2 -2.8 L-2.1 -2.8 Z" fill="#CE1126" stroke="white" stroke-width="0.5" stroke-linejoin="round"/>
+        </g>
+      </svg>
+    </div>
+    <b><span class="miniFlag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#CE1126"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L42 30 L0 60 Z" fill="#5AB4E8"/><g transform="translate(14,30)"><path d="M0 -8 L2.1 -2.8 L8.2 -2.8 L3.3 0.6 L5 6.8 L0 3.2 L-5 6.8 L-3.3 0.6 L-8.2 -2.8 L-2.1 -2.8 Z" fill="#CE1126"/></g></svg></span>الجنوب العربي</b>
     <small>رسمي</small>
   </div>
   <div class="comm" onclick="goComm('sa')"><div class="flag"><img src="https://flagcdn.com/w80/sa.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/sa.png"></span>السعودية</b><small>رسمي</small></div>
@@ -70,14 +78,11 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
   <div class="comm" onclick="goComm('ae')"><div class="flag"><img src="https://flagcdn.com/w80/ae.png"></div><b><span class="miniFlag"><img src="https://flagcdn.com/w80/ae.png"></span>الإمارات</b><small>رسمي</small></div>
 </div>
 
-<!-- زر انشاء تحت -->
 <button class="createBtn" onclick="openCreate()">+ إنشاء مجتمع جديد</button>
 
-<!-- نافذة الانشاء -->
 <div id="createModal" class="modal" onclick="if(event.target===this)closeCreate()">
   <div class="modalBox">
     <h3>إنشاء مجتمع جديد</h3>
-    
     <div class="imgPicker">
       <div class="imgBox" id="imgBox" onclick="document.getElementById('fileInput').click()">
         <span id="imgPlus">+</span>
@@ -86,16 +91,22 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
       <small style="color:var(--muted);font-size:11px">صورة مربعة بنفس حجم الأعلام (64x40)</small>
       <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="previewImg(this)">
     </div>
-
     <div class="field">
       <label>اسم المجتمع</label>
       <input id="commNameInput" placeholder="مثال: سواق">
     </div>
-
     <div class="field">
-      <label>علم الدولة (من ضمنهم علم الجنوب)</label>
+      <label>علم الدولة (من ضمنهم علم الجنوب بنجمة وسط المثلث)</label>
       <div class="flagOptions" id="flagOptions">
-        <div class="flagOpt on" data-flag="south" onclick="selectFlag(this,'south')"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/></svg></div>
+        <div class="flagOpt on" data-flag="south" onclick="selectFlag(this,'south')">
+          <svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg">
+            <rect width="90" height="20" y="0" fill="#CE1126"/>
+            <rect width="90" height="20" y="20" fill="#FFF"/>
+            <rect width="90" height="20" y="40" fill="#000"/>
+            <path d="M0 0 L42 30 L0 60 Z" fill="#5AB4E8"/>
+            <g transform="translate(14,30)"><path d="M0 -6.5 L1.7 -2.2 L6.6 -2.2 L2.6 0.4 L4 5 L0 2 L-4 5 L-2.6 0.4 L-6.6 -2.2 L-1.7 -2.2 Z" fill="#CE1126"/></g>
+          </svg>
+        </div>
         <div class="flagOpt" data-flag="sa" onclick="selectFlag(this,'sa')"><img src="https://flagcdn.com/w80/sa.png"></div>
         <div class="flagOpt" data-flag="ye" onclick="selectFlag(this,'ye')"><img src="https://flagcdn.com/w80/ye.png"></div>
         <div class="flagOpt" data-flag="ae" onclick="selectFlag(this,'ae')"><img src="https://flagcdn.com/w80/ae.png"></div>
@@ -105,7 +116,6 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
         <div class="flagOpt" data-flag="bh" onclick="selectFlag(this,'bh')"><img src="https://flagcdn.com/w80/bh.png"></div>
       </div>
     </div>
-
     <div class="modalBtns">
       <button class="btnCancel" onclick="closeCreate()">إلغاء</button>
       <button class="btnCreate" onclick="doCreate()">إنشاء</button>
@@ -124,94 +134,37 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
 <script type="module">
 import { auth, db } from '/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { collection, onSnapshot, doc, setDoc, serverTimestamp, increment } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
+import { collection, onSnapshot, doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 let uid=localStorage.getItem('gabo_uid')||null;
 let selectedFlag='south';
 let selectedImgBase64=null;
-
 onAuthStateChanged(auth,u=>{ if(u){ uid=u.uid; localStorage.setItem('gabo_uid',u.uid); }});
-
 window.goComm=id=>location.href=`community/index.html?id=${id}`;
-
 window.openCreate=()=>document.getElementById('createModal').classList.add('on');
 window.closeCreate=()=>document.getElementById('createModal').classList.remove('on');
-
-window.selectFlag=(el,flag)=>{
-  document.querySelectorAll('.flagOpt').forEach(e=>e.classList.remove('on'));
-  el.classList.add('on');
-  selectedFlag=flag;
-}
-
-window.previewImg=(input)=>{
-  if(input.files && input.files[0]){
-    const reader=new FileReader();
-    reader.onload=e=>{
-      selectedImgBase64=e.target.result;
-      const img=document.getElementById('imgPreview');
-      img.src=selectedImgBase64;
-      img.style.display='block';
-      document.getElementById('imgPlus').style.display='none';
-    }
-    reader.readAsDataURL(input.files[0]);
-  }
-}
-
+window.selectFlag=(el,flag)=>{ document.querySelectorAll('.flagOpt').forEach(e=>e.classList.remove('on')); el.classList.add('on'); selectedFlag=flag; }
+window.previewImg=(input)=>{ if(input.files && input.files[0]){ const reader=new FileReader(); reader.onload=e=>{ selectedImgBase64=e.target.result; const img=document.getElementById('imgPreview'); img.src=selectedImgBase64; img.style.display='block'; document.getElementById('imgPlus').style.display='none'; }; reader.readAsDataURL(input.files[0]); } }
 window.doCreate=async()=>{
   const name=document.getElementById('commNameInput').value.trim();
   if(!name){ alert('اكتب اسم المجتمع'); return; }
   if(!uid){ alert('سجل دخول أول'); location.href='/login/'; return; }
   const id=name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-أ-ي]/g,'')+'-'+Date.now().toString(36).slice(-4);
   try{
-    await setDoc(doc(db,'communities',id),{
-      name:name,
-      flag:selectedFlag,
-      img:selectedImgBase64||null,
-      ownerUid:uid,
-      members:[uid],
-      membersCount:1,
-      banned:[],
-      closed:false,
-      createdAt:serverTimestamp()
-    });
-    closeCreate();
-    document.getElementById('commNameInput').value='';
-    selectedImgBase64=null;
-    document.getElementById('imgPreview').style.display='none';
-    document.getElementById('imgPlus').style.display='block';
-    goComm(id);
+    await setDoc(doc(db,'communities',id),{name:name,flag:selectedFlag,img:selectedImgBase64||null,ownerUid:uid,members:[uid],membersCount:1,banned:[],closed:false,createdAt:serverTimestamp()});
+    closeCreate(); document.getElementById('commNameInput').value=''; selectedImgBase64=null; document.getElementById('imgPreview').style.display='none'; document.getElementById('imgPlus').style.display='block'; goComm(id);
   }catch(e){ alert('خطأ: '+e.message); }
 }
-
-// تحميل المجتمعات
+const southFlagBig = `<svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#CE1126"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L42 30 L0 60 Z" fill="#5AB4E8"/><g transform="translate(14,30)"><path d="M0 -6.5 L1.7 -2.2 L6.6 -2.2 L2.6 0.4 L4 5 L0 2 L-4 5 L-2.6 0.4 L-6.6 -2.2 L-1.7 -2.2 Z" fill="#CE1126"/></g></svg>`;
 const grid=document.getElementById('commPage');
 onSnapshot(collection(db,'communities'),snap=>{
   grid.querySelectorAll('.userComm').forEach(e=>e.remove());
   snap.forEach(d=>{
     if(['south','sa','ye','ae'].includes(d.id)) return;
     const data=d.data();
-    const div=document.createElement('div');
-    div.className='comm userComm';
-    div.onclick=()=>goComm(d.id);
-    
-    let flagHtml='';
-    if(data.img){
-      flagHtml=`<div class="flag"><img src="${data.img}"></div>`;
-    }else if(data.flag==='south'){
-      flagHtml=`<div class="flag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/></svg></div>`;
-    }else{
-      flagHtml=`<div class="flag"><img src="https://flagcdn.com/w80/${data.flag||'sa'}.png"></div>`;
-    }
-    
-    let miniFlag='';
-    if(data.flag==='south'){
-      miniFlag=`<span class="miniFlag"><svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="20" y="0" fill="#D71921"/><rect width="90" height="20" y="20" fill="#FFF"/><rect width="90" height="20" y="40" fill="#000"/><path d="M0 0 L45 30 L0 60 Z" fill="#4AA6D0"/></svg></span>`;
-    }else{
-      miniFlag=`<span class="miniFlag"><img src="https://flagcdn.com/w80/${data.flag||'sa'}.png"></span>`;
-    }
-    
-    div.innerHTML=`${flagHtml}<b>${miniFlag}${data.name}</b><small>${data.membersCount||1} عضو ${data.closed?'🔒':''}</small>`;
-    grid.appendChild(div);
+    const div=document.createElement('div'); div.className='comm userComm'; div.onclick=()=>goComm(d.id);
+    let flagHtml=''; if(data.img){ flagHtml=`<div class="flag"><img src="${data.img}"></div>`; }else if(data.flag==='south'){ flagHtml=`<div class="flag">${southFlagBig}</div>`; }else{ flagHtml=`<div class="flag"><img src="https://flagcdn.com/w80/${data.flag||'sa'}.png"></div>`; }
+    let miniFlag=''; if(data.flag==='south'){ miniFlag=`<span class="miniFlag">${southFlagBig}</span>`; }else{ miniFlag=`<span class="miniFlag"><img src="https://flagcdn.com/w80/${data.flag||'sa'}.png"></span>`; }
+    div.innerHTML=`${flagHtml}<b>${miniFlag}${data.name}</b><small>${data.membersCount||1} عضو ${data.closed?'🔒':''}</small>`; grid.appendChild(div);
   });
 });
 </script>
