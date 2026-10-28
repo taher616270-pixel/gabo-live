@@ -1,32 +1,36 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>GABO LIVE</title>
 <style>
-:root{--bg:#07060c;--card:#13111e;--b:#2a2840;--v:#7c3aed;--t:#fff;--m:#a1a1aa}
+:root{--bg:#07060c;--card:#13111e;--card2:#1b192b;--b:#2a2840;--v:#7c3aed;--t:#fff;--m:#a1a1aa}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--t);font-family:system-ui;min-height:100vh;padding-bottom:95px}
-.top{position:sticky;top:0;z-index:10;background:rgba(7,6,12,.92);backdrop-filter:blur(12px);display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--b)}
-.top h1{font-size:20px;font-weight:900;letter-spacing:.1em}
+body{background:var(--bg);color:var(--t);font-family:system-ui,-apple-system;min-height:100vh;padding-bottom:110px;overflow-x:hidden}
+.top{position:sticky;top:0;z-index:20;background:rgba(7,6,12,.9);backdrop-filter:blur(12px);display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--b)}
+.top h1{font-size:20px;font-weight:900;letter-spacing:.08em}
 .top h1 span{color:var(--v)}
+.topBtns{display:flex;gap:8px}
 .topBtns button{background:#1e1c2e;border:1px solid var(--b);color:#fff;padding:7px 14px;border-radius:20px;font-size:13px;cursor:pointer}
 .main{padding:20px 16px}
-.main h2{font-size:20px;margin-bottom:16px}
-.cardBtn{width:100%;background:linear-gradient(135deg,#1b192b,#13111e);border:1px solid var(--b);border-radius:20px;padding:18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;margin-bottom:14px;text-decoration:none;color:#fff;transition:.15s}
+.main h2{font-size:19px;margin-bottom:16px;font-weight:800}
+.cardBtn{width:100%;background:linear-gradient(135deg,var(--card2),var(--card));border:1px solid var(--b);border-radius:20px;padding:18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;margin-bottom:14px;text-decoration:none;color:#fff}
 .cardBtn:active{transform:scale(.98);border-color:var(--v)}
 .cardBtn .left{display:flex;align-items:center;gap:14px}
-.cardBtn .icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;background:rgba(124,58,237,.18)}
-.cardBtn h3{font-size:17px;margin-bottom:3px}
+.cardBtn .icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.2)}
+.cardBtn h3{font-size:16px;margin-bottom:3px;font-weight:800}
 .cardBtn p{font-size:12px;color:var(--m)}
 .cardBtn .arr{color:var(--m);font-size:18px}
 
-/* 5 أزرار تحت */
-.bottomNav{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:99}
-.bottomNav a{flex:1;text-decoration:none;color:#a1a1aa;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:4px}
+/* الشريط السفلي 5 ازرار فقط */
+.bottomNav{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-end;padding:8px 0 calc(10px + env(safe-area-inset-bottom));z-index:9999}
+.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:2px 0}
 .bottomNav a.on{color:#fff}
-.bottomNav a .ic{font-size:22px}
-.bottomNav a.center .ic{background:var(--v);color:#fff;width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-top:-10px;box-shadow:0 6px 18px rgba(124,58,237,.4)}
+.bottomNav a .ic{font-size:22px;line-height:1}
+.bottomNav a.plus{flex:1.2}
+.bottomNav a.plus .ic{background:var(--v);color:#fff;width:58px;height:58px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-20px;box-shadow:0 8px 24px rgba(124,58,237,.5);border:1px solid rgba(255,255,255,.1)}
+.bottomNav a.plus{color:#fff}
 </style>
 </head>
 <body>
@@ -43,35 +47,65 @@ body{background:var(--bg);color:var(--t);font-family:system-ui;min-height:100vh;
   <h2>الرئيسية</h2>
 
   <a class="cardBtn" href="/communities/">
-    <div class="left"><div class="icon">🌍</div><div><h3>المجتمعات</h3><p>ادخل مجتمعك المفضل</p></div></div>
+    <div class="left">
+      <div class="icon">🌍</div>
+      <div><h3>المجتمعات</h3><p>ادخل مجتمعك المفضل</p></div>
+    </div>
     <div class="arr">‹</div>
   </a>
 
   <a class="cardBtn" href="/chat/">
-    <div class="left"><div class="icon">💬</div><div><h3>الشات العام</h3><p>دردش مع الجميع مباشرة</p></div></div>
+    <div class="left">
+      <div class="icon">💬</div>
+      <div><h3>الشات العام</h3><p>دردش مع الجميع مباشرة</p></div>
+    </div>
     <div class="arr">‹</div>
   </a>
 
   <a class="cardBtn" href="/members/">
-    <div class="left"><div class="icon">👥</div><div><h3>الأعضاء</h3><p>شوف من معك في المنصة</p></div></div>
+    <div class="left">
+      <div class="icon">👥</div>
+      <div><h3>الأعضاء</h3><p>تعرف على أعضاء المنصة</p></div>
+    </div>
     <div class="arr">‹</div>
   </a>
-
 </div>
 
+<!-- 5 ازرار فقط تحت -->
 <div class="bottomNav">
-  <a href="/app/" class="on"><span class="ic">🏠</span>الرئيسية</a>
-  <a href="/communities/"><span class="ic">🌍</span>المجتمعات</a>
-  <a href="/chat/" class="center"><span class="ic">+</span>العام</a>
-  <a href="/members/"><span class="ic">👥</span>الأعضاء</a>
-  <a href="/profile/"><span class="ic">👤</span>حسابي</a>
+  <a href="/app/" class="on">
+    <span class="ic">🏠</span>
+    الرئيسية
+  </a>
+  <a href="/members/">
+    <span class="ic">👥</span>
+    الأعضاء
+  </a>
+  <a href="/create/" class="plus">
+    <span class="ic">+</span>
+    إنشاء
+  </a>
+  <a href="/communities/">
+    <span class="ic">🌍</span>
+    المجتمعات
+  </a>
+  <a href="/profile/">
+    <span class="ic">👤</span>
+    حسابي
+  </a>
 </div>
 
 <script type="module">
 import { auth } from '/firebase-config.js';
 import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-onAuthStateChanged(auth, u=>{ if(!u) location.replace('/login/'); });
-document.getElementById('logoutBtn').onclick=()=>signOut(auth).then(()=>location.replace('/login/'));
+
+onAuthStateChanged(auth, (u)=>{
+  if(!u){ location.replace('/login/'); return; }
+});
+
+document.getElementById('logoutBtn').onclick=()=>{
+  signOut(auth).then(()=>location.replace('/login/'));
+};
 </script>
 </body>
 </html>
