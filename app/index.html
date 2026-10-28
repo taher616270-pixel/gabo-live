@@ -1,111 +1,74 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GABO LIVE</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:#0a0812;color:#f8f7ff;font-family:system-ui;padding-bottom:80px}
-.wrap{width:min(1200px,calc(100% - 16px));margin:auto}
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 0;position:sticky;top:0;background:#0a0812cc;backdrop-filter:blur(10px);z-index:10}
-.brand{color:#c4b5fd;font-weight:900;text-decoration:none;font-size:20px}
-.page{display:none}.page.active{display:block}
-.card{background:rgba(17,12,29,.95);border:1px solid rgba(196,181,253,.2);border-radius:16px;display:flex;flex-direction:column;overflow:hidden;margin-top:12px}
-.card h3{margin:0;padding:14px;border-bottom:1px solid #ffffff12;font-size:14px;color:#c4b5fd}
-.list{overflow:auto;max-height:70vh}
-.item{padding:12px 14px;cursor:pointer;border-bottom:1px solid #ffffff08;display:flex;justify-content:space-between;align-items:center}
-.item:active,.item.active{background:#7c3aed33}
-.msgs{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:55vh;max-height:65vh}
-.msg{padding:10px 14px;border-radius:16px;max-width:85%;background:#ffffff12;line-height:1.5}
-.msg.me{align-self:flex-end;background:linear-gradient(135deg,#7c3aed,#5b21b6)}
-.input-area{display:flex;gap:8px;padding:12px;border-top:1px solid #ffffff12;position:sticky;bottom:0;background:#110c1d}
-input{flex:1;background:#0d0b15;border:1px solid #ffffff22;border-radius:12px;padding:12px;color:#fff;outline:none}
-button{border-radius:12px;padding:11px 16px;border:0;background:#211638;color:#fff;cursor:pointer;font-weight:700}
-.primary{background:linear-gradient(135deg,#7c3aed,#5b21b6)}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(15,12,24,.98);border-top:1px solid #ffffff18;display:flex;justify-content:space-around;padding:8px 0 12px;z-index:100;backdrop-filter:blur(20px)}
-.bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:2px;color:#aaa3bd;text-decoration:none;font-size:11px;padding:6px 16px;border-radius:12px;cursor:pointer}
-.bottom-nav a.active{color:#c4b5fd;background:#7c3aed22}
-.bottom-nav b{font-size:20px}
-</style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>المجتمع — GABO LIVE</title>
+<link rel="stylesheet" href="/assets/style/style.css">
 </head>
 <body>
 <div class="wrap">
-<div class="topbar"><a class="brand" href="/">GABO LIVE ✨</a><button id="logoutBtn" style="padding:6px 12px;font-size:12px">خروج</button></div>
+  <header class="topbar">
+    <a class="brand" href="/app/">GABO LIVE ✨</a>
+    <div><a class="btn sm" data-go="hosts" href="/hosts/">مضيف؟</a> <button class="btn sm" data-logout>خروج</button></div>
+  </header>
 
-<!-- صفحة المجتمعات -->
-<div class="page active" id="page-communities">
-<div class="card"><h3>🌍 المجتمعات</h3><div class="list" id="communityList"><div class="item">جاري التحميل...</div></div></div>
-<div class="card" style="margin-top:12px"><h3 id="chatTitle">الشات العام</h3><div class="msgs" id="msgsBox"></div><div class="input-area"><input id="msgInput" placeholder="اكتب رسالة..."><button id="sendBtn" class="primary">↑</button></div></div>
+  <div class="seg"><button class="on" data-show="communities">🌍 المجتمعات</button><button data-show="members">👥 الأعضاء</button></div>
+
+  <section class="page active" id="page-communities">
+    <div class="card"><h3>المجتمعات</h3><div class="list" id="communityList"><div class="empty">جاري التحميل...</div></div></div>
+    <div class="card"><h3 id="chatTitle">الشات العام</h3>
+      <div class="msgs" id="msgsBox"></div>
+      <div class="composer"><input id="msgInput" class="input" placeholder="اكتب رسالة..." maxlength="500"><button id="sendBtn" class="btn primary">↑</button></div>
+    </div>
+  </section>
+
+  <section class="page" id="page-members">
+    <div class="card"><h3>كل الأعضاء</h3><div class="list" id="usersList"><div class="empty">جاري التحميل...</div></div></div>
+  </section>
 </div>
-
-<!-- صفحة الأعضاء -->
-<div class="page" id="page-members">
-<div class="card"><h3>👥 كل الأعضاء</h3><div class="list" id="usersList"></div></div>
-</div>
-
-</div>
-
-<nav class="bottom-nav" id="bottomNav">
-<a data-page="communities" class="active"><b>⌂</b><span>المجتمعات</span></a>
-<a data-page="members"><b>👥</b><span>الأعضاء</span></a>
-<a href="/profile/"><b>◉</b><span>حسابي</span></a>
-</nav>
 
 <script type="module">
-import {auth,db} from "/firebase-config.js";
-import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import {collection,addDoc,query,where,orderBy,onSnapshot,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-let me=null; let currentId='general'; let unsub=null;
-onAuthStateChanged(auth,u=>{ if(!u){location.href='/login/';return;} me=u; listenCommunities(); listenUsers(); listenMessages(); });
+import { db, boot, me, mountChat, $, esc, toast } from '/assets/app.js';
+import { collection, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-function showPage(id){
- document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
- document.getElementById('page-'+id)?.classList.add('active');
- document.querySelectorAll('.bottom-nav a').forEach(a=>a.classList.remove('active'));
- document.querySelector(`.bottom-nav a[data-page="${id}"]`)?.classList.add('active');
-}
-document.querySelectorAll('.bottom-nav a[data-page]').forEach(a=>{ a.onclick=()=>showPage(a.dataset.page); });
+await boot({ auth: true });
 
-function listenCommunities(){
- onSnapshot(collection(db,'communities'),snap=>{
-  const el=document.getElementById('communityList'); el.innerHTML='';
-  if(snap.empty){el.innerHTML='<div class="item">لا يوجد مجتمعات</div>';return;}
-  snap.forEach(d=>{
-   const c=d.data();
-   const div=document.createElement('div'); div.className='item'+((c.id||d.id)===currentId?' active':'');
-   div.innerHTML=`<span>${c.icon||'🌍'} ${c.name||c.id}</span><small>💬</small>`;
-   div.onclick=()=>{currentId=c.id||d.id;document.getElementById('chatTitle').innerText=c.name||c.id;document.querySelectorAll('#communityList .item').forEach(i=>i.classList.remove('active'));div.classList.add('active');listenMessages();};
-   el.appendChild(div);
+let current = new URLSearchParams(location.search).get('c') || 'general';
+const chat = mountChat({ box: $('#msgsBox'), input: $('#msgInput'), button: $('#sendBtn'), community: current });
+
+onSnapshot(collection(db, 'communities'), snap => {
+  const el = $('#communityList'); el.replaceChildren();
+  if (snap.empty) { el.innerHTML = '<div class="empty">لا يوجد مجتمعات بعد</div>'; return; }
+  snap.forEach(d => {
+    const c = d.data(), id = c.id || d.id;
+    const row = document.createElement('div');
+    row.className = 'item' + (id === current ? ' active' : '');
+    row.innerHTML = `<span>${esc(c.icon || '🌍')} ${esc(c.name || id)}</span><small>💬</small>`;
+    if (id === current) $('#chatTitle').textContent = c.name || id;
+    row.onclick = () => {
+      current = id; $('#chatTitle').textContent = c.name || id;
+      $$('.item', el).forEach(i => i.classList.remove('active')); row.classList.add('active');
+      chat.setCommunity(id);
+    };
+    el.append(row);
   });
- });
-}
-function listenUsers(){
- onSnapshot(collection(db,'users'),snap=>{
-  const el=document.getElementById('usersList'); el.innerHTML='';
-  snap.forEach(d=>{
-   const u=d.data(); if(d.id===me?.uid) return;
-   const div=document.createElement('div'); div.className='item'; div.innerHTML=`<span>${u.name||u.email}</span><small>✉</small>`;
-   div.onclick=()=>{location.href='/app/private/?to='+d.id;};
-   el.appendChild(div);
+}, () => toast('تعذر تحميل المجتمعات', 'error'));
+
+onSnapshot(collection(db, 'users'), snap => {
+  const el = $('#usersList'); el.replaceChildren();
+  snap.forEach(d => {
+    if (d.id === me.uid) return;
+    const u = d.data();
+    if (u.banned) return;
+    const row = document.createElement('div'); row.className = 'item';
+    row.innerHTML = `<span>${esc(u.name || u.email)}<br><small>${u.subscription === 'VIP' ? '♛ VIP' : ''}</small></span><small>✉</small>`;
+    row.onclick = () => (location.href = '/app/private/?to=' + d.id);
+    el.append(row);
   });
- });
-}
-function listenMessages(){
- if(unsub) unsub();
- const q=query(collection(db,'messages'),where('communityId','==',currentId),orderBy('createdAt','asc'));
- unsub=onSnapshot(q,snap=>{
-  const box=document.getElementById('msgsBox'); box.innerHTML='';
-  if(snap.empty){box.innerHTML='<div class="msg">لا يوجد رسائل بعد 👋</div>';return;}
-  snap.forEach(d=>{
-   const m=d.data(); const div=document.createElement('div'); div.className='msg'+(m.from===me.uid?' me':'');
-   div.innerHTML=`<b style="font-size:11px;color:#c4b5fd">${m.fromName||''}</b><div>${m.text}</div>`; box.appendChild(div);
-  }); box.scrollTop=box.scrollHeight;
- });
-}
-async function send(){ const inp=document.getElementById('msgInput'); const t=inp.value.trim(); if(!t) return; inp.value=''; await addDoc(collection(db,'messages'),{communityId:currentId,from:me.uid,fromName:me.displayName||me.email,text:t,createdAt:serverTimestamp()}); }
-document.getElementById('sendBtn').onclick=send;
-document.getElementById('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter') send();});
-document.getElementById('logoutBtn').onclick=()=>signOut(auth).then(()=>location.href='/');
+  if (!el.children.length) el.innerHTML = '<div class="empty">لا يوجد أعضاء آخرين بعد</div>';
+}, () => toast('تعذر تحميل الأعضاء', 'error'));
+
+function $$(s, r = document) { return [...r.querySelectorAll(s)]; }
 </script>
 </body>
 </html>
