@@ -5,54 +5,84 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>GABO LIVE</title>
 <style>
-:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed;--muted:#8b8ba7}
+:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:96px;min-height:100vh}
+body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:96px}
+.top{height:56px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;padding:0 14px;position:sticky;top:0;z-index:20}
+.tabs{display:flex;gap:8px;padding:12px}
+.tabs button{flex:1;background:#161426;border:1px solid var(--b);color:#8b8ba7;padding:12px;border-radius:14px;font-weight:800;font-size:13px}
+.tabs button.on{background:var(--v);color:#fff;border-color:var(--v)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px}
+.comm{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:8px;cursor:pointer}
+.comm .flag{font-size:28px}
+.comm b{font-size:13px}
+.comm small{color:#8b8ba7;font-size:11px}
+.comm.create{border:1px dashed var(--v);align-items:center;justify-content:center;text-align:center}
+.worldChat{padding:12px;display:none}
+.worldChat.on{display:block}
+.worldBox{background:var(--card);border:1px solid var(--b);border-radius:18px;height:62vh;display:flex;flex-direction:column}
+.worldMsgs{flex:1;padding:12px;overflow:auto;display:flex;flex-direction:column;gap:8px}
+.msg{background:#1e1c2e;padding:8px 12px;border-radius:12px;font-size:13px;align-self:flex-start}
+.msg.me{background:var(--v);align-self:flex-end}
+.worldInput{display:flex;gap:8px;padding:10px;border-top:1px solid var(--b)}
+.worldInput input{flex:1;background:#0f0e18;border:1px solid var(--b);border-radius:10px;padding:10px;color:#fff}
+.worldInput button{background:var(--v);border:0;color:#fff;padding:10px 14px;border-radius:10px;font-weight:800}
 
-.top{height:56px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;padding:0 14px;position:sticky;top:0;z-index:50}
-.top b{font-size:15px;font-weight:800}
-
-.tabs{display:flex;gap:8px;padding:12px 14px}
-.tabs button{flex:1;background:#161426;border:1px solid var(--b);color:var(--muted);padding:10px;border-radius:12px;font-weight:700;font-size:13px}
-.tabs button.on{background:var(--v);border-color:var(--v);color:#fff}
-
-.feed{padding:0 12px 12px;display:flex;flex-direction:column;gap:10px}
-.card{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:14px}
-.card .h{display:flex;gap:10px;align-items:center}
-.card .av{width:40px;height:40px;border-radius:50%;background:#2a2840}
-.card .txt{margin-top:10px;font-size:13px;line-height:1.6;color:#d2d2e6}
-
-/* الشريط - ثابت داخل الصفحة */
-.bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom));z-index:9999;direction:ltr}
+/* شريط ثابت */
+.bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;z-index:9999;direction:ltr}
 .bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
 .bottomNav a.on{color:#fff}
 .bottomNav a .ic{font-size:22px;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
-.bottomNav a.plus .ic{background:var(--v);color:#fff;width:56px;height:56px;border-radius:16px;font-size:30px;margin-top:-16px;box-shadow:0 6px 18px rgba(124,58,237,.45)}
+.bottomNav a.plus .ic{background:var(--v);color:#fff;width:56px;height:56px;border-radius:16px;font-size:30px;margin-top:-16px}
 .navBadge{position:absolute;top:-4px;right:14px;background:#ff3b30;color:#fff;min-width:18px;height:18px;border-radius:9px;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #0f0e18}
 .navBadge.hide{display:none}
 </style>
 </head>
 <body>
 
-<div class="top"><b>✨ GABO LIVE</b><a href="/notifications/" style="text-decoration:none;font-size:18px">🔔</a></div>
+<div class="top"><b>✨ GABO LIVE</b><span>🔔</span></div>
 
 <div class="tabs">
-  <button class="on" id="t1">المجتمع</button>
-  <button id="t2">المجتمعات</button>
+  <button id="tabComm" class="on">المجتمعات</button>
+  <button id="tabWorld">شات العالم 🌍</button>
 </div>
 
-<div class="feed" id="feed">
-  <div class="card">
-    <div class="h"><div class="av"></div><div><b style="font-size:13px">أهلا بك في GABO</b><br><small style="color:var(--muted)">الآن</small></div></div>
-    <div class="txt">هذه هي الصفحة الرئيسية الجديدة - المنشورات ستظهر هنا تلقائيا</div>
+<!-- مجتمعات الدول -->
+<div id="commPage" class="grid">
+  <div class="comm" onclick="openComm('south')">
+    <span class="flag">🏴</span><b>مجتمع الجنوب العربي</b><small>1.2k متواجد</small>
+  </div>
+  <div class="comm" onclick="openComm('sa')">
+    <span class="flag">🇸🇦</span><b>مجتمع السعودية</b><small>890 متواجد</small>
+  </div>
+  <div class="comm" onclick="openComm('ye')">
+    <span class="flag">🇾🇪</span><b>مجتمع اليمن</b><small>650 متواجد</small>
+  </div>
+  <div class="comm" onclick="openComm('ae')">
+    <span class="flag">🇦🇪</span><b>مجتمع الإمارات</b><small>420 متواجد</small>
+  </div>
+  <div class="comm create" onclick="createComm()">
+    <span style="font-size:28px">+</span><b>إنشاء مجتمع جديد</b><small>اختر اسم وصورة</small>
   </div>
 </div>
 
-<!-- الشريط داخل الصفحة - مستحيل يختفي -->
+<!-- شات العالم -->
+<div id="worldPage" class="worldChat">
+  <div class="worldBox">
+    <div id="worldMsgs" class="worldMsgs">
+      <div class="msg">أهلا بكم في شات العالم 🌍 - الكل يقدر يدردش هنا</div>
+    </div>
+    <div class="worldInput">
+      <input id="worldInput" placeholder="اكتب رسالة...">
+      <button onclick="sendWorld()">إرسال</button>
+    </div>
+  </div>
+</div>
+
 <div class="bottomNav">
   <a href="/profile/"><span class="ic">👤</span><span>حسابي</span></a>
   <a href="/dm/"><span class="ic">🔒</span><span>دردشة خاصة</span><span id="navBadge" class="navBadge hide">0</span></a>
-  <a href="/create/" class="plus"><span class="ic">+</span></a>
+  <a href="#" class="plus" onclick="createComm();return false"><span class="ic">+</span></a>
   <a href="/posts/"><span class="ic">📄</span><span>منشورات</span></a>
   <a href="/app/" class="on"><span class="ic">🏠</span><span>الرئيسية</span></a>
 </div>
@@ -62,6 +92,23 @@ import { auth, db } from '/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { collection, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
+const tabComm=document.getElementById('tabComm'), tabWorld=document.getElementById('tabWorld');
+tabComm.onclick=()=>{tabComm.classList.add('on');tabWorld.classList.remove('on');document.getElementById('commPage').style.display='grid';document.getElementById('worldPage').classList.remove('on')}
+tabWorld.onclick=()=>{tabWorld.classList.add('on');tabComm.classList.remove('on');document.getElementById('commPage').style.display='none';document.getElementById('worldPage').classList.add('on')}
+
+window.openComm=(id)=>{ location.href=`/community/?id=${id}` }
+window.createComm=()=>{
+  const name=prompt('اسم المجتمع الجديد:');
+  if(!name) return;
+  // هنا تحفظ في Firebase لاحقا - الآن نعرضه مؤقتا
+  const grid=document.getElementById('commPage');
+  const div=document.createElement('div');
+  div.className='comm'; div.innerHTML=`<span class="flag">✨</span><b>${name}</b><small>مجتمع جديد - انضم الآن</small>`;
+  div.onclick=()=>openComm(name);
+  grid.insertBefore(div, grid.lastElementChild);
+}
+
+// عداد الرسائل
 function startBadge(uid){
   const b=document.getElementById('navBadge'); if(!b) return;
   onSnapshot(query(collection(db,'chats'), where('users','array-contains',uid)), snap=>{
@@ -69,16 +116,16 @@ function startBadge(uid){
     if(t>0){ b.textContent=t>99?'99+':t; b.classList.remove('hide'); } else b.classList.add('hide');
   });
 }
-onAuthStateChanged(auth,u=>{
-  if(!u){ location.replace('/login/'); return; }
-  localStorage.setItem('gabo_uid',u.uid); startBadge(u.uid);
-});
+onAuthStateChanged(auth,u=>{ if(u){ localStorage.setItem('gabo_uid',u.uid); startBadge(u.uid); }});
 const s=localStorage.getItem('gabo_uid'); if(s) startBadge(s);
 
-// تبديل التابات
-t1.onclick=()=>{t1.classList.add('on'); t2.classList.remove('on')}
-t2.onclick=()=>{t2.classList.add('on'); t1.classList.remove('on')}
+// شات العالم محلي مؤقت
+window.sendWorld=()=>{
+  const inp=document.getElementById('worldInput'); if(!inp.value.trim()) return;
+  const box=document.getElementById('worldMsgs');
+  const d=document.createElement('div'); d.className='msg me'; d.textContent=inp.value;
+  box.appendChild(d); inp.value=''; box.scrollTop=box.scrollHeight;
+}
 </script>
-
 </body>
 </html>
