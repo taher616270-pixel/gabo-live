@@ -3,101 +3,145 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>حسابي</title>
+<title>حسابي - GABO LIVE</title>
 <style>
-:root{--bg:#07060c;--card:#161426;--b:#2a2840;--v:#7c3aed}
-*{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px}
-.card{margin:14px;background:var(--card);border:1px solid var(--b);border-radius:22px;padding:16px;position:relative}
+:root{--bg:#07060c;--card:#161426;--b:#2a2840;--v:#7c3aed;--m:#a1a1aa}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px}
+.top{padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.top b{font-size:18px}
+.card{margin:12px;background:var(--card);border:1px solid var(--b);border-radius:22px;padding:16px}
 .head{display:flex;gap:12px;align-items:center;flex-direction:row-reverse}
-.avatar{width:72px;height:72px;border-radius:18px;background:#6d28d9;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;position:relative;overflow:hidden;flex-shrink:0}
+.avatar{width:74px;height:74px;border-radius:18px;background:#6d28d9;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;position:relative;overflow:hidden;flex-shrink:0}
 .avatar img{width:100%;height:100%;object-fit:cover}
-.pencil{position:absolute;bottom:-4px;right:-4px;width:26px;height:26px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;border:2px solid var(--card);cursor:pointer;z-index:5}
-.info{flex:1;text-align:left;direction:ltr}.info b{font-size:16px;display:flex;gap:6px;align-items:center}
-.info span{font-size:11px;color:#a1a1aa;display:block;margin-top:2px;direction:rtl;text-align:right}
-.stats{display:flex;gap:8px;margin-top:14px}.stat{flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:12px;padding:8px;text-align:center}.stat b{font-size:16px}.stat i{font-size:10px;color:#a1a1aa;font-style:normal;display:block}
-.bio{margin-top:12px;background:#0f0e18;border:1px solid var(--b);border-radius:12px;padding:10px;font-size:12px;color:#a1a1aa}
-.rowBtns{display:flex;gap:8px;margin-top:10px}.btn{flex:1;padding:10px;border-radius:10px;border:0;font-weight:800;font-size:12px}.vip{background:#fbbf24;color:#000}.notif{background:#1e1c2e;border:1px solid var(--b);color:#fff}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-end;z-index:200}.modal.on{display:flex}
-.sheet{background:#1a182c;width:100%;border-radius:20px 20px 0 0;padding:18px;border-top:1px solid var(--b);max-height:85vh;overflow:auto}
-.sheet input,.sheet select,.sheet textarea{width:100%;background:#0f0e18;border:1px solid var(--b);border-radius:10px;padding:12px;color:#fff;margin-top:8px}
-.bottom{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:100}
-.bottom a{flex:1;text-align:center;color:#6b6b7a;text-decoration:none;font-size:9px}.bottom a.on{color:#fff}.bottom a div{font-size:20px}
-.bottom a.plus div{background:var(--v);width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;margin:-18px auto 4px}
+.pencil{position:absolute;bottom:-3px;right:-3px;width:26px;height:26px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;border:2px solid var(--card);cursor:pointer;z-index:10}
+.info{flex:1;text-align:left;direction:ltr}
+.info h2{font-size:16px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.info p{font-size:11px;color:var(--m);margin-top:3px;direction:rtl;text-align:right}
+.flagImg{width:26px;height:18px;border-radius:4px;object-fit:cover;border:1px solid rgba(255,255,255,.2);vertical-align:middle}
+.stats{display:flex;gap:8px;margin-top:14px}
+.stat{flex:1;background:#1e1c2e;border:1px solid var(--b);border-radius:12px;padding:8px;text-align:center}
+.stat b{font-size:16px;display:block}.stat span{font-size:10px;color:var(--m)}
+.bio{margin-top:12px;background:#0f0e18;border:1px solid var(--b);border-radius:12px;padding:10px;font-size:12px;color:var(--m);min-height:44px}
+.btns{display:flex;gap:8px;margin-top:10px}
+.btn{flex:1;padding:11px;border-radius:11px;border:0;font-weight:800;font-size:12px;cursor:pointer}
+.btn.vip{background:#fbbf24;color:#000}.btn.notif{background:#1e1c2e;border:1px solid var(--b);color:#fff}
+
+/* نافذة القلم */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);display:none;align-items:flex-end;z-index:999}
+.modal.on{display:flex}
+.sheet{background:#1a182c;width:100%;border-radius:22px 22px 0 0;padding:18px;border-top:1px solid var(--b);max-height:88vh;overflow:auto}
+.sheet input,.sheet select,.sheet textarea{width:100%;background:#0f0e18;border:1px solid var(--b);border-radius:10px;padding:12px;color:#fff;margin-top:8px;font-family:system-ui}
+.sheet label{font-size:11px;color:var(--m);margin-top:12px;display:block}
+.upload{border:1px dashed var(--b);border-radius:10px;padding:14px;text-align:center;color:var(--m);cursor:pointer;margin-top:8px}
+
+/* الشريط السفلي الموحد */
+.bottomNav{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-end;padding:8px 0 calc(10px + env(safe-area-inset-bottom));z-index:1000;direction:ltr}
+.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:9px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bottomNav a.on{color:#fff}
+.bottomNav a .ic{font-size:22px}
+.bottomNav a.plus .ic{background:var(--v);color:#fff;width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-20px;box-shadow:0 8px 20px rgba(124,58,237,.5)}
 </style>
 </head>
 <body>
 <div class="card">
   <div class="head">
-    <div class="avatar" id="av"><span id="avL">T</span><div class="pencil" id="open">✏️</div></div>
+    <div class="avatar" id="avatar"><span id="avL">T</span><div class="pencil" id="openEdit">✏️</div></div>
     <div class="info">
-      <b><span id="nm">Taher Hammam</span><span id="fl"></span></b>
-      <span>ملفك في مجتمع GABO LIVE</span>
-      <span id="em" style="text-decoration:underline;font-size:10px"></span>
+      <h2><span id="name">...</span><span id="flag"></span></h2>
+      <p>ملفك في مجتمع GABO LIVE</p>
+      <p id="email" style="text-decoration:underline;font-size:10px;color:#8b8ba7"></p>
     </div>
   </div>
   <div class="stats">
-    <div class="stat"><b id="c1">0</b><i>متابعين</i></div>
-    <div class="stat"><b id="c2">0</b><i>متابَع</i></div>
-    <div class="stat"><b id="c3">0</b><i>زوار</i></div>
+    <div class="stat"><b id="followers">0</b><span>متابعين</span></div>
+    <div class="stat"><b id="following">0</b><span>متابَع</span></div>
+    <div class="stat"><b id="visitors">0</b><span>زوار</span></div>
   </div>
-  <div class="bio" id="bio">اكتب نبذة قصيرة عنك...</div>
-  <div class="rowBtns">
+  <div class="bio" id="bioView">اكتب نبذة قصيرة عنك...</div>
+  <div class="btns">
     <button class="btn vip" onclick="location.href='/vip/'">👑 VIP</button>
-    <button class="btn notif" id="nb">🔔 اشتراك الإشعارات</button>
+    <button class="btn notif" id="notifBtn">🔔 اشتراك الإشعارات</button>
   </div>
 </div>
 
-<div class="modal" id="md"><div class="sheet">
-  <h3>✏️ تعديل الملف</h3>
-  <div style="border:1px dashed var(--b);border-radius:10px;padding:14px;text-align:center;margin-top:10px;cursor:pointer" id="upBox">📷 تغيير الصورة<input type="file" id="fi" accept="image/*" hidden></div>
-  <label style="font-size:11px;color:#a1a1aa;margin-top:10px;display:block">الاسم</label><input id="en">
-  <label style="font-size:11px;color:#a1a1aa;margin-top:10px;display:block">الدولة</label>
-  <select id="ec"><option value="">بدون</option><option value="south-arabia">🚩 الجنوب العربي</option><option value="🇸🇦">🇸🇦 السعودية</option><option value="🇾🇪">🇾🇪 اليمن</option><option value="🇦🇪">🇦🇪 الإمارات</option></select>
-  <label style="font-size:11px;color:#a1a1aa;margin-top:10px;display:block">نبذة عنك - اكتب هنا</label><textarea id="eb" rows="3" placeholder="اكتب نبذة قصيرة عنك..."></textarea>
-  <div style="display:flex;gap:8px;margin-top:12px"><button class="btn" style="background:#2a2840;color:#fff;flex:1" id="cl">إلغاء</button><button class="btn vip" style="flex:1" id="sv">حفظ</button></div>
-</div></div>
-
-<div class="bottom">
-  <a href="/profile/" class="on"><div>👤</div>حسابي</a>
-  <a href="/dm/"><div>🔒</div>دردشة خاصة</a>
-  <a href="/create/" class="plus"><div>+</div></a>
-  <a href="/posts/"><div>📄</div>منشورات</a>
-  <a href="/app/"><div>🏠</div>الرئيسية</a>
+<div class="modal" id="modal">
+<div class="sheet">
+  <h3>✏️ تعديل الملف الشخصي</h3>
+  <div class="upload" id="upBox">📷 تغيير الصورة<input type="file" id="fileInp" accept="image/*" hidden></div>
+  <label>الاسم</label><input id="editName" placeholder="اسمك">
+  <label>الدولة</label>
+  <select id="editCountry">
+    <option value="">بدون علم</option>
+    <option value="south-arabia">🚩 الجنوب العربي</option>
+    <option value="🇸🇦">🇸🇦 السعودية</option>
+    <option value="🇾🇪">🇾🇪 اليمن</option>
+    <option value="🇦🇪">🇦🇪 الإمارات</option>
+    <option value="🇰🇼">🇰🇼 الكويت</option>
+    <option value="🇶🇦">🇶🇦 قطر</option>
+    <option value="🇧🇭">🇧🇭 البحرين</option>
+    <option value="🇴🇲">🇴🇲 عمان</option>
+    <option value="🇪🇬">🇪🇬 مصر</option>
+  </select>
+  <label>نبذة عنك - اكتب هنا داخل القلم</label><textarea id="editBio" rows="3" placeholder="اكتب نبذة قصيرة عنك..."></textarea>
+  <div style="display:flex;gap:8px;margin-top:14px">
+    <button class="btn" style="background:#2a2840;color:#fff;flex:1" id="closeEdit">إلغاء</button>
+    <button class="btn vip" style="flex:1" id="saveEdit">💾 حفظ</button>
+  </div>
 </div>
+</div>
+
+<div class="bottomNav">
+  <a href="/profile/" id="nav-profile" class="on"><span class="ic">👤</span>حسابي</a>
+  <a href="/dm/" id="nav-dm"><span class="ic">🔒</span>دردشة خاصة</a>
+  <a href="/create/" class="plus"><span class="ic">+</span></a>
+  <a href="/posts/" id="nav-posts"><span class="ic">📄</span>منشورات</a>
+  <a href="/app/" id="nav-home"><span class="ic">🏠</span>الرئيسية</a>
+</div>
+
 <script type="module">
 import {auth,db} from '/firebase-config.js';
 import {onAuthStateChanged,updateProfile} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {doc,getDoc,setDoc,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-let cu=null,np=null;
-const fl=document.getElementById('fl');
-function rf(v){ if(!v){fl.innerHTML='';return} if(v==='south-arabia') fl.innerHTML=`<img src="/assets/south-arabia.png" style="width:24px;height:16px;border-radius:3px;border:1px solid #fff3">`; else fl.textContent=v; }
+let cur=null,newPhoto=null;
+const flagEl=document.getElementById('flag');
+function renderFlag(v){
+  if(!v){flagEl.innerHTML='';return}
+  if(v==='south-arabia'){flagEl.innerHTML=`<img src="/assets/south-arabia.png" class="flagImg">`}
+  else flagEl.textContent=v;
+}
 onAuthStateChanged(auth,async u=>{
-  if(!u){location.replace('/login/');return} cu=u;
-  document.getElementById('nm').textContent=u.displayName||u.email.split('@')[0];
+  if(!u){location.replace('/login/');return}
+  cur=u;
+  document.getElementById('name').textContent=u.displayName||u.email.split('@')[0];
   document.getElementById('avL').textContent=(u.displayName||'T')[0].toUpperCase();
-  document.getElementById('em').textContent=u.email;
-  document.getElementById('en').value=u.displayName||'';
-  const ref=doc(db,'users',u.uid); const s=await getDoc(ref); if(!s.exists()) await setDoc(ref,{followers:0,following:0,visitors:0});
-  onSnapshot(ref,d=>{ if(d.exists()){ document.getElementById('c1').textContent=d.data().followers||0; document.getElementById('c2').textContent=d.data().following||0; document.getElementById('c3').textContent=d.data().visitors||0; }});
-  const b=localStorage.getItem('gabo_bio_'+u.uid); if(b){document.getElementById('bio').textContent=b; document.getElementById('eb').value=b;}
-  const p=localStorage.getItem('gabo_photo_'+u.uid); if(p) document.getElementById('av').innerHTML=`<img src="${p}" style="width:100%;height:100%;object-fit:cover"><div class="pencil" id="open">✏️</div>`;
-  const f=localStorage.getItem('gabo_flag_'+u.uid); if(f){document.getElementById('ec').value=f; rf(f);}
-  document.getElementById('open').onclick=()=>document.getElementById('md').classList.add('on');
+  document.getElementById('email').textContent=u.email;
+  document.getElementById('editName').value=u.displayName||'';
+  const ref=doc(db,'users',u.uid);
+  const snap=await getDoc(ref);
+  if(!snap.exists()){await setDoc(ref,{followers:0,following:0,visitors:0,createdAt:Date.now()})}
+  onSnapshot(ref,d=>{if(d.exists()){document.getElementById('followers').textContent=d.data().followers||0;document.getElementById('following').textContent=d.data().following||0;document.getElementById('visitors').textContent=d.data().visitors||0;}});
+  const bio=localStorage.getItem('gabo_bio_'+u.uid); if(bio){document.getElementById('bioView').textContent=bio;document.getElementById('editBio').value=bio;}
+  const photo=localStorage.getItem('gabo_photo_'+u.uid); if(photo){document.getElementById('avatar').innerHTML=`<img src="${photo}" style="width:100%;height:100%;object-fit:cover"><div class="pencil" id="openEdit">✏️</div>`; document.getElementById('openEdit').onclick=()=>document.getElementById('modal').classList.add('on')}
+  const f=localStorage.getItem('gabo_flag_'+u.uid); if(f){document.getElementById('editCountry').value=f;renderFlag(f);}
 });
-document.getElementById('cl').onclick=()=>document.getElementById('md').classList.remove('on');
-document.getElementById('md').onclick=e=>{if(e.target.id==='md') e.target.classList.remove('on')};
-document.getElementById('upBox').onclick=()=>document.getElementById('fi').click();
-document.getElementById('fi').onchange=e=>{ const r=new FileReader(); r.onload=()=>{np=r.result; document.getElementById('upBox').innerHTML=`<img src="${np}" style="width:50px;height:50px;border-radius:10px;object-fit:cover"> تم`;}; r.readAsDataURL(e.target.files[0]);};
-document.getElementById('sv').onclick=async()=>{
-  const n=document.getElementById('en').value.trim(), b=document.getElementById('eb').value.trim(), f=document.getElementById('ec').value;
-  if(n) await updateProfile(cu,{displayName:n});
-  if(np) localStorage.setItem('gabo_photo_'+cu.uid,np);
-  if(b) localStorage.setItem('gabo_bio_'+cu.uid,b);
-  localStorage.setItem('gabo_flag_'+cu.uid,f); rf(f);
+const modal=document.getElementById('modal');
+document.getElementById('openEdit').onclick=()=>modal.classList.add('on');
+document.getElementById('closeEdit').onclick=()=>modal.classList.remove('on');
+modal.onclick=e=>{if(e.target.id==='modal')modal.classList.remove('on')}
+document.getElementById('upBox').onclick=()=>document.getElementById('fileInp').click();
+document.getElementById('fileInp').onchange=e=>{const fr=new FileReader();fr.onload=()=>{newPhoto=fr.result;document.getElementById('upBox').innerHTML=`<img src="${newPhoto}" style="width:56px;height:56px;border-radius:10px;object-fit:cover"><br>تم`;};fr.readAsDataURL(e.target.files[0]);}
+document.getElementById('saveEdit').onclick=async()=>{
+  const n=document.getElementById('editName').value.trim();
+  const b=document.getElementById('editBio').value.trim();
+  const f=document.getElementById('editCountry').value;
+  if(n&&n!==cur.displayName) await updateProfile(cur,{displayName:n});
+  if(newPhoto) localStorage.setItem('gabo_photo_'+cur.uid,newPhoto);
+  if(b) localStorage.setItem('gabo_bio_'+cur.uid,b);
+  localStorage.setItem('gabo_flag_'+cur.uid,f);
   location.reload();
 };
-document.getElementById('nb').onclick=async()=>{ if(Notification.permission!=='granted') await Notification.requestPermission(); alert('تم تفعيل الإشعارات 🔔'); };
-document.getElementById('open').onclick=()=>document.getElementById('md').classList.add('on');
+document.getElementById('notifBtn').onclick=async()=>{if(Notification.permission!=='granted') await Notification.requestPermission(); alert('تم تفعيل الإشعارات 🔔')};
 </script>
 </body>
 </html>
