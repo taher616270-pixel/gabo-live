@@ -6,119 +6,82 @@
 <title>GABO LIVE</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{position:fixed;inset:0;background:#08050f;overflow:hidden;font-family:system-ui,-apple-system}
+body{position:fixed;inset:0;background:#08050f;overflow:hidden;font-family:system-ui}
 
-.login-bg{
+.login{
   position:fixed;inset:0;
   display:flex;align-items:center;justify-content:center;
-  background:radial-gradient(800px 500px at 50% 0%,rgba(124,58,237,.25),#08050f);
+  background:radial-gradient(700px 500px at 50% -10%,rgba(124,58,237,.32),#08050f);
   padding:20px;
 }
 .card{
-  width:100%;max-width:360px;
-  background:rgba(20,16,32,.85);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:22px;
-  padding:26px 20px;
-  backdrop-filter:blur(20px);
+  width:100%;max-width:340px;
+  background:#151121;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:24px;
+  padding:22px;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
 }
-.card h2{color:#fff;font-size:15px;text-align:center;margin-bottom:16px}
-.inp{
-  width:100%;height:46px;
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:12px;
-  margin-bottom:10px;
-  color:#fff;outline:none;
-  padding:0 14px;
-}
-.btn{
-  width:100%;height:46px;
-  background:#7c3aed;
-  border:none;border-radius:12px;
-  color:#fff;font-weight:700;font-size:15px;
-  margin-top:6px;
-}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{flex:1;height:38px;border-radius:12px;border:0;font-weight:700}
+.tab.a{background:#7c3aed;color:#fff}
+.tab.b{background:rgba(255,255,255,.07);color:#aaa}
+.card h3{color:#fff;text-align:center;font-size:14px;margin:12px 0}
+.inp{width:100%;height:44px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:12px;margin-bottom:10px;color:#fff;padding:0 12px;outline:none}
+.btn{width:100%;height:44px;background:#7c3aed;border:0;border-radius:12px;color:#fff;font-weight:800}
 
-/* غطاء البداية */
 .splash{
-  position:fixed;inset:0;
-  z-index:10;
+  position:fixed;inset:0;z-index:10;
   display:flex;
-  pointer-events:none;
 }
-.half{
-  flex:1;
+.side{flex:1;background:#08050f;display:flex;align-items:center;transition:transform 1s cubic-bezier(.76,0,.24,1)}
+.side.l{justify-content:flex-end;padding-right:6px;transform:translateX(0)}
+.side.r{justify-content:flex-start;padding-left:6px;transform:translateX(0)}
+.word{font-size:40px;font-weight:900;letter-spacing:5px}
+.gabo{color:#fff}.live{color:#a78bfa}
+
+.open .l{transform:translateX(-100%)}
+.open .r{transform:translateX(100%)}
+
+.center{
+  position:fixed;inset:0;z-index:11;
+  display:flex;align-items:center;justify-content:center;gap:10px;
   background:#08050f;
-  display:flex;
-  align-items:center;
-  transition:transform 1.2s cubic-bezier(.16,1,.3,1);
+  animation:pop 2s cubic-bezier(.16,1,.3,1) forwards;
 }
-.half.left{justify-content:flex-end;padding-right:8px}
-.half.right{justify-content:flex-start;padding-left:8px}
-.word{
-  font-size:42px;font-weight:900;letter-spacing:5px;
-}
-.gabo{color:#fff}
-.live{color:#a78bfa}
-.half.left .word{transform:translateX(0)}
-.half.right .word{transform:translateX(0)}
-
-.splash.open .left{transform:translateX(-100%)}
-.splash.open .right{transform:translateX(100%)}
-
-.center-zoom{
-  position:fixed;inset:0;
-  z-index:11;
-  display:flex;align-items:center;justify-content:center;
-  gap:12px;
-  animation:zoomIn 2.2s cubic-bezier(.16,1,.3,1) forwards;
-}
-@keyframes zoomIn{
-  0%{transform:scale(.2);opacity:0}
+@keyframes pop{
+  0%{transform:scale(.18);opacity:0}
   25%{opacity:1}
-  60%{transform:scale(1.1)}
-  100%{transform:scale(1.1)}
+  65%{transform:scale(1.15)}
+  100%{transform:scale(1.15)}
 }
 </style>
 </head>
 <body>
 
-<div class="login-bg">
+<div class="login">
   <div class="card">
-    <h2>👋 مرحباً بعودتك</h2>
+    <div class="tabs"><button class="tab b">حساب جديد</button><button class="tab a">دخول</button></div>
+    <h3>👋 مرحباً بعودتك</h3>
     <input class="inp" placeholder="البريد">
     <input class="inp" placeholder="كلمة السر" type="password">
     <button class="btn">دخول</button>
   </div>
 </div>
 
-<div class="center-zoom" id="center">
-  <div class="word gabo">GABO</div>
-  <div class="word live">LIVE</div>
-</div>
-
-<div class="splash" id="splash">
-  <div class="half left"><div class="word gabo">GABO</div></div>
-  <div class="half right"><div class="word live">LIVE</div></div>
-</div>
+<div class="center" id="c"><div class="word gabo">GABO</div><div class="word live">LIVE</div></div>
+<div class="splash" id="s"><div class="side l"><div class="word gabo">GABO</div></div><div class="side r"><div class="word live">LIVE</div></div></div>
 
 <script>
-const center = document.getElementById('center');
-const splash = document.getElementById('splash');
-
-// 1- بعد ما يكبر في الوسط 2 ثانية
 setTimeout(()=>{
-  center.style.opacity='0';
-  center.style.transition='opacity .4s';
-  splash.classList.add('open');
-},2200);
-
-// 2- احذف الغطاء بعد ما ينفتح
+  document.getElementById('c').style.opacity='0';
+  document.getElementById('c').style.transition='.35s';
+  document.getElementById('s').classList.add('open');
+},1900);
 setTimeout(()=>{
-  splash.style.display='none';
-  center.style.display='none';
-},3500);
+  document.getElementById('c').remove();
+  document.getElementById('s').remove();
+},3100);
 </script>
 </body>
 </html>
