@@ -30,13 +30,25 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 .userItem small{color:var(--muted);font-size:11px}
 .actionBtn{background:var(--v);border:0;color:#fff;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0}
 .actionBtn.outline{background:transparent;border:1px solid var(--b);color:#fff}
-.actionBtn:disabled{opacity:.5}
-.chat{flex:1;overflow:auto;padding:76px 12px 90px 12px;display:flex;flex-direction:column;gap:10px}
+.chat{flex:1;overflow:auto;padding:76px 12px 130px 12px;display:flex;flex-direction:column;gap:10px}
 .bubble{max-width:78%;padding:10px 14px;border-radius:18px;background:#1e1c2e;border:1px solid var(--b);font-size:14px;word-break:break-word}
 .bubble.me{align-self:flex-end;background:var(--v);border-color:var(--v)}
-.inputBar{position:fixed;bottom:84px;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);padding:10px;display:flex;gap:8px;z-index:20}
+.bubble .southFlag{width:40px;height:26px;border-radius:4px;overflow:hidden;display:inline-flex;border:1px solid rgba(255,255,255,.3);vertical-align:middle}
+.bubble .southFlag svg{width:100%;height:100%;display:block}
+.inputBar{position:fixed;bottom:84px;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);padding:10px;display:flex;gap:8px;z-index:20;align-items:center}
 .inputBar input{flex:1;background:#1a182a;border:1px solid var(--b);border-radius:20px;padding:12px 14px;color:#fff;outline:0;font-size:14px}
+.iconBtn{width:40px;height:40px;border-radius:50%;background:#1e1c2e;border:1px solid var(--b);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;flex-shrink:0}
 .send{width:44px;height:44px;border-radius:50%;background:var(--v);border:0;color:#fff;font-size:20px;cursor:pointer;flex-shrink:0}
+.emojiPanel{position:fixed;bottom:130px;left:8px;right:8px;background:#161426;border:1px solid var(--b);border-radius:18px;max-height:340px;display:none;flex-direction:column;z-index:2000;overflow:hidden}
+.emojiPanel.on{display:flex}
+.emojiTabs{display:flex;gap:6px;padding:10px;border-bottom:1px solid var(--b);overflow-x:auto}
+.emojiTabs button{background:#0f0e18;border:1px solid var(--b);color:#fff;padding:6px 12px;border-radius:10px;cursor:pointer;font-size:13px;white-space:nowrap}
+.emojiTabs button.on{background:var(--v)}
+.emojiGrid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;padding:10px;overflow-y:auto}
+.emojiGrid span{font-size:24px;padding:8px;text-align:center;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.emojiGrid span:hover{background:#1e1c2e}
+.flagCustom{width:32px;height:22px;border-radius:4px;overflow:hidden;border:1px solid #444;display:inline-flex!important}
+.flagCustom svg{width:100%;height:100%;object-fit:cover}
 .bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;padding-bottom:env(safe-area-inset-bottom);z-index:1000;direction:ltr}
 .bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
 .bottomNav a.on{color:#fff}
@@ -67,7 +79,22 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 
 <div class="list" id="listView"></div>
 <div class="chat" id="chatView" style="display:none"></div>
-<div class="inputBar" id="inputBar" style="display:none"><input id="msgInput" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMsg()"><button class="send" onclick="sendMsg()">➤</button></div>
+
+<div class="emojiPanel" id="emojiPanel">
+  <div class="emojiTabs">
+    <button class="on" onclick="showEmojiCat(event,'smile')">😊 وجوه</button>
+    <button onclick="showEmojiCat(event,'flags')">🏳️ أعلام</button>
+    <button onclick="showEmojiCat(event,'love')">❤️ حب</button>
+    <button onclick="showEmojiCat(event,'all')">✨ الكل</button>
+  </div>
+  <div class="emojiGrid" id="emojiGrid"></div>
+</div>
+
+<div class="inputBar" id="inputBar" style="display:none">
+<button class="iconBtn" onclick="toggleEmoji()">😊</button>
+<input id="msgInput" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMsg()">
+<button class="send" onclick="sendMsg()">➤</button>
+</div>
 
 <button class="fab" id="fabBtn" onclick="openAddPeople()">+</button>
 
@@ -92,6 +119,9 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 import {auth,db} from '/firebase-config.js';
 import {onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {doc,getDoc,setDoc,collection,addDoc,serverTimestamp,onSnapshot,query,orderBy,where,getDocs,limit,arrayUnion,increment} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const SOUTH_SVG=`<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="200" y="0" fill="#D71921"/><rect width="900" height="200" y="200" fill="#FFF"/><rect width="900" height="200" y="400" fill="#000"/><path d="M0 0 L380 300 L0 600 Z" fill="#5EB6E4"/><g transform="translate(125,300)"><path d="M0 -70 L20 -22 L75 -22 L32 10 L48 65 L0 32 L-48 65 L-32 10 L-75 -22 L-20 -22 Z" fill="#D71921" stroke="white" stroke-width="10" stroke-linejoin="round"/></g></svg>`;
+const SOUTH_PLACEHOLDER='[[SOUTH_FLAG]]';
 
 let uid=null, targetUid=null, chatId=null, currentTab='chats', chatsCache=[], friendsCache=[], addCache=[];
 function getTargetUid(){
@@ -125,6 +155,88 @@ function filterBySearch(arr){
   return arr.filter(u=> (u.name||'').toLowerCase().includes(q) || (u.gaboId||'').toLowerCase().includes(q) );
 }
 
+// === اموجيات ===
+window.toggleEmoji=()=>{
+  const p=document.getElementById('emojiPanel');
+  p.classList.toggle('on');
+  if(p.classList.contains('on')) showEmojiCat(null,'smile');
+}
+window.showEmojiCat=(e,cat)=>{
+  if(e){
+    e.target.closest('.emojiTabs').querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+    e.target.classList.add('on');
+  }
+  const grid=document.getElementById('emojiGrid');
+  grid.innerHTML='';
+  let list=[];
+  if(cat==='smile') list=['😀','😂','😍','🥰','😊','😎','🤩','😭','😢','😡','🤔','👍','👎','👏','🙏','💪','🔥','❤️','💜','✨','🎉','🥳','😴','🤤','🤫','🤐','🥺','😋','😜','🤣','😇','🤠','🥶'];
+  else if(cat==='flags') list=['🇸🇦','🇾🇪','🇦🇪','🇴🇲','🇶🇦','🇰🇼','🇧🇭','🇪🇬','🇯🇴','🇱🇧','🇵🇸','🇮🇶','🇸🇾','🇹🇷','🇵🇰','🇺🇸','🇬🇧'];
+  else if(cat==='love') list=['❤️','🧡','💛','💚','💙','💜','🖤','🤍','💔','❣️','💕','💞','💓','💗','💖','💝','😘','🥰','😍','🤗','💋','💌','🌹','🌷','💐'];
+  else list=['😀','😂','❤️','🔥','👍','😍','🙏','💪','🇸🇦','🇾🇪','🏴','✨','🎉','🌟','💯','👑','💜','😎','🤩','🥳','😭','🤔','👏','🫶','🤲','❤️‍🔥','💥','🌙','☀️','⭐'];
+
+  list.forEach(em=>{
+    const s=document.createElement('span');
+    s.textContent=em;
+    s.onclick=()=>{document.getElementById('msgInput').value+=em; document.getElementById('msgInput').focus();};
+    grid.appendChild(s);
+  });
+  // اضافة علم الجنوب المخصص كأول واحد في الاعلام
+  if(cat==='flags' || cat==='all'){
+    const southSpan=document.createElement('span');
+    southSpan.className='flagCustom';
+    southSpan.innerHTML=SOUTH_SVG;
+    southSpan.title='علم الجنوب العربي';
+    southSpan.onclick=()=>{
+      document.getElementById('msgInput').value+=SOUTH_PLACEHOLDER;
+      document.getElementById('msgInput').focus();
+    };
+    grid.prepend(southSpan);
+  }
+}
+
+function renderMessageText(text){
+  // استبدال علم الجنوب
+  if(text.includes(SOUTH_PLACEHOLDER)){
+    return text.replaceAll(SOUTH_PLACEHOLDER, `<span class="southFlag">${SOUTH_SVG}</span>`);
+  }
+  // لو الرسالة فقط اعلام، كبرها
+  return text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+async function loadChatsData(){
+  const q=query(collection(db,'privateChats'), where('participants','array-contains', uid));
+  onSnapshot(q, async snap=>{
+    chatsCache=[];
+    for(const d of snap.docs){
+      const data=d.data();
+      const other=data.participants?.find(x=>x!==uid);
+      if(!other) continue;
+      let name=other.slice(0,8), photo='https://i.pravatar.cc/100?u='+other;
+      try{
+        const us=await getDoc(doc(db,'users',other));
+        if(us.exists()){name=us.data().displayName||us.data().name||name; photo=us.data().photoURL||us.data().photo||us.data().avatar||photo;}
+      }catch{}
+      let msgCount=0;
+      try{
+        const msgsSnap=await getDocs(collection(db,'privateChats',d.id,'messages'));
+        let otherCount=0;
+        msgsSnap.forEach(m=>{ if(m.data().uid===other) otherCount++; });
+        msgCount= otherCount>0 ? otherCount : msgsSnap.size;
+      }catch{}
+      const time = data.lastAt ? new Date(data.lastAt.seconds*1000).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}) : '';
+      chatsCache.push({otherUid:other, name, photo, lastText:data.lastText||'', time, lastAt:data.lastAt?.seconds||0, count:msgCount});
+    }
+    chatsCache.sort((a,b)=>b.lastAt-a.lastAt);
+    const count=chatsCache.length;
+    document.getElementById('countBadge').textContent=count;
+    document.getElementById('countBadge').style.display= count>0?'inline-flex':'none';
+    document.getElementById('navCount').textContent=count;
+    document.getElementById('navCount').style.display= count>0?'flex':'none';
+    document.getElementById('tabCount').textContent= count>0?`(${count})`:'';
+    if(currentTab==='chats') renderChats();
+  });
+}
+
 function renderChats(){
   const list=document.getElementById('listView');
   const filtered=filterBySearch(chatsCache);
@@ -136,11 +248,23 @@ function renderChats(){
   filtered.forEach(c=>{
     const item=document.createElement('div');
     item.className='chatItem';
-    item.innerHTML=`<div style="width:42px;height:42px;border-radius:50%;overflow:hidden;background:#222"><img src="${c.photo}" style="width:100%;height:100%;object-fit:cover"></div><div style="flex:1;overflow:hidden"><b style="font-size:13px">${c.name}</b><br><small style="color:#8b8ba7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block">${c.lastText||'محادثة جديدة'}</small></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><small style="color:#6b6b7a;font-size:10px">${c.time||''}</small><div style="color:#6b6b7a">‹</div></div>`;
+    // عرض اخر رسالة مع علم الجنوب لو موجود
+    let preview=c.lastText;
+    if(preview.includes(SOUTH_PLACEHOLDER)) preview='🏴 علم الجنوب العربي';
+    const countBadge = c.count>0? `<span style="background:#7c3aed;color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:12px;min-width:20px;text-align:center">${c.count} رسائل</span>` : '';
+    item.innerHTML=`
+      <div style="width:42px;height:42px;border-radius:50%;overflow:hidden;background:#222"><img src="${c.photo}" style="width:100%;height:100%;object-fit:cover"></div>
+      <div style="flex:1;overflow:hidden"><b style="font-size:13px">${c.name}</b><br><small style="color:#8b8ba7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block">${preview||'محادثة جديدة'}</small></div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:65px">
+        <small style="color:#8b8ba7;font-size:11px">${c.time||''}</small>
+        ${countBadge}
+        <div style="color:#6b6b7a;font-size:12px">›</div>
+      </div>`;
     item.onclick=()=>{localStorage.setItem('last_dm_uid', c.otherUid); location.href='/dm/?uid='+c.otherUid;};
     list.appendChild(item);
   });
 }
+
 function renderFriends(){
   const list=document.getElementById('listView');
   const filtered=filterBySearch(friendsCache);
@@ -196,7 +320,6 @@ window.filterAdd=()=>{
   else renderAddPeople(addCache.filter(u=>u.name.toLowerCase().includes(q)));
 }
 
-// متابعة - مصحح 100%
 window.followUser=async(otherUid)=>{
   const btn=document.getElementById('btn_'+otherUid);
   if(btn) {btn.textContent='...'; btn.disabled=true;}
@@ -224,34 +347,6 @@ window.followUser=async(otherUid)=>{
 window.startChat=(otherUid)=>{
   localStorage.setItem('last_dm_uid', otherUid);
   location.href='/dm/?uid='+otherUid;
-}
-
-async function loadChatsData(){
-  const q=query(collection(db,'privateChats'), where('participants','array-contains', uid));
-  onSnapshot(q, async snap=>{
-    chatsCache=[];
-    for(const d of snap.docs){
-      const data=d.data();
-      const other=data.participants?.find(x=>x!==uid);
-      if(!other) continue;
-      let name=other.slice(0,8), photo='https://i.pravatar.cc/100?u='+other;
-      try{
-        const us=await getDoc(doc(db,'users',other));
-        if(us.exists()){name=us.data().displayName||us.data().name||name; photo=us.data().photoURL||us.data().photo||us.data().avatar||photo;}
-      }catch{}
-      const time = data.lastAt ? new Date(data.lastAt.seconds*1000).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}) : '';
-      chatsCache.push({otherUid:other, name, photo, lastText:data.lastText||'', time, lastAt:data.lastAt?.seconds||0});
-    }
-    chatsCache.sort((a,b)=>b.lastAt-a.lastAt);
-    // عداد الرسائل فوق
-    const count=chatsCache.length;
-    document.getElementById('countBadge').textContent=count;
-    document.getElementById('countBadge').style.display= count>0?'inline-flex':'none';
-    document.getElementById('navCount').textContent=count;
-    document.getElementById('navCount').style.display= count>0?'flex':'none';
-    document.getElementById('tabCount').textContent= count>0?`(${count})`:'';
-    if(currentTab==='chats') renderChats();
-  });
 }
 
 async function loadFriendsData(){
@@ -296,7 +391,6 @@ onAuthStateChanged(auth, async u=>{
     document.getElementById('chatView').style.display='flex';
     document.getElementById('inputBar').style.display='flex';
     
-    // رجع صورة الشخص فوق
     const avatarWrap=document.getElementById('hAvatarWrap');
     const icon=document.getElementById('hIcon');
     avatarWrap.style.display='flex';
@@ -314,7 +408,6 @@ onAuthStateChanged(auth, async u=>{
     }catch{}
 
     chatId=[uid,targetUid].sort().join('_');
-    // ** اصلاح الحفظ: ينشئ المحادثة فورا **
     await setDoc(doc(db,'privateChats',chatId),{
       participants:[uid,targetUid],
       lastAt:serverTimestamp(),
@@ -327,13 +420,18 @@ onAuthStateChanged(auth, async u=>{
       const box=document.getElementById('chatView');
       box.innerHTML='';
       if(s.empty){
-        box.innerHTML='<div style="text-align:center;color:#6b6b7a;margin-top:60px">ابدأ المحادثة 👋</div>';
+        box.innerHTML='<div style="text-align:center;color:#6b6b7a;margin-top:60px">ابدأ المحادثة 👋<br><small>اضغط 😊 لإرسال إيموجي وعلم الجنوب 🏴</small></div>';
       }else{
         s.forEach(d=>{
           const m=d.data();
           const div=document.createElement('div');
           div.className='bubble '+(m.uid===uid?'me':'');
-          div.textContent=m.text||'';
+          // عرض علم الجنوب كصورة
+          if(m.text && m.text.includes(SOUTH_PLACEHOLDER)){
+            div.innerHTML=m.text.replaceAll(SOUTH_PLACEHOLDER, `<span class="southFlag">${SOUTH_SVG}</span>`);
+          }else{
+            div.textContent=m.text||'';
+          }
           box.appendChild(div);
         });
       }
@@ -356,12 +454,18 @@ onAuthStateChanged(auth, async u=>{
 
 window.sendMsg=async()=>{
   const input=document.getElementById('msgInput');
-  const t=input.value.trim();
+  let t=input.value.trim();
   if(!t || !chatId) return;
   input.value='';
+  document.getElementById('emojiPanel').classList.remove('on');
+  
+  // للعرض في قائمة المحادثات
+  let preview=t;
+  if(t.includes(SOUTH_PLACEHOLDER)) preview='🏴 علم الجنوب';
+  
   await addDoc(collection(db,'privateChats',chatId,'messages'),{text:t, uid:uid, createdAt:serverTimestamp()});
   await setDoc(doc(db,'privateChats',chatId),{
-    lastText:t,
+    lastText:preview,
     lastAt:serverTimestamp(),
     participants:[uid,targetUid]
   },{merge:true});
