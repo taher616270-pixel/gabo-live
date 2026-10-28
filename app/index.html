@@ -2,39 +2,35 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>GABO LIVE</title>
+<title>VIP</title>
 <style>
-:root{--bg:#07060c;--card:#161426;--b:#2a2840;--v:#7c3aed;--m:#a1a1aa}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px}
+:root{--b:#2a2840;--v:#7c3aed}
+*{margin:0;padding:0;box-sizing:border-box}body{background:#07060c;color:#fff;font-family:system-ui;padding-bottom:110px}
 .top{padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
-.top b{font-size:18px}
-.top .acts{display:flex;gap:8px}
-.top .acts a{background:#1e1c2e;border:1px solid var(--b);color:#fff;padding:5px 10px;border-radius:16px;font-size:11px;text-decoration:none}
-.list{margin:10px 12px;display:flex;flex-direction:column;gap:10px}
-.item{background:var(--card);border:1px solid var(--b);border-radius:16px;padding:14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
-.item .l{font-size:14px;font-weight:700}.item .s{font-size:11px;color:var(--m);margin-top:2px}
+.back{background:#1e1c2e;border:1px solid var(--b);color:#fff;padding:6px 14px;border-radius:20px;text-decoration:none;font-size:13px}
+.card{margin:16px;background:#161426;border:1px solid var(--b);border-radius:20px;padding:22px;text-align:center}
 .bottomNav{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-end;padding:8px 0 calc(10px + env(safe-area-inset-bottom));z-index:1000;direction:ltr}
 .bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:9px;display:flex;flex-direction:column;align-items:center;gap:3px}
-.bottomNav a.on{color:#fff}.bottomNav a .ic{font-size:22px}
-.bottomNav a.plus .ic{background:var(--v);color:#fff;width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-20px;box-shadow:0 8px 20px rgba(124,58,237,.5)}
+.bottomNav a .ic{font-size:22px}
+.bottomNav a.plus .ic{background:var(--v);color:#fff;width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-20px}
 </style>
 </head>
 <body>
-<div class="top"><b>✨ GABO LIVE</b><div class="acts"><a href="/profile/">ملفي</a><a href="/login/">خروج</a></div></div>
-<div style="padding:0 16px;color:var(--m);font-size:12px">الرئيسية</div>
-<div class="list">
-  <div class="item" onclick="location.href='/groups/'"><div><div class="l">المجتمعات</div><div class="s">ادخل مجتمعك المفضل</div></div><div>›</div></div>
-  <div class="item" onclick="location.href='/chat/'"><div><div class="l">الشات العام</div><div class="s">توبيك مع الجميع</div></div><div>›</div></div>
-  <div class="item" onclick="location.href='/members/'"><div><div class="l">الأعضاء</div><div class="s">تعرف على الأعضاء</div></div><div>›</div></div>
+<div class="top"><b>✨ GABO LIVE</b><a class="back" href="/profile/">رجوع ‹</a></div>
+<div class="card">
+  <h2>دائرتك المميزة</h2>
+  <p style="color:#a1a1aa;font-size:13px;margin-top:8px">مساحة مخصصة للمميزين - الجنوب العربي</p>
+  <div style="margin-top:16px;display:flex;gap:8px;justify-content:center">
+    <button style="background:var(--v);border:0;color:#fff;padding:10px 16px;border-radius:10px;font-weight:800">عرض الباقات ↓</button>
+    <button style="background:#2a2840;border:0;color:#fff;padding:10px 16px;border-radius:10px">انضم كضيف</button>
+  </div>
 </div>
-
 <div class="bottomNav">
-  <a href="/profile/" id="nav-profile"><span class="ic">👤</span>حسابي</a>
-  <a href="/dm/" id="nav-dm"><span class="ic">🔒</span>دردشة خاصة</a>
+  <a href="/profile/"><span class="ic">👤</span>حسابي</a>
+  <a href="/dm/"><span class="ic">🔒</span>دردشة خاصة</a>
   <a href="/create/" class="plus"><span class="ic">+</span></a>
-  <a href="/posts/" id="nav-posts"><span class="ic">📄</span>منشورات</a>
-  <a href="/app/" id="nav-home" class="on"><span class="ic">🏠</span>الرئيسية</a>
+  <a href="/posts/"><span class="ic">📄</span>منشورات</a>
+  <a href="/app/"><span class="ic">🏠</span>الرئيسية</a>
 </div>
 </body>
 </html>
