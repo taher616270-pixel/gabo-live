@@ -3,22 +3,5 @@
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(self), geolocation=()
-  Cross-Origin-Opener-Policy: same-origin
-  Cross-Origin-Embedder-Policy: credentialless
-
-/*.html
-  Cache-Control: no-cache, no-store, must-revalidate
-
-/app/*
-  Cache-Control: no-cache, no-store, must-revalidate
-  Permissions-Policy: microphone=(self)
-
-/assets/*
-  Cache-Control: public, max-age=3600, immutable
-  Access-Control-Allow-Origin: *
-
-/assets/app.js
-  Cache-Control: no-cache, must-revalidate
-
-/assets/style/*
-  Cache-Control: public, max-age=3600
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+  Cache-Control: no-cache
