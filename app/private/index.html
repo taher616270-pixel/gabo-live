@@ -1,86 +1,83 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>الخاص — GABO LIVE</title>
-<style>
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#0a0812;color:#f8f7ff;font-family:system-ui;padding-bottom:80px}
-.wrap{width:min(1200px,calc(100% - 16px));margin:auto}
-.topbar{display:flex;justify-content:space-between;padding:12px 0;position:sticky;top:0;background:#0a0812cc;z-index:10;backdrop-filter:blur(10px)}
-.brand{color:#c4b5fd;font-weight:900;text-decoration:none}
-.page{display:none}.page.active{display:block}
-.card{background:rgba(17,12,29,.95);border:1px solid rgba(196,181,253,.2);border-radius:16px;display:flex;flex-direction:column;overflow:hidden;margin-top:12px}
-.card h3{margin:0;padding:12px;border-bottom:1px solid #ffffff12;font-size:13px;color:#c4b5fd;display:flex;justify-content:space-between}
-.list{overflow:auto;flex:1;max-height:75vh}
-.item{padding:12px;cursor:pointer;border-bottom:1px solid #ffffff06;display:flex;justify-content:space-between;align-items:center}
-.item.active{background:#7c3aed33}
-.msgs{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:60vh;max-height:65vh}
-.msg{padding:10px 12px;border-radius:14px;max-width:75%;background:#ffffff0e;line-height:1.4}
-.msg.me{align-self:flex-end;background:linear-gradient(135deg,#7c3aed,#5b21b6)}
-.input-area{display:flex;gap:8px;padding:10px;border-top:1px solid #ffffff12;position:sticky;bottom:0;background:#110c1d}
-input{flex:1;background:#0d0b15;border:1px solid #ffffff22;border-radius:10px;padding:11px;color:#fff;outline:none}
-button{border-radius:10px;padding:10px 14px;border:0;background:#211638;color:#fff;cursor:pointer;font-weight:700}
-.primary{background:linear-gradient(135deg,#7c3aed,#5b21b6)}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(15,12,24,.98);border-top:1px solid #ffffff18;display:flex;justify-content:space-around;padding:8px 0 12px;z-index:100}
-.bottom-nav a{display:flex;flex-direction:column;align-items:center;color:#aaa3bd;text-decoration:none;font-size:11px;padding:6px 16px;border-radius:12px;cursor:pointer}
-.bottom-nav a.active{color:#c4b5fd;background:#7c3aed22}.bottom-nav b{font-size:20px}
-</style>
+<link rel="stylesheet" href="/assets/style/style.css">
 </head>
 <body>
 <div class="wrap">
-<div class="topbar"><a class="brand" href="/app/">← GABO LIVE</a><span id="meName" style="font-size:12px;color:#aaa"></span></div>
+  <header class="topbar">
+    <a class="brand" href="/app/">GABO LIVE ✨</a>
+    <span class="muted" style="font-size:12px" data-user-name></span>
+  </header>
 
-<div class="page active" id="page-list">
-<div class="card"><h3>✉️ الخاص - كل الأعضاء</h3><div class="list" id="usersList"></div></div>
+  <section class="page active" id="page-list">
+    <div class="card"><h3>✉️ الخاص - كل الأعضاء</h3><div class="list" id="usersList"><div class="empty">جاري التحميل...</div></div></div>
+  </section>
+
+  <section class="page" id="page-chat">
+    <div class="card">
+      <h3 style="display:flex;justify-content:space-between"><span id="chatTitle">الخاص</span><a data-show="list" href="#" class="muted">✕ رجوع</a></h3>
+      <div class="msgs" id="msgsBox" style="height:60vh"></div>
+      <div class="composer"><input id="msgInput" class="input" placeholder="اكتب رسالة..." maxlength="500"><button id="sendBtn" class="btn primary">↑</button></div>
+    </div>
+  </section>
 </div>
-
-<div class="page" id="page-chat">
-<div class="card"><h3><span id="chatTitle">الخاص</span><span style="cursor:pointer" onclick="showPage('list')">✕ رجوع</span></h3><div class="msgs" id="msgsBox"></div><div class="input-area"><input id="msgInput" placeholder="اكتب رسالة..."><button id="sendBtn" class="primary">↑</button></div></div>
-</div>
-
-</div>
-
-<nav class="bottom-nav">
-<a href="/app/"><b>⌂</b><span>الرئيسية</span></a>
-<a href="/app/public/"><b>🌍</b><span>العام</span></a>
-<a class="active"><b>✉</b><span>الخاص</span></a>
-<a href="/profile/"><b>◉</b><span>حسابي</span></a>
-</nav>
 
 <script type="module">
-import {auth,db} from "/firebase-config.js";
-import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import {collection,addDoc,query,where,orderBy,onSnapshot,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-let me=null;let toId=new URLSearchParams(location.search).get('to');let unsub=null;
-function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');}
-window.showPage=showPage;
-onAuthStateChanged(auth,u=>{if(!u){location.href='/login/';return;}me=u;document.getElementById('meName').innerText=u.displayName||u.email;listenUsers();if(toId){showPage('chat');listenPrivate();}});
-function listenUsers(){
- onSnapshot(collection(db,'users'),snap=>{
-  const el=document.getElementById('usersList');el.innerHTML='';
-  snap.forEach(d=>{
-   const us=d.data();const uid=d.id||us.uid;if(uid===me.uid) return;
-   const div=document.createElement('div');div.className='item'+(uid===toId?' active':'');
-   div.innerHTML=`<span><b>${us.name||us.email}</b><br><small style="color:#aaa">${us.email||''}</small></span><span>💬</span>`;
-   div.onclick=()=>{toId=uid;document.getElementById('chatTitle').innerText=us.name||us.email;history.replaceState(null,'','?to='+uid);showPage('chat');listenPrivate();};
-   el.appendChild(div);
+import { db, boot, me, showPage, toast, esc, $ } from '/assets/app.js';
+import { collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+await boot({ auth: true });
+
+let toId = new URLSearchParams(location.search).get('to'), unsub = null;
+const chatId = (a, b) => [a, b].sort().join('_');
+
+onSnapshot(collection(db, 'users'), snap => {
+  const el = $('#usersList'); el.replaceChildren();
+  snap.forEach(d => {
+    if (d.id === me.uid) return;
+    const u = d.data(); if (u.banned) return;
+    const row = document.createElement('div');
+    row.className = 'item' + (d.id === toId ? ' active' : '');
+    row.innerHTML = `<span><b>${esc(u.name || u.email)}</b><br><small>${esc(u.email || '')}</small></span><span>💬</span>`;
+    if (d.id === toId) $('#chatTitle').textContent = u.name || u.email;
+    row.onclick = () => open(d.id, u.name || u.email);
+    el.append(row);
   });
- });
+  if (!el.children.length) el.innerHTML = '<div class="empty">لا يوجد أعضاء آخرين بعد</div>';
+}, () => toast('تعذر تحميل الأعضاء', 'error'));
+
+function open(id, title) {
+  toId = id; $('#chatTitle').textContent = title;
+  history.replaceState(null, '', '?to=' + id);
+  showPage('chat'); listen();
 }
-function getChatId(a,b){return [a,b].sort().join('_');}
-function listenPrivate(){
- if(!toId) return;if(unsub) unsub();
- const chatId=getChatId(me.uid,toId);
- const q=query(collection(db,'private_messages'),where('chatId','==',chatId),orderBy('createdAt','asc'));
- unsub=onSnapshot(q,snap=>{
-  const box=document.getElementById('msgsBox');box.innerHTML='';
-  if(snap.empty) box.innerHTML='<div class="msg">ابدأ المحادثة 👋</div>';
-  snap.forEach(d=>{const m=d.data();const div=document.createElement('div');div.className='msg'+(m.from===me.uid?' me':'');div.innerText=m.text;box.appendChild(div);});
-  box.scrollTop=box.scrollHeight;
- });
+function listen() {
+  unsub?.();
+  const q = query(collection(db, 'private_messages'), where('chatId', '==', chatId(me.uid, toId)), orderBy('createdAt', 'asc'));
+  unsub = onSnapshot(q, snap => {
+    const box = $('#msgsBox'); box.replaceChildren();
+    if (snap.empty) box.innerHTML = '<div class="empty">ابدأ المحادثة 👋</div>';
+    snap.forEach(d => {
+      const m = d.data(), row = document.createElement('div');
+      row.className = 'msg' + (m.from === me.uid ? ' me' : ''); row.textContent = m.text; box.append(row);
+    });
+    box.scrollTop = box.scrollHeight;
+  }, () => toast('تعذر تحميل المحادثة', 'error'));
 }
-async function send(){const inp=document.getElementById('msgInput');const t=inp.value.trim();if(!t||!toId){alert('اختر عضو أولا');return;}inp.value='';await addDoc(collection(db,'private_messages'),{chatId:getChatId(me.uid,toId),from:me.uid,to:toId,text:t,createdAt:serverTimestamp()});}
-document.getElementById('sendBtn').onclick=send;document.getElementById('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter') send();});
+async function send() {
+  const inp = $('#msgInput'), text = inp.value.trim().slice(0, 500);
+  if (!text) return;
+  if (!toId) return toast('اختر عضو اولا', 'error');
+  inp.value = '';
+  try { await addDoc(collection(db, 'private_messages'), { chatId: chatId(me.uid, toId), from: me.uid, to: toId, text, createdAt: serverTimestamp() }); }
+  catch (e) { toast('تعذر الارسال', 'error'); inp.value = text; }
+}
+$('#sendBtn').onclick = send;
+$('#msgInput').addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+if (toId) { showPage('chat'); listen(); }
 </script>
 </body>
 </html>
