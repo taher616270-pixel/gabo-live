@@ -7,6 +7,13 @@
 /hosts /hosts/index.html 200
 /vip /vip/index.html 200
 /admin /admin/index.html 200
+/posts /posts/index.html 200
+/dm /dm/index.html 200
+/create /create/index.html 200
+/communities /communities/index.html 200
+/members /members/index.html 200
+/chat /chat/index.html 200
+/host /host/index.html 200
 
 # اي مسار غير موجود يرجع للافتتاحية
 /* /index.html 404
