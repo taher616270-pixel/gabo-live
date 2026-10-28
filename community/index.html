@@ -1,134 +1,125 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>مجتمع الجنوب العربي</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>مجتمع</title>
 <style>
-:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed;--muted:#8b8ba7;--msg:#1e1c32}
+:root{--bg:#080810;--card:#161426;--b:#2a2840;--v:#7c3aed;--muted:#8b8ba7}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
-
-/* هيدر ثابت ما يتحرك */
-.header{
-  height:68px;background:#0f0e18;border-bottom:1px solid var(--b);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 12px;position:fixed;top:0;left:0;right:0;z-index:1000;
-}
-.headerLeft{display:flex;align-items:center;gap:10px;flex:1;overflow:hidden}
-.backBtn{width:38px;height:38px;border-radius:12px;background:#161426;border:1px solid var(--b);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;flex-shrink:0}
+.header{height:68px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px;padding:0 12px;position:fixed;top:0;left:0;right:0;z-index:1000}
+.backBtn{width:38px;height:38px;border-radius:12px;background:#161426;border:1px solid var(--b);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px}
 .commFlag{width:52px;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--b);flex-shrink:0;background:#000}
 .commFlag svg,.commFlag img{width:100%;height:100%;object-fit:cover;display:block}
 .headerInfo{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:3px}
-.headerInfo b{font-size:14px;display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.headerInfo small{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.miniFlagInHeader{width:18px;height:12px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid #333;flex-shrink:0}
-.miniFlagInHeader svg,.miniFlagInHeader img{width:100%;height:100%;object-fit:cover}
-
-/* الرسائل تتحرك لحالها */
-.messages{
-  flex:1;overflow-y:auto;overflow-x:hidden;
-  padding:80px 12px 130px 12px;
-  display:flex;flex-direction:column;gap:14px;
-}
+.headerInfo b{font-size:14px;display:flex;align-items:center;gap:6px}
+.headerInfo small{font-size:11px;color:var(--muted)}
+.miniFlagInHeader{width:18px;height:12px;border-radius:3px;overflow:hidden;display:inline-flex;border:1px solid #333}
+.messages{flex:1;overflow-y:auto;padding:80px 12px 130px 12px;display:flex;flex-direction:column;gap:14px}
 .msgRow{display:flex;gap:8px;align-items:flex-end;max-width:88%}
 .msgRow.me{align-self:flex-end;flex-direction:row-reverse}
 .msgRow.other{align-self:flex-start}
-.avatar{width:38px;height:38px;border-radius:50%;overflow:hidden;background:#161426;border:1px solid var(--b);flex-shrink:0}
-.avatar img{width:100%;height:100%;object-fit:cover;display:block}
-.msgContent{display:flex;flex-direction:column;gap:4px;min-width:0}
+.avatar{width:38px;height:38px;border-radius:50%;overflow:hidden;background:#161426;border:1px solid var(--b);flex-shrink:0;cursor:pointer}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.avatar:active{transform:scale(0.9)}
+.msgContent{display:flex;flex-direction:column;gap:4px}
 .nameLine{display:flex;align-items:center;gap:5px;font-size:12px;color:#c4b5fd;font-weight:800}
-.nameLine .check{width:14px;height:14px;background:#1d9bf0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:#fff;flex-shrink:0}
+.nameLine .check{width:14px;height:14px;background:#1d9bf0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:#fff}
 .nameLine .time{font-size:10px;color:var(--muted);font-weight:400}
-.bubble{padding:10px 14px;border-radius:18px 18px 4px 18px;font-size:14px;line-height:1.45;word-break:break-word;background:var(--msg);border:1px solid var(--b);max-width:100%}
-.msgRow.other .bubble{border-radius:18px 18px 18px 4px;background:#161426}
+.bubble{padding:10px 14px;border-radius:18px;font-size:14px;border:1px solid var(--b);background:#1e1c32}
 .msgRow.me .bubble{background:var(--v);border-color:var(--v);color:#fff}
-
-/* يكتب الآن فوق الكتابة */
-.typingBar{
-  position:fixed;bottom:74px;left:12px;right:12px;
-  font-size:11px;color:#a78bfa;display:none;z-index:50;
-  background:rgba(22,20,38,.95);padding:7px 12px;border-radius:12px;border:1px solid var(--b);
-}
-.typingBar.on{display:block}
-
-/* لوحة ايموجي */
-.emojiPanel{
-  position:fixed;bottom:76px;left:8px;right:8px;
-  background:#161426;border:1px solid var(--b);border-radius:18px;
-  max-height:340px;display:none;flex-direction:column;z-index:2000;overflow:hidden;
-  box-shadow:0 10px 30px rgba(0,0,0,.5);
-}
+.inputBar{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);padding:10px 12px;display:flex;gap:8px;z-index:1000}
+.inputWrap{flex:1;background:#1a182a;border:1px solid var(--b);border-radius:24px;padding:8px 14px;display:flex}
+.inputWrap input{flex:1;background:transparent;border:0;outline:0;color:#fff;font-size:14px}
+.iconBtn{width:40px;height:40px;border-radius:50%;background:#1e1c2e;border:1px solid var(--b);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px}
+.sendBtn{width:44px;height:44px;border-radius:50%;background:var(--v);border:0;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px}
+.emojiPanel{position:fixed;bottom:76px;left:8px;right:8px;background:#161426;border:1px solid var(--b);border-radius:18px;max-height:340px;display:none;flex-direction:column;z-index:2000;overflow:hidden}
 .emojiPanel.on{display:flex}
 .emojiTabs{display:flex;gap:6px;padding:10px;border-bottom:1px solid var(--b);overflow-x:auto}
-.emojiTabs button{background:#0f0e18;border:1px solid var(--b);color:#fff;padding:6px 12px;border-radius:10px;font-size:16px;cursor:pointer;white-space:nowrap}
-.emojiTabs button.on{background:var(--v);border-color:var(--v)}
+.emojiTabs button{background:#0f0e18;border:1px solid var(--b);color:#fff;padding:6px 12px;border-radius:10px;cursor:pointer}
+.emojiTabs button.on{background:var(--v)}
 .emojiGrid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;padding:10px;overflow-y:auto}
-.emojiGrid span{font-size:24px;padding:8px;text-align:center;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center}
-.emojiGrid span:hover{background:#1e1c2e}
+.emojiGrid span{font-size:24px;padding:8px;text-align:center;cursor:pointer;border-radius:8px}
 .flagCustom{width:30px;height:20px;border-radius:4px;overflow:hidden;border:1px solid #444;display:inline-flex!important}
 
-/* شريط كتابة ثابت */
-.inputBar{
-  position:fixed;bottom:0;left:0;right:0;
-  background:#0f0e18;border-top:1px solid var(--b);
-  padding:10px 12px;padding-bottom:calc(10px + env(safe-area-inset-bottom));
-  display:flex;align-items:center;gap:8px;z-index:1000;
-}
-.inputWrap{flex:1;background:#1a182a;border:1px solid var(--b);border-radius:24px;display:flex;align-items:center;gap:6px;padding:8px 14px}
-.inputWrap input{flex:1;background:transparent;border:0;outline:0;color:#fff;font-size:14px}
-.iconBtn{width:40px;height:40px;border-radius:50%;background:#1e1c2e;border:1px solid var(--b);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;flex-shrink:0}
-.sendBtn{width:44px;height:44px;border-radius:50%;background:var(--v);border:0;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;flex-shrink:0}
+/* === مودال الملف الشخصي === */
+.profileModal{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);z-index:5000;display:none;align-items:center;justify-content:center;padding:16px}
+.profileModal.on{display:flex}
+.profileBox{width:100%;max-width:360px;background:#161426;border:1px solid #2a2840;border-radius:22px;overflow:hidden;animation:pop .2s ease}
+@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.pCover{width:100%;height:140px;background:linear-gradient(135deg,#1a2a4a,#0f3460,#161426);position:relative;overflow:hidden}
+.pCover img{width:100%;height:100%;object-fit:cover;display:block}
+.pAvatar{width:90px;height:90px;border-radius:22px;border:3px solid #161426;background:#6d28d9;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;position:absolute;bottom:-30px;right:16px;overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,.5)}
+.pAvatar img{width:100%;height:100%;object-fit:cover}
+.pInfo{padding:40px 16px 16px 16px}
+.pName{font-size:18px;font-weight:900;display:flex;align-items:center;gap:8px}
+.pCountry{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:13px;color:#c4c4d0}
+.pCountry img{width:26px;height:18px;border-radius:3px;border:1px solid rgba(255,255,255,.2)}
+.pMeta{margin-top:6px;font-size:12px;color:#8b8ba7;display:flex;gap:10px}
+.pBio{margin-top:10px;background:#1e1c2e;border:1px solid var(--b);border-radius:12px;padding:10px;font-size:13px;color:#d0d0e0;line-height:1.6;min-height:40px}
+.pActions{display:flex;gap:8px;margin-top:14px}
+.pBtn{flex:1;padding:12px;border-radius:12px;border:0;font-weight:800;font-size:13px;cursor:pointer}
+.pBtn.primary{background:var(--v);color:#fff}
+.pBtn.secondary{background:#1e1c2e;border:1px solid var(--b);color:#fff}
+.pClose{position:absolute;top:10px;left:10px;width:32px;height:32px;background:rgba(0,0,0,.5);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="headerLeft">
-    <div class="backBtn" onclick="location.href='/app/'">›</div>
-    <div class="commFlag" id="commFlag"></div>
-    <div class="headerInfo">
-      <b><span id="commName">مجتمع الجنوب العربي</span> <span class="miniFlagInHeader" id="commMiniFlag"></span></b>
-      <small><span id="memberCount">0 عضو</span> • <span id="onlineCount">12k متصل</span> • رسمي</small>
-    </div>
+  <div class="backBtn" onclick="location.href='/app/'">›</div>
+  <div class="commFlag" id="commFlag"></div>
+  <div class="headerInfo">
+    <b><span id="commName">تحميل...</span> <span class="miniFlagInHeader" id="commMiniFlag"></span></b>
+    <small><span id="memberCount">0 عضو</span> • 12k متصل • رسمي</small>
   </div>
-  <div class="backBtn" style="background:#161426" onclick="location.href='/app/'">☰</div>
 </div>
 
 <div class="messages" id="messages"></div>
-<div class="typingBar" id="typingBar">يكتب الآن...</div>
 
-<div class="emojiPanel" id="emojiPanel">
-  <div class="emojiTabs">
-    <button class="on" onclick="showEmojiCat(event,'smile')">😊</button>
-    <button onclick="showEmojiCat(event,'flags')">🏳️ أعلام</button>
-    <button onclick="showEmojiCat(event,'hearts')">❤️</button>
-    <button onclick="showEmojiCat(event,'hands')">👍</button>
-    <button onclick="showEmojiCat(event,'all')">😀 كلها</button>
+<!-- مودال الملف الشخصي -->
+<div class="profileModal" id="profileModal" onclick="if(event.target===this)closeProfile()">
+  <div class="profileBox">
+    <div class="pCover" id="pCover"><img id="pCoverImg" style="display:none"><div class="pClose" onclick="closeProfile()">✕</div><div class="pAvatar" id="pAvatar"><span id="pAvatarLetter">T</span><img id="pAvatarImg" style="display:none"></div></div>
+    <div class="pInfo">
+      <div class="pName"><span id="pName">تحميل...</span> <span id="pVerified" style="display:none;width:16px;height:16px;background:#1d9bf0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:#fff">✓</span></div>
+      <div class="pCountry"><span id="pFlag"></span><span id="pCountryName">الجنوب العربي</span></div>
+      <div class="pMeta"><span id="pGender"></span><span id="pAge"></span><span id="pId" style="font-family:monospace"></span></div>
+      <div class="pBio" id="pBio">مرحبا بك في ملفي 👋</div>
+      <div class="pActions">
+        <button class="pBtn primary" id="pChatBtn">💬 دردشة خاصة</button>
+        <button class="pBtn secondary" id="pViewBtn">👁️ عرض الملف</button>
+      </div>
+    </div>
   </div>
-  <div class="emojiGrid" id="emojiGrid"></div>
 </div>
 
-<div class="inputBar">
-  <button class="iconBtn" onclick="toggleEmoji()">😊</button>
-  <div class="inputWrap">
-    <input id="msgInput" placeholder="اكتب رسالة..." oninput="onTyping()" onkeydown="if(event.key==='Enter')sendMsg()">
-  </div>
-  <button class="sendBtn" onclick="sendMsg()">➤</button>
-</div>
+<div class="emojiPanel" id="emojiPanel"><div class="emojiTabs"><button class="on" onclick="showEmojiCat(event,'smile')">😊</button><button onclick="showEmojiCat(event,'flags')">🏳️</button></div><div class="emojiGrid" id="emojiGrid"></div></div>
+<div class="inputBar"><button class="iconBtn" onclick="toggleEmoji()">😊</button><div class="inputWrap"><input id="msgInput" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMsg()"></div><button class="sendBtn" onclick="sendMsg()">➤</button></div>
 
 <script type="module">
 import { auth, db } from '/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { collection, doc, onSnapshot, addDoc, serverTimestamp, getDoc, setDoc, arrayUnion, increment } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-const SOUTH_SVG=`<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><rect width="900" height="200" y="0" fill="#D71921"/><rect width="900" height="200" y="200" fill="#FFFFFF"/><rect width="900" height="200" y="400" fill="#000000"/><path d="M0 0 L380 300 L0 600 Z" fill="#5EB6E4"/><g transform="translate(125,300)"><path d="M0 -70 L20 -22 L75 -22 L32 10 L48 65 L0 32 L-48 65 L-32 10 L-75 -22 L-20 -22 Z" fill="#D71921" stroke="white" stroke-width="10" stroke-linejoin="round"/></g></svg>`;
-const SOUTH_MINI=`<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="200" y="0" fill="#D71921"/><rect width="900" height="200" y="200" fill="#FFF"/><rect width="900" height="200" y="400" fill="#000"/><path d="M0 0 L380 300 L0 600 Z" fill="#5EB6E4"/><g transform="translate(125,300)"><path d="M0 -60 L17 -18 L64 -18 L27 8 L41 55 L0 25 L-41 55 L-27 8 L-64 -18 L-17 -18 Z" fill="#D71921"/></g></svg>`;
+const SOUTH_SVG=`<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="200" y="0" fill="#D71921"/><rect width="900" height="200" y="200" fill="#FFF"/><rect width="900" height="200" y="400" fill="#000"/><path d="M0 0 L380 300 L0 600 Z" fill="#5EB6E4"/><g transform="translate(125,300)"><path d="M0 -70 L20 -22 L75 -22 L32 10 L48 65 L0 32 L-48 65 L-32 10 L-75 -22 L-20 -22 Z" fill="#D71921" stroke="white" stroke-width="10" stroke-linejoin="round"/></g></svg>`;
+
+const COMM_DATA={
+south:{name:'مجتمع الجنوب العربي', flag:SOUTH_SVG, mini:SOUTH_SVG},
+sa:{name:'مجتمع السعودية', flag:`<img src="https://flagcdn.com/w80/sa.png">`, mini:`<img src="https://flagcdn.com/w80/sa.png">`},
+ye:{name:'مجتمع اليمن', flag:`<img src="https://flagcdn.com/w80/ye.png">`, mini:`<img src="https://flagcdn.com/w80/ye.png">`},
+ae:{name:'مجتمع الإمارات', flag:`<img src="https://flagcdn.com/w80/ae.png">`, mini:`<img src="https://flagcdn.com/w80/ae.png">`},
+om:{name:'مجتمع عمان', flag:`<img src="https://flagcdn.com/w80/om.png">`, mini:`<img src="https://flagcdn.com/w80/om.png">`},
+qa:{name:'مجتمع قطر', flag:`<img src="https://flagcdn.com/w80/qa.png">`, mini:`<img src="https://flagcdn.com/w80/qa.png">`},
+kw:{name:'مجتمع الكويت', flag:`<img src="https://flagcdn.com/w80/kw.png">`, mini:`<img src="https://flagcdn.com/w80/kw.png">`},
+bh:{name:'مجتمع البحرين', flag:`<img src="https://flagcdn.com/w80/bh.png">`, mini:`<img src="https://flagcdn.com/w80/bh.png">`}
+};
 
 const params=new URLSearchParams(location.search);
 let communityId=params.get('id')||'south';
 let uid=localStorage.getItem('gabo_uid')||null;
 let userData=null;
+let lastOpenedUid=null;
 
 const commFlagEl=document.getElementById('commFlag');
 const commMiniFlagEl=document.getElementById('commMiniFlag');
@@ -137,65 +128,42 @@ const memberCountEl=document.getElementById('memberCount');
 const messagesEl=document.getElementById('messages');
 const msgInput=document.getElementById('msgInput');
 
-function setHeaderFlag(){
-  if(communityId==='south'){
-    commFlagEl.innerHTML=SOUTH_SVG;
-    commMiniFlagEl.innerHTML=SOUTH_MINI;
-    commNameEl.textContent='مجتمع الجنوب العربي';
-  }else{
-    commFlagEl.innerHTML=`<img src="https://flagcdn.com/w80/${communityId}.png">`;
-    commMiniFlagEl.innerHTML=`<img src="https://flagcdn.com/w80/${communityId}.png">`;
-    commNameEl.textContent=communityId;
-  }
+function setHeaderInstant(){
+  const data=COMM_DATA[communityId] || {name:'مجتمع '+communityId, flag:`<img src="https://flagcdn.com/w80/${communityId}.png">`, mini:`<img src="https://flagcdn.com/w80/${communityId}.png">`};
+  commFlagEl.innerHTML=data.flag;
+  commMiniFlagEl.innerHTML=data.mini;
+  commNameEl.textContent=data.name;
 }
-setHeaderFlag();
+setHeaderInstant();
 
 onAuthStateChanged(auth, async (u)=>{
   if(u){
-    uid=u.uid;
-    localStorage.setItem('gabo_uid',uid);
-    try{
-      const snap=await getDoc(doc(db,'users',uid));
-      if(snap.exists()){
-        userData=snap.data();
-        // خزن الصورة محليا عشان تطلع بسرعة
-        if(userData.photoURL) localStorage.setItem('gabo_photo',userData.photoURL);
-        if(userData.displayName) localStorage.setItem('gabo_name',userData.displayName);
-      }else{
-        userData={displayName:u.displayName||localStorage.getItem('gabo_name')||'مستخدم', photoURL:u.photoURL||localStorage.getItem('gabo_photo')||'', verified:false};
-      }
-    }catch{
-      userData={displayName:localStorage.getItem('gabo_name')||'مستخدم', photoURL:localStorage.getItem('gabo_photo')||'', verified:false};
+    uid=u.uid; localStorage.setItem('gabo_uid',uid);
+    const snap=await getDoc(doc(db,'users',uid)).catch(()=>null);
+    userData=snap?.exists()?snap.data():{displayName:localStorage.getItem('gabo_name')||'مستخدم', photoURL:localStorage.getItem('gabo_photo')||'', verified:false};
+    const commRef=doc(db,'communities',communityId);
+    const commSnap=await getDoc(commRef).catch(()=>null);
+    if(!commSnap?.exists()){
+      const info=COMM_DATA[communityId] || {name:communityId};
+      await setDoc(commRef,{name:info.name||communityId, flag:communityId, members:[uid], membersCount:1, createdAt:serverTimestamp()}, {merge:true});
+    }else{
+      try{ await setDoc(commRef,{membersCount:increment(1), members:arrayUnion(uid)}, {merge:true}); }catch{}
     }
-    try{ await setDoc(doc(db,'communities',communityId),{membersCount:increment(1), members:arrayUnion(uid)}, {merge:true}); }catch{}
   }
 });
 
-// الرسائل - مع صورة واسم وفوقه علامة صح
 onSnapshot(collection(db,'communities',communityId,'messages'), (snap)=>{
-  const msgs=[];
-  snap.forEach(d=>msgs.push({id:d.id,...d.data()}));
+  const msgs=[]; snap.forEach(d=>msgs.push({id:d.id,...d.data()}));
   msgs.sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
   messagesEl.innerHTML='';
   msgs.forEach(m=>{
     const isMe=m.uid===uid;
-    const row=document.createElement('div');
-    row.className='msgRow '+(isMe?'me':'other');
-    let photo=m.photoURL||m.avatar||'';
-    if(!photo || photo.length<10){
-      photo=localStorage.getItem('gabo_photo_'+m.uid)||'';
-    }
-    if(!photo) photo='https://i.pravatar.cc/100?u='+m.uid;
-    const name=m.displayName||m.name||'مستخدم';
+    const row=document.createElement('div'); row.className='msgRow '+(isMe?'me':'other');
+    let photo=m.photoURL||m.photo||m.avatar||localStorage.getItem('gabo_photo_'+m.uid)||''; if(!photo) photo='https://i.pravatar.cc/100?u='+m.uid;
+    let name=m.displayName||m.name||'مستخدم';
     const verified=m.verified?`<span class="check">✓</span>`:'';
     const time=m.createdAt?new Date(m.createdAt.seconds*1000).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}):'';
-    row.innerHTML=`
-      <div class="avatar"><img src="${photo}" onerror="this.src='https://i.pravatar.cc/100?u=${m.uid}'"></div>
-      <div class="msgContent">
-        <div class="nameLine">${escapeHtml(name)} ${verified} <span class="time">${time}</span></div>
-        <div class="bubble">${escapeHtml(m.text||'')}</div>
-      </div>
-    `;
+    row.innerHTML=`<div class="avatar" onclick="openUserProfile('${m.uid}','${photo.replace(/'/g,'')}','${name.replace(/'/g,'')}')"><img src="${photo}"></div><div class="msgContent"><div class="nameLine">${name} ${verified} <span class="time">${time}</span></div><div class="bubble">${String(m.text||'').replace(/</g,'&lt;')}</div></div>`;
     messagesEl.appendChild(row);
   });
   messagesEl.scrollTop=messagesEl.scrollHeight;
@@ -204,71 +172,79 @@ onSnapshot(collection(db,'communities',communityId,'messages'), (snap)=>{
 onSnapshot(doc(db,'communities',communityId), (snap)=>{
   if(snap.exists()){
     const data=snap.data();
+    if(data.name) commNameEl.textContent=data.name;
     const count=data.membersCount|| (data.members?data.members.length:0) || 0;
     memberCountEl.textContent=count+' عضو';
-    if(data.name) commNameEl.textContent=data.name;
   }
 });
 
-function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+// === فتح الملف الشخصي عند الضغط على الصورة ===
+window.openUserProfile=async (targetUid, fallbackPhoto, fallbackName)=>{
+  lastOpenedUid=targetUid;
+  const modal=document.getElementById('profileModal');
+  modal.classList.add('on');
+  // قيم مؤقتة سريعة
+  document.getElementById('pName').textContent=fallbackName||'تحميل...';
+  document.getElementById('pAvatarLetter').textContent=(fallbackName||'T')[0];
+  if(fallbackPhoto){ document.getElementById('pAvatarImg').src=fallbackPhoto; document.getElementById('pAvatarImg').style.display='block'; document.getElementById('pAvatarLetter').style.display='none'; }
+  document.getElementById('pBio').textContent='جاري التحميل...';
+  try{
+    const snap=await getDoc(doc(db,'users',targetUid));
+    if(snap.exists()){
+      const d=snap.data();
+      const photo=d.photoURL||d.photo||d.avatar||fallbackPhoto||'';
+      const name=d.displayName||d.name||fallbackName||'مستخدم';
+      const bio=d.bio||'مرحبا بكم في ملفي الشخصي 👋';
+      const countryName=d.countryName||'الجنوب العربي';
+      const flagImg=d.countryFlagImg||'/assets/south-arabia.png.JPG';
+      const cover=d.cover||'';
+      const gender=d.gender||'';
+      const bday=d.bday||'';
+      const gaboId=d.gaboId||'--------';
+      document.getElementById('pName').textContent=name;
+      document.getElementById('pAvatarLetter').textContent=name[0];
+      if(photo){ const img=document.getElementById('pAvatarImg'); img.src=photo; img.style.display='block'; document.getElementById('pAvatarLetter').style.display='none'; }
+      if(cover){ const cImg=document.getElementById('pCoverImg'); cImg.src=cover; cImg.style.display='block'; }
+      else{ document.getElementById('pCoverImg').style.display='none'; }
+      document.getElementById('pCountryName').textContent=countryName;
+      document.getElementById('pFlag').innerHTML=`<img src="${flagImg}" style="width:26px;height:18px;border-radius:3px">`;
+      document.getElementById('pGender').textContent=gender;
+      document.getElementById('pId').textContent='ID: '+gaboId;
+      if(bday){ try{ const age=new Date().getFullYear()-parseInt(bday.split('-')[0]); document.getElementById('pAge').textContent='• '+age+' سنة'; }catch{} }
+      document.getElementById('pBio').textContent=bio;
+      if(d.verified) document.getElementById('pVerified').style.display='inline-flex'; else document.getElementById('pVerified').style.display='none';
+    }else{
+      document.getElementById('pBio').textContent='مرحبا 👋';
+    }
+  }catch(e){ document.getElementById('pBio').textContent='خطأ في التحميل'; }
+}
+
+window.closeProfile=()=>{ document.getElementById('profileModal').classList.remove('on'); }
+
+document.getElementById('pChatBtn').onclick=()=>{
+  if(!lastOpenedUid) return;
+  location.href=`/dm/?uid=${lastOpenedUid}`;
+}
+document.getElementById('pViewBtn').onclick=()=>{
+  if(!lastOpenedUid) return;
+  location.href=`/profile/view/?uid=${lastOpenedUid}`;
+}
 
 window.sendMsg=async ()=>{
-  const text=msgInput.value.trim();
-  if(!text) return;
-  if(!uid){ alert('سجل دخول'); location.href='/login/'; return; }
+  const text=msgInput.value.trim(); if(!text||!uid) return;
   const displayName=userData?.displayName||userData?.name||localStorage.getItem('gabo_name')||'مستخدم';
-  const photoURL=userData?.photoURL||userData?.avatar||localStorage.getItem('gabo_photo')||'';
-  const verified=userData?.verified||false;
+  const photoURL=userData?.photoURL||userData?.photo||localStorage.getItem('gabo_photo')||'';
   msgInput.value='';
-  document.getElementById('emojiPanel').classList.remove('on');
-  try{
-    await addDoc(collection(db,'communities',communityId,'messages'),{
-      text:text, uid:uid, displayName:displayName, name:displayName, photoURL:photoURL, avatar:photoURL, verified:verified, createdAt:serverTimestamp()
-    });
-    if(photoURL) localStorage.setItem('gabo_photo_'+uid, photoURL);
-  }catch(e){ alert(e.message); }
+  await addDoc(collection(db,'communities',communityId,'messages'),{text, uid, displayName, name:displayName, photoURL, avatar:photoURL, photo:photoURL, verified:userData?.verified||false, createdAt:serverTimestamp()});
 }
-
-window.onTyping=()=>{
-  // تقدر تضيف هنا ارسال حالة كتابة
-}
-window.toggleEmoji=()=>{
-  const p=document.getElementById('emojiPanel');
-  p.classList.toggle('on');
-  if(p.classList.contains('on')) showEmojiCat(null,'smile');
-}
-
-const SMILES=['😀','😃','😂','🤣','😍','🥰','😊','😎','😭','😢','😡','🤔','🙏','💪','👏','🔥','❤️','✨','🫡','😅','🥺','🤩','😇','🤗','😋','😜','🤪','😏'];
-const FLAGS=['🇸🇦','🇾🇪','🇦🇪','🇴🇲','🇶🇦','🇰🇼','🇧🇭','🇪🇬','🇯🇴','🇱🇧','🇸🇾','🇮🇶','🇵🇸','🇺🇸','🇬🇧','🇹🇷','🇩🇪','🇫🇷','🇮🇹','🇯🇵','🇰🇷','🇧🇷','🇦🇷'];
-const HEARTS=['❤️','🧡','💛','💚','💙','💜','🤍','🖤','💔','💖','💝','💘','💗','💓','💞'];
-const HANDS=['👍','👎','👏','🙏','💪','👌','✌️','🤝','👋','🤲','☝️','👊','✊','🤞','🫶'];
-const ALL=[...SMILES,...FLAGS,...HEARTS,...HANDS,'😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃','😉','😊','😇','🥰','😍','🤩','😘','😗','😚','😙'];
-
+window.toggleEmoji=()=>{ const p=document.getElementById('emojiPanel'); p.classList.toggle('on'); if(p.classList.contains('on')) showEmojiCat(null,'smile'); }
 window.showEmojiCat=(e,cat)=>{
   if(e) e.target.closest('.emojiTabs').querySelectorAll('button').forEach(b=>b.classList.remove('on'));
   if(e) e.target.classList.add('on');
-  const grid=document.getElementById('emojiGrid');
-  grid.innerHTML='';
-  let list=SMILES;
-  if(cat==='smile') list=SMILES;
-  if(cat==='flags') list=FLAGS;
-  if(cat==='hearts') list=HEARTS;
-  if(cat==='hands') list=HANDS;
-  if(cat==='all') list=ALL;
-  list.forEach(em=>{
-    const span=document.createElement('span');
-    span.textContent=em;
-    span.onclick=()=>{ msgInput.value+=em; msgInput.focus(); };
-    grid.appendChild(span);
-  });
-  if(cat==='flags' || cat==='all'){
-    const span=document.createElement('span');
-    span.className='flagCustom';
-    span.innerHTML=SOUTH_MINI;
-    span.title='علم الجنوب العربي';
-    span.onclick=()=>{ msgInput.value+=' 🏴 '; msgInput.focus(); };
-    grid.appendChild(span);
-  }
+  const grid=document.getElementById('emojiGrid'); grid.innerHTML='';
+  const list=cat==='flags'?['🇸🇦','🇾🇪','🇦🇪','🇴🇲','🇶🇦','🇰🇼','🇧🇭']:['😀','😂','❤️','🔥','👍','😍','🙏','💪'];
+  list.forEach(em=>{ const s=document.createElement('span'); s.textContent=em; s.onclick=()=>{ msgInput.value+=em; msgInput.focus(); }; grid.appendChild(s); });
+  if(cat==='flags'){ const s=document.createElement('span'); s.className='flagCustom'; s.innerHTML=SOUTH_SVG; s.onclick=()=>{ msgInput.value+=' 🏴 '; }; grid.appendChild(s); }
 }
 </script>
 </body>
