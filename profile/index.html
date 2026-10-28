@@ -1,89 +1,66 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ملفي — GABO LIVE</title>
-<link rel="stylesheet" href="/assets/style/style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>حسابي - GABO LIVE</title>
 <style>
-body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.22),transparent 48%),#08070d;color:#f8f7ff;font-family:system-ui;padding-bottom:90px}
-.wrap{width:min(1180px,calc(100% - 28px));margin:auto}
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 0;position:sticky;top:0;background:rgba(8,7,13,.9);backdrop-filter:blur(12px);z-index:50}
-.brand{color:#c4b5fd;font-weight:900;text-decoration:none}
-.glass{background:rgba(17,12,29,.82);border:1px solid rgba(196,181,253,.18);border-radius:20px;backdrop-filter:blur(18px)}
-.mainpanel{padding:20px}
-.page{display:none}.page.active{display:block}
-.btn{border-radius:12px;padding:10px 15px;border:1px solid #ffffff22;color:#fff;background:#211638;cursor:pointer;font-weight:700}
-.btn.primary{background:linear-gradient(135deg,#7c3aed,#5b21b6)}
-.input{width:100%;background:#0d0b15;color:#fff;border:1px solid #ffffff22;border-radius:12px;padding:12px;margin:6px 0;outline:none}
-.big-avatar{width:72px;height:72px;border-radius:22px;display:grid;place-items:center;background:linear-gradient(135deg,#a78bfa,#4c1d95);font-size:28px;font-weight:900}
-.field{display:flex;flex-direction:column;gap:6px;margin:12px 0}
-.bottom-nav{position:fixed;z-index:1000;bottom:10px;left:50%;transform:translateX(-50%);width:min(560px,calc(100% - 20px));display:flex;justify-content:space-around;padding:8px;background:rgba(15,12,24,.96);border:1px solid #ffffff20;border-radius:18px}
-.bottom-nav a{display:flex;flex-direction:column;align-items:center;color:#aaa3bd;text-decoration:none;padding:6px 12px;border-radius:12px;font-size:11px}
-.bottom-nav a.active{color:#c4b5fd;background:#7c3aed22}
+:root{--bg:#07060c;--card:#13111e;--b:#2a2840;--v:#7c3aed;--t:#fff;--m:#a1a1aa}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--t);font-family:system-ui;min-height:100vh;padding-bottom:120px}
+.top{padding:14px 16px;border-bottom:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:rgba(7,6,12,.9);backdrop-filter:blur(10px);z-index:10}
+.card{margin:20px 16px;background:var(--card);border:1px solid var(--b);border-radius:20px;padding:20px;text-align:center}
+.inp{width:100%;background:#1b192b;border:1px solid var(--b);border-radius:12px;padding:14px;color:#fff;margin-top:10px;text-align:right}
+.btnV{background:var(--v);color:#fff;border:0;width:100%;padding:14px;border-radius:14px;margin-top:16px;font-weight:800;font-size:15px}
+.tabs{display:flex;gap:8px;justify-content:center;margin-top:14px}
+.tabs button{background:#1b192b;border:1px solid var(--b);color:var(--m);padding:8px 18px;border-radius:20px}
+.tabs button.on{background:#fff;color:#000}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-end;padding:8px 0 calc(10px + env(safe-area-inset-bottom));z-index:9999}
+.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bottomNav a.on{color:#fff}
+.bottomNav a .ic{font-size:22px}
+.bottomNav a.plus .ic{background:var(--v);color:#fff;width:58px;height:58px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-20px;box-shadow:0 8px 24px rgba(124,58,237,.5)}
 </style>
 </head>
-<body data-page="profile">
-<div class="wrap">
-<header class="topbar">
-<a class="brand" href="/">GABO LIVE ✨</a>
-<button id="logoutBtn" class="btn">خروج</button>
-</header>
+<body>
+<div class="top"><a href="/app/" style="background:#1e1c2e;border:1px solid var(--b);color:#fff;padding:6px 12px;border-radius:12px;text-decoration:none">‹ خروج</a><b>GABO LIVE</b><span></span></div>
 
-<!-- صفحة 1: الملف -->
-<div class="page active" id="page-profile">
-<main class="glass mainpanel" style="max-width:760px;margin:24px auto">
-<div style="display:flex;gap:16px;align-items:center">
-<div class="big-avatar">G</div>
-<div><h1 style="margin:0" data-user-name>حسابي</h1><p style="color:#aaa3bd;margin:4px 0">ملفك في مجتمع GABO LIVE</p></div>
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center"><h2>حسابي</h2><div style="width:44px;height:44px;background:var(--v);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900">G</div></div>
+  <p style="color:var(--m);font-size:12px;text-align:right;margin-top:4px">ملفك في مجتمع GABO LIVE</p>
+  <input id="name" class="inp" placeholder="اسمك">
+  <label style="display:block;text-align:right;color:var(--m);font-size:11px;margin-top:12px">البريد الإلكتروني</label>
+  <input id="email" class="inp" disabled>
+  <label style="display:block;text-align:right;color:var(--m);font-size:11px;margin-top:12px">نبذة عنك</label>
+  <textarea id="bio" class="inp" rows="3" placeholder="اكتب نبذة قصيرة"></textarea>
+  <button class="btnV" id="save">💾 حفظ الملف</button>
+  <div class="tabs"><button class="on">الملف</button><button>الإعدادات</button></div>
 </div>
 
-<div id="profileGuest" class="hidden" style="margin-top:20px;padding:20px;border:1px dashed #ffffff20;border-radius:14px;text-align:center">
-سجّل الدخول لإنشاء ملفك<br><a class="btn primary" href="/login/" style="display:inline-block;margin-top:10px;text-decoration:none">تسجيل الدخول</a>
+<!-- نفس الشريط اللي في الرئيسية بالضبط -->
+<div class="bottomNav">
+  <a href="/profile/" class="on"><span class="ic">👤</span>حسابي</a>
+  <a href="/dm/"><span class="ic">🔒</span>دردشة خاصة</a>
+  <a href="/create/" class="plus"><span class="ic">+</span></a>
+  <a href="/posts/"><span class="ic">📄</span>منشورات</a>
+  <a href="/app/"><span class="ic">🏠</span>الرئيسية</a>
 </div>
 
-<form id="profileForm" style="margin-top:20px">
-<div class="field"><label>اسم العرض</label><input class="input" id="profileName" required maxlength="50" placeholder="اسمك"></div>
-<div class="field"><label>البريد الإلكتروني</label><input class="input" id="profileEmail" disabled></div>
-<div class="field"><label>نبذة عنك</label><textarea id="profileBio" class="input" maxlength="280" placeholder="اكتب نبذة قصيرة" style="min-height:90px"></textarea></div>
-<button class="btn primary" style="width:100%">حفظ الملف 💾</button>
-</form>
-</main>
-</div>
-
-<!-- صفحة 2: الإعدادات -->
-<div class="page" id="page-settings">
-<main class="glass mainpanel" style="max-width:760px;margin:24px auto">
-<h2>الإعدادات ⚙️</h2>
-<div style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
-<div class="glass" style="padding:14px;display:flex;justify-content:space-between"><span>الإشعارات</span><span style="color:#34d399">مفعلة</span></div>
-<div class="glass" style="padding:14px;display:flex;justify-content:space-between"><span>الوضع الليلي</span><span>🌙</span></div>
-<button class="btn" style="background:#be123c" onclick="document.getElementById('logoutBtn').click()">تسجيل الخروج</button>
-</div>
-</main>
-</div>
-
-<!-- أزرار تبديل منعزلة داخل الصفحة -->
-<div style="max-width:760px;margin:0 auto;display:flex;gap:8px">
-<button class="btn primary" onclick="showPage('profile')" id="btn-profile">الملف</button>
-<button class="btn" onclick="showPage('settings')" id="btn-settings">الإعدادات</button>
-</div>
-
-</div>
-
-<nav class="bottom-nav">
-<a href="/"><b>⌂</b><span>الرئيسية</span></a>
-<a href="/app/"><b>♬</b><span>المجتمع</span></a>
-<a href="/profile/" class="active"><b>◉</b><span>حسابي</span></a>
-</nav>
-
-<script>
-function showPage(id){
- document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
- document.getElementById('page-'+id)?.classList.add('active');
- document.querySelectorAll('[id^="btn-"]').forEach(b=>b.classList.remove('primary'));
- document.getElementById('btn-'+id)?.classList.add('primary');
-}
+<script type="module">
+import { auth } from '/firebase-config.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+let authReady=false;
+onAuthStateChanged(auth, u=>{
+  authReady=true;
+  if(!u){
+    // انتظر ثانية عشان ما يصير لوب
+    setTimeout(()=>{ if(authReady) location.replace('/login/'); }, 800);
+    return;
+  }
+  document.getElementById('name').value = u.displayName || '';
+  document.getElementById('email').value = u.email || '';
+});
+document.getElementById('save').onclick=()=>{ alert('تم الحفظ ✅'); };
 </script>
-<script type="module" src="/assets/app.js"></script>
 </body>
 </html>
