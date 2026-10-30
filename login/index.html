@@ -51,7 +51,7 @@ button,input{font:inherit}button{touch-action:manipulation}.shell{width:100%;max
 (function(){
 let mode='login',googleLoading=false,auth=null,db=null,authFns=null,storeFns=null,initError=null;
 const $=s=>document.querySelector(s),msg=$('#msg'),mainBtn=$('#mainBtn'),tabL=$('#tabLogin'),tabS=$('#tabSignup'),loginF=$('#loginFields'),signupF=$('#signupFields');
-function setMessage(t,type=''){msg.textContent=t;msg.className='msg'+(type?' '+type)}
+function setMessage(t,type=''){msg.textContent=t;msg.className='msg'+(type?' '+type:'')}
 function clearErr(){document.querySelectorAll('input').forEach(i=>i.classList.remove('bad'));document.querySelectorAll('.fieldErr').forEach(e=>{e.textContent='';e.classList.remove('show')});$('#consentErr').classList.remove('show');setMessage('')}
 function fieldErr(input,error,text){$(input).classList.add('bad');$(error).textContent=text;$(error).classList.add('show')}
 function setMode(m){mode=m;tabL.classList.toggle('on',m==='login');tabS.classList.toggle('on',m==='signup');tabL.setAttribute('aria-selected',String(m==='login'));tabS.setAttribute('aria-selected',String(m==='signup'));loginF.hidden=m!=='login';signupF.hidden=m!=='signup';mainBtn.textContent=m==='login'?'تسجيل دخول':'إنشاء حساب';clearErr()}
