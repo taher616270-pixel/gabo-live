@@ -24,7 +24,7 @@ export function getCountryFlag(code) {
 /* ---------- المسارات: كل صفحة تعرف الباقي بالاسم ---------- */
 export const ROUTES = {
   home: '/', login: '/login/', app: '/app/', public: '/app/public/',
-  private: '/app/private/', profile: '/profile/', hosts: '/hosts/', vip: '/vip/', admin: '/admin/'
+  private: '/dm/', profile: '/profile/', hosts: '/hosts/', vip: '/vip/', admin: '/admin/'
 };
 export function go(target, replace) {
   const url = ROUTES[target] || target;

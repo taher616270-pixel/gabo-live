@@ -104,6 +104,7 @@ function setHeaderInstant(){
 }
 setHeaderInstant();
 onAuthStateChanged(auth, async (u)=>{
+  if(!u){ location.replace('/login/'); return; }
   if(u){
     uid=u.uid; localStorage.setItem('gabo_uid',uid);
     const snap=await getDoc(doc(db,'users',uid)).catch(()=>null);
@@ -114,7 +115,10 @@ onAuthStateChanged(auth, async (u)=>{
       const info=COMM_DATA[communityId] || {name:communityId};
       await setDoc(commRef,{name:info.name||communityId, flag:communityId, members:[uid], membersCount:1, createdAt:serverTimestamp()}, {merge:true});
     }else{
-      try{ await setDoc(commRef,{membersCount:increment(1), members:arrayUnion(uid)}, {merge:true}); }catch{}
+      const members=Array.isArray(commSnap.data().members)?commSnap.data().members:[];
+      if(!members.includes(uid)){
+        try{ await setDoc(commRef,{membersCount:increment(1), members:arrayUnion(uid)}, {merge:true}); }catch{}
+      }
     }
   }
 });

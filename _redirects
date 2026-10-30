@@ -2,7 +2,7 @@
 /login /login/index.html 200
 /app /app/index.html 200
 /app/public /app/public/index.html 200
-/app/private /app/private/index.html 200
+/app/private /dm/index.html 200
 /profile /profile/index.html 200
 /hosts /hosts/index.html 200
 /vip /vip/index.html 200
