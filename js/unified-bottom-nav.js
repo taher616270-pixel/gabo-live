@@ -23,6 +23,7 @@ function normalizePath(path) {
 
 function currentRoute() {
   const path = location.pathname.replace(/index\.html$/, '');
+  if (path === '/') return '/app/';
   return path.endsWith('/') ? path : path + '/';
 }
 
