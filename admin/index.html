@@ -214,7 +214,7 @@ document.getElementById('southFlagFile').addEventListener('change',event=>{
    canvas.width=w;canvas.height=h;
    const ctx=canvas.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);ctx.drawImage(image,0,0,w,h);
    const data=canvas.toDataURL('image/jpeg',0.84);
-   if(data.length>850000){alert('تعذر ضغط الصورة إلى الحجم المناسب. اختر صورة أصغر.');return;}
+   if(data.length>500000){alert('الصورة ما زالت كبيرة بعد الضغط. اختر صورة أصغر (حتى 500 كيلوبايت تقريباً).');return;}
    pendingSouthFlagData=data;document.getElementById('southFlagPreview').src=data;
    document.getElementById('southFlagStatus').textContent='الصورة جاهزة. اضغط اعتماد العلم الجديد لحفظها.';
   };
