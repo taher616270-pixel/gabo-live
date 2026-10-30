@@ -23,11 +23,6 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
 .comm small{color:var(--muted);font-size:12px;font-weight:700}
 .comm small.live{color:#a78bfa}
 .createBtn{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:var(--v);color:#fff;border:0;padding:14px 26px;border-radius:30px;font-weight:900;font-size:14px;box-shadow:0 8px 20px rgba(124,58,237,.4);z-index:999;cursor:pointer}
-.bottomNav{position:fixed;bottom:0;left:0;right:0;height:84px;background:#0f0e18;border-top:1px solid var(--b);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;z-index:9999;direction:ltr}
-.bottomNav a{flex:1;text-decoration:none;color:#6b6b7a;font-size:10px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px}
-.bottomNav a.on{color:#fff}
-.bottomNav a .ic{font-size:22px;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
-.bottomNav a.plus .ic{background:var(--v);color:#fff;width:56px;height:56px;border-radius:16px;font-size:30px;margin-top:-16px}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:none;align-items:flex-end;justify-content:center;padding:12px}
 .modal.on{display:flex}
 .modalBox{background:#161426;border:1px solid var(--b);border-radius:20px 20px 0 0;width:100%;max-width:420px;padding:16px;max-height:90vh;overflow:auto}
@@ -55,7 +50,6 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 .tabs button{border-color:var(--b);border-radius:14px;transition:.2s}.tabs button.on{background:linear-gradient(135deg,#f3d58e,#bd8d3e);color:#1a1308;border-color:transparent}
 .grid{gap:13px}.comm{background:linear-gradient(155deg,#1c1726,#100e17);border:1px solid var(--b);border-radius:20px;padding:16px 10px;box-shadow:0 8px 24px #0003;transition:transform .18s,border-color .18s}.comm:active{transform:scale(.97);border-color:#e7bd6380}.flag{border-radius:14px;box-shadow:0 5px 16px #0005}.comm b{font-size:14px}.comm small.live{color:#f0d08b}
 .createBtn{background:linear-gradient(135deg,#f3d58e,#bd8d3e);color:#1a1308;border:1px solid #ffe5a8;border-radius:17px;box-shadow:0 10px 30px #d6a84a40;font-family:'Tajawal',sans-serif}
-.bottomNav{height:auto;min-height:78px;padding:9px 5px calc(8px + env(safe-area-inset-bottom));background:rgba(13,11,18,.97);border-top:1px solid var(--b);backdrop-filter:blur(20px);align-items:center;direction:rtl}.bottomNav a{color:#9991a3;font-size:10px;gap:4px}.bottomNav a.on{color:#f5d99d}.bottomNav a .ic{font-size:22px}.bottomNav a.plus .ic{background:linear-gradient(135deg,#f3d58e,#bd8d3e);color:#1a1308;border-radius:14px;box-shadow:0 5px 18px #d6a84a35}
 .modal{backdrop-filter:blur(5px)}.modalBox{background:linear-gradient(160deg,#211b2b,#121019);border:1px solid var(--b);border-radius:24px 24px 18px 18px;box-shadow:0 20px 70px #0009}.modalBox h3{color:#f5d99d}.field input{border-color:#ffffff20;border-radius:13px}.field input:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 3px #e7bd6320}.flagOpt.on{border-color:var(--gold);box-shadow:0 0 0 2px #e7bd6330}.btnCreate{background:linear-gradient(135deg,#f3d58e,#bd8d3e);color:#1a1308}
 @media(min-width:700px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));max-width:900px;margin:auto}}
 .engagementSection{margin:8px 12px 22px;padding:16px;background:linear-gradient(145deg,#211a2c,#100e17);border:1px solid var(--b);border-radius:22px;box-shadow:0 12px 30px #0004}.sectionHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 14px 12px}.engagementSection .sectionHead{margin:0 0 14px}.sectionHead small{font-size:9px;letter-spacing:2px;color:var(--gold);font-weight:900}.sectionHead h2{font-size:19px;margin:3px 0;color:#f8e7c0}.sectionHead p{font-size:11px;color:var(--muted)}.liveBadge{white-space:nowrap;border:1px solid #57c99b55;color:#75d6ac;background:#57c99b12;padding:6px 9px;border-radius:20px;font-size:10px;font-weight:800}.activityList{display:flex;flex-direction:column;gap:9px}.activityCard{display:flex;align-items:center;gap:11px;padding:10px;background:#ffffff08;border:1px solid #ffffff12;border-radius:15px;cursor:pointer;min-width:0}.activityRank{width:28px;height:28px;display:grid;place-items:center;border-radius:9px;background:#e7bd6318;color:#f5d99d;font-weight:900;font-size:12px;flex-shrink:0}.activityFlag{width:48px;height:38px;border-radius:10px;overflow:hidden;border:1px solid #ffffff20;flex-shrink:0;background:#08070d}.activityFlag img,.activityFlag svg{width:100%;height:100%;object-fit:cover;display:block}.activityInfo{flex:1;min-width:0}.activityInfo b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.activityInfo small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.activityStats{text-align:left;white-space:nowrap;color:#f0d08b;font-size:11px;font-weight:900}.activityEmpty{color:var(--muted);font-size:12px;text-align:center;padding:15px 5px}.communityHead{margin-top:8px}</style>
@@ -98,13 +92,7 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
   </div>
 </div>
 
-<nav class="bottomNav" aria-label="التنقل الرئيسي">
-  <a href="/profile/"><span class="ic">♙</span><span>حسابي</span></a>
-  <a href="/dm/"><span class="ic">✉</span><span>الرسائل</span></a>
-  <a href="/app/public/"><span class="ic">🌍</span><span>المجتمع</span></a>
-  <a href="/vip/"><span class="ic">♛</span><span>VIP</span></a>
-  <a href="/app/" class="on"><span class="ic">⌂</span><span>الرئيسية</span></a>
-</nav>
+
 
 <script type="module">
 import { auth, db } from '/firebase-config.js';
