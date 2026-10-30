@@ -46,10 +46,21 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
 .modalBtns button{flex:1;padding:12px;border-radius:12px;border:0;font-weight:900;font-size:14px;cursor:pointer}
 .btnCancel{background:#1e1c2e;color:#fff;border:1px solid var(--b)!important}
 .btnCreate{background:var(--v);color:#fff}
+
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
+:root{--bg:#08070d;--card:#17131f;--b:rgba(231,189,99,.2);--v:#8b63d7;--muted:#aaa3b4;--gold:#e7bd63}
+body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -10%,rgba(121,80,201,.22),transparent 45%),#08070d;padding-bottom:120px}
+.top{height:66px;background:rgba(12,10,17,.9);border-bottom:1px solid var(--b);backdrop-filter:blur(18px);padding:0 18px}.top b{font-size:20px;letter-spacing:.08em;color:#f5d99d}
+.tabs button{border-color:var(--b);border-radius:14px;transition:.2s}.tabs button.on{background:linear-gradient(135deg,#f3d58e,#bd8d3e);color:#1a1308;border-color:transparent}
+.grid{gap:13px}.comm{background:linear-gradient(155deg,#1c1726,#100e17);border:1px solid var(--b);border-radius:20px;padding:16px 10px;box-shadow:0 8px 24px #0003;transition:transform .18s,border-color .18s}.comm:active{transform:scale(.97);border-color:#e7bd6380}.flag{border-radius:14px;box-shadow:0 5px 16px #0005}.comm b{font-size:14px}.comm small.live{color:#f0d08b}
+.createBtn{background:linear-gradient(135deg,#f3d58e,#bd8d3e);color:#1a1308;border:1px solid #ffe5a8;border-radius:17px;box-shadow:0 10px 30px #d6a84a40;font-family:'Tajawal',sans-serif}
+.bottomNav{height:auto;min-height:78px;padding:9px 5px calc(8px + env(safe-area-inset-bottom));background:rgba(13,11,18,.97);border-top:1px solid var(--b);backdrop-filter:blur(20px);align-items:center;direction:rtl}.bottomNav a{color:#9991a3;font-size:10px;gap:4px}.bottomNav a.on{color:#f5d99d}.bottomNav a .ic{font-size:22px}.bottomNav a.plus .ic{background:linear-gradient(135deg,#f3d58e,#bd8d3e);color:#1a1308;border-radius:14px;box-shadow:0 5px 18px #d6a84a35}
+.modal{backdrop-filter:blur(5px)}.modalBox{background:linear-gradient(160deg,#211b2b,#121019);border:1px solid var(--b);border-radius:24px 24px 18px 18px;box-shadow:0 20px 70px #0009}.modalBox h3{color:#f5d99d}.field input{border-color:#ffffff20;border-radius:13px}.field input:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 3px #e7bd6320}.flagOpt.on{border-color:var(--gold);box-shadow:0 0 0 2px #e7bd6330}.btnCreate{background:linear-gradient(135deg,#f3d58e,#bd8d3e);color:#1a1308}
+@media(min-width:700px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));max-width:900px;margin:auto}}
 </style>
 </head>
 <body>
-<div class="top"><b>✨ GABO LIVE</b><span>🔔</span></div>
+<div class="top"><b>GABO LIVE ✦</b><a href="/notifications/" aria-label="الإشعارات" style="text-decoration:none;color:#f5d99d;font-size:20px">♧</a></div><div style="padding:20px 16px 8px"><small style="color:#e7bd63;font-weight:900;letter-spacing:2px">YOUR SOCIAL UNIVERSE</small><h1 style="font-size:27px;margin:5px 0">عالمك يبدأ من هنا</h1><p style="color:#aaa3b4;font-size:13px">اكتشف المجتمعات وتواصل مع أشخاص يشاركونك الاهتمام</p></div>
 <div class="tabs"><button class="on">المجتمعات</button><button onclick="location.href='/dm/'">شات العالم 🌍</button></div>
 
 <div id="commPage" class="grid"></div>
@@ -85,13 +96,13 @@ body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:110px;
   </div>
 </div>
 
-<div class="bottomNav">
-  <a href="/profile/"><span class="ic">👤</span><span>حسابي</span></a>
-  <a href="/dm/"><span class="ic">🔒</span><span>خاص</span></a>
-  <a href="#" class="plus" onclick="openCreate();return false"><span class="ic">+</span></a>
-  <a href="/posts/"><span class="ic">📄</span><span>منشورات</span></a>
-  <a href="/app/" class="on"><span class="ic">🏠</span><span>الرئيسية</span></a>
-</div>
+<nav class="bottomNav" aria-label="التنقل الرئيسي">
+  <a href="/profile/"><span class="ic">♙</span><span>حسابي</span></a>
+  <a href="/dm/"><span class="ic">✉</span><span>الرسائل</span></a>
+  <a href="#" class="plus" onclick="openCreate();return false"><span class="ic">＋</span><span>إنشاء</span></a>
+  <a href="/notifications/"><span class="ic">♧</span><span>التنبيهات</span></a>
+  <a href="/app/" class="on"><span class="ic">⌂</span><span>الرئيسية</span></a>
+</nav>
 
 <script type="module">
 import { auth, db } from '/firebase-config.js';
