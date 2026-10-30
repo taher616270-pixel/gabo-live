@@ -41,7 +41,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;min-height:100vh;padd
 
 <script type="module">
 import {db} from '/firebase-config.js';
-import {getSouthArabiaFlag} from '/assets/country-flags.js';
+import {getSouthArabiaFlag,getCountryRegistry} from '/assets/country-flags.js';
 import {doc,getDoc} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 function genId(uid){let h=0;for(let i=0;i<uid.length;i++){h=(h*31+uid.charCodeAt(i))%1000000000;}return (10000000+(h%90000000)).toString().padStart(8,'0');}
 const params=new URLSearchParams(location.search);
@@ -56,8 +56,9 @@ else{
       const photo=d.photoURL||d.photo||d.avatar||'';
       const name=d.displayName||d.name||'مستخدم';
       const bio=d.bio||'مرحبا بكم في ملفي 👋';
-      const country=d.countryName||'الجنوب العربي';
-      const flag=d.country==='south-arabia'?await getSouthArabiaFlag():(d.countryFlagImg||'/assets/south-arabia.png.JPG');
+      const countryInfo=(await getCountryRegistry()).find(c=>c.code===String(d.country||'').toLowerCase());
+      const country=countryInfo?.name||(d.country?'غير محدد':(d.countryName||'غير محدد'));
+      const flag=countryInfo?.code==='south-arabia'?await getSouthArabiaFlag():(countryInfo?.flag||(d.country?'':(d.countryFlagImg||'')));
       const gender=d.gender||'';
       const bday=d.bday||'';
       const cover=d.cover||'';
@@ -66,7 +67,7 @@ else{
       if(photo){ document.getElementById('avImg').src=photo; document.getElementById('avImg').style.display='block'; document.getElementById('avL').style.display='none'; }
       if(cover){ document.getElementById('coverImg').src=cover; document.getElementById('coverImg').style.display='block'; document.getElementById('coverPH').style.display='none'; }
       document.getElementById('bio').textContent=bio;
-      document.getElementById('country').innerHTML=`<img src="${flag}" style="width:22px;height:15px;border-radius:2px"> ${country}`;
+      document.getElementById('country').innerHTML=(flag?`<img src="${flag}" style="width:22px;height:15px;border-radius:2px"> `:'')+country;
       document.getElementById('gender').textContent=gender;
       document.getElementById('uidText').textContent=d.gaboId||genId(targetUid);
       if(bday){ try{ const age=new Date().getFullYear()-parseInt(bday.split('-')[0]); document.getElementById('age').textContent=age+' سنة'; }catch{} }

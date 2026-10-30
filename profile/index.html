@@ -136,14 +136,14 @@ body{padding-bottom:110px}
 </div>
 <script type="module">
 import {auth,db} from '/firebase-config.js';
-import {getSouthArabiaFlag} from '/assets/country-flags.js';
+import {getSouthArabiaFlag,getCountryRegistry} from '/assets/country-flags.js';
 import {onAuthStateChanged,updateProfile,signOut,deleteUser} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {doc,getDoc,setDoc,onSnapshot,deleteDoc} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 let cur=null;
 let pending={name:null,bio:null,bday:null,gender:null,country:null,countryName:null,countryFlagImg:null,avatar:null,cover:null,coverDeleted:false};
 let tempGender=null; let selDay=3, selMonth=1, selYear=2000;
 let SOUTH_FLAG='/assets/south-arabia.png.JPG';
-const countries=[
+let countries=[
   {code:'south-arabia',name:'الجنوب العربي',flagImg:SOUTH_FLAG},
   {code:'SA',name:'السعودية',flagImg:'https://flagcdn.com/w40/sa.png'},
   {code:'YE',name:'اليمن',flagImg:'https://flagcdn.com/w40/ye.png'},
@@ -262,7 +262,7 @@ function showCoverInMain(coverData){
 }
 onAuthStateChanged(auth,async u=>{
   if(!u){location.replace('/login/');return}
-  cur=u; SOUTH_FLAG=await getSouthArabiaFlag(); countries[0].flagImg=SOUTH_FLAG; const ref=doc(db,'users',u.uid); const snap=await getDoc(ref);
+  cur=u; SOUTH_FLAG=await getSouthArabiaFlag(); countries= (await getCountryRegistry()).map(c=>({code:c.code,name:c.name,flagImg:c.code==='south-arabia'?SOUTH_FLAG:c.flag})); const ref=doc(db,'users',u.uid); const snap=await getDoc(ref);
   let finalId; let savedGender='أنثى ♀️'; let savedBday='2000-01-03';
   if(!snap.exists()){
     finalId=genId(u.uid); 
@@ -272,7 +272,7 @@ onAuthStateChanged(auth,async u=>{
     finalId=snap.data().gaboId||genId(u.uid);
     const d=snap.data();
     if(d.bio){document.getElementById('bioPublic').textContent=d.bio; document.getElementById('rowBioVal').textContent=d.bio;}
-    if(d.countryName){setCountryDisplay(d.countryName,d.country||'south-arabia',d.countryFlagImg||SOUTH_FLAG);} else{setCountryDisplay('الجنوب العربي','south-arabia',SOUTH_FLAG);}
+    if(d.countryName){const activeCountry=countries.find(c=>c.code===String(d.country||'').toLowerCase());setCountryDisplay(activeCountry?.name||'غير محدد',activeCountry?.code||'',activeCountry?.flagImg||'');} else{setCountryDisplay('الجنوب العربي','south-arabia',SOUTH_FLAG);}
     if(d.gender){savedGender=d.gender; document.getElementById('rowGenderVal').textContent=d.gender;}
     if(d.bday){savedBday=d.bday; document.getElementById('rowBdayVal').textContent=d.bday;}
     updateMeta(savedGender,savedBday);

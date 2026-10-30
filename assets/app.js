@@ -1,6 +1,6 @@
 // GABO LIVE - المحرك المشترك لكل الصفحات (حراسة الدخول، التنقل، الشات)
 import { auth, db } from '/firebase-config.js';
-import { getSouthArabiaFlag } from '/assets/country-flags.js';
+import { getSouthArabiaFlag, getCountryRegistry } from '/assets/country-flags.js';
 import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { doc, getDoc, collection, addDoc, query, where, orderBy, limitToLast, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
@@ -18,6 +18,7 @@ export const COUNTRY_FLAGS = {
 
 let centralSouthFlag = '/assets/south-arabia.png.JPG';
 getSouthArabiaFlag().then(flag => { centralSouthFlag = flag; COUNTRY_FLAGS['south-arabia'] = flag; COUNTRY_FLAGS['south-yemen'] = flag; }).catch(()=>{});
+getCountryRegistry().then(list => list.forEach(country => { COUNTRY_FLAGS[country.code] = country.code === 'south-arabia' ? centralSouthFlag : country.flag; })).catch(()=>{});
 
 export function getCountryFlag(code) {
   if (!code) return '';

@@ -108,7 +108,7 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 
 <script type="module">
 import { auth, db } from '/firebase-config.js';
-import { getSouthArabiaFlag } from '/assets/country-flags.js';
+import { getSouthArabiaFlag, getCountryRegistry } from '/assets/country-flags.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { collection, onSnapshot, doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
@@ -120,7 +120,9 @@ const SOUTH_FLAG=await getSouthArabiaFlag();
 const SOUTH_SVG=`<img src="${SOUTH_FLAG}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`
 
 const STATIC_IDS=['south','sa','ye','ae','om','qa','kw','bh'];
-const NAMES={south:'الجنوب العربي',sa:'السعودية',ye:'اليمن',ae:'الإمارات',om:'عمان',qa:'قطر',kw:'الكويت',bh:'البحرين'};
+const managedCountries=await getCountryRegistry();
+const managedNames=Object.fromEntries(managedCountries.map(country=>[country.code,country.name]));
+const NAMES={south:managedNames['south-arabia']||'الجنوب العربي',sa:managedNames.sa||'السعودية',ye:managedNames.ye||'اليمن',ae:managedNames.ae||'الإمارات',om:managedNames.om||'عمان',qa:managedNames.qa||'قطر',kw:managedNames.kw||'الكويت',bh:managedNames.bh||'البحرين'};
 const FLAG_HTML={
 south:SOUTH_SVG,
 sa:`<img src="https://flagcdn.com/w80/sa.png">`,
