@@ -107,7 +107,7 @@ body{background:radial-gradient(ellipse at 50% -15%,#1c3a4c 0,transparent 48%),#
 import { auth, db } from '/firebase-config.js';
 import { getSouthArabiaFlag,getCountryRegistry } from '/assets/country-flags.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { collection, doc, onSnapshot, addDoc, serverTimestamp, getDoc, setDoc, arrayUnion, arrayRemove, increment, decrement } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { collection, doc, onSnapshot, addDoc, serverTimestamp, getDoc, setDoc, arrayUnion, arrayRemove, increment, decrement, query, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 const SOUTH_FLAG=await getSouthArabiaFlag();
 const GLOBAL_GLOBE=`<svg viewBox="0 0 64 64" role="img" aria-label="الشات العام"><defs><radialGradient id="ocean" cx="30%" cy="24%"><stop stop-color="#a8fff4"/><stop offset=".3" stop-color="#37c9c0"/><stop offset=".72" stop-color="#246a9b"/><stop offset="1" stop-color="#18234c"/></radialGradient><linearGradient id="land" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d8ffe8"/><stop offset="1" stop-color="#4bd3a5"/></linearGradient></defs><circle cx="32" cy="32" r="27" fill="url(#ocean)" stroke="#b6fff2" stroke-width="1.5"/><path d="M17 14l7-4 7 3 1 6-5 4-1 7-7-2-4-6 2-8zm20-3 9 3 5 8-5 4-2 8-6-2-3-7 3-5-4-4zm-20 29 7-3 7 4 3 8-6 8-8-4-4-8zm23 3 7-5 7 4-2 9-8 5-5-6z" fill="url(#land)" opacity=".95"/><path d="M6 32h52M32 5c-9 9-12 18-12 27s3 18 12 27M32 5c9 9 12 18 12 27s-3 18-12 27" fill="none" stroke="#d4fff8" stroke-opacity=".45" stroke-width="1"/><ellipse cx="32" cy="32" rx="27" ry="10" fill="none" stroke="#d4fff8" stroke-opacity=".38"/></svg>`;
 const SOUTH_SVG=`<img src="${SOUTH_FLAG}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`
@@ -192,7 +192,7 @@ async function renderGlobalMembers(ids){
 document.getElementById('leaveGlobalChat')?.addEventListener('click',async()=>{if(!uid||!hasJoinedGeneralChat)return;if(!confirm('هل تريد الخروج من الشات العام؟'))return;const btn=document.getElementById('leaveGlobalChat');btn.disabled=true;try{const ref=doc(db,'communities','global');const snap=await getDoc(ref);const members=snap.exists()&&Array.isArray(snap.data().members)?snap.data().members:[];if(members.includes(uid)){await setDoc(ref,{members:arrayRemove(uid),membersCount:Math.max(0,members.length-1)},{merge:true});}hasJoinedGeneralChat=false;updateGeneralChatGate();closeGlobalStats();document.getElementById('globalMembersList').style.display='none';}catch(e){alert('تعذر الخروج حالياً، حاول مرة ثانية.');}finally{btn.disabled=false;}});
 
 document.getElementById('joinPublicChat')?.addEventListener('click',async()=>{const btn=document.getElementById('joinPublicChat');if(!uid||hasJoinedGeneralChat)return;btn.disabled=true;btn.textContent='جارٍ الانضمام...';try{const ref=doc(db,'communities','global');const snap=await getDoc(ref);const members=snap.exists()&&Array.isArray(snap.data().members)?snap.data().members:[];if(!members.includes(uid)){const today=new Date().toISOString().slice(0,10);const sameDay=snap.exists()&&snap.data().activityDay===today;await setDoc(ref,{name:'الشات العام',type:'public-chat',members:arrayUnion(uid),membersCount:increment(1),joinsToday:sameDay?increment(1):1,activityScore:sameDay?increment(2):2,activityDay:today},{merge:true});}hasJoinedGeneralChat=true;updateGeneralChatGate();msgInput?.focus();}catch(e){btn.disabled=false;btn.innerHTML='حاول مرة ثانية ←';alert('تعذر الانضمام حالياً، تحقق من اتصالك أو صلاحيات قاعدة البيانات.');}});
-onSnapshot(collection(db,'communities',communityId,'messages'), (snap)=>{
+onSnapshot(query(collection(db,'communities',communityId,'messages'),orderBy('createdAt','desc'),limit(100)), (snap)=>{
   const msgs=[]; snap.forEach(d=>msgs.push({id:d.id,...d.data()}));
   msgs.sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
   messagesEl.innerHTML='';
@@ -213,7 +213,6 @@ onSnapshot(collection(db,'communities',communityId,'messages'), (snap)=>{
     const timeEl=document.createElement('span');timeEl.className='time';const stamp=m.createdAt?.toDate?m.createdAt.toDate():m.createdAt?.seconds?new Date(m.createdAt.seconds*1000):null;timeEl.textContent=stamp?stamp.toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'}):'الآن';line.appendChild(timeEl);
     const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=String(m.text||'');
     content.append(line,bubble);row.append(avatar,content);messagesEl.appendChild(row);
-    messagesEl.appendChild(row);
   });
   messagesEl.scrollTop=messagesEl.scrollHeight;
 });
@@ -264,12 +263,18 @@ window.closeProfile=()=>{ document.getElementById('profileModal').classList.remo
 document.getElementById('pChatBtn').onclick=()=>{ if(!lastOpenedUid) return; location.href=`/dm/?uid=${lastOpenedUid}`; }
 document.getElementById('pViewBtn').onclick=()=>{ if(!lastOpenedUid) return; location.href=`/profile/view/?uid=${lastOpenedUid}`; }
 window.sendMsg=async ()=>{
-  const text=msgInput.value.trim(); if(!text||!uid||(isGeneralPublicChat&&!hasJoinedGeneralChat)) return;
+  const text=msgInput.value.trim();
+  if(!text||text.length>1000||!uid||(isGeneralPublicChat&&!hasJoinedGeneralChat)||sendingMessage)return;
+  sendingMessage=true;const sendButton=document.querySelector('.sendBtn');if(sendButton)sendButton.disabled=true;
   const displayName=userData?.displayName||userData?.name||localStorage.getItem('gabo_name')||'مستخدم';
   const photoURL=userData?.photoURL||userData?.photo||localStorage.getItem('gabo_photo')||'';
-  msgInput.value='';
-  await addDoc(collection(db,'communities',communityId,'messages'),{text,uid,displayName,name:displayName,photoURL,avatar:photoURL,photo:photoURL,verified:userData?.verified||false,createdAt:serverTimestamp()});
-  const commRef=doc(db,'communities',communityId);const today=new Date().toISOString().slice(0,10);const commSnap=await getDoc(commRef).catch(()=>null);const sameDay=commSnap?.exists()&&commSnap.data().activityDay===today;await setDoc(commRef,{messagesToday:sameDay?increment(1):1,activityScore:sameDay?increment(3):3,activityDay:today,lastActivityAt:serverTimestamp()},{merge:true});
+  try{
+    await addDoc(collection(db,'communities',communityId,'messages'),{text,uid,displayName,name:displayName,photoURL,avatar:photoURL,photo:photoURL,verified:userData?.verified===true,createdAt:serverTimestamp()});
+    msgInput.value='';document.getElementById('emojiPanel')?.classList.remove('on');
+    const commRef=doc(db,'communities',communityId);const today=new Date().toISOString().slice(0,10);const commSnap=await getDoc(commRef).catch(()=>null);const sameDay=commSnap?.exists()&&commSnap.data().activityDay===today;
+    await setDoc(commRef,{messagesToday:sameDay?increment(1):1,activityScore:sameDay?increment(3):3,activityDay:today,lastActivityAt:serverTimestamp()},{merge:true}).catch(()=>{});
+  }catch(error){console.error('Global chat send failed:',error);alert('تعذر إرسال الرسالة. تحقق من اتصالك وصلاحيات قاعدة البيانات ثم حاول مرة أخرى.');}
+  finally{sendingMessage=false;if(sendButton)sendButton.disabled=false;msgInput.focus();}
 }
 window.toggleEmoji=()=>{ const p=document.getElementById('emojiPanel'); p.classList.toggle('on'); if(p.classList.contains('on')) showEmojiCat(null,'smile'); }
 window.showEmojiCat=(e,cat)=>{
