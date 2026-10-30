@@ -153,7 +153,7 @@ function closeGlobalStats(){document.getElementById('globalStatsShade').style.di
 document.getElementById('globalStatsFab')?.addEventListener('click',openGlobalStats);
 document.getElementById('closeGlobalStats')?.addEventListener('click',closeGlobalStats);
 document.getElementById('globalStatsShade')?.addEventListener('click',closeGlobalStats);
-document.getElementById('showGlobalMembers')?.addEventListener('click',()=>{const box=document.getElementById('globalMembersList');box.style.display=box.style.display==='none'?'block':'none';});
+document.getElementById('showGlobalMembers')?.addEventListener('click',()=>{const box=document.getElementById('globalMembersList');box.style.display=box.style.display==='none'?'block':'none';if(box.style.display==='block')renderGlobalMembers(globalMembers);});
 async function renderGlobalMembers(ids){
  const box=document.getElementById('globalMembersList');if(!box)return;
  document.getElementById('globalTotalMembers').textContent=String(ids.length);
