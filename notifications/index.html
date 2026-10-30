@@ -47,6 +47,7 @@ input:checked + .slider:before{transform:translateX(-20px)}
 
 <script type="module">
 import {auth,db} from '/firebase-config.js';
+import {getSouthArabiaFlag} from '/assets/country-flags.js';
 import {onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {doc,getDoc,setDoc} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 let cur=null, swReg=null;
@@ -110,10 +111,11 @@ $('testBtn').onclick=async()=>{
   if(Notification.permission!=='granted'){alert('فعل الإشعارات أولاً من الزر فوق'); return}
   // طريقة الآيفون: عن طريق Service Worker
   if(swReg){
+    const southFlag=await getSouthArabiaFlag();
     await swReg.showNotification('GABO LIVE 🔔',{
       body:'الإشعارات شغالة تمام! ✅ هذا إشعار تجريبي',
-      icon:'/assets/south-arabia.png.JPG',
-      badge:'/assets/south-arabia.png.JPG',
+      icon:southFlag,
+      badge:southFlag,
       vibrate:[200,100,200]
     });
     show('🔔 تم إرسال الإشعار - انظر فوق الشاشة');
