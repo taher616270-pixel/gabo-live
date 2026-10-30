@@ -116,11 +116,11 @@ onAuthStateChanged(auth, async (u)=>{
     const commSnap=await getDoc(commRef).catch(()=>null);
     if(!commSnap?.exists()){
       const info=COMM_DATA[communityId] || {name:communityId};
-      await setDoc(commRef,{name:info.name||communityId, flag:communityId, members:[uid], membersCount:1, createdAt:serverTimestamp()}, {merge:true});
+      await setDoc(commRef,{name:info.name||communityId,flag:communityId,members:[uid],membersCount:1,joinsToday:1,activityScore:2,activityDay:new Date().toISOString().slice(0,10),createdAt:serverTimestamp()},{merge:true});
     }else{
       const members=Array.isArray(commSnap.data().members)?commSnap.data().members:[];
       if(!members.includes(uid)){
-        try{ await setDoc(commRef,{membersCount:increment(1), members:arrayUnion(uid)}, {merge:true}); }catch{}
+        try{const today=new Date().toISOString().slice(0,10);const sameDay=commSnap.data().activityDay===today;await setDoc(commRef,{membersCount:increment(1),members:arrayUnion(uid),joinsToday:sameDay?increment(1):1,activityScore:sameDay?increment(2):2,activityDay:today},{merge:true});}catch{}
       }
     }
   }
@@ -191,7 +191,8 @@ window.sendMsg=async ()=>{
   const displayName=userData?.displayName||userData?.name||localStorage.getItem('gabo_name')||'مستخدم';
   const photoURL=userData?.photoURL||userData?.photo||localStorage.getItem('gabo_photo')||'';
   msgInput.value='';
-  await addDoc(collection(db,'communities',communityId,'messages'),{text, uid, displayName, name:displayName, photoURL, avatar:photoURL, photo:photoURL, verified:userData?.verified||false, createdAt:serverTimestamp()});
+  await addDoc(collection(db,'communities',communityId,'messages'),{text,uid,displayName,name:displayName,photoURL,avatar:photoURL,photo:photoURL,verified:userData?.verified||false,createdAt:serverTimestamp()});
+  const commRef=doc(db,'communities',communityId);const today=new Date().toISOString().slice(0,10);const commSnap=await getDoc(commRef).catch(()=>null);const sameDay=commSnap?.exists()&&commSnap.data().activityDay===today;await setDoc(commRef,{messagesToday:sameDay?increment(1):1,activityScore:sameDay?increment(3):3,activityDay:today,lastActivityAt:serverTimestamp()},{merge:true});
 }
 window.toggleEmoji=()=>{ const p=document.getElementById('emojiPanel'); p.classList.toggle('on'); if(p.classList.contains('on')) showEmojiCat(null,'smile'); }
 window.showEmojiCat=(e,cat)=>{
