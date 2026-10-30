@@ -174,7 +174,7 @@ onAuthStateChanged(auth, async u=>{
  }
  me=u; document.getElementById('adminEmail').innerText=u.email;
  const c=await getDoc(doc(db,'site_config','main')); if(c.exists()) cfg={...cfg,...c.data()};
- initTabs(); listenAll(); fillAgoraForm(); renderNav(); renderPlans(); renderPages(); renderSouthFlag(); countryRegistry=await getCountryRegistryAdmin(); renderCountryRegistry(); loadHosts(); loadUsersFull();
+ initTabs(); listenAll(); fillAgoraForm(); renderNav(); renderPlans(); renderPages(); renderSouthFlag(); try{countryRegistry=await getCountryRegistryAdmin();renderCountryRegistry();}catch(countryError){console.error('Country manager setup:',countryError);document.getElementById('countryAdminList').innerHTML='<p style="color:#fbbf24;line-height:1.8">لتفعيل إدارة الدول، انشر قواعد Firestore وStorage الموضحة في ملف FIREBASE_COUNTRY_RULES.md داخل المستودع.</p>';} loadHosts(); loadUsersFull();
 });
 
 document.getElementById('logout').onclick=()=>signOut(auth).then(()=>location.href='/login/');
