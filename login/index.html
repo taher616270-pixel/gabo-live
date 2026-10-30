@@ -1,110 +1,446 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#090811">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090811">
 <title>GABO LIVE | تسجيل الدخول</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-:root{color-scheme:dark;--bg:#090811;--panel:#151222;--line:rgba(255,255,255,.09);--purple:#8957f5;--purple2:#6235c9;--gold:#e8c77b;--text:#fbfaff;--muted:#aaa5ba;--red:#ff718c;--green:#63d9a1}
-*{box-sizing:border-box}html{min-height:100%;background:var(--bg)}body{margin:0;min-height:100vh;min-height:100svh;padding:max(18px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));display:grid;place-items:center;overflow-x:hidden;background:radial-gradient(ellipse at 50% 0%,rgba(119,73,218,.20),transparent 42%),radial-gradient(ellipse at 100% 100%,rgba(215,174,91,.08),transparent 35%),var(--bg);color:var(--text);font-family:'Tajawal',system-ui,-apple-system,sans-serif}
-button,input{font:inherit}button{touch-action:manipulation}.shell{width:100%;max-width:460px;min-width:0;position:relative;margin:auto}.glow{position:absolute;inset:8% -8%;z-index:-1;background:rgba(117,76,218,.13);filter:blur(65px);border-radius:50%;pointer-events:none}
-.card{position:relative;width:100%;min-width:0;padding:clamp(18px,5vw,36px);border:1px solid rgba(220,190,255,.13);border-radius:28px;background:linear-gradient(155deg,rgba(26,22,42,.97),rgba(15,13,24,.98));box-shadow:0 28px 90px rgba(0,0,0,.48),inset 0 1px rgba(255,255,255,.04);overflow:hidden}.card:before{content:"";position:absolute;top:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.7}
-.brand{text-align:center;margin:0 0 27px}.mark{width:auto;height:auto;margin:0 auto 14px;display:block;border:0;border-radius:0;background:none;box-shadow:none;font-family:Arial,sans-serif;font-size:clamp(66px,18vw,82px);line-height:.95;font-weight:900;letter-spacing:-.09em;color:#f2d58e;transform:perspective(240px) rotateX(10deg) rotateY(-13deg);text-shadow:1px 1px 0 #c5a45f,2px 2px 0 #a98643,3px 3px 0 #80602e,4px 4px 0 #49351e,6px 7px 9px rgba(0,0,0,.9),0 0 24px rgba(232,199,123,.24);animation:gFloat 3s ease-in-out infinite;will-change:transform,opacity}@keyframes gFloat{0%,100%{transform:perspective(240px) rotateX(10deg) rotateY(-13deg) translateY(0);filter:brightness(.92)}50%{transform:perspective(240px) rotateX(10deg) rotateY(-13deg) translateY(-6px);filter:brightness(1.12)}}
-.brand h1{margin:0;font-family:Arial,sans-serif;font-size:30px;letter-spacing:.13em;font-weight:900;direction:ltr}.brand h1 span{color:var(--gold)}.brand p{margin:8px 0 0;color:var(--muted);font-size:14px}
-.tabs{display:flex;gap:5px;padding:5px;margin-bottom:23px;border:1px solid var(--line);border-radius:14px;background:rgba(5,4,10,.42)}.tabs button{flex:1;min-height:43px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-weight:800;cursor:pointer;transition:.2s}.tabs button.on{color:var(--gold);background:linear-gradient(110deg,#08070c 0%,#241a3b 58%,#49306f 100%);border:1px solid rgba(232,199,123,.38);box-shadow:0 5px 18px rgba(112,68,220,.20),inset 0 0 14px rgba(232,199,123,.06)}
-.field{margin:0 0 15px}label{display:block;margin:0 0 7px;color:#ded9eb;font-size:13px;font-weight:700}.input-wrap{position:relative}input{display:block;width:100%;height:51px;padding:0 15px;border:1px solid rgba(255,255,255,.10);border-radius:13px;outline:0;background:rgba(7,6,13,.58);color:#fff;font-size:15px;transition:border-color .2s,box-shadow .2s}input::placeholder{color:#777286}input:focus{border-color:rgba(164,125,255,.85);box-shadow:0 0 0 3px rgba(137,87,245,.13)}input.bad{border-color:var(--red)}input[dir=ltr]{text-align:left}.fieldErr{display:none;margin:5px 3px 0;color:var(--red);font-size:12px}.fieldErr.show{display:block}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.pass-toggle{position:absolute;left:12px;top:50%;transform:translateY(-50%);padding:6px 4px;border:0;background:transparent;color:var(--gold);font-size:12px;font-weight:700;cursor:pointer}.forgot{display:block;width:max-content;margin:-3px 0 5px auto;padding:5px 0;border:0;background:transparent;color:var(--gold);font-size:13px;font-weight:700;cursor:pointer}
-.main-btn,.social-btn{width:100%;min-height:52px;border-radius:14px;font-weight:800;font-size:16px;cursor:pointer;transition:transform .18s,opacity .18s,border-color .18s}.main-btn{margin-top:9px;border:1px solid rgba(232,199,123,.58);background:linear-gradient(110deg,#07070a 0%,#17121f 36%,#49306f 72%,#b18a43 125%);color:#f1d58f;box-shadow:0 10px 25px rgba(0,0,0,.34),0 5px 22px rgba(112,68,220,.20),inset 0 1px rgba(255,255,255,.08)}.main-btn:hover{border-color:#f0d38b;box-shadow:0 10px 28px rgba(112,68,220,.28),0 0 18px rgba(232,199,123,.12)}.main-btn:active,.social-btn:active{transform:scale(.99)}button:disabled{opacity:.58;cursor:not-allowed}
-.social-btn{display:flex;align-items:center;justify-content:center;gap:11px;min-height:49px;margin-top:10px;border:1px solid rgba(232,199,123,.35);background:linear-gradient(110deg,#08080b,#171322 68%,#241936);color:#ead08f;font-size:15px;box-shadow:inset 0 1px rgba(255,255,255,.045);}.social-btn:hover{border-color:rgba(232,199,123,.82);background:linear-gradient(110deg,#09080d,#30204d 72%,#4a326e);box-shadow:0 5px 18px rgba(112,68,220,.16)}.social-btn img{width:19px;height:19px}.apple-icon{font-family:Arial,sans-serif;font-size:21px;line-height:1}
-.msg{min-height:20px;margin:12px 0 0;text-align:center;font-size:13px;line-height:1.5;color:var(--muted)}.msg.e{color:var(--red)}.msg.ok{color:var(--green)}.divider{display:flex;align-items:center;gap:12px;margin:17px 0;color:#827c91;font-size:12px}.divider:before,.divider:after{content:"";height:1px;flex:1;background:var(--line)}.legal{text-align:center;margin:20px 0 0;color:#827c91;font-size:11px;line-height:1.7}
-.consent{display:flex;align-items:flex-start;gap:10px;margin:17px 1px 5px;text-align:right;color:#d9d3e8;font-size:12px;line-height:1.9;cursor:pointer}
-.consentErr{display:none;margin:2px 4px 8px;color:var(--red);font-size:12px;text-align:center}
-.consentErr.show{display:block}
-.consent input{appearance:none;-webkit-appearance:none;flex:0 0 19px;width:19px;height:19px;min-height:19px;margin:3px 0 0;padding:0;border:1.5px solid #9a78e8;border-radius:50%;background:#0b0912;cursor:pointer;transition:.18s}
-.consent input:checked{border-color:#a77bff;background:radial-gradient(circle,#fff 0 23%,#8957f5 26% 100%);box-shadow:0 0 0 3px rgba(137,87,245,.16)}
-.consent input:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-.consent a{color:#b18aff;text-decoration:none;font-weight:800;white-space:nowrap}
-.consent a:hover{text-decoration:underline;color:#d0b8ff}
-.consentErr{display:none;margin:2px 4px 8px;color:var(--red);font-size:12px}
-.consentErr.show{display:block}
-#signupFields[hidden]{display:none!important}
-@media(max-width:420px){body{padding: max(14px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));align-items:center}.card{padding:clamp(17px,5vw,23px) clamp(14px,4.5vw,19px);border-radius:21px}.brand{margin-bottom:20px}.brand h1{font-size:clamp(25px,7vw,27px)}.row{gap:9px}input{height:49px;min-width:0}.main-btn,.social-btn{min-height:48px;font-size:15px}}
-@media(max-height:760px){body{align-items:start}.card{padding-top:18px;padding-bottom:18px}.brand{margin-bottom:15px}.mark{font-size:64px;margin-bottom:10px}.field{margin-bottom:10px}.divider{margin:12px 0}.legal{margin-top:14px}}
-@media(max-width:340px){.card{padding-inline:13px}.tabs{gap:3px}.tabs button{font-size:13px}.row{grid-template-columns:1fr 1fr;gap:7px}label{font-size:12px}.social-btn{gap:8px;font-size:14px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}.mark{animation:none!important;opacity:.9}}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-.country-wrap{position:relative;width:100%}.country-native-select{position:absolute!important;width:1px!important;height:1px!important;min-height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;opacity:0!important;pointer-events:none!important}
-.country-trigger{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;height:51px;padding:0 13px;border:1px solid rgba(255,255,255,.10);border-radius:13px;background:#100e19;color:#fff;font:inherit;font-size:14px;text-align:right;cursor:pointer}.country-trigger:focus-visible{outline:0;border-color:rgba(164,125,255,.85);box-shadow:0 0 0 3px rgba(137,87,245,.13)}.country-trigger .chosen{display:flex;align-items:center;gap:10px;min-width:0}.country-trigger .chosen img,.country-option img{width:28px;height:20px;flex:0 0 28px;object-fit:cover;border-radius:4px;border:1px solid rgba(255,255,255,.16);background:#0b0912}.country-trigger .placeholder{color:#aaa5ba}.country-chevron{color:var(--gold);font-size:12px}.country-menu{display:none;position:absolute;z-index:20;top:calc(100% + 7px);right:0;left:0;padding:8px;border:1px solid rgba(232,199,123,.25);border-radius:14px;background:#151222;box-shadow:0 16px 38px rgba(0,0,0,.55)}.country-menu.open{display:block}.country-search{width:100%;height:42px;margin-bottom:7px;padding:0 11px;border-radius:9px;font-size:14px}.country-options{max-height:250px;overflow:auto;overscroll-behavior:contain}.country-option{display:flex;align-items:center;gap:10px;width:100%;min-height:42px;padding:7px 9px;border:0;border-radius:8px;background:transparent;color:#f7f3ff;text-align:right;font:inherit;font-size:14px;cursor:pointer}.country-option:hover,.country-option[aria-selected=true]{background:rgba(137,87,245,.2);color:var(--gold)}.country-option[hidden]{display:none!important}.country-empty{display:none;padding:12px;text-align:center;color:var(--muted);font-size:13px}.country-empty.show{display:block}
-@media(max-width:420px){.country-trigger{height:49px}}
+<style>
+:root {
+  color-scheme:dark;
+  --bg:#090811;
+  --panel:#151222;
+  --gold:#e8c77b;
+  --purple:#8957f5;
+  --text:#fbfaff;
+  --muted:#aaa5ba;
+  --red:#ff718c;
+  --green:#63d9a1;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;padding:20px;
+  display:grid;place-items:center;
+  background:radial-gradient(ellipse at 50% 0%,rgba(119,73,218,.2),transparent 42%),var(--bg);
+  color:var(--text);font-family:Tajawal,Arial,sans-serif
+}
+.shell{width:100%;max-width:460px}
+.card{
+  padding:28px;border:1px solid rgba(220,190,255,.13);
+  border-radius:25px;
+  background:linear-gradient(155deg,#1a162a,#0f0d18);
+  box-shadow:0 28px 90px #0008
+}
+.brand{text-align:center;margin-bottom:25px}
+.mark{font-size:75px;font-weight:900;color:var(--gold);line-height:1}
+.brand h1{font-family:Arial;font-size:30px;letter-spacing:3px}
+.brand h1 span{color:var(--gold)}
+.brand p{color:var(--muted)}
+.tabs{display:flex;gap:5px;padding:5px;margin-bottom:20px;background:#08070c;border-radius:13px}
+.tabs button{
+  flex:1;padding:13px;border:0;border-radius:10px;
+  background:transparent;color:var(--muted);
+  font-family:inherit;font-weight:800;cursor:pointer
+}
+.tabs button.on{background:#30204d;color:var(--gold)}
+.field{margin-bottom:15px}
+label{display:block;margin-bottom:7px;font-weight:700;font-size:13px}
+input{
+  width:100%;height:50px;padding:0 13px;
+  border:1px solid #ffffff20;border-radius:12px;
+  background:#08070c;color:white;font:inherit;outline:none
+}
+input:focus{border-color:var(--purple)}
+input[dir=ltr]{text-align:left}
+.input-wrap{position:relative}
+.pass-toggle{
+  position:absolute;left:10px;top:12px;
+  border:0;background:none;color:var(--gold);cursor:pointer
+}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.forgot{
+  display:block;margin:0 0 12px auto;border:0;
+  background:none;color:var(--gold);font:inherit;cursor:pointer
+}
+.main-btn,.social-btn{
+  width:100%;min-height:50px;margin-top:10px;
+  border-radius:13px;font:inherit;font-weight:800;cursor:pointer
+}
+.main-btn{
+  color:var(--gold);border:1px solid #e8c77b88;
+  background:linear-gradient(110deg,#08070c,#49306f)
+}
+.social-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  color:var(--gold);border:1px solid #e8c77b55;
+  background:linear-gradient(110deg,#08080b,#241936)
+}
+.social-btn img{width:20px;height:20px}
+.apple-icon{font-size:22px}
+button:disabled{opacity:.55}
+.divider{display:flex;align-items:center;gap:10px;margin:18px 0;color:var(--muted);font-size:12px}
+.divider:before,.divider:after{content:"";height:1px;flex:1;background:#ffffff20}
+.msg{text-align:center;min-height:22px;margin-top:12px;font-size:13px;color:var(--muted)}
+.msg.e{color:var(--red)}
+.msg.ok{color:var(--green)}
+.fieldErr{display:none;color:var(--red);font-size:12px;margin-top:5px}
+.fieldErr.show{display:block}
+.consent{display:flex;gap:9px;margin-top:18px;font-size:12px;line-height:1.8}
+.consent input{width:18px;height:18px;flex:0 0 18px;margin:3px 0}
+.consent a{color:#b18aff}
+.consentErr{display:none;color:var(--red);font-size:12px}
+.consentErr.show{display:block}
+.legal{text-align:center;color:#827c91;font-size:11px;margin-top:20px}
+.country-wrap{position:relative}
+.country-native-select{display:none}
+.country-trigger{
+  width:100%;height:50px;padding:0 12px;
+  text-align:right;color:white;background:#08070c;
+  border:1px solid #ffffff20;border-radius:12px;font:inherit
+}
+.country-menu{
+  display:none;position:absolute;z-index:10;top:55px;
+  right:0;left:0;padding:8px;background:#151222;
+  border:1px solid #e8c77b55;border-radius:12px
+}
+.country-menu.open{display:block}
+.country-search{margin-bottom:7px}
+.country-options{max-height:220px;overflow:auto}
+.country-option{
+  display:flex;align-items:center;gap:10px;width:100%;
+  padding:10px;border:0;background:transparent;color:white;
+  text-align:right;font:inherit
+}
+.country-option img{width:25px;height:18px}
+.country-option[hidden]{display:none}
+.country-empty{display:none;padding:10px}
+.country-empty.show{display:block}
+@media(max-width:420px){.card{padding:19px}.row{gap:7px}}
 </style>
 </head>
+
 <body>
-<main class="shell"><div class="glow"></div><section class="card" aria-label="GABO LIVE account">
-<header class="brand"><div class="mark" aria-hidden="true">G</div><h1>GABO <span>LIVE</span></h1><p>عالمك... بلحظتك</p></header>
-<div class="tabs" role="tablist" aria-label="نوع الحساب"><button id="tabLogin" class="on" type="button" role="tab" aria-selected="true">تسجيل دخول</button><button id="tabSignup" type="button" role="tab" aria-selected="false">إنشاء حساب</button></div>
+<main class="shell">
+<section class="card">
+
+<header class="brand">
+<div class="mark">G</div>
+<h1>GABO <span>LIVE</span></h1>
+<p>عالمك... بلحظتك</p>
+</header>
+
+<div class="tabs">
+<button id="tabLogin" class="on" type="button">تسجيل دخول</button>
+<button id="tabSignup" type="button">إنشاء حساب</button>
+</div>
+
 <form id="authForm" novalidate>
+
 <div id="loginFields">
-<div class="field"><label for="l_email">البريد الإلكتروني</label><input id="l_email" type="email" placeholder="example@gmail.com" dir="ltr" autocomplete="email" inputmode="email"><div class="fieldErr" id="l_emailErr"></div></div>
-<div class="field"><label for="f_loginPass">كلمة المرور</label><div class="input-wrap"><input id="f_loginPass" type="password" placeholder="أدخل كلمة المرور" autocomplete="current-password"><button class="pass-toggle" type="button" data-toggle="f_loginPass">إظهار</button></div><div class="fieldErr" id="l_passErr"></div></div>
+<div class="field">
+<label for="l_email">البريد الإلكتروني</label>
+<input id="l_email" type="email" placeholder="example@gmail.com" dir="ltr">
+<div class="fieldErr" id="l_emailErr"></div>
+</div>
+
+<div class="field">
+<label for="f_loginPass">كلمة المرور</label>
+<div class="input-wrap">
+<input id="f_loginPass" type="password" placeholder="أدخل كلمة المرور">
+<button class="pass-toggle" type="button" data-toggle="f_loginPass">إظهار</button>
+</div>
+<div class="fieldErr" id="l_passErr"></div>
+</div>
+
 <button class="forgot" id="forgotBtn" type="button">نسيت كلمة المرور؟</button>
 </div>
+
 <div id="signupFields" hidden>
+
 <div class="row">
-<div class="field"><label for="f_first">الاسم الأول</label><input id="f_first" type="text" placeholder="اسمك" autocomplete="given-name"><div class="fieldErr" id="f_firstErr"></div></div>
-<div class="field"><label for="f_last">اللقب</label><input id="f_last" type="text" placeholder="اللقب" autocomplete="family-name"><div class="fieldErr" id="f_lastErr"></div></div>
+<div class="field">
+<label for="f_first">الاسم الأول</label>
+<input id="f_first" type="text" placeholder="اسمك">
+<div class="fieldErr" id="f_firstErr"></div>
 </div>
-<div class="field"><label for="f_email">البريد الإلكتروني</label><input id="f_email" type="email" placeholder="example@gmail.com" dir="ltr" autocomplete="email" inputmode="email"><div class="fieldErr" id="f_emailErr"></div></div>
-<div class="field"><label for="f_pass">كلمة المرور</label><div class="input-wrap"><input id="f_pass" type="password" placeholder="6 أحرف على الأقل" autocomplete="new-password"><button class="pass-toggle" type="button" data-toggle="f_pass">إظهار</button></div><div class="fieldErr" id="f_passErr"></div></div>
-<div class="field"><label for="f_confirm">تأكيد كلمة المرور</label><div class="input-wrap"><input id="f_confirm" type="password" placeholder="أعد كتابة كلمة المرور" autocomplete="new-password"><button class="pass-toggle" type="button" data-toggle="f_confirm">إظهار</button></div><div class="fieldErr" id="f_confirmErr"></div></div>
-<div class="field"><label for="countryPicker">الدولة</label><div class="country-wrap"><select id="f_country" class="country-native-select" tabindex="-1" aria-hidden="true"><option value="">اختر الدولة</option></select><button id="countryPicker" class="country-trigger" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="chosen" id="countryChosen"><span class="placeholder">اختر الدولة</span></span><span class="country-chevron">▾</span></button><div class="country-menu" id="countryMenu"><input class="country-search" id="countrySearch" type="search" placeholder="ابحث عن دولة..." autocomplete="off" aria-label="ابحث عن دولة"><div class="country-options" id="countryOptions" role="listbox" aria-label="الدول"></div><div class="country-empty" id="countryEmpty">لا توجد دولة بهذا الاسم</div></div></div><div class="fieldErr" id="f_countryErr"></div></div>
+
+<div class="field">
+<label for="f_last">اللقب</label>
+<input id="f_last" type="text" placeholder="اللقب">
+<div class="fieldErr" id="f_lastErr"></div>
 </div>
+</div>
+
+<div class="field">
+<label for="f_email">البريد الإلكتروني</label>
+<input id="f_email" type="email" placeholder="example@gmail.com" dir="ltr">
+<div class="fieldErr" id="f_emailErr"></div>
+</div>
+
+<div class="field">
+<label for="f_pass">كلمة المرور</label>
+<div class="input-wrap">
+<input id="f_pass" type="password" placeholder="6 أحرف على الأقل">
+<button class="pass-toggle" type="button" data-toggle="f_pass">إظهار</button>
+</div>
+<div class="fieldErr" id="f_passErr"></div>
+</div>
+
+<div class="field">
+<label for="f_confirm">تأكيد كلمة المرور</label>
+<div class="input-wrap">
+<input id="f_confirm" type="password" placeholder="أعد كتابة كلمة المرور">
+<button class="pass-toggle" type="button" data-toggle="f_confirm">إظهار</button>
+</div>
+<div class="fieldErr" id="f_confirmErr"></div>
+</div>
+
+<div class="field">
+<label for="countryPicker">الدولة</label>
+<div class="country-wrap">
+
+<select id="f_country" class="country-native-select">
+<option value="">اختر الدولة</option>
+</select>
+
+<button id="countryPicker" class="country-trigger" type="button">
+<span id="countryChosen">اختر الدولة</span> ▾
+</button>
+
+<div class="country-menu" id="countryMenu">
+<input class="country-search" id="countrySearch" type="search" placeholder="ابحث عن دولة">
+<div class="country-options" id="countryOptions"></div>
+<div class="country-empty" id="countryEmpty">لا توجد دولة بهذا الاسم</div>
+</div>
+</div>
+<div class="fieldErr" id="f_countryErr"></div>
+</div>
+
+</div>
+
 <button class="main-btn" id="mainBtn" type="submit">تسجيل دخول</button>
 </form>
+
 <div class="msg" id="msg" role="status" aria-live="polite"></div>
+
 <div class="divider">أو المتابعة باستخدام</div>
-<button class="social-btn" id="googleBtn" type="button"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">المتابعة باستخدام Google</button>
-<button class="social-btn" id="appleBtn" type="button"><span class="apple-icon" aria-hidden="true"></span>المتابعة باستخدام Apple</button>
-<label class="consent" for="termsConsent"><input id="termsConsent" type="checkbox"><span>لقد قرأت ووافقت على <a href="/terms.html" target="_blank" rel="noopener">شروط الخدمة</a>، و<a href="/privacy.html" target="_blank" rel="noopener">سياسة الخصوصية</a>، و<a href="/guidelines.html" target="_blank" rel="noopener">إرشادات سلوك مستخدمي GABO LIVE</a></span></label>
-<div class="consentErr" id="consentErr" role="alert">يجب الموافقة على الشروط والسياسات قبل إنشاء الحساب</div>
+
+<button class="social-btn" id="googleBtn" type="button">
+<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">
+المتابعة باستخدام Google
+</button>
+
+<button class="social-btn" id="appleBtn" type="button">
+<span class="apple-icon"></span>
+المتابعة باستخدام Apple
+</button>
+
+<label class="consent" for="termsConsent">
+<input id="termsConsent" type="checkbox">
+<span>
+لقد قرأت ووافقت على
+<a href="/terms.html" target="_blank">شروط الخدمة</a>،
+<a href="/privacy.html" target="_blank">سياسة الخصوصية</a>،
+<a href="/guidelines.html" target="_blank">إرشادات السلوك</a>
+</span>
+</label>
+
+<div class="consentErr" id="consentErr">يجب الموافقة على الشروط والسياسات أولاً</div>
+
 <p class="legal">GABO LIVE — تواصل، شارك، وعِش اللحظة.</p>
-</section></main>
+
+</section>
+</main>
+
 <script type="module">
 import { getSouthArabiaFlag, getCountryRegistry } from '/assets/country-flags.js';
+
 const SOUTH_FLAG = await getSouthArabiaFlag();
-let mode='login',auth=null,db=null,authFns=null,storeFns=null,initError=null,accountCreating=false,socialBusy=false;
-const $=id=>document.getElementById(id),msg=$('msg'),mainBtn=$('mainBtn'),tabL=$('tabLogin'),tabS=$('tabSignup'),loginF=$('loginFields'),signupF=$('signupFields');
-function setMessage(text,type){msg.textContent=text||'';msg.className=type?('msg '+type):'msg'}
-function clearErrors(){document.querySelectorAll('input,select').forEach(el=>el.classList.remove('bad'));document.querySelectorAll('.fieldErr').forEach(el=>{el.textContent='';el.classList.remove('show')});$('consentErr').classList.remove('show');setMessage('')}
-function fieldError(inputId,errorId,text){$(inputId).classList.add('bad');$(errorId).textContent=text;$(errorId).classList.add('show')}
-function requireConsent(){if($('termsConsent').checked)return true;$('consentErr').classList.add('show');$('termsConsent').focus();setMessage('وافق على الشروط والسياسات أولاً','e');return false}
-function setMode(next){mode=next;tabL.classList.toggle('on',mode==='login');tabS.classList.toggle('on',mode==='signup');tabL.setAttribute('aria-selected',String(mode==='login'));tabS.setAttribute('aria-selected',String(mode==='signup'));loginF.hidden=mode!=='login';signupF.hidden=mode!=='signup';mainBtn.textContent=mode==='login'?'تسجيل دخول':'إنشاء حساب';clearErrors()}
-tabL.addEventListener('click',()=>setMode('login'));tabS.addEventListener('click',()=>setMode('signup'));
-document.querySelectorAll('[data-toggle]').forEach(button=>button.addEventListener('click',()=>{const input=$(button.dataset.toggle);input.type=input.type==='password'?'text':'password';button.textContent=input.type==='password'?'إظهار':'إخفاء'}));
-const COUNTRY_CODES='AC AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CP CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DG DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW'.split(' ');
-const displayNames=new Intl.DisplayNames(['ar'],{type:'region'});
-const countries=(await getCountryRegistry()).map(c=>({...c,flag:c.code==='south-arabia'?SOUTH_FLAG:c.flag}));
-function fillCountries(){const select=$('f_country'),options=$('countryOptions'),trigger=$('countryPicker'),menu=$('countryMenu'),search=$('countrySearch');countries.forEach(country=>{const option=document.createElement('option');option.value=country.code;option.textContent=country.name;option.dataset.flag=country.flag;select.appendChild(option);const item=document.createElement('button');item.type='button';item.className='country-option';item.role='option';item.dataset.code=country.code;item.dataset.name=country.name;item.innerHTML='<img src="'+country.flag+'" alt="" loading="lazy"><span></span>';item.querySelector('span').textContent=country.name;item.setAttribute('aria-selected','false');item.addEventListener('click',()=>{select.value=country.code;select.dispatchEvent(new Event('change',{bubbles:true}));menu.classList.remove('open');trigger.setAttribute('aria-expanded','false');trigger.focus();search.value='';filterCountries('')});options.appendChild(item)});function filterCountries(value){const q=value.trim().toLocaleLowerCase('ar');let count=0;options.querySelectorAll('.country-option').forEach(item=>{const show=item.dataset.name.toLocaleLowerCase('ar').includes(q);item.hidden=!show;if(show)count++});$('countryEmpty').classList.toggle('show',count===0)}search.addEventListener('input',()=>filterCountries(search.value));trigger.addEventListener('click',()=>{const open=!menu.classList.contains('open');menu.classList.toggle('open',open);trigger.setAttribute('aria-expanded',String(open));if(open){search.value='';filterCountries('');search.focus()}});document.addEventListener('click',event=>{if(!event.target.closest('.country-wrap')){menu.classList.remove('open');trigger.setAttribute('aria-expanded','false')}});document.addEventListener('keydown',event=>{if(event.key==='Escape'&&menu.classList.contains('open')){menu.classList.remove('open');trigger.setAttribute('aria-expanded','false');trigger.focus()}});select.addEventListener('change',()=>{const country=countries.find(c=>c.code===select.value),chosen=$('countryChosen');chosen.replaceChildren();if(country){const flag=document.createElement('img');flag.src=country.flag;flag.alt='';const name=document.createElement('span');name.textContent=country.name;chosen.append(flag,name);options.querySelectorAll('.country-option').forEach(item=>item.setAttribute('aria-selected',String(item.dataset.code===country.code)));trigger.setAttribute('aria-label','الدولة المختارة: '+country.name)}else{const placeholder=document.createElement('span');placeholder.className='placeholder';placeholder.textContent='اختر الدولة';chosen.appendChild(placeholder);trigger.setAttribute('aria-label','اختر الدولة');options.querySelectorAll('.country-option').forEach(item=>item.setAttribute('aria-selected','false'))}})}
+
+let mode = 'login';
+let auth = null;
+let db = null;
+let authFns = null;
+let storeFns = null;
+let initError = null;
+let accountCreating = false;
+let socialBusy = false;
+
+const $ = id => document.getElementById(id);
+const msg = $('msg');
+const mainBtn = $('mainBtn');
+
+function setMessage(text,type='') {
+  msg.textContent = text || '';
+  msg.className = 'msg ' + type;
+}
+
+function clearErrors() {
+  document.querySelectorAll('.fieldErr').forEach(el => {
+    el.textContent = '';
+    el.classList.remove('show');
+  });
+  $('consentErr').classList.remove('show');
+  setMessage('');
+}
+
+function fieldError(inputId,errorId,text) {
+  $(inputId).classList.add('bad');
+  $(errorId).textContent = text;
+  $(errorId).classList.add('show');
+}
+
+function requireConsent() {
+  if ($('termsConsent').checked) return true;
+
+  $('consentErr').classList.add('show');
+  setMessage('وافق على الشروط والسياسات أولاً','e');
+  $('termsConsent').focus();
+  return false;
+}
+
+function setMode(next) {
+  mode = next;
+
+  $('tabLogin').classList.toggle('on',mode === 'login');
+  $('tabSignup').classList.toggle('on',mode === 'signup');
+
+  $('loginFields').hidden = mode !== 'login';
+  $('signupFields').hidden = mode !== 'signup';
+
+  mainBtn.textContent = mode === 'login' ? 'تسجيل دخول' : 'إنشاء حساب';
+
+  clearErrors();
+}
+
+$('tabLogin').addEventListener('click',() => setMode('login'));
+$('tabSignup').addEventListener('click',() => setMode('signup'));
+
+document.querySelectorAll('[data-toggle]').forEach(button => {
+  button.addEventListener('click',() => {
+    const input = $(button.dataset.toggle);
+    input.type = input.type === 'password' ? 'text' : 'password';
+    button.textContent = input.type === 'password' ? 'إظهار' : 'إخفاء';
+  });
+});
+
+/* قائمة الدول */
+const countries = (await getCountryRegistry()).map(c => ({
+  ...c,
+  flag: c.code === 'south-arabia' ? SOUTH_FLAG : c.flag
+}));
+
+function fillCountries() {
+  const select = $('f_country');
+  const options = $('countryOptions');
+
+  countries.forEach(country => {
+    const option = document.createElement('option');
+    option.value = country.code;
+    option.textContent = country.name;
+    select.appendChild(option);
+
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.className = 'country-option';
+    item.dataset.code = country.code;
+    item.dataset.name = country.name;
+
+    const flag = document.createElement('img');
+    flag.src = country.flag;
+    flag.alt = '';
+
+    const name = document.createElement('span');
+    name.textContent = country.name;
+
+    item.append(flag,name);
+
+    item.addEventListener('click',() => {
+      select.value = country.code;
+      $('countryChosen').textContent = country.name;
+      $('countryMenu').classList.remove('open');
+    });
+
+    options.appendChild(item);
+  });
+}
+
 fillCountries();
-function errorText(code){const map={'auth/email-already-in-use':'هذا البريد مسجل من قبل، سجل دخولك','auth/invalid-credential':'البريد أو كلمة المرور غير صحيحة','auth/wrong-password':'كلمة المرور غير صحيحة','auth/user-not-found':'الحساب غير موجود، أنشئ حساباً جديداً','auth/weak-password':'كلمة المرور ضعيفة، استخدم 6 أحرف على الأقل','auth/invalid-email':'صيغة البريد الإلكتروني غير صحيحة','auth/network-request-failed':'تعذر الاتصال، تحقق من الإنترنت وحاول مجدداً','auth/popup-blocked':'تعذر فتح نافذة تسجيل الدخول، اسمح بالنوافذ المنبثقة','auth/too-many-requests':'محاولات كثيرة، انتظر قليلاً ثم حاول','auth/unauthorized-domain':'هذا النطاق غير مضاف إلى نطاقات Firebase المصرح بها','auth/operation-not-allowed':'طريقة الدخول غير مفعّلة في إعدادات Firebase','auth/operation-not-supported-in-this-environment':'طريقة الدخول هذه غير مدعومة في المتصفح الحالي','auth/invalid-oauth-provider':'فعّل مزود Apple في Firebase Authentication أولاً','auth/account-exists-with-different-credential':'هذا البريد مرتبط بطريقة تسجيل دخول أخرى'};return map[code]||''}
-async function saveUserProfile(user,extra){const ref=storeFns.doc(db,'users',user.uid);await storeFns.setDoc(ref,Object.assign({uid:user.uid,email:user.email||null,name:user.displayName||user.email?.split('@')[0]||'مستخدم',displayName:user.displayName||user.email?.split('@')[0]||'مستخدم',photo:user.photoURL||'',photoURL:user.photoURL||'',createdAt:storeFns.serverTimestamp(),banned:false},extra||{}),{merge:true})}
-async function initialize(){try{const config=await import('/firebase-config.js');auth=config.auth;db=config.db;await config.authReady;authFns=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');storeFns=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');const redirect=await authFns.getRedirectResult(auth);if(redirect?.user){await saveUserProfile(redirect.user);location.replace('/app/');return}authFns.onAuthStateChanged(auth,async user=>{if(!user||accountCreating)return;try{await saveUserProfile(user)}catch(err){console.error('Profile sync:',err)}if(!accountCreating)location.replace('/app/')});}catch(error){initError=error;console.error('Firebase initialization:',error);setMessage('تعذر تحميل خدمة الدخول. حدّث الصفحة أو تحقق من الاتصال.','e')}}
-const ready=initialize();
-function validateSignup(){let valid=true;const first=$('f_first').value.trim(),last=$('f_last').value.trim(),email=$('f_email').value.trim(),password=$('f_pass').value,confirm=$('f_confirm').value,country=countries.find(c=>c.code===$('f_country').value);
-if(first.length<2){fieldError('f_first','f_firstErr','اكتب الاسم الأول');valid=false}
-if(last.length<2){fieldError('f_last','f_lastErr','اكتب اللقب');valid=false}
-if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){fieldError('f_email','f_emailErr','أدخل بريداً إلكترونياً صحيحاً');valid=false}
-if(password.length<6){fieldError('f_pass','f_passErr','كلمة المرور 6 أحرف على الأقل');valid=false}
-if(password!==confirm){fieldError('f_confirm','f_confirmErr','كلمتا المرور غير متطابقتين');valid=false}
-if(!country){fieldError('f_country','f_countryErr','اختر الدولة');valid=false}
-if(!requireConsent())valid=false;
-return valid?{first,last,email,password,country}:null}
-$('authForm').addEventListener('submit',async event=>{event.preventDefault();clearErrors();mainBtn.disabled=true;const previous=mode==='login'?'تسجيل دخول':'إنشاء حساب';mainBtn.textContent='جارٍ التنفيذ...';try{await ready;if(!authFns)throw initError||new Error('Firebase unavailable');
-if(mode==='login'){const email=$('l_email').value.trim(),password=$('f_loginPass').value;let valid=true;if(!email){fieldError('l_email','l_emailErr','أدخل البريد الإلكتروني');valid=false}if(!password){fieldError('f_loginPass','l_passErr','أدخل كلمة المرور');valid=false}if(!valid)return;await authFns.signInWithEmailAndPassword(auth,email,password)}
-else{const data=validateSignup();if(!data)return;accountCreating=true;const credential=await authFns.createUserWithEmailAndPassword(auth,data.email,data.password);const fullName=data.first+' '+data.last;await authFns.updateProfile(credential.user,{displayName:fullName});await saveUserProfile(credential.user,{name:fullName,displayName:fullName,firstName:data.first,lastName:data.last,country:data.country.code,countryName:data.country.name,countryFlagImg:data.country.flag,isGuest:false});setMessage('تم إنشاء حسابك بنجاح، جارٍ فتح GABO LIVE','ok');location.replace('/app/')}}
-catch(error){console.error('Authentication error:',error);accountCreating=false;setMessage(errorText(error.code)||'تعذر تنفيذ العملية. تحقق من البيانات والاتصال ثم حاول مجدداً.','e')}
-finally{mainBtn.disabled=false;mainBtn.textContent=previous}});
-$('forgotBtn').addEventListener('click',async()=>{clearErrors();const email=$('l_email').value.trim();if(!email){fieldError('l_email','l_emailErr','اكتب بريدك أولاً لإرسال رابط الاستعادة');return}const button=$('forgotBtn');button.disabled=true;try{await ready;if(!authFns)throw initError||new Error('Firebase unavailable');await authFns.sendPasswordResetEmail(auth,email);setMessage('إذا كان البريد مسجلاً، سيصلك رابط إعادة تعيين كلمة المرور','ok')}catch(error){setMessage(errorText(error.code)||'تعذر إرسال رابط الاستعادة، حاول لاحقاً','e')}finally{button.disabled=false}});
-async function socialLogin(kind){if(socialBusy)return;if(!requireConsent())return;socialBusy=true;const button=$(kind+'Btn');button.disabled=true;setMessage('جارٍ الاتصال...');try{await ready;if(!authFns)throw initError||new Error('Firebase unavailable');let provider;if(kind==='google')provider=new authFns.GoogleAuthProvider();else provider=new authFns.OAuthProvider('apple.com');provider.setCustomParameters(kind==='google'?{prompt:'select_account'}:{locale:'ar'});const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);if(isIOS){await authFns.signInWithRedirect(auth,provider);return}const result=await authFns.signInWithPopup(auth,provider);await saveUserProfile(result.user)}catch(error){console.error(kind+' sign-in:',error);setMessage(errorText(error.code)||(kind==='apple'?'تعذر تسجيل الدخول عبر Apple. تحقق من تفعيل Apple في Firebase.':'تعذر تسجيل الدخول عبر Google، حاول مجدداً.'),'e')}finally{socialBusy=false;button.disabled=false}}
-$('googleBtn').addEventListener('click',()=>socialLogin('google'));
-$('appleBtn').addEventListener('click',()=>socialLogin('apple'));
-</script>
-</body></html>
+
+$('countryPicker').addEventListener('click',() => {
+  $('countryMenu').classList.toggle('open');
+});
+
+$('countrySearch').addEventListener('input',event => {
+  const q = event.target.value.toLowerCase();
+  let count = 0;
+
+  document.querySelectorAll('.country-option').forEach(item => {
+    const show = item.dataset.name.toLowerCase().includes(q);
+    item.hidden = !show;
+    if (show) count++;
+  });
+
+  $('countryEmpty').classList.toggle('show',count === 0);
+});
+
+document.addEventListener('click',event => {
+  if (!event.target.closest('.country-wrap')) {
+    $('countryMenu').classList.remove('open');
+  }
+});
+
+/* رسائل أخطاء Firebase */
+function errorText(code) {
+  const map = {
+    'auth/email-already-in-use':'هذا البريد مسجل من قبل',
+    'auth/invalid-credential':'البريد أو كلمة المرور غير صحيحة',
+    'auth/wrong-password':'كلمة المرور غير صحيحة',
+    'auth/user-not-found':'الحساب غير موجود',
+    'auth/weak-password':'كلمة المرور ضعيفة',
+    'auth/invalid-email':'البريد الإلكتروني غير صحيح',
+    'auth/network-request-failed':'تحقق من اتصال الإنترنت',
+    'auth/popup-blocked':'المتصفح منع نافذة تسجيل الدخول',
+    'auth/popup-closed-by-user':'أغلقت نافذة تسجيل الدخول قبل إكمال العملية',
+    'auth/too-many-requests':'محاولات كثيرة، حاول لاحقاً',
+    'auth/unauthorized-domain':'النطاق غير مصرح به في Firebase',
+    'auth/operation-not-allowed':'طريقة الدخول غير مفعّلة في Firebase',
+    'auth/account-exists-with-different-credential':'هذا البريد مرتبط بطريقة دخول أخرى',
+    'auth/cancelled-popup-request':'تم إلغاء طلب تسجيل الدخول السابق'
+  };
+
+  return map[code] || '';
+}
+
+/* حفظ بيانات المستخدم */
+async function saveUserProfile(user,extra={}) {
+  const ref = storeFns.doc(db,'users',user.uid);
+
+  await storeFns.setDoc(ref,{
+    uid:user.uid,
+    email:user.email || null,
+    name:user.displayName || user.email?.split('@')[0] || 'مستخدم',
+    displayName:user.displayName || user.email?.split('@')[0] || 'مستخدم',
+    photo:user.photoURL || '',
+    photoURL:user.photoURL || '',
+    createdAt:storeFns.serverTimestamp(),
+    banned:false,
+    ...extra
+  },{merge:true});
+}
+
+/* تهيئة Firebase */
+async function initialize() {
+  try {
+    const config = await import('/firebase-config.js');
+
+    auth = config.auth;
+    db = config.db;
+
+    await config.authReady;
+
+    authFns = await import(
+      'https://www.gstatic.com/firebasejs/10.12.2
