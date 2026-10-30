@@ -102,7 +102,7 @@ body{background:radial-gradient(ellipse at 50% -15%,#1c3a4c 0,transparent 48%),#
 </aside>
 <div class="profileModal" id="profileModal" onclick="if(event.target===this)closeProfile()"><div class="profileBox"><div class="pCover" id="pCover"><img id="pCoverImg" style="display:none"><div class="pClose" onclick="closeProfile()">✕</div><div class="pAvatar" id="pAvatar"><span id="pAvatarLetter">T</span><img id="pAvatarImg" style="display:none"></div></div><div class="pInfo"><div class="pName"><span id="pName">تحميل...</span></div><div class="pCountry"><span id="pFlag"></span><span id="pCountryName">الجنوب العربي</span></div><div class="pMeta"><span id="pGender"></span><span id="pAge"></span><span id="pId">ID: --------</span></div><div class="pBio" id="pBio">...</div><div class="pActions"><button class="pBtn primary" id="pChatBtn">💬 دردشة خاصة</button><button class="pBtn secondary" id="pViewBtn">👁️ عرض الملف</button></div></div></div></div>
 <div class="emojiPanel" id="emojiPanel"><div class="emojiTabs"><button class="on" onclick="showEmojiCat(event,'smile')">😊</button><button onclick="showEmojiCat(event,'flags')">🏳️</button></div><div class="emojiGrid" id="emojiGrid"></div></div>
-<div class="inputBar"><button class="iconBtn" onclick="toggleEmoji()">😊</button><div class="inputWrap"><input id="msgInput" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMsg()"></div><button class="sendBtn" onclick="sendMsg()">➤</button></div>
+<div class="inputBar"><button class="iconBtn" type="button" onclick="toggleEmoji()">😊</button><div class="inputWrap"><input id="msgInput" type="text" autocomplete="off" maxlength="1000" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter'){event.preventDefault();sendMsg()}"></div><button class="sendBtn" id="sendGlobalMessage" type="button" aria-label="إرسال الرسالة" onclick="sendMsg()">➤</button></div>
 <script type="module">
 import { auth, db } from '/firebase-config.js';
 import { getSouthArabiaFlag,getCountryRegistry } from '/assets/country-flags.js';
@@ -154,10 +154,8 @@ onAuthStateChanged(auth, async (u)=>{
     const commRef=doc(db,'communities',communityId);
     const commSnap=await getDoc(commRef).catch(()=>null);
     if(isGeneralPublicChat){
-      
-      const latest=commSnap;
-      const members=latest?.exists()&&Array.isArray(latest.data().members)?latest.data().members:[];
-      hasJoinedGeneralChat=members.includes(uid);
+      // الشات العام مفتوح لكل مستخدم مسجل؛ لا نوقف الإرسال على عضوية منفصلة.
+      hasJoinedGeneralChat=true;
       updateGeneralChatGate();
     }else if(!commSnap?.exists()){
       const info=COMM_DATA[communityId] || {name:communityId};
@@ -170,7 +168,7 @@ onAuthStateChanged(auth, async (u)=>{
     }
   }
 });
-function updateGeneralChatGate(){if(!isGeneralPublicChat)return;const fab=document.getElementById('globalStatsFab');if(fab)fab.style.display='flex';const leave=document.getElementById('leaveGlobalChat');if(leave)leave.style.display=hasJoinedGeneralChat?'block':'none';const gate=document.getElementById('joinGate');const bar=document.querySelector('.inputBar');if(gate)gate.style.display=hasJoinedGeneralChat?'none':'flex';if(bar){bar.style.display=hasJoinedGeneralChat?'flex':'none';bar.setAttribute('aria-hidden',hasJoinedGeneralChat?'false':'true');}if(msgInput){msgInput.disabled=!hasJoinedGeneralChat;msgInput.placeholder=hasJoinedGeneralChat?'اكتب رسالتك في الشات العام...':'انضم إلى الشات العام للكتابة';}const send=document.querySelector('.sendBtn');if(send)send.disabled=!hasJoinedGeneralChat;const emoji=document.querySelector('.inputBar .iconBtn');if(emoji)emoji.disabled=!hasJoinedGeneralChat;}
+function updateGeneralChatGate(){if(!isGeneralPublicChat)return;const fab=document.getElementById('globalStatsFab');if(fab)fab.style.display='flex';const gate=document.getElementById('joinGate');const bar=document.querySelector('.inputBar');if(gate)gate.style.display='none';if(bar){bar.style.display=uid?'flex':'none';bar.setAttribute('aria-hidden',uid?'false':'true');}if(msgInput){msgInput.disabled=!uid;msgInput.placeholder=uid?'اكتب رسالتك في الشات العام...':'سجل الدخول للكتابة';}const send=document.querySelector('.sendBtn');if(send)send.disabled=!uid||sendingMessage;const emoji=document.querySelector('.inputBar .iconBtn');if(emoji)emoji.disabled=!uid;}
 updateGeneralChatGate();
 
 function openGlobalStats(){document.getElementById('globalStatsShade').style.display='block';document.getElementById('globalStatsPanel').classList.add('open');document.getElementById('globalStatsPanel').setAttribute('aria-hidden','false');}
@@ -275,7 +273,7 @@ document.getElementById('pChatBtn').onclick=()=>{ if(!lastOpenedUid) return; loc
 document.getElementById('pViewBtn').onclick=()=>{ if(!lastOpenedUid) return; location.href=`/profile/view/?uid=${lastOpenedUid}`; }
 window.sendMsg=async ()=>{
   const text=msgInput.value.trim();
-  if(!text||text.length>1000||!uid||(isGeneralPublicChat&&!hasJoinedGeneralChat)||sendingMessage)return;
+  if(!text||text.length>1000||!uid||sendingMessage)return;
   sendingMessage=true;const sendButton=document.querySelector('.sendBtn');if(sendButton)sendButton.disabled=true;
   const displayName=userData?.displayName||userData?.name||localStorage.getItem('gabo_name')||'مستخدم';
   const photoURL=userData?.photoURL||userData?.photo||localStorage.getItem('gabo_photo')||'';
