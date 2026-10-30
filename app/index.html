@@ -122,7 +122,7 @@ kw:`<img src="https://flagcdn.com/w80/kw.png">`,
 bh:`<img src="https://flagcdn.com/w80/bh.png">`
 };
 
-onAuthStateChanged(auth,u=>{ if(!u){ location.replace('/login/'); return; } uid=u.uid; localStorage.setItem('gabo_uid',u.uid); });
+onAuthStateChanged(auth,u=>{ if(!u){ location.replace('/login/'); return; } uid=u.uid; localStorage.setItem('gabo_uid',u.uid); onSnapshot(doc(db,'users',u.uid),snap=>{const p=snap.exists()?snap.data():{};const a=document.getElementById('homeAvatar');if(!a)return;const photo=p.photoURL||p.photoUrl||p.avatar;if(photo){const im=document.createElement('img');im.src=photo;im.alt='الصورة الشخصية';a.replaceChildren(im);}else a.textContent=String(p.name||p.displayName||u.displayName||u.email||'م').trim().charAt(0);}); });
 
 window.goComm=(id)=>{ location.href=`/community/index.html?id=${encodeURIComponent(id)}`; };
 window.openCreate=()=>document.getElementById('createModal').classList.add('on');
@@ -141,7 +141,7 @@ window.doCreate=async()=>{
 }
 
 const grid=document.getElementById('commPage');
-const activityGrid=document.getElementById('activityPage');
+const activityGrid=document.getElementById('activityPage');const communitySearch=document.getElementById('communitySearch');const clearSearch=document.getElementById('clearSearch');function applyCommunitySearch(){const q=(communitySearch?.value||'').trim().toLocaleLowerCase('ar');document.querySelectorAll('#commPage .comm').forEach(card=>{card.style.display=card.textContent.toLocaleLowerCase('ar').includes(q)?'':'none';});if(clearSearch)clearSearch.style.display=q?'block':'none';}communitySearch?.addEventListener('input',applyCommunitySearch);clearSearch?.addEventListener('click',()=>{communitySearch.value='';applyCommunitySearch();communitySearch.focus();});
 
 // نبني كل المجتمعات من Firestore - والرسمية نعرض عدد الأعضاء لايف
 onSnapshot(collection(db,'communities'),snap=>{
