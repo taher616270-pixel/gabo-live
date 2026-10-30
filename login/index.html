@@ -62,6 +62,84 @@ button:disabled{opacity:.55}
 .country-empty{display:none;padding:10px}
 .country-empty.show{display:block}
 @media(max-width:420px){.card{padding:19px}.row{gap:7px}}
+
+/* Compact responsive login: keep every action visible without page scrolling */
+html{height:100%;overflow:hidden}
+body{height:100vh;min-height:0;overflow:hidden;padding:clamp(6px,2vh,16px);padding-top:max(6px,env(safe-area-inset-top));padding-bottom:max(6px,env(safe-area-inset-bottom))}
+@supports(height:100dvh){body{height:100dvh}}
+.shell{width:min(100%,460px);max-height:100%;display:flex;align-items:center}
+.card{width:100%;max-height:100%;overflow:hidden;padding:clamp(12px,2.2vh,22px);border-radius:20px}
+.brand{margin-bottom:clamp(7px,1.5vh,14px)}
+.mark{font-size:clamp(34px,6vh,54px)}
+.brand h1{font-size:clamp(20px,3.5vh,26px);margin:4px 0}
+.brand p{font-size:12px;margin:3px 0 0}
+.tabs{margin-bottom:clamp(7px,1.5vh,13px);padding:3px}
+.tabs button{padding:9px 6px}
+.field{margin-bottom:clamp(6px,1.2vh,10px)}
+label{margin-bottom:4px;font-size:12px}
+input{height:42px;padding:0 10px;font-size:14px}
+.pass-toggle{top:8px}
+.row{gap:8px}
+.forgot{font-size:12px;margin:0 0 5px auto}
+.main-btn,.social-btn{min-height:42px;margin-top:6px;font-size:13px}
+.social-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.social-btn{margin-top:0;padding:4px 6px;white-space:nowrap}
+.social-btn img{width:17px;height:17px}
+.apple-icon{font-size:18px}
+.divider{margin:9px 0;font-size:11px}
+.msg{min-height:17px;margin-top:5px;font-size:12px}
+.consent{margin-top:9px;gap:7px;font-size:11px;line-height:1.45}
+.consent input{width:16px;height:16px;flex-basis:16px;margin:1px 0}
+.consentErr{font-size:11px}
+.legal{font-size:10px;margin:8px 0 0}
+.country-trigger{height:42px;padding:0 9px;font-size:13px}
+.country-menu{top:46px}
+.country-search{height:38px}
+.country-options{max-height:150px}
+.country-option{padding:7px;font-size:13px}
+#signupFields:not([hidden]){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px 9px}
+#signupFields .row{display:contents}
+#signupFields .field{min-width:0;margin:0}
+#signupFields .field label{white-space:nowrap}
+#signupFields input{height:40px;min-width:0;font-size:13px}
+#signupFields .country-wrap{min-width:0}
+#signupFields .country-trigger{height:40px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-height:650px){
+ .card{padding:10px 13px}
+ .brand{margin-bottom:6px}
+ .mark{font-size:34px}
+ .brand h1{font-size:20px;margin:2px 0}
+ .brand p{font-size:10px;margin:0}
+ .tabs{margin-bottom:6px}
+ .tabs button{padding:7px 5px}
+ .field{margin-bottom:5px}
+ input{height:38px}
+ #signupFields input,#signupFields .country-trigger{height:36px}
+ .main-btn,.social-btn{min-height:38px}
+ .divider{margin:6px 0}
+ .consent{margin-top:6px}
+ .legal{margin-top:5px}
+}
+@media(max-width:350px){
+ .card{padding:9px}
+ #signupFields:not([hidden]){gap:5px 6px}
+ .social-row{gap:6px}
+ .social-btn{font-size:12px}
+}
+@media(max-height:520px) and (orientation:landscape){
+ body{padding:4px}
+ .shell{max-width:700px}
+ .card{padding:7px 12px}
+ .brand{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:4px}
+ .mark{font-size:28px}
+ .brand h1{font-size:18px;margin:0}
+ .brand p{display:none}
+ .tabs{margin-bottom:4px}
+ .field{margin-bottom:3px}
+ .divider{margin:4px 0}
+ .legal{display:none}
+}
+
 </style>
 </head>
 <body>
@@ -109,8 +187,10 @@ button:disabled{opacity:.55}
 
 <div class="msg" id="msg"></div>
 <div class="divider">أو المتابعة باستخدام</div>
-<button class="social-btn" id="googleBtn" type="button"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"> المتابعة باستخدام Google</button>
-<button class="social-btn" id="appleBtn" type="button"><span class="apple-icon"></span> المتابعة باستخدام Apple</button>
+<div class="social-row">
+<button class="social-btn" id="googleBtn" type="button"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"> Google</button>
+<button class="social-btn" id="appleBtn" type="button"><span class="apple-icon"></span> Apple</button>
+</div>
 
 <label class="consent" for="termsConsent"><input id="termsConsent" type="checkbox"><span>لقد قرأت ووافقت على <a href="/terms.html" target="_blank">شروط الخدمة</a>، <a href="/privacy.html" target="_blank">سياسة الخصوصية</a></span></label>
 <div class="consentErr" id="consentErr">يجب الموافقة على الشروط والسياسات أولاً</div>
