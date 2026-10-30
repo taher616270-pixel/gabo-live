@@ -72,9 +72,11 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 <div class="inputBar"><button class="iconBtn" onclick="toggleEmoji()">😊</button><div class="inputWrap"><input id="msgInput" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMsg()"></div><button class="sendBtn" onclick="sendMsg()">➤</button></div>
 <script type="module">
 import { auth, db } from '/firebase-config.js';
+import { getSouthArabiaFlag } from '/assets/country-flags.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { collection, doc, onSnapshot, addDoc, serverTimestamp, getDoc, setDoc, arrayUnion, increment } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-const SOUTH_SVG=`<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="200" y="0" fill="#D71921"/><rect width="900" height="200" y="200" fill="#FFF"/><rect width="900" height="200" y="400" fill="#000"/><path d="M0 0 L380 300 L0 600 Z" fill="#5EB6E4"/><g transform="translate(125,300)"><path d="M0 -70 L20 -22 L75 -22 L32 10 L48 65 L0 32 L-48 65 L-32 10 L-75 -22 L-20 -22 Z" fill="#D71921" stroke="white" stroke-width="10" stroke-linejoin="round"/></g></svg>`;
+const SOUTH_FLAG=await getSouthArabiaFlag();
+const SOUTH_SVG=`<img src="${SOUTH_FLAG}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`
 const COMM_DATA={
 south:{name:'مجتمع الجنوب العربي', flag:SOUTH_SVG, mini:SOUTH_SVG},
 sa:{name:'مجتمع السعودية', flag:`<img src="https://flagcdn.com/w80/sa.png">`, mini:`<img src="https://flagcdn.com/w80/sa.png">`},
@@ -164,7 +166,7 @@ window.openUserProfile=async (targetUid, fallbackPhoto, fallbackName)=>{
       const name=d.displayName||d.name||fallbackName||'مستخدم';
       const bio=d.bio||'مرحبا بكم في ملفي الشخصي 👋';
       const countryName=d.countryName||'الجنوب العربي';
-      const flagImg=d.countryFlagImg||'/assets/south-arabia.png.JPG';
+      const flagImg=d.country==='south-arabia'?await getSouthArabiaFlag():(d.countryFlagImg||'/assets/south-arabia.png.JPG');
       const cover=d.cover||'';
       const gender=d.gender||'';
       const gaboId=d.gaboId||genId(targetUid);
