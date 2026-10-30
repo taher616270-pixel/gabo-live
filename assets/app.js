@@ -84,8 +84,8 @@ export async function logout() { await signOut(auth); go('login', true); }
 /* ---------- شريط التنقل السفلي (تتحكم فيه لوحة الادمن من site_config) ---------- */
 const DEFAULT_NAV = [
   { icon: '⌂', label: 'الرئيسية', path: '/app/' },
-  { icon: '🌍', label: 'العام', path: '/app/public/' },
-  { icon: '✉', label: 'الخاص', path: '/app/private/' },
+  { icon: '✉', label: 'الرسائل', path: '/dm/' },
+  { icon: '🌍', label: 'المجتمع', path: '/app/public/' },
   { icon: '♛', label: 'VIP', path: '/vip/' },
   { icon: '◉', label: 'حسابي', path: '/profile/' }
 ];
