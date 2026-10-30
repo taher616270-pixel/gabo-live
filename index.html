@@ -16,7 +16,7 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--ink)}
 body{position:fixed;inset:0;color:#fff;font-family:'Tajawal',sans-serif;-webkit-font-smoothing:antialiased}
 .splash{position:relative;isolation:isolate;width:100%;height:100%;min-height:100svh;display:grid;place-items:center;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#211735 0%,#100d19 32%,#09090f 68%,#050508 100%)}
 .splash:before{content:"";position:absolute;inset:0;z-index:-1;opacity:.2;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.24'/%3E%3C/svg%3E")}
-.ambient{position:absolute;z-index:-1;width:min(105vw,780px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(125,83,190,.19),rgba(188,145,75,.07) 37%,transparent 69%);filter:blur(24px);animation:ambient 6s ease-in-out infinite}
+.sparkles{position:absolute;inset:0;pointer-events:none;opacity:.55;background-image:radial-gradient(2px 2px at 18% 24%,rgba(255,235,190,.9) 45%,transparent 60%),radial-gradient(1.5px 1.5px at 78% 19%,rgba(190,158,255,.9) 45%,transparent 60%),radial-gradient(1px 1px at 84% 72%,rgba(255,235,190,.8) 45%,transparent 60%),radial-gradient(2px 2px at 23% 78%,rgba(190,158,255,.75) 45%,transparent 60%),radial-gradient(1px 1px at 62% 12%,rgba(255,255,255,.8) 45%,transparent 60%);animation:twinkle 3.8s ease-in-out infinite alternate}\n.ambient{position:absolute;z-index:-1;width:min(105vw,780px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(125,83,190,.19),rgba(188,145,75,.07) 37%,transparent 69%);filter:blur(24px);animation:ambient 6s ease-in-out infinite}
 .halo{position:absolute;width:min(92vw,620px);aspect-ratio:1;border:1px solid rgba(222,190,128,.08);border-radius:50%;box-shadow:0 0 90px rgba(142,99,217,.07),inset 0 0 90px rgba(142,99,217,.045);animation:halo 16s linear infinite}
 .halo:before,.halo:after{content:"";position:absolute;border:1px solid rgba(255,255,255,.045);border-radius:50%;inset:8%}
 .halo:after{inset:17%;border-color:rgba(218,184,112,.08)}
@@ -33,16 +33,16 @@ body{position:fixed;inset:0;color:#fff;font-family:'Tajawal',sans-serif;-webkit-
 .glint{position:absolute;z-index:2;top:5%;left:14%;width:34%;height:1px;transform:rotate(-48deg);background:linear-gradient(90deg,transparent,#fff7dc,transparent);filter:drop-shadow(0 0 5px #f4dba4);animation:glint 3.4s ease-in-out 1.4s infinite}
 .wordmark{display:flex;direction:ltr;align-items:baseline;gap:.12em;font-family:'Alexandria',sans-serif;font-size:clamp(35px,9vw,54px);font-weight:900;line-height:1;letter-spacing:.095em;opacity:0;transform:translateY(16px);animation:rise .8s ease .55s forwards}
 .gabo{color:#f8f6f2;text-shadow:0 3px 24px rgba(255,255,255,.12)}
-.live{background:linear-gradient(100deg,#fff1c8 0%,#d9b66c 42%,#b28af7 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.live{background:linear-gradient(100deg,#fff1c8 0%,#d9b66c 42%,#b28af7 100%);-webkit-background-clip:text;background-clip:text;color:transparent}\n.wordmark{filter:drop-shadow(0 8px 22px rgba(174,133,255,.12))}
 .rule{width:68px;height:1px;margin:21px 0 15px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;animation:fade .7s ease .8s forwards}
 .tagline{font-size:clamp(17px,4.6vw,21px);font-weight:700;letter-spacing:.01em;color:#f4eee3;opacity:0;transform:translateY(10px);animation:rise .7s ease .9s forwards}
 .tagline span{color:var(--gold2)}
 .subline{margin-top:8px;color:rgba(238,231,220,.47);font-size:13px;letter-spacing:.035em;opacity:0;animation:fade .7s ease 1.15s forwards}
 .loading-area{position:absolute;bottom:max(55px,calc(env(safe-area-inset-bottom) + 38px));left:50%;width:min(230px,58vw);transform:translateX(-50%);text-align:center;opacity:0;animation:fade .6s ease 1.25s forwards}
-.loading-label{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:13px;color:rgba(255,255,255,.5);font-size:11px;letter-spacing:.07em}
+.loading-label{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:13px;color:rgba(255,255,255,.58);font-size:11px;letter-spacing:.04em}.loading-label strong{font:700 10px Alexandria,sans-serif;color:#e9d39f;min-width:30px}
 .live-dot{width:5px;height:5px;border-radius:50%;background:#d9b66c;box-shadow:0 0 9px rgba(217,182,108,.8);animation:blink 1.2s ease infinite}
 .track{height:2px;border-radius:10px;background:rgba(255,255,255,.1);overflow:hidden}
-.track span{display:block;width:0;height:100%;background:linear-gradient(90deg,#9470df,#e6c982,#fff0c5);box-shadow:0 0 12px rgba(225,194,130,.7);animation:progress 4.25s linear forwards}
+.track span{display:block;width:0;height:100%;background:linear-gradient(90deg,#9470df,#e6c982,#fff0c5);box-shadow:0 0 12px rgba(225,194,130,.7);animation:progress 3.7s linear forwards}
 .version{position:absolute;bottom:max(18px,env(safe-area-inset-bottom));left:0;right:0;text-align:center;color:rgba(255,255,255,.2);font:9px 'Alexandria',sans-serif;letter-spacing:.22em;opacity:0;animation:fade .7s ease 1.5s forwards}
 .exit{animation:exit .45s ease forwards}
 @keyframes ambient{0%,100%{transform:scale(.9);opacity:.65}50%{transform:scale(1.08);opacity:1}}
@@ -52,7 +52,7 @@ body{position:fixed;inset:0;color:#fff;font-family:'Tajawal',sans-serif;-webkit-
 @keyframes fade{to{opacity:1}}
 @keyframes shadowPulse{0%,100%{opacity:.55;transform:scale(.92)}50%{opacity:1;transform:scale(1.08)}}
 @keyframes glint{0%,100%{opacity:0;transform:translate(-18px,12px) rotate(-48deg)}35%{opacity:.9}65%{opacity:0;transform:translate(45px,-25px) rotate(-48deg)}}
-@keyframes blink{0%,100%{opacity:.35}50%{opacity:1}}
+@keyframes blink{0%,100%{opacity:.35}50%{opacity:1}}\n@keyframes twinkle{from{opacity:.25;transform:scale(.99)}to{opacity:.75;transform:scale(1.015)}}
 @keyframes progress{to{width:100%}}
 @keyframes exit{to{opacity:0;transform:scale(1.025)}}
 @media(max-height:650px){.brand-emblem{width:clamp(112px,29vh,145px);margin-bottom:18px}.content{transform:translateY(-2vh)}.rule{margin:14px 0 10px}.loading-area{bottom:max(42px,calc(env(safe-area-inset-bottom) + 25px))}}
@@ -61,7 +61,7 @@ body{position:fixed;inset:0;color:#fff;font-family:'Tajawal',sans-serif;-webkit-
 </head>
 <body>
 <main class="splash" id="splash" aria-label="GABO LIVE">
-  <div class="ambient" aria-hidden="true"></div>
+  <div class="ambient" aria-hidden="true"></div>\n  <div class="sparkles" aria-hidden="true"></div>
   <div class="halo" aria-hidden="true"></div>
   <div class="orbit" aria-hidden="true"></div>
   <section class="content">
@@ -77,7 +77,7 @@ body{position:fixed;inset:0;color:#fff;font-family:'Tajawal',sans-serif;-webkit-
     <p class="subline">مساحتك للتواصل واكتشاف عالم جديد</p>
   </section>
   <div class="loading-area" aria-hidden="true">
-    <div class="loading-label"><i class="live-dot"></i><span>نجهّز لك تجربة GABO</span></div>
+    <div class="loading-label"><i class="live-dot"></i><span id="loadingText">نجهّز لك تجربة GABO</span><strong id="loadingPercent">0%</strong></div>
     <div class="track"><span></span></div>
   </div>
   <div class="version" aria-hidden="true">YOUR WORLD · YOUR MOMENT</div>
@@ -93,15 +93,15 @@ body{position:fixed;inset:0;color:#fff;font-family:'Tajawal',sans-serif;-webkit-
     done=true;
     var splash=document.getElementById('splash');
     if(splash)splash.classList.add('exit');
-    var wait=Math.max(0,4450-(Date.now()-started));
+    var wait=Math.max(0,duration-(Date.now()-started));
     setTimeout(function(){
       Promise.race([warm,new Promise(function(resolve){setTimeout(resolve,350)})])
         .then(function(){location.replace(LOGIN)});
-    },Math.min(wait,450));
+    },Math.min(wait,350));
   }
-  setTimeout(go,4450);
+  setTimeout(go,duration);
   window.addEventListener('pageshow',function(e){
-    if(e.persisted){done=false;started=Date.now();setTimeout(go,4450)}
+    if(e.persisted){done=false;started=Date.now();setTimeout(go,duration)}
   });
 })();
 </script>
