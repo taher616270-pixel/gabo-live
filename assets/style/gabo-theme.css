@@ -92,7 +92,7 @@ body{padding-bottom:calc(104px + env(safe-area-inset-bottom))!important}
 #gaboUnifiedNav .gaboNavBadge{
  position:absolute!important;top:1px!important;right:calc(50% - 26px)!important;
  min-width:17px!important;height:17px!important;padding:0 4px!important;border-radius:20px!important;
- display:flex!important;align-items:center!important;justify-content:center!important;
+ display:flex;align-items:center!important;justify-content:center!important;
  background:#e84a54!important;color:#fff!important;border:2px solid #171320!important;
  font-size:9px!important;font-weight:900!important;line-height:1!important;
 }
