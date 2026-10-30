@@ -62,7 +62,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 </head>
 <body>
 <div class="header">
-<div class="backBtn" onclick="location.href='/app/'">›</div>
+<div class="backBtn" onclick="if(window.parent!==window){window.parent.postMessage({type:'gabo-close-global-chat'},location.origin)}else{location.href='/app/'}">›</div>
 <div class="commFlag" id="commFlag"></div>
 <div class="headerInfo"><b><span id="commName">تحميل...</span> <span class="miniFlagInHeader" id="commMiniFlag"></span></b><small><span id="memberCount">0 عضو</span> • 12k متصل • رسمي</small></div>
 </div>
