@@ -18,19 +18,19 @@ body{position:fixed;inset:0;color:#fff;font-family:'Tajawal',sans-serif;-webkit-
 .splash:before{content:"";position:absolute;inset:0;z-index:-1;opacity:.2;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.24'/%3E%3C/svg%3E")}
 .sparkles{position:absolute;inset:0;pointer-events:none;opacity:.55;background-image:radial-gradient(2px 2px at 18% 24%,rgba(255,235,190,.9) 45%,transparent 60%),radial-gradient(1.5px 1.5px at 78% 19%,rgba(190,158,255,.9) 45%,transparent 60%),radial-gradient(1px 1px at 84% 72%,rgba(255,235,190,.8) 45%,transparent 60%),radial-gradient(2px 2px at 23% 78%,rgba(190,158,255,.75) 45%,transparent 60%),radial-gradient(1px 1px at 62% 12%,rgba(255,255,255,.8) 45%,transparent 60%);animation:twinkle 3.8s ease-in-out infinite alternate}
 .ambient{position:absolute;z-index:-1;width:min(105vw,780px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(125,83,190,.19),rgba(188,145,75,.07) 37%,transparent 69%);filter:blur(24px);animation:ambient 6s ease-in-out infinite}
-.halo{position:absolute;width:min(92vw,620px);aspect-ratio:1;border:1px solid rgba(222,190,128,.08);border-radius:50%;box-shadow:0 0 90px rgba(142,99,217,.07),inset 0 0 90px rgba(142,99,217,.045);animation:halo 16s linear infinite}
+.halo{position:absolute;z-index:0;top:50%;left:50%;width:128%;aspect-ratio:1;transform:translate(-50%,-50%);border:1px solid rgba(222,190,128,.08);border-radius:50%;box-shadow:0 0 90px rgba(142,99,217,.07),inset 0 0 90px rgba(142,99,217,.045);animation:halo 16s linear infinite}
 .halo:before,.halo:after{content:"";position:absolute;border:1px solid rgba(255,255,255,.045);border-radius:50%;inset:8%}
 .halo:after{inset:17%;border-color:rgba(218,184,112,.08)}
-.orbit{position:absolute;width:min(108vw,700px);aspect-ratio:1;border:1px dashed rgba(229,199,140,.12);border-radius:50%;animation:halo 42s linear infinite reverse}
+.orbit{position:absolute;z-index:0;top:50%;left:50%;width:148%;aspect-ratio:1;transform:translate(-50%,-50%);border:1px dashed rgba(229,199,140,.12);border-radius:50%;animation:halo 42s linear infinite reverse}
 .orbit:before{content:"";position:absolute;top:14%;left:20%;width:5px;height:5px;border-radius:50%;background:#f8e4b2;box-shadow:0 0 15px 5px rgba(248,228,178,.4)}
 .content{position:relative;z-index:2;width:100%;display:flex;align-items:center;flex-direction:column;text-align:center;padding:28px 22px;transform:translateY(-1.5vh)}
 .brand-emblem{position:relative;width:clamp(148px,39vw,194px);aspect-ratio:1;margin-bottom:30px;display:grid;place-items:center;opacity:0;transform:translateY(24px) scale(.78);animation:emblemIn 1.25s cubic-bezier(.16,1,.3,1) .1s forwards}
 .emblem-shadow{position:absolute;inset:13%;border-radius:50%;background:rgba(168,120,255,.22);filter:blur(26px);animation:shadowPulse 3.5s ease-in-out infinite}
-.emblem-frame{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 205deg,#7d5a34 0deg,#f7e4b0 72deg,#8b6b3f 132deg,#60448e 205deg,#e8cb8c 276deg,#7d5a34 360deg);padding:1.5px;box-shadow:0 12px 45px rgba(0,0,0,.5),0 0 38px rgba(210,174,105,.17)}
+.emblem-frame{position:absolute;inset:0;animation:frameTurn 18s linear infinite;border-radius:50%;background:conic-gradient(from 205deg,#7d5a34 0deg,#f7e4b0 72deg,#8b6b3f 132deg,#60448e 205deg,#e8cb8c 276deg,#7d5a34 360deg);padding:1.5px;box-shadow:0 12px 45px rgba(0,0,0,.5),0 0 38px rgba(210,174,105,.17)}
 .emblem-frame:before{content:"";position:absolute;inset:5px;border-radius:50%;background:linear-gradient(145deg,#171321,#08080d 72%);box-shadow:inset 0 1px 0 rgba(255,255,255,.15)}
-.emblem-inner{position:absolute;inset:13px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 36% 25%,#38294c 0%,#171321 43%,#0a0910 78%);border:1px solid rgba(255,235,190,.19);box-shadow:inset 0 0 24px rgba(180,132,255,.1),inset 0 2px 4px rgba(255,255,255,.1)}
+.emblem-inner{position:absolute;z-index:1;inset:13px;animation:emblemBreath 3.2s ease-in-out infinite;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 36% 25%,#38294c 0%,#171321 43%,#0a0910 78%);border:1px solid rgba(255,235,190,.19);box-shadow:inset 0 0 24px rgba(180,132,255,.1),inset 0 2px 4px rgba(255,255,255,.1)}
 .emblem-inner:after{content:"";position:absolute;inset:8px;border-radius:50%;border:1px solid rgba(225,194,130,.13)}
-.letter{position:relative;z-index:1;font-family:'Alexandria',serif;font-size:clamp(82px,21vw,112px);font-weight:800;line-height:1;letter-spacing:-.1em;padding-right:.1em;background:linear-gradient(145deg,#fff7dc 8%,#e8cb8c 34%,#9c7544 57%,#fff0c8 76%,#b78e53 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 5px 10px rgba(0,0,0,.7))}
+.letter{position:relative;z-index:2;animation:letterGlow 3s ease-in-out infinite;font-family:'Alexandria',serif;font-size:clamp(82px,21vw,112px);font-weight:800;line-height:1;letter-spacing:-.1em;padding-right:.1em;background:linear-gradient(145deg,#fff7dc 8%,#e8cb8c 34%,#9c7544 57%,#fff0c8 76%,#b78e53 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 5px 10px rgba(0,0,0,.7))}
 .glint{position:absolute;z-index:2;top:5%;left:14%;width:34%;height:1px;transform:rotate(-48deg);background:linear-gradient(90deg,transparent,#fff7dc,transparent);filter:drop-shadow(0 0 5px #f4dba4);animation:glint 3.4s ease-in-out 1.4s infinite}
 .wordmark{display:flex;direction:ltr;align-items:baseline;gap:.12em;font-family:'Alexandria',sans-serif;font-size:clamp(35px,9vw,54px);font-weight:900;line-height:1;letter-spacing:.095em;opacity:0;transform:translateY(16px);animation:rise .8s ease .55s forwards}
 .gabo{color:#f8f6f2;text-shadow:0 3px 24px rgba(255,255,255,.12)}
@@ -48,8 +48,11 @@ body{position:fixed;inset:0;color:#fff;font-family:'Tajawal',sans-serif;-webkit-
 .version{position:absolute;bottom:max(18px,env(safe-area-inset-bottom));left:0;right:0;text-align:center;color:rgba(255,255,255,.2);font:9px 'Alexandria',sans-serif;letter-spacing:.22em;opacity:0;animation:fade .7s ease 1.5s forwards}
 .exit{animation:exit .45s ease forwards}
 @keyframes ambient{0%,100%{transform:scale(.9);opacity:.65}50%{transform:scale(1.08);opacity:1}}
-@keyframes halo{to{transform:rotate(360deg)}}
+@keyframes halo{to{transform:translate(-50%,-50%) rotate(360deg)}}
 @keyframes emblemIn{to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes frameTurn{to{transform:rotate(360deg)}}
+@keyframes emblemBreath{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+@keyframes letterGlow{0%,100%{filter:drop-shadow(0 5px 10px rgba(0,0,0,.7))}50%{filter:drop-shadow(0 0 18px rgba(232,203,140,.45)) drop-shadow(0 5px 10px rgba(0,0,0,.7))}}
 @keyframes rise{to{opacity:1;transform:translateY(0)}}
 @keyframes fade{to{opacity:1}}
 @keyframes shadowPulse{0%,100%{opacity:.55;transform:scale(.92)}50%{opacity:1;transform:scale(1.08)}}
@@ -66,10 +69,10 @@ body{position:fixed;inset:0;color:#fff;font-family:'Tajawal',sans-serif;-webkit-
 <main class="splash" id="splash" aria-label="GABO LIVE">
   <div class="ambient" aria-hidden="true"></div>
   <div class="sparkles" aria-hidden="true"></div>
-  <div class="halo" aria-hidden="true"></div>
-  <div class="orbit" aria-hidden="true"></div>
   <section class="content">
     <div class="brand-emblem" aria-hidden="true">
+      <div class="halo"></div>
+      <div class="orbit"></div>
       <div class="emblem-shadow"></div>
       <div class="emblem-frame"></div>
       <div class="emblem-inner"><span class="letter">G</span></div>
