@@ -125,10 +125,22 @@ const commsDefault = [
 ];
 
 let me=null;
-let cfg={brand:"GABO LIVE",bottomNav:[{icon:"⌂",label:"الرئيسية",path:"/",order:0,visible:true},{icon:"♬",label:"المجتمع",path:"/app/",order:1,visible:true},{icon:"✉",label:"الخاص",path:"/app/private/",order:2,visible:true},{icon:"◉",label:"حسابي",path:"/profile/",order:3,visible:true}],agora:{appId:"",appCert:"",enabled:true,maxMic:8},payment:{key:"",currency:"SAR"},plans:[{id:"vip1",name:"VIP شهري",price:29,days:30}],pages:[],features:{privateChat:true}};
+let cfg={brand:"GABO LIVE",bottomNav:[{icon:"⌂",label:"الرئيسية",path:"/",order:0,visible:true},{icon:"♬",label:"المجتمع",path:"/app/",order:1,visible:true},{icon:"✉",label:"الخاص",path:"/dm/",order:2,visible:true},{icon:"◉",label:"حسابي",path:"/profile/",order:3,visible:true}],agora:{appId:"",appCert:"",enabled:true,maxMic:8},payment:{key:"",currency:"SAR"},plans:[{id:"vip1",name:"VIP شهري",price:29,days:30}],pages:[],features:{privateChat:true}};
 
 onAuthStateChanged(auth, async u=>{
- if(!u){ location.href='/login/'; return; }
+ if(!u){ location.replace('/login/'); return; }
+ try {
+  const adminProfile=await getDoc(doc(db,'users',u.uid));
+  if(!adminProfile.exists() || adminProfile.data().isAdmin !== true){
+   alert('هذه الصفحة مخصصة للإدارة فقط');
+   location.replace('/app/');
+   return;
+  }
+ } catch (error) {
+  alert('تعذر التحقق من صلاحيات الإدارة');
+  location.replace('/app/');
+  return;
+ }
  me=u; document.getElementById('adminEmail').innerText=u.email;
  const c=await getDoc(doc(db,'site_config','main')); if(c.exists()) cfg={...cfg,...c.data()};
  initTabs(); listenAll(); fillAgoraForm(); renderNav(); renderPlans(); renderPages(); loadHosts(); loadUsersFull();
@@ -196,14 +208,19 @@ function loadUsersFull(){
  onSnapshot(collection(db,'users'), s=>{
    document.getElementById('cUsers').innerText=s.size;
    const list=document.getElementById('usersListFull'); list.innerHTML='';
-   s.forEach(d=>{ const u=d.data(); const div=document.createElement('div'); div.className='row'; div.innerHTML=`<span>🟢 ${u.name||u.email}<br><small>${u.email} | ${u.subscription||'مجاني'} ${u.isAdmin?'⭐ أدمن':''}</small></span><div style="display:flex;gap:4px;flex-wrap:wrap"><button class="small" onclick="toggleAdmin('${d.id}',${!!u.isAdmin})">${u.isAdmin?'إلغاء أدمن':'جعله أدمن'}</button><button class="small" onclick="giveVIP('${d.id}')">VIP</button><button class="small" onclick="location.href='/app/private/?to=${d.id}'">خاص</button><button class="small danger" onclick="banUser('${d.id}')">حظر</button></div>`; list.appendChild(div); });
+   s.forEach(d=>{ const u=d.data(); const div=document.createElement('div'); div.className='row'; div.innerHTML=`<span>🟢 ${u.name||u.email}<br><small>${u.email} | ${u.subscription||'مجاني'} ${u.isAdmin?'⭐ أدمن':''}</small></span><div style="display:flex;gap:4px;flex-wrap:wrap"><button class="small" onclick="toggleAdmin('${d.id}',${!!u.isAdmin})">${u.isAdmin?'إلغاء أدمن':'جعله أدمن'}</button><button class="small" onclick="giveVIP('${d.id}')">VIP</button><button class="small" onclick="location.href='/dm/?uid=${d.id}'">خاص</button><button class="small danger" onclick="banUser('${d.id}')">حظر</button></div>`; list.appendChild(div); });
  });
 }
 window.toggleAdmin=async(uid,cur)=>{await updateDoc(doc(db,'users',uid),{isAdmin:!cur});}
 window.giveVIP=async uid=>{
+ const userSnap=await getDoc(doc(db,'users',uid));
+ if(!userSnap.exists()) return alert('المستخدم غير موجود');
+ const userEmail=userSnap.data().email;
  await updateDoc(doc(db,'users',uid),{subscription:'VIP',subUntil:Date.now()+30*24*3600*1000});
- fetch(EMAIL_URL,{method:"POST",body:JSON.stringify({type:"contact",name:"نظام GABO",email:uid,message:"تمت ترقيتك الى VIP ✅"})});
- alert('تمت الترقية + ارسال ايميل');
+ if(userEmail){
+  try{ await fetch(EMAIL_URL,{method:"POST",body:JSON.stringify({type:"contact",name:"نظام GABO",email:userEmail,message:"تمت ترقيتك الى VIP ✅"})}); }catch{}
+  alert('تمت الترقية وإرسال طلب إشعار البريد');
+ }else{ alert('تمت الترقية، لكن لا يوجد بريد إلكتروني محفوظ لهذا المستخدم'); }
 }
 window.banUser=async uid=>{ if(confirm('حظر؟')) await updateDoc(doc(db,'users',uid),{banned:true}); }
 
