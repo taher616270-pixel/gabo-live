@@ -275,41 +275,67 @@ window.sendMsg=async ()=>{
   const input=document.getElementById('msgInput');
   const button=document.getElementById('sendGlobalMessage');
   const currentUser=auth.currentUser;
-  const messageText=(input?.value||'').trim();
-  if(!currentUser){alert('انتهت جلسة الدخول. سجل الدخول ثم حاول مرة أخرى.');return;}
+
+  // لا نعتمد على uid المخزن محلياً؛ نعتمد هوية Firebase الموثقة فقط.
+  if(!currentUser){
+    alert('انتهت جلسة الدخول. سجل الدخول ثم حاول مرة أخرى.');
+    return;
+  }
+  if(uid && uid!==currentUser.uid){
+    alert('تغير حساب الدخول. حدّث الصفحة ثم حاول مرة أخرى.');
+    return;
+  }
+
+  const messageText=String(input?.value||'').trim();
   if(!messageText){input?.focus();return;}
   if(messageText.length>1000){alert('الرسالة طويلة جداً، الحد الأقصى 1000 حرف.');return;}
   if(sendingMessage)return;
+
   sendingMessage=true;
-  if(button)button.disabled=true;
+  if(button){button.disabled=true;button.setAttribute('aria-busy','true');}
+  if(input)input.disabled=true;
+
   try{
+    // تحديث رمز الدخول قبل الكتابة لتفادي استخدام جلسة منتهية.
+    await currentUser.getIdToken(true);
     const profile=userData||{};
-    const displayName=profile.displayName||profile.name||localStorage.getItem('gabo_name')||'مستخدم';
-    const photoURL=profile.photoURL||profile.photo||localStorage.getItem('gabo_photo')||'';
-    const writePromise=addDoc(collection(db,'communities','global','messages'),{
-      text:messageText,uid:currentUser.uid,displayName,name:displayName,
-      photoURL,verified:profile.verified===true,createdAt:serverTimestamp()
+    const displayName=String(profile.displayName||profile.name||currentUser.displayName||localStorage.getItem('gabo_name')||'مستخدم').slice(0,80);
+    const photoURL=String(profile.photoURL||profile.photo||currentUser.photoURL||localStorage.getItem('gabo_photo')||'');
+    const messagesRef=collection(db,'communities','global','messages');
+
+    await addDoc(messagesRef,{
+      text:messageText,
+      uid:currentUser.uid,
+      displayName,
+      name:displayName,
+      photoURL,
+      verified:profile.verified===true,
+      type:'text',
+      createdAt:serverTimestamp()
     });
-    let sendTimeout;
-    await Promise.race([
-      writePromise,
-      new Promise((_,reject)=>{sendTimeout=setTimeout(()=>reject(Object.assign(new Error('انتهت مهلة الاتصال بخادم Firebase بعد 12 ثانية'),{code:'gabo/send-timeout'})),12000);})
-    ]).finally(()=>clearTimeout(sendTimeout));
+
     input.value='';
     document.getElementById('emojiPanel')?.classList.remove('on');
     input.focus();
   }catch(error){
-    console.error('Global chat send failed:',error);
+    console.error('Global chat send failed:',{
+      code:error?.code,
+      message:error?.message,
+      uid:currentUser.uid,
+      path:'communities/global/messages'
+    });
     const code=error?.code||'unknown';
-    const reason=code==='permission-denied'?'قواعد Firestore تمنع إرسال الرسائل (permission-denied).':
-      code==='unauthenticated'?'يجب تسجيل الدخول لإرسال الرسائل.':
-      code==='unavailable'?'تعذر الاتصال بخادم Firebase حالياً.':
-      code==='gabo/send-timeout'?'الاتصال بـ Firebase لم يستجب خلال 12 ثانية. لم يتم تأكيد إرسال الرسالة؛ افحص الاتصال وقواعد Firestore.':
-      'فشل إرسال الرسالة ('+code+'): '+(error?.message||'خطأ غير معروف');
+    const reason=code==='permission-denied'?'رفضت قواعد Firestore الإرسال. تأكد أن قاعدة communities/{communityId}/messages تسمح للمستخدم المسجل بإنشاء رسالة يكون uid فيها مطابقاً لحسابه.':
+      code==='unauthenticated'?'جلسة Firebase غير موثقة. سجّل الخروج ثم ادخل من جديد.':
+      code==='unavailable'?'خدمة Firestore غير متاحة حالياً. تحقق من اتصال الإنترنت وحالة Firebase.':
+      code==='failed-precondition'?'هناك إعداد أو فهرس مطلوب في Firestore. راجع رسالة الخطأ في سجل المتصفح.':
+      'تعذر إرسال الرسالة ('+code+'): '+(error?.message||'خطأ غير معروف');
     alert(reason);
   }finally{
     sendingMessage=false;
-    if(button)button.disabled=false;
+    if(button){button.disabled=!auth.currentUser;button.removeAttribute('aria-busy');}
+    if(input)input.disabled=!auth.currentUser;
+    updateGeneralChatGate();
   }
 };
 window.toggleEmoji=()=>{ const p=document.getElementById('emojiPanel'); p.classList.toggle('on'); if(p.classList.contains('on')) showEmojiCat(null,'smile'); }
