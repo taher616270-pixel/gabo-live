@@ -166,8 +166,8 @@ window.openUserProfile=async (targetUid, fallbackPhoto, fallbackName)=>{
       const name=d.displayName||d.name||fallbackName||'مستخدم';
       const bio=d.bio||'مرحبا بكم في ملفي الشخصي 👋';
       const countryInfo=(await getCountryRegistry()).find(c=>c.code===String(d.country||'').toLowerCase());
-      const countryName=countryInfo?.name||d.countryName||'غير محدد';
-      const flagImg=countryInfo?.flag||(d.countryFlagImg||'/assets/south-arabia.png.JPG');
+      const countryName=countryInfo?.name||(d.country?'غير محدد':(d.countryName||'غير محدد'));
+      const flagImg=countryInfo?.code==='south-arabia'?await getSouthArabiaFlag():(countryInfo?.flag||(d.country?'':(d.countryFlagImg||'')));
       const cover=d.cover||'';
       const gender=d.gender||'';
       const gaboId=d.gaboId||genId(targetUid);
@@ -176,7 +176,7 @@ window.openUserProfile=async (targetUid, fallbackPhoto, fallbackName)=>{
       if(photo){ const img=document.getElementById('pAvatarImg'); img.src=photo; img.style.display='block'; document.getElementById('pAvatarLetter').style.display='none'; }
       if(cover){ const cImg=document.getElementById('pCoverImg'); cImg.src=cover; cImg.style.display='block'; }
       document.getElementById('pCountryName').textContent=countryName;
-      document.getElementById('pFlag').innerHTML=`<img src="${flagImg}" style="width:26px;height:18px;border-radius:3px">`;
+      document.getElementById('pFlag').innerHTML=flagImg?`<img src="${flagImg}" style="width:26px;height:18px;border-radius:3px">`:'';
       document.getElementById('pGender').textContent=gender;
       document.getElementById('pId').textContent='ID: '+gaboId;
       document.getElementById('pBio').textContent=bio;
