@@ -183,17 +183,11 @@ async function renderGlobalMembers(ids){
  box.innerHTML='<div class="globalMembersEmpty">جاري تحميل قائمة الأعضاء...</div>';
  if(!ids.length){box.innerHTML='<div class="globalMembersEmpty">لا يوجد أعضاء منضمون حالياً</div>';return;}
  const rows=await Promise.all(ids.map(async id=>{try{const snap=await getDoc(doc(db,'users',id));const d=snap.exists()?snap.data():{};return {uid:id,name:d.displayName||d.name||'عضو GABO',photo:d.photoURL||d.photo||d.avatar||'',gaboId:d.gaboId||genId(id)};}catch{return {uid:id,name:'عضو GABO',photo:'',gaboId:genId(id)};}}));
- box.innerHTML='';
-    const avatar=document.createElement('button');avatar.type='button';avatar.className='avatar';avatar.setAttribute('aria-label','عرض ملف '+name);
-    if(photo){const img=document.createElement('img');img.src=photo;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';avatar.appendChild(img);}else{avatar.textContent=String(name).trim().charAt(0)||'؟';}
-    avatar.addEventListener('click',()=>window.openUserProfile(m.uid,photo,name));
-    const content=document.createElement('div');content.className='msgContent';
-    const line=document.createElement('div');line.className='nameLine';
-    const nameEl=document.createElement('span');nameEl.textContent=name;line.appendChild(nameEl);
-    if(m.verified){const badge=document.createElement('span');badge.className='check';badge.textContent='✓';badge.title='حساب موثق';line.appendChild(badge);}
-    const timeEl=document.createElement('span');timeEl.className='time';const stamp=m.createdAt?.toDate?m.createdAt.toDate():m.createdAt?.seconds?new Date(m.createdAt.seconds*1000):null;timeEl.textContent=stamp?stamp.toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'}):'الآن';line.appendChild(timeEl);
-    const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=String(m.text||'');
-    content.append(line,bubble);row.append(avatar,content);messagesEl.appendChild(row);
+ box.replaceChildren();
+ rows.forEach(m=>{const row=document.createElement('button');row.type='button';row.className='globalMemberRow';
+ if(m.photo){const img=document.createElement('img');img.src=m.photo;img.alt='';img.loading='lazy';row.appendChild(img);}else{const av=document.createElement('span');av.className='globalMemberAvatar';av.textContent=(m.name||'؟').charAt(0);row.appendChild(av);}
+ const info=document.createElement('span');const name=document.createElement('b');name.textContent=m.name;const id=document.createElement('small');id.textContent='ID: '+m.gaboId;info.append(name,id);row.appendChild(info);
+ row.addEventListener('click',()=>{closeGlobalStats();window.openUserProfile(m.uid,m.photo,m.name);});box.appendChild(row);});
 }
 document.getElementById('leaveGlobalChat')?.addEventListener('click',async()=>{if(!uid||!hasJoinedGeneralChat)return;if(!confirm('هل تريد الخروج من الشات العام؟'))return;const btn=document.getElementById('leaveGlobalChat');btn.disabled=true;try{const ref=doc(db,'communities','global');const snap=await getDoc(ref);const members=snap.exists()&&Array.isArray(snap.data().members)?snap.data().members:[];if(members.includes(uid)){await setDoc(ref,{members:arrayRemove(uid),membersCount:Math.max(0,members.length-1)},{merge:true});}hasJoinedGeneralChat=false;updateGeneralChatGate();closeGlobalStats();document.getElementById('globalMembersList').style.display='none';}catch(e){alert('تعذر الخروج حالياً، حاول مرة ثانية.');}finally{btn.disabled=false;}});
 
@@ -209,7 +203,16 @@ onSnapshot(collection(db,'communities',communityId,'messages'), (snap)=>{
     let name=m.displayName||m.name||'مستخدم';
     const verified=m.verified?`<span class="check">✓</span>`:'';
     const time=m.createdAt?new Date(m.createdAt.seconds*1000).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}):'';
-    row.innerHTML=`<div class="avatar" onclick="openUserProfile('${m.uid}','${photo.replace(/'/g,'')}','${name.replace(/'/g,'')}')"><img src="${photo}"></div><div class="msgContent"><div class="nameLine">${name} ${verified} <span class="time">${time}</span></div><div class="bubble">${String(m.text||'').replace(/</g,'&lt;')}</div></div>`;
+    const avatar=document.createElement('button');avatar.type='button';avatar.className='avatar';avatar.setAttribute('aria-label','عرض ملف '+name);
+    if(photo){const img=document.createElement('img');img.src=photo;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';avatar.appendChild(img);}else{avatar.textContent=String(name).trim().charAt(0)||'؟';}
+    avatar.addEventListener('click',()=>window.openUserProfile(m.uid,photo,name));
+    const content=document.createElement('div');content.className='msgContent';
+    const line=document.createElement('div');line.className='nameLine';
+    const nameEl=document.createElement('span');nameEl.textContent=name;line.appendChild(nameEl);
+    if(m.verified){const badge=document.createElement('span');badge.className='check';badge.textContent='✓';badge.title='حساب موثق';line.appendChild(badge);}
+    const timeEl=document.createElement('span');timeEl.className='time';const stamp=m.createdAt?.toDate?m.createdAt.toDate():m.createdAt?.seconds?new Date(m.createdAt.seconds*1000):null;timeEl.textContent=stamp?stamp.toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'}):'الآن';line.appendChild(timeEl);
+    const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=String(m.text||'');
+    content.append(line,bubble);row.append(avatar,content);messagesEl.appendChild(row);
     messagesEl.appendChild(row);
   });
   messagesEl.scrollTop=messagesEl.scrollHeight;
