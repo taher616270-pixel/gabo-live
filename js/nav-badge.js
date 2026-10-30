@@ -10,8 +10,8 @@ onAuthStateChanged(auth, user=>{
     let total=0;
     snap.forEach(d=>{ total += d.data().unread?.[uid] || 0; });
     document.querySelectorAll('#navBadge, .navBadge').forEach(b=>{
-      if(total>0){ b.textContent=total>99?'99+':total; b.classList.remove('hide'); }
-      else b.classList.add('hide');
+      if(total>0){ b.textContent=total>99?'99+':total; b.classList.remove('hide'); b.style.display='flex'; }
+      else { b.classList.add('hide'); b.style.display='none'; }
     });
   });
 });
