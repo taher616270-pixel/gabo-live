@@ -1,0 +1,12 @@
+{
+  "name": "gabo-live",
+  "version": "1.0.0",
+  "description": "GABO LIVE - Live streaming platform",
+  "private": true,
+  "scripts": {
+    "test": "echo \"No tests configured\" && exit 0"
+  },
+  "dependencies": {
+    "@vercel/speed-insights": "^2.0.0"
+  }
+}
