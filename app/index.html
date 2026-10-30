@@ -104,23 +104,16 @@ let uid=localStorage.getItem('gabo_uid')||null;
 let selectedFlag='south';
 let selectedImgBase64=null;
 
-const SOUTH_FLAG=await getSouthArabiaFlag(); const southFlagOption=document.getElementById('southFlagOption'); if(southFlagOption) southFlagOption.src=SOUTH_FLAG;
-const SOUTH_SVG=`<img src="${SOUTH_FLAG}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`
-
+// نعرض المجتمعات الافتراضية فوراً من ملفات الصفحة، ثم نحدّث العلم والأسماء من Firebase بالخلفية.
+let SOUTH_FLAG='/assets/south-arabia.png.JPG';
+let SOUTH_SVG=`<img src="${SOUTH_FLAG}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`;
+const southFlagOption=document.getElementById('southFlagOption');
 const STATIC_IDS=['south','sa','ye','ae','om','qa','kw','bh'];
-const managedCountries=await getCountryRegistry();
-const managedNames=Object.fromEntries(managedCountries.map(country=>[country.code,country.name]));
-const NAMES={south:managedNames['south-arabia']||'الجنوب العربي',sa:managedNames.sa||'السعودية',ye:managedNames.ye||'اليمن',ae:managedNames.ae||'الإمارات',om:managedNames.om||'عمان',qa:managedNames.qa||'قطر',kw:managedNames.kw||'الكويت',bh:managedNames.bh||'البحرين'};
-const FLAG_HTML={
-south:SOUTH_SVG,
-sa:`<img src="https://flagcdn.com/w80/sa.png">`,
-ye:`<img src="https://flagcdn.com/w80/ye.png">`,
-ae:`<img src="https://flagcdn.com/w80/ae.png">`,
-om:`<img src="https://flagcdn.com/w80/om.png">`,
-qa:`<img src="https://flagcdn.com/w80/qa.png">`,
-kw:`<img src="https://flagcdn.com/w80/kw.png">`,
-bh:`<img src="https://flagcdn.com/w80/bh.png">`
-};
+const NAMES={south:'الجنوب العربي',sa:'السعودية',ye:'اليمن',ae:'الإمارات',om:'عمان',qa:'قطر',kw:'الكويت',bh:'البحرين'};
+const FLAG_HTML={south:SOUTH_SVG,sa:'<img src="https://flagcdn.com/w80/sa.png">',ye:'<img src="https://flagcdn.com/w80/ye.png">',ae:'<img src="https://flagcdn.com/w80/ae.png">',om:'<img src="https://flagcdn.com/w80/om.png">',qa:'<img src="https://flagcdn.com/w80/qa.png">',kw:'<img src="https://flagcdn.com/w80/kw.png">',bh:'<img src="https://flagcdn.com/w80/bh.png">'};
+function updateSouthFlag(url){if(!url)return;SOUTH_FLAG=url;SOUTH_SVG=`<img src="${url}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`;FLAG_HTML.south=SOUTH_SVG;if(southFlagOption)southFlagOption.src=url;document.querySelectorAll('[data-south-flag]').forEach(img=>img.src=url);}
+getSouthArabiaFlag().then(updateSouthFlag).catch(()=>{});
+getCountryRegistry().then(items=>{items.forEach(country=>{if(country.code==='south-arabia')NAMES.south=country.name;else if(NAMES[country.code]!==undefined)NAMES[country.code]=country.name;});renderOfficialCommunities();}).catch(()=>{});
 
 onAuthStateChanged(auth,u=>{ if(!u){ location.replace('/login/'); return; } uid=u.uid; localStorage.setItem('gabo_uid',u.uid); onSnapshot(doc(db,'users',u.uid),snap=>{const p=snap.exists()?snap.data():{};const a=document.getElementById('homeAvatar');if(!a)return;const photo=p.photoURL||p.photoUrl||p.avatar;if(photo){const im=document.createElement('img');im.src=photo;im.alt='الصورة الشخصية';a.replaceChildren(im);}else a.textContent=String(p.name||p.displayName||u.displayName||u.email||'م').trim().charAt(0);}); });
 
@@ -141,7 +134,9 @@ window.doCreate=async()=>{
 }
 
 const grid=document.getElementById('commPage');
-const activityGrid=document.getElementById('activityPage');const communitySearch=document.getElementById('communitySearch');const clearSearch=document.getElementById('clearSearch');function applyCommunitySearch(){const q=(communitySearch?.value||'').trim().toLocaleLowerCase('ar');document.querySelectorAll('#commPage .comm').forEach(card=>{card.style.display=card.textContent.toLocaleLowerCase('ar').includes(q)?'':'none';});if(clearSearch)clearSearch.style.display=q?'block':'none';}communitySearch?.addEventListener('input',applyCommunitySearch);clearSearch?.addEventListener('click',()=>{communitySearch.value='';applyCommunitySearch();communitySearch.focus();});
+const activityGrid=document.getElementById('activityPage');
+function renderOfficialCommunities(counts={}){if(!grid)return;const customIds=new Set([...grid.querySelectorAll('.comm[data-community-id]')].map(el=>el.dataset.communityId));const existing=new Map([...grid.querySelectorAll('.comm[data-official-id]')].map(el=>[el.dataset.officialId,el]));['south','sa','ye','ae','om','qa','kw','bh'].forEach(id=>{let div=existing.get(id);if(!div){div=document.createElement('div');div.className='comm';div.dataset.officialId=id;div.onclick=()=>window.goComm(id);}const flagContent=id==='south'?SOUTH_SVG:FLAG_HTML[id];div.innerHTML=`<div class="flag">${flagContent}</div><b><span class="miniFlag">${flagContent}</span>${NAMES[id]}</b><small class="${(counts[id]||0)>0?'live':''}">${(counts[id]||0)>0?(counts[id]+' عضو'):'رسمي'}</small>`;if(!existing.has(id))grid.appendChild(div);});}
+renderOfficialCommunities();const communitySearch=document.getElementById('communitySearch');const clearSearch=document.getElementById('clearSearch');function applyCommunitySearch(){const q=(communitySearch?.value||'').trim().toLocaleLowerCase('ar');document.querySelectorAll('#commPage .comm').forEach(card=>{card.style.display=card.textContent.toLocaleLowerCase('ar').includes(q)?'':'none';});if(clearSearch)clearSearch.style.display=q?'block':'none';}communitySearch?.addEventListener('input',applyCommunitySearch);clearSearch?.addEventListener('click',()=>{communitySearch.value='';applyCommunitySearch();communitySearch.focus();});
 
 // نبني كل المجتمعات من Firestore - والرسمية نعرض عدد الأعضاء لايف
 onSnapshot(collection(db,'communities'),snap=>{
@@ -173,21 +168,11 @@ onSnapshot(collection(db,'communities'),snap=>{
   });
 
   // 1- المجتمعات الرسمية - يطلع عدد الأعضاء
-  ['south','sa','ye','ae','om','qa'].forEach(id=>{
-    const count=counts[id] || 0;
-    const div=document.createElement('div'); div.className='comm'; div.onclick=()=>window.goComm(id);
-    const flagContent= id==='south'?SOUTH_SVG:FLAG_HTML[id];
-    div.innerHTML=`
-      <div class="flag">${flagContent}</div>
-      <b><span class="miniFlag">${flagContent}</span>${NAMES[id]}</b>
-      <small class="${count>0?'live':''}">${count>0?count+' عضو':'رسمي - 0 عضو'}</small>
-    `;
-    grid.appendChild(div);
-  });
+  renderOfficialCommunities(counts);
 
   // 2- المجتمعات اللي أنشأها المستخدمين
   customDocs.forEach(({id,data})=>{
-    const div=document.createElement('div'); div.className='comm'; div.onclick=()=>window.goComm(id);
+    const div=document.createElement('div'); div.className='comm'; div.dataset.communityId=id; div.onclick=()=>window.goComm(id);
     let flagHtml=''; 
     if(data.img){ flagHtml=`<div class="flag"><img src="${data.img}"></div>`; }
     else if(data.flag==='south'){ flagHtml=`<div class="flag">${SOUTH_SVG}</div>`; }
