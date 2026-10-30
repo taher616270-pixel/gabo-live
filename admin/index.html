@@ -36,6 +36,7 @@ textarea{min-height:90px}
 <div class="tab" data-p="subs">💳 الاشتراكات</div>
 <div class="tab" data-p="nav">🧭 الأزرار</div>
 <div class="tab" data-p="pages">📄 الصفحات</div>
+<div class="tab" data-p="flags">🏴 علم الجنوب</div>
 <div class="tab" data-p="hosts">🎤 المضيفين</div>
 <div class="tab" data-p="users">👥 الأعضاء</div>
 </div>
@@ -95,6 +96,17 @@ textarea{min-height:90px}
 <div id="pagesList"></div>
 </div>
 
+<!-- SOUTH ARABIA FLAG -->
+<div class="card panel" id="p-flags">
+<b>🏴 العلم المركزي للجنوب العربي</b>
+<p style="color:#aaa3bd;font-size:13px;line-height:1.8">ارفع صورة العلم مرة واحدة، وسيتم استخدام النسخة الجديدة تلقائياً في التسجيل والملفات الشخصية وقوائم الأعضاء والدردشة والإشعارات. يفضّل صورة واضحة بصيغة PNG أو JPG.</p>
+<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:14px 0">
+<img id="southFlagPreview" src="/assets/south-arabia.png.JPG" alt="معاينة علم الجنوب العربي" style="width:150px;height:100px;object-fit:cover;border:1px solid #ffffff30;border-radius:12px;background:#08060e">
+<div style="flex:1;min-width:180px"><input id="southFlagFile" type="file" accept="image/png,image/jpeg,image/webp"><small id="southFlagStatus" style="color:#aaa3bd">العلم الحالي مستخدم في جميع الصفحات.</small></div>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button id="saveSouthFlag" class="primary">💾 اعتماد العلم الجديد في كل الموقع</button><button id="resetSouthFlag">استعادة العلم الافتراضي</button></div>
+</div>
+
 <!-- HOSTS -->
 <div class="card panel" id="p-hosts">
 <b>🎤 طلبات المضيفين - عند القبول يرسل ايميل تلقائي عبر Google Script الجديد</b>
@@ -144,7 +156,7 @@ onAuthStateChanged(auth, async u=>{
  }
  me=u; document.getElementById('adminEmail').innerText=u.email;
  const c=await getDoc(doc(db,'site_config','main')); if(c.exists()) cfg={...cfg,...c.data()};
- initTabs(); listenAll(); fillAgoraForm(); renderNav(); renderPlans(); renderPages(); loadHosts(); loadUsersFull();
+ initTabs(); listenAll(); fillAgoraForm(); renderNav(); renderPlans(); renderPages(); renderSouthFlag(); loadHosts(); loadUsersFull();
 });
 
 document.getElementById('logout').onclick=()=>signOut(auth).then(()=>location.href='/login/');
@@ -180,6 +192,49 @@ function renderNav(){ const el=document.getElementById('navList'); el.innerHTML=
 window.moveNav=(i,dir)=>{const a=cfg.bottomNav; const j=i+dir; if(j<0||j>=a.length) return; [a[i],a[j]]=[a[j],a[i]]; a.forEach((x,idx)=>x.order=idx); renderNav(); saveCfg();}
 window.delNav=i=>{if(confirm('حذف؟')){cfg.bottomNav.splice(i,1); renderNav(); saveCfg();}}
 document.getElementById('addNav').onclick=()=>{const icon=document.getElementById('nIcon').value||'•'; const label=document.getElementById('nLabel').value; const path=document.getElementById('nPath').value; if(!label||!path) return alert('اكمل'); cfg.bottomNav.push({icon,label,path,order:cfg.bottomNav.length,visible:true}); renderNav(); saveCfg();}
+
+
+// Central South Arabia flag manager. The optimized image is stored once in site_config/main.
+function renderSouthFlag(){
+ const src=cfg.flags?.southArabiaDataUrl||'/assets/south-arabia.png.JPG';
+ document.getElementById('southFlagPreview').src=src;
+ document.getElementById('southFlagStatus').textContent=cfg.flags?.southArabiaDataUrl?'يوجد علم مخصص مطبق على كل الصفحات.':'يتم استخدام العلم الافتراضي حالياً.';
+}
+let pendingSouthFlagData=null;
+document.getElementById('southFlagFile').addEventListener('change',event=>{
+ const file=event.target.files?.[0]; if(!file)return;
+ if(!['image/png','image/jpeg','image/webp'].includes(file.type)){alert('اختر صورة PNG أو JPG أو WebP');event.target.value='';return;}
+ if(file.size>8*1024*1024){alert('حجم الصورة كبير جداً. الحد الأقصى 8 ميجابايت قبل الضغط.');event.target.value='';return;}
+ const reader=new FileReader();
+ reader.onload=()=>{
+  const image=new Image();
+  image.onload=()=>{
+   const canvas=document.createElement('canvas');let w=image.width,h=image.height;const max=1400;
+   if(w>max||h>max){const ratio=Math.min(max/w,max/h);w=Math.round(w*ratio);h=Math.round(h*ratio);}
+   canvas.width=w;canvas.height=h;
+   const ctx=canvas.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);ctx.drawImage(image,0,0,w,h);
+   const data=canvas.toDataURL('image/jpeg',0.84);
+   if(data.length>850000){alert('تعذر ضغط الصورة إلى الحجم المناسب. اختر صورة أصغر.');return;}
+   pendingSouthFlagData=data;document.getElementById('southFlagPreview').src=data;
+   document.getElementById('southFlagStatus').textContent='الصورة جاهزة. اضغط اعتماد العلم الجديد لحفظها.';
+  };
+  image.onerror=()=>alert('تعذر قراءة الصورة');
+  image.src=reader.result;
+ };
+ reader.readAsDataURL(file);
+});
+document.getElementById('saveSouthFlag').onclick=async()=>{
+ if(!pendingSouthFlagData)return alert('اختر صورة العلم الجديدة أولاً');
+ const button=document.getElementById('saveSouthFlag');button.disabled=true;button.textContent='جارٍ الحفظ...';
+ try{cfg.flags={...(cfg.flags||{}),southArabiaDataUrl:pendingSouthFlagData};await saveCfg();document.getElementById('southFlagStatus').textContent='تم اعتماد العلم المركزي. قد تحتاج الصفحات المفتوحة إلى تحديث.';pendingSouthFlagData=null;document.getElementById('southFlagFile').value='';}
+ catch(error){console.error(error);alert('تعذر حفظ العلم. تحقق من صلاحيات قاعدة البيانات وحاول مجدداً.');}
+ finally{button.disabled=false;button.textContent='💾 اعتماد العلم الجديد في كل الموقع';}
+};
+document.getElementById('resetSouthFlag').onclick=async()=>{
+ if(!confirm('استعادة العلم الافتراضي في كل صفحات الموقع؟'))return;
+ try{cfg.flags={...(cfg.flags||{}),southArabiaDataUrl:null};await saveCfg();pendingSouthFlagData=null;document.getElementById('southFlagFile').value='';renderSouthFlag();}
+ catch(error){console.error(error);alert('تعذر استعادة العلم الافتراضي.');}
+};
 
 // Plans
 function renderPlans(){const el=document.getElementById('plansList'); el.innerHTML=''; (cfg.plans||[]).forEach((p,i)=>{const d=document.createElement('div'); d.className='row'; d.innerHTML=`<span><b>${p.name}</b> — ${p.price} SAR / ${p.days} يوم</span><button class="small danger" onclick="delPlan(${i})">حذف</button>`; el.appendChild(d);});}
