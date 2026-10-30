@@ -57,7 +57,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 .pBtn.primary{background:var(--v);color:#fff}
 .pBtn.secondary{background:#1e1c2e;border:1px solid var(--b);color:#fff}
 .pClose{position:absolute;top:10px;left:10px;width:32px;height:32px;background:rgba(0,0,0,.5);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px}
-.joinGate{position:fixed;bottom:0;left:0;right:0;z-index:1100;padding:12px 14px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(135deg,#171526f5,#101b22f5);border-top:1px solid #a88be755;box-shadow:0 -12px 35px #0008;display:flex;align-items:center;gap:12px;backdrop-filter:blur(18px)}.joinGate>div{flex:1;min-width:0}.joinGate b{display:block;font-size:13px;color:#f2eaff}.joinGate small{display:block;color:#aaa4bd;font-size:10px;line-height:1.5;margin-top:3px}.joinGate button{border:1px solid #a88be7;color:#fff;background:linear-gradient(135deg,#6650a5,#3a5d72);border-radius:13px;padding:12px 15px;font:800 12px system-ui;box-shadow:0 5px 18px #51427d66;white-space:nowrap}.joinGate button:disabled{opacity:.6}.inputBar{bottom:0}.messages{padding-bottom:145px}body.generalPublicChat .commFlag,body.generalPublicChat #commMiniFlag{display:none}body.generalPublicChat .headerInfo b{color:#f0eaff}body.generalPublicChat .headerInfo small{color:#73d9b7}</style>
+.joinGate{position:fixed;bottom:0;left:0;right:0;z-index:1100;padding:12px 14px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(135deg,#171526f5,#101b22f5);border-top:1px solid #a88be755;box-shadow:0 -12px 35px #0008;display:flex;align-items:center;gap:12px;backdrop-filter:blur(18px)}.joinGate>div{flex:1;min-width:0}.joinGate b{display:block;font-size:13px;color:#f2eaff}.joinGate small{display:block;color:#aaa4bd;font-size:10px;line-height:1.5;margin-top:3px}.joinGate button{border:1px solid #a88be7;color:#fff;background:linear-gradient(135deg,#6650a5,#3a5d72);border-radius:13px;padding:12px 15px;font:800 12px system-ui;box-shadow:0 5px 18px #51427d66;white-space:nowrap}.joinGate button:disabled{opacity:.6}.inputBar{bottom:0}.messages{padding-bottom:145px}body.generalPublicChat .commFlag{width:48px;height:48px;border-radius:50%;border:1px solid #78e6dc88;background:radial-gradient(circle at 32% 25%,#8df7ed 0,#287f91 24%,#172d57 58%,#101322 100%);box-shadow:0 0 0 4px #5ce1d51c,0 0 24px #3dd6ca55;overflow:visible;position:relative}body.generalPublicChat .commFlag svg{width:100%;height:100%;filter:drop-shadow(0 4px 9px #0008)}body.generalPublicChat #commMiniFlag{display:none}body.generalPublicChat .headerInfo b{color:#f0eaff}body.generalPublicChat .headerInfo small{color:#73d9b7}body.generalPublicChat .header{background:linear-gradient(100deg,#101020,#14222d 65%,#101020)}body.generalPublicChat .inputBar{background:linear-gradient(120deg,#101020,#14222d);border-top-color:#4acfc455}body.generalPublicChat .inputWrap{border-color:#4acfc455}body.generalPublicChat .sendBtn{background:linear-gradient(135deg,#27b9ad,#3478a7);box-shadow:0 4px 15px #24b8aa55}</style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
 </head>
 <body>
@@ -76,6 +76,7 @@ import { getSouthArabiaFlag,getCountryRegistry } from '/assets/country-flags.js'
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { collection, doc, onSnapshot, addDoc, serverTimestamp, getDoc, setDoc, arrayUnion, increment } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 const SOUTH_FLAG=await getSouthArabiaFlag();
+const GLOBAL_GLOBE=`<svg viewBox="0 0 64 64" role="img" aria-label="الشات العام"><defs><radialGradient id="ocean" cx="30%" cy="24%"><stop stop-color="#a8fff4"/><stop offset=".3" stop-color="#37c9c0"/><stop offset=".72" stop-color="#246a9b"/><stop offset="1" stop-color="#18234c"/></radialGradient><linearGradient id="land" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d8ffe8"/><stop offset="1" stop-color="#4bd3a5"/></linearGradient></defs><circle cx="32" cy="32" r="27" fill="url(#ocean)" stroke="#b6fff2" stroke-width="1.5"/><path d="M17 14l7-4 7 3 1 6-5 4-1 7-7-2-4-6 2-8zm20-3 9 3 5 8-5 4-2 8-6-2-3-7 3-5-4-4zm-20 29 7-3 7 4 3 8-6 8-8-4-4-8zm23 3 7-5 7 4-2 9-8 5-5-6z" fill="url(#land)" opacity=".95"/><path d="M6 32h52M32 5c-9 9-12 18-12 27s3 18 12 27M32 5c9 9 12 18 12 27s-3 18-12 27" fill="none" stroke="#d4fff8" stroke-opacity=".45" stroke-width="1"/><ellipse cx="32" cy="32" rx="27" ry="10" fill="none" stroke="#d4fff8" stroke-opacity=".38"/></svg>`;
 const SOUTH_SVG=`<img src="${SOUTH_FLAG}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`
 const COMM_DATA={
 south:{name:'مجتمع الجنوب العربي', flag:SOUTH_SVG, mini:SOUTH_SVG},
@@ -102,6 +103,7 @@ const memberCountEl=document.getElementById('memberCount');
 const messagesEl=document.getElementById('messages');
 const msgInput=document.getElementById('msgInput');
 function setHeaderInstant(){
+  if(isGeneralPublicChat){document.body.classList.add('generalPublicChat');commFlagEl.innerHTML=GLOBAL_GLOBE;commNameEl.textContent='الشات العام';document.querySelector('.headerInfo small').textContent='دردشة عامة • عالم GABO LIVE';return;}
   const data=COMM_DATA[communityId] || {name:'مجتمع '+communityId, flag:`<img src="https://flagcdn.com/w80/${communityId}.png">`, mini:`<img src="https://flagcdn.com/w80/${communityId}.png">`};
   commFlagEl.innerHTML=data.flag;
   commMiniFlagEl.innerHTML=data.mini;
@@ -133,7 +135,7 @@ onAuthStateChanged(auth, async (u)=>{
     }
   }
 });
-function updateGeneralChatGate(){if(!isGeneralPublicChat)return;const gate=document.getElementById('joinGate');const bar=document.querySelector('.inputBar');if(gate)gate.style.display=hasJoinedGeneralChat?'none':'flex';if(bar)bar.style.display=hasJoinedGeneralChat?'flex':'none';if(hasJoinedGeneralChat)document.getElementById('memberCount').textContent=document.getElementById('memberCount').textContent.replace(' • انضم','');}
+function updateGeneralChatGate(){if(!isGeneralPublicChat)return;const gate=document.getElementById('joinGate');const bar=document.querySelector('.inputBar');if(gate)gate.style.display=hasJoinedGeneralChat?'none':'flex';if(bar){bar.style.display=hasJoinedGeneralChat?'flex':'none';bar.setAttribute('aria-hidden',hasJoinedGeneralChat?'false':'true');}if(msgInput){msgInput.disabled=!hasJoinedGeneralChat;msgInput.placeholder=hasJoinedGeneralChat?'اكتب رسالتك في الشات العام...':'انضم إلى الشات العام للكتابة';}const send=document.querySelector('.sendBtn');if(send)send.disabled=!hasJoinedGeneralChat;const emoji=document.querySelector('.inputBar .iconBtn');if(emoji)emoji.disabled=!hasJoinedGeneralChat;}
 updateGeneralChatGate();
 document.getElementById('joinPublicChat')?.addEventListener('click',async()=>{const btn=document.getElementById('joinPublicChat');if(!uid||hasJoinedGeneralChat)return;btn.disabled=true;btn.textContent='جارٍ الانضمام...';try{const ref=doc(db,'communities','global');const snap=await getDoc(ref);const members=snap.exists()&&Array.isArray(snap.data().members)?snap.data().members:[];if(!members.includes(uid)){const today=new Date().toISOString().slice(0,10);const sameDay=snap.exists()&&snap.data().activityDay===today;await setDoc(ref,{name:'الشات العام',type:'public-chat',members:arrayUnion(uid),membersCount:increment(1),joinsToday:sameDay?increment(1):1,activityScore:sameDay?increment(2):2,activityDay:today},{merge:true});}hasJoinedGeneralChat=true;updateGeneralChatGate();msgInput?.focus();}catch(e){btn.disabled=false;btn.innerHTML='حاول مرة ثانية ←';alert('تعذر الانضمام حالياً، تحقق من اتصالك أو صلاحيات قاعدة البيانات.');}});
 onSnapshot(collection(db,'communities',communityId,'messages'), (snap)=>{
@@ -153,6 +155,7 @@ onSnapshot(collection(db,'communities',communityId,'messages'), (snap)=>{
   messagesEl.scrollTop=messagesEl.scrollHeight;
 });
 onSnapshot(doc(db,'communities',communityId), (snap)=>{
+  if(isGeneralPublicChat&&snap.exists()&&uid){const members=Array.isArray(snap.data().members)?snap.data().members:[];const joined=members.includes(uid);if(joined!==hasJoinedGeneralChat){hasJoinedGeneralChat=joined;updateGeneralChatGate();}}
   if(snap.exists()){
     const data=snap.data();
     if(data.name) commNameEl.textContent=isGeneralPublicChat?'الشات العام':data.name;
