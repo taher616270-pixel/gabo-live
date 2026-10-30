@@ -72,7 +72,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 <div class="inputBar"><button class="iconBtn" onclick="toggleEmoji()">😊</button><div class="inputWrap"><input id="msgInput" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMsg()"></div><button class="sendBtn" onclick="sendMsg()">➤</button></div>
 <script type="module">
 import { auth, db } from '/firebase-config.js';
-import { getSouthArabiaFlag } from '/assets/country-flags.js';
+import { getSouthArabiaFlag,getCountryRegistry } from '/assets/country-flags.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { collection, doc, onSnapshot, addDoc, serverTimestamp, getDoc, setDoc, arrayUnion, increment } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 const SOUTH_FLAG=await getSouthArabiaFlag();
@@ -165,8 +165,9 @@ window.openUserProfile=async (targetUid, fallbackPhoto, fallbackName)=>{
       const photo=d.photoURL||d.photo||d.avatar||fallbackPhoto||'';
       const name=d.displayName||d.name||fallbackName||'مستخدم';
       const bio=d.bio||'مرحبا بكم في ملفي الشخصي 👋';
-      const countryName=d.countryName||'الجنوب العربي';
-      const flagImg=d.country==='south-arabia'?await getSouthArabiaFlag():(d.countryFlagImg||'/assets/south-arabia.png.JPG');
+      const countryInfo=(await getCountryRegistry()).find(c=>c.code===String(d.country||'').toLowerCase());
+      const countryName=countryInfo?.name||d.countryName||'غير محدد';
+      const flagImg=countryInfo?.flag||(d.countryFlagImg||'/assets/south-arabia.png.JPG');
       const cover=d.cover||'';
       const gender=d.gender||'';
       const gaboId=d.gaboId||genId(targetUid);
