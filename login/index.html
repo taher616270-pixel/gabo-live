@@ -103,11 +103,9 @@ input{height:42px;padding:0 10px;font-size:14px}
 #signupFields .row{display:contents}
 #signupFields .field{min-width:0;margin:0}
 #signupFields .field label{white-space:nowrap}
-#signupFields .signup-email,#signupFields .signup-country{grid-column:1 / -1}
-#signupFields input{height:44px;min-width:0;font-size:14px}
+#signupFields input{height:40px;min-width:0;font-size:13px}
 #signupFields .country-wrap{min-width:0}
-#signupFields .country-trigger{height:44px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#signupFields .signup-password,#signupFields .signup-confirm{grid-column:span 1}
+#signupFields .country-trigger{height:40px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-height:650px){
  .card{padding:10px 13px}
  .brand{margin-bottom:6px}
@@ -118,7 +116,7 @@ input{height:42px;padding:0 10px;font-size:14px}
  .tabs button{padding:7px 5px}
  .field{margin-bottom:5px}
  input{height:38px}
- #signupFields input,#signupFields .country-trigger{height:40px}
+ #signupFields input,#signupFields .country-trigger{height:36px}
  .main-btn,.social-btn{min-height:38px}
  .divider{margin:6px 0}
  .consent{margin-top:6px}
@@ -255,8 +253,10 @@ body{
 <div class="field"><label>الاسم الأول</label><input id="f_first" type="text" placeholder="اسمك"><div class="fieldErr" id="f_firstErr"></div></div>
 <div class="field"><label>اللقب</label><input id="f_last" type="text" placeholder="اللقب"><div class="fieldErr" id="f_lastErr"></div></div>
 </div>
-<div class="field signup-email"><label>البريد الإلكتروني</label><input id="f_email" type="email" placeholder="example@gmail.com" dir="ltr"><div class="fieldErr" id="f_emailErr"></div></div>
-<div class="field signup-country">
+<div class="field"><label>البريد الإلكتروني</label><input id="f_email" type="email" placeholder="example@gmail.com" dir="ltr"><div class="fieldErr" id="f_emailErr"></div></div>
+<div class="field"><label>كلمة المرور</label><div class="input-wrap"><input id="f_pass" type="password" placeholder="6 أحرف على الأقل"><button class="pass-toggle" type="button" data-toggle="f_pass">إظهار</button></div><div class="fieldErr" id="f_passErr"></div></div>
+<div class="field"><label>تأكيد كلمة المرور</label><div class="input-wrap"><input id="f_confirm" type="password" placeholder="أعد كتابة كلمة المرور"><button class="pass-toggle" type="button" data-toggle="f_confirm">إظهار</button></div><div class="fieldErr" id="f_confirmErr"></div></div>
+<div class="field">
 <label>الدولة</label>
 <div class="country-wrap">
 <select id="f_country" class="country-native-select"><option value="">اختر الدولة</option></select>
@@ -265,8 +265,6 @@ body{
 </div>
 <div class="fieldErr" id="f_countryErr"></div>
 </div>
-<div class="field signup-password"><label>كلمة المرور</label><div class="input-wrap"><input id="f_pass" type="password" placeholder="6 أحرف على الأقل"><button class="pass-toggle" type="button" data-toggle="f_pass">إظهار</button></div><div class="fieldErr" id="f_passErr"></div></div>
-<div class="field signup-confirm"><label>تأكيد كلمة المرور</label><div class="input-wrap"><input id="f_confirm" type="password" placeholder="أعد كتابة كلمة المرور"><button class="pass-toggle" type="button" data-toggle="f_confirm">إظهار</button></div><div class="fieldErr" id="f_confirmErr"></div></div>
 </div>
 
 <button class="main-btn" id="mainBtn" type="submit">تسجيل دخول</button>
