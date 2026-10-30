@@ -1,232 +1,69 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GABO LIVE - دخول</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#090811">
+<title>GABO LIVE | تسجيل الدخول</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#08070d;--card:#13111c;--b:#232131;--v:#7c3aed;--t:#fff;--m:#a1a1aa;--err:#fb7185;--ok:#4ade80}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--t);font-family:system-ui,-apple-system;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
-.box{width:100%;max-width:420px;background:var(--card);border:1px solid rgba(124,58,237,.25);border-radius:24px;padding:26px}
-.logo{text-align:center;margin-bottom:22px}
-.logo h1{font-size:34px;letter-spacing:.15em;font-weight:900}
-.logo h1 span{color:var(--v)}
-.tabs{display:flex;background:#0e0c16;border-radius:12px;padding:4px;margin-bottom:20px}
-.tabs button{flex:1;padding:11px;border:none;border-radius:8px;background:transparent;color:var(--m);cursor:pointer;font-weight:700;transition:.2s}
-.tabs button.on{background:var(--v);color:#fff}
-label{display:block;margin:12px 0 6px;color:var(--m);font-size:13px}
-input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--b);background:#0e0d14;color:#fff;outline:none;font-size:14px;transition:.2s}
-input:focus{border-color:var(--v)}
-input.bad{border-color:var(--err)!important;background:rgba(251,113,133,.08)}
-.row{display:flex;gap:10px}
-.row>div{flex:1}
-.btn{width:100%;padding:14px;border:none;border-radius:12px;background:var(--v);color:#fff;font-weight:800;font-size:16px;cursor:pointer;margin-top:16px;transition:.2s}
-.btn:disabled{opacity:.6;cursor:not-allowed}
-.btn.ghost{background:#fff;color:#000;display:flex;align-items:center;justify-content:center;gap:8px}
-.btn.apple{background:#000;border:1px solid var(--b);color:#fff;display:flex;align-items:center;justify-content:center;gap:8px}
-.divider{display:flex;align-items:center;gap:10px;margin:18px 0;color:var(--m);font-size:12px}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--b)}
-.msg{text-align:center;font-size:13px;margin-top:12px;min-height:18px;line-height:1.4}
-.msg.e{color:var(--err)} .msg.ok{color:var(--ok)}
-.fieldErr{font-size:11px;color:var(--err);margin-top:4px;display:none}
-.fieldErr.show{display:block}
-#signupFields{display:none}
-</style>
-<link rel="stylesheet" href="/assets/style/gabo-theme.css">
-</head>
-<body>
-<div class="box">
-  <div class="logo"><h1>GABO <span>LIVE</span></h1></div>
-  <div class="tabs">
-    <button id="tabLogin" class="on">تسجيل دخول</button>
-    <button id="tabSignup">إنشاء حساب</button>
-  </div>
-
-  <!-- LOGIN -->
-  <div id="loginFields">
-    <label>البريد الإلكتروني</label>
-    <input id="l_email" type="email" placeholder="example@gmail.com" dir="ltr" autocomplete="email">
-    <div class="fieldErr" id="l_emailErr"></div>
-    <label>كلمة المرور</label>
-    <input id="f_loginPass" type="password" placeholder="••••••••" autocomplete="current-password">
-    <div class="fieldErr" id="l_passErr"></div>
-  </div>
-
-  <!-- SIGNUP -->
-  <div id="signupFields">
-    <div class="row">
-      <div>
-        <label>الاسم الأول</label>
-        <input id="f_first" type="text" placeholder="" autocomplete="given-name">
-        <div class="fieldErr" id="f_firstErr"></div>
-      </div>
-      <div>
-        <label>اللقب</label>
-        <input id="f_last" type="text" placeholder="" autocomplete="family-name">
-        <div class="fieldErr" id="f_lastErr"></div>
-      </div>
-    </div>
-    <label>البريد الإلكتروني</label>
-    <input id="f_email" type="email" placeholder="example@gmail.com" dir="ltr" autocomplete="email">
-    <div class="fieldErr" id="f_emailErr"></div>
-    <label>كلمة المرور</label>
-    <input id="f_pass" type="password" placeholder="••••••••" autocomplete="new-password">
-    <div class="fieldErr" id="f_passErr"></div>
-    <label>تأكيد كلمة المرور</label>
-    <input id="f_confirm" type="password" placeholder="••••••••" autocomplete="new-password">
-    <div class="fieldErr" id="f_confirmErr"></div>
-  </div>
-
-  <button class="btn" id="mainBtn">تسجيل دخول</button>
-  <div class="msg" id="msg"></div>
-  <div class="divider">أو</div>
-  <button class="btn ghost" id="googleBtn"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Google</button>
-  <button class="btn apple" id="appleBtn" style="margin-top:10px"> Apple</button>
-</div>
-
-<script type="module">
-import { auth, db } from '/firebase-config.js';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, updateProfile } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
-let mode='login';
-let googleLoading=false;
-const $=s=>document.querySelector(s);
-const msg=$('#msg'), mainBtn=$('#mainBtn');
-const tabL=$('#tabLogin'), tabS=$('#tabSignup');
-const loginF=$('#loginFields'), signupF=$('#signupFields');
-
-function setMode(m){
-  mode=m;
-  tabL.classList.toggle('on',m==='login');
-  tabS.classList.toggle('on',m==='signup');
-  loginF.style.display=m==='login'?'block':'none';
-  signupF.style.display=m==='signup'?'block':'none';
-  mainBtn.textContent=m==='login'?'تسجيل دخول':'إنشاء حساب';
-  clearErr();
-}
-function clearErr(){
-  document.querySelectorAll('input').forEach(i=>i.classList.remove('bad'));
-  document.querySelectorAll('.fieldErr').forEach(e=>{e.textContent=''; e.classList.remove('show')});
-  msg.textContent=''; msg.className='msg';
-}
-function showFieldErr(inp, err, txt){
-  $(inp).classList.add('bad');
-  $(err).textContent=txt;
-  $(err).classList.add('show');
-}
-
-tabL.onclick=()=>setMode('login');
-tabS.onclick=()=>setMode('signup');
-
-async function ensureUserDoc(u, fullName=''){
-  const ref=doc(db,'users',u.uid);
-  const snap=await getDoc(ref).catch(()=>null);
-  if(!snap || !snap.exists()){
-    await setDoc(ref,{
-      email:u.email,
-      name:fullName || u.displayName || u.email.split('@')[0],
-      photo:u.photoURL||'',
-      uid:u.uid,
-      createdAt:serverTimestamp(),
-      banned:false
-    });
-  }
-}
-
-onAuthStateChanged(auth, async u=>{
-  if(u){
-    try{await ensureUserDoc(u)}catch{}
-    location.replace('/app/');
-  }
-});
-
-function translateError(code){
-  switch(code){
-    case 'auth/email-already-in-use': return 'هذا الإيميل مسجل من قبل، سجل دخول';
-    case 'auth/invalid-credential':
-    case 'auth/wrong-password': return 'الإيميل أو كلمة المرور خطأ';
-    case 'auth/user-not-found': return 'الحساب غير موجود، أنشئ حساب جديد';
-    case 'auth/weak-password': return 'كلمة المرور ضعيفة - 6 أحرف على الأقل';
-    case 'auth/invalid-email': return 'صيغة الإيميل غير صحيحة';
-    case 'auth/network-request-failed': return 'مشكلة في الشبكة، طفّ مانع الإعلانات وحاول';
-    case 'auth/popup-blocked': return 'اسمح بالنوافذ المنبثقة للمتصفح';
-    case 'auth/cancelled-popup-request': return '';
-    default: return '';
-  }
-}
-
-mainBtn.onclick=async()=>{
-  clearErr();
-  if(mode==='login'){
-    const email=$('#l_email').value.trim();
-    const pass=$('#f_loginPass').value;
-    if(!email){ showFieldErr('#l_email','#l_emailErr','اكتب الإيميل'); return; }
-    if(!pass){ showFieldErr('#f_loginPass','#l_passErr','اكتب كلمة المرور'); return; }
-    mainBtn.disabled=true; mainBtn.textContent='جاري...';
-    try{
-      await signInWithEmailAndPassword(auth,email,pass);
-    }catch(e){
-      mainBtn.disabled=false; mainBtn.textContent='تسجيل دخول';
-      msg.textContent=translateError(e.code) || 'خطأ: '+e.code;
-      msg.className='msg e';
-    }
-  }else{
-    const first=$('#f_first').value.trim();
-    const last=$('#f_last').value.trim();
-    const email=$('#f_email').value.trim();
-    const pass=$('#f_pass').value;
-    const confirm=$('#f_confirm').value;
-    let ok=true;
-    if(first.length<2){ showFieldErr('#f_first','#f_firstErr','الاسم الأول مطلوب'); ok=false; }
-    if(last.length<2){ showFieldErr('#f_last','#f_lastErr','اللقب مطلوب'); ok=false; }
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ showFieldErr('#f_email','#f_emailErr','الإيميل غير صحيح'); ok=false; }
-    if(pass.length<6){ showFieldErr('#f_pass','#f_passErr','6 أحرف على الأقل'); ok=false; }
-    if(pass!==confirm){ showFieldErr('#f_confirm','#f_confirmErr','غير مطابقة'); ok=false; }
-    if(!ok) return;
-    mainBtn.disabled=true; mainBtn.textContent='جاري...';
-    try{
-      const cred=await createUserWithEmailAndPassword(auth,email,pass);
-      const fullName=first+' '+last;
-      await updateProfile(cred.user,{displayName:fullName});
-      await ensureUserDoc(cred.user,fullName);
-      msg.textContent='تم إنشاء الحساب!'; msg.className='msg ok';
-    }catch(e){
-      mainBtn.disabled=false; mainBtn.textContent='إنشاء حساب';
-      const t=translateError(e.code);
-      if(e.code==='auth/email-already-in-use'){
-        msg.textContent=t; msg.className='msg e';
-        setTimeout(()=>setMode('login'),1200);
-      }else{
-        msg.textContent=t || e.message; msg.className='msg e';
-      }
-    }
-  }
-};
-
-$('#googleBtn').onclick=async()=>{
-  if(googleLoading) return;
-  googleLoading=true;
-  const btn=$('#googleBtn'); btn.disabled=true;
-  msg.textContent='جاري فتح Google...'; msg.className='msg';
-  try{
-    const p=new GoogleAuthProvider();
-    p.setCustomParameters({prompt:'select_account'});
-    const r=await signInWithPopup(auth,p);
-    await ensureUserDoc(r.user);
-  }catch(e){
-    const t=translateError(e.code);
-    if(t) { msg.textContent=t; msg.className='msg e'; }
-    else { msg.textContent=''; }
-  }finally{
-    googleLoading=false; btn.disabled=false;
-  }
-};
-
-$('#appleBtn').onclick=()=>{
-  msg.textContent='Apple قريباً - استخدم Google'; msg.className='msg e';
-};
-</script>
-</body>
-</html>
+:root{color-scheme:dark;--bg:#090811;--panel:#151222;--line:rgba(255,255,255,.09);--purple:#8957f5;--purple2:#6235c9;--gold:#e8c77b;--text:#fbfaff;--muted:#aaa5ba;--red:#ff718c;--green:#63d9a1}
+*{box-sizing:border-box}html{min-height:100%;background:var(--bg)}body{margin:0;min-height:100vh;min-height:100svh;padding:max(18px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));display:grid;place-items:center;overflow-x:hidden;background:radial-gradient(ellipse at 50% 0%,rgba(119,73,218,.20),transparent 42%),radial-gradient(ellipse at 100% 100%,rgba(215,174,91,.08),transparent 35%),var(--bg);color:var(--text);font-family:'Tajawal',system-ui,-apple-system,sans-serif}
+button,input{font:inherit}button{touch-action:manipulation}.shell{width:100%;max-width:460px;min-width:0;position:relative;margin:auto}.glow{position:absolute;inset:8% -8%;z-index:-1;background:rgba(117,76,218,.13);filter:blur(65px);border-radius:50%;pointer-events:none}
+.card{position:relative;width:100%;min-width:0;padding:clamp(18px,5vw,36px);border:1px solid rgba(220,190,255,.13);border-radius:28px;background:linear-gradient(155deg,rgba(26,22,42,.97),rgba(15,13,24,.98));box-shadow:0 28px 90px rgba(0,0,0,.48),inset 0 1px rgba(255,255,255,.04);overflow:hidden}.card:before{content:"";position:absolute;top:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.7}
+.brand{text-align:center;margin:0 0 27px}.mark{width:auto;height:auto;margin:0 auto 14px;display:block;border:0;border-radius:0;background:none;box-shadow:none;font-family:Arial,sans-serif;font-size:clamp(66px,18vw,82px);line-height:.95;font-weight:900;letter-spacing:-.09em;color:#f2d58e;transform:perspective(240px) rotateX(10deg) rotateY(-13deg);text-shadow:1px 1px 0 #c5a45f,2px 2px 0 #a98643,3px 3px 0 #80602e,4px 4px 0 #49351e,6px 7px 9px rgba(0,0,0,.9),0 0 24px rgba(232,199,123,.24);animation:gFloat 3s ease-in-out infinite;will-change:transform,opacity}@keyframes gFloat{0%,100%{transform:perspective(240px) rotateX(10deg) rotateY(-13deg) translateY(0);filter:brightness(.92)}50%{transform:perspective(240px) rotateX(10deg) rotateY(-13deg) translateY(-6px);filter:brightness(1.12)}}
+.brand h1{margin:0;font-family:Arial,sans-serif;font-size:30px;letter-spacing:.13em;font-weight:900;direction:ltr}.brand h1 span{color:var(--gold)}.brand p{margin:8px 0 0;color:var(--muted);font-size:14px}
+.tabs{display:flex;gap:5px;padding:5px;margin-bottom:23px;border:1px solid var(--line);border-radius:14px;background:rgba(5,4,10,.42)}.tabs button{flex:1;min-height:43px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-weight:800;cursor:pointer;transition:.2s}.tabs button.on{color:var(--gold);background:linear-gradient(110deg,#08070c 0%,#241a3b 58%,#49306f 100%);border:1px solid rgba(232,199,123,.38);box-shadow:0 5px 18px rgba(112,68,220,.20),inset 0 0 14px rgba(232,199,123,.06)}
+.field{margin:0 0 15px}label{display:block;margin:0 0 7px;color:#ded9eb;font-size:13px;font-weight:700}.input-wrap{position:relative}input{display:block;width:100%;height:51px;padding:0 15px;border:1px solid rgba(255,255,255,.10);border-radius:13px;outline:0;background:rgba(7,6,13,.58);color:#fff;font-size:15px;transition:border-color .2s,box-shadow .2s}input::placeholder{color:#777286}input:focus{border-color:rgba(164,125,255,.85);box-shadow:0 0 0 3px rgba(137,87,245,.13)}input.bad{border-color:var(--red)}input[dir=ltr]{text-align:left}.fieldErr{display:none;margin:5px 3px 0;color:var(--red);font-size:12px}.fieldErr.show{display:block}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.pass-toggle{position:absolute;left:12px;top:50%;transform:translateY(-50%);padding:6px 4px;border:0;background:transparent;color:var(--gold);font-size:12px;font-weight:700;cursor:pointer}.forgot{display:block;width:max-content;margin:-3px 0 5px auto;padding:5px 0;border:0;background:transparent;color:var(--gold);font-size:13px;font-weight:700;cursor:pointer}
+.main-btn,.social-btn{width:100%;min-height:52px;border-radius:14px;font-weight:800;font-size:16px;cursor:pointer;transition:transform .18s,opacity .18s,border-color .18s}.main-btn{margin-top:9px;border:1px solid rgba(232,199,123,.58);background:linear-gradient(110deg,#07070a 0%,#17121f 36%,#49306f 72%,#b18a43 125%);color:#f1d58f;box-shadow:0 10px 25px rgba(0,0,0,.34),0 5px 22px rgba(112,68,220,.20),inset 0 1px rgba(255,255,255,.08)}.main-btn:hover{border-color:#f0d38b;box-shadow:0 10px 28px rgba(112,68,220,.28),0 0 18px rgba(232,199,123,.12)}.main-btn:active,.social-btn:active{transform:scale(.99)}button:disabled{opacity:.58;cursor:not-allowed}
+.social-btn{display:flex;align-items:center;justify-content:center;gap:11px;min-height:49px;margin-top:10px;border:1px solid rgba(232,199,123,.35);background:linear-gradient(110deg,#08080b,#171322 68%,#241936);color:#ead08f;font-size:15px;box-shadow:inset 0 1px rgba(255,255,255,.045);}.social-btn:hover{border-color:rgba(232,199,123,.82);background:linear-gradient(110deg,#09080d,#30204d 72%,#4a326e);box-shadow:0 5px 18px rgba(112,68,220,.16)}.social-btn img{width:19px;height:19px}.apple-icon{font-family:Arial,sans-serif;font-size:21px;line-height:1}
+.msg{min-height:20px;margin:12px 0 0;text-align:center;font-size:13px;line-height:1.5;color:var(--muted)}.msg.e{color:var(--red)}.msg.ok{color:var(--green)}.divider{display:flex;align-items:center;gap:12px;margin:17px 0;color:#827c91;font-size:12px}.divider:before,.divider:after{content:"";height:1px;flex:1;background:var(--line)}.legal{text-align:center;margin:20px 0 0;color:#827c91;font-size:11px;line-height:1.7}
+.consent{display:flex;align-items:flex-start;gap:10px;margin:15px 1px 5px;text-align:right;color:#d9d3e8;font-size:12px;line-height:1.9;cursor:pointer}
+.consent input{appearance:none;-webkit-appearance:none;flex:0 0 19px;width:19px;height:19px;min-height:19px;margin:3px 0 0;padding:0;border:1.5px solid #9a78e8;border-radius:50%;background:#0b0912;cursor:pointer;transition:.18s}
+.consent input:checked{border-color:#a77bff;background:radial-gradient(circle,#fff 0 23%,#8957f5 26% 100%);box-shadow:0 0 0 3px rgba(137,87,245,.16)}
+.consent input:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.consent a{color:#b18aff;text-decoration:none;font-weight:800;white-space:nowrap}
+.consent a:hover{text-decoration:underline;color:#d0b8ff}
+.consentErr{display:none;margin:2px 4px 8px;color:var(--red);font-size:12px}
+.consentErr.show{display:block}
+#signupFields[hidden]{display:none!important}
+@media(max-width:420px){body{padding: max(14px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));align-items:center}.card{padding:clamp(17px,5vw,23px) clamp(14px,4.5vw,19px);border-radius:21px}.brand{margin-bottom:20px}.brand h1{font-size:clamp(25px,7vw,27px)}.row{gap:9px}input{height:49px;min-width:0}.main-btn,.social-btn{min-height:48px;font-size:15px}}
+@media(max-height:760px){body{align-items:start}.card{padding-top:18px;padding-bottom:18px}.brand{margin-bottom:15px}.mark{font-size:64px;margin-bottom:10px}.field{margin-bottom:10px}.divider{margin:12px 0}.legal{margin-top:14px}}
+@media(max-width:340px){.card{padding-inline:13px}.tabs{gap:3px}.tabs button{font-size:13px}.row{grid-template-columns:1fr 1fr;gap:7px}label{font-size:12px}.social-btn{gap:8px;font-size:14px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}.mark{animation:none!important;opacity:.9}}
+</style></head>
+<body><main class="shell"><div class="glow"></div><section class="card" aria-label="GABO LIVE account">
+<header class="brand"><div class="mark" aria-hidden="true">G</div><h1>GABO <span>LIVE</span></h1><p>عالمك... بلحظتك</p></header>
+<div class="tabs" role="tablist" aria-label="نوع الحساب"><button id="tabLogin" class="on" type="button" role="tab" aria-selected="true">تسجيل دخول</button><button id="tabSignup" type="button" role="tab" aria-selected="false">إنشاء حساب</button></div>
+<div id="loginFields">
+<div class="field"><label for="l_email">البريد الإلكتروني</label><input id="l_email" type="email" placeholder="example@gmail.com" dir="ltr" autocomplete="email" inputmode="email"><div class="fieldErr" id="l_emailErr"></div></div>
+<div class="field"><label for="f_loginPass">كلمة المرور</label><div class="input-wrap"><input id="f_loginPass" type="password" placeholder="أدخل كلمة المرور" autocomplete="current-password"><button class="pass-toggle" type="button" data-toggle="f_loginPass">إظهار</button></div><div class="fieldErr" id="l_passErr"></div></div>
+<button class="forgot" id="forgotBtn" type="button">نسيت كلمة المرور؟</button></div>
+<div id="signupFields" hidden>
+<div class="row"><div class="field"><label for="f_first">الاسم الأول</label><input id="f_first" type="text" placeholder="اسمك" autocomplete="given-name"><div class="fieldErr" id="f_firstErr"></div></div><div class="field"><label for="f_last">اللقب</label><input id="f_last" type="text" placeholder="اللقب" autocomplete="family-name"><div class="fieldErr" id="f_lastErr"></div></div></div>
+<div class="field"><label for="f_email">البريد الإلكتروني</label><input id="f_email" type="email" placeholder="example@gmail.com" dir="ltr" autocomplete="email" inputmode="email"><div class="fieldErr" id="f_emailErr"></div></div>
+<div class="field"><label for="f_pass">كلمة المرور</label><div class="input-wrap"><input id="f_pass" type="password" placeholder="6 أحرف على الأقل" autocomplete="new-password"><button class="pass-toggle" type="button" data-toggle="f_pass">إظهار</button></div><div class="fieldErr" id="f_passErr"></div></div>
+<div class="field"><label for="f_confirm">تأكيد كلمة المرور</label><div class="input-wrap"><input id="f_confirm" type="password" placeholder="أعد كتابة كلمة المرور" autocomplete="new-password"><button class="pass-toggle" type="button" data-toggle="f_confirm">إظهار</button></div><div class="fieldErr" id="f_confirmErr"></div></div><label class="consent" for="termsConsent"><input id="termsConsent" type="checkbox"><span>لقد قرأت ووافقت على <a href="/terms.html" target="_blank" rel="noopener">شروط الخدمة</a>، و<a href="/privacy.html" target="_blank" rel="noopener">سياسة الخصوصية</a>، و<a href="/guidelines.html" target="_blank" rel="noopener">إرشادات سلوك مستخدمي GABO LIVE</a></span></label><div class="consentErr" id="consentErr" role="alert">يجب الموافقة على الشروط والسياسات قبل إنشاء الحساب</div></div>
+<button class="main-btn" id="mainBtn" type="button">تسجيل دخول</button><div class="msg" id="msg" role="status" aria-live="polite"></div><div class="divider">أو المتابعة باستخدام</div>
+<button class="social-btn" id="googleBtn" type="button"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">المتابعة باستخدام Google</button>
+<button class="social-btn" id="appleBtn" type="button"><span class="apple-icon" aria-hidden="true"></span>المتابعة باستخدام Apple</button>
+<p class="legal">لقد قرأت ووافقت على <a href="/terms.html" target="_blank" rel="noopener">شروط الخدمة</a>، و<a href="/privacy.html" target="_blank" rel="noopener">سياسة الخصوصية</a>، و<a href="/guidelines.html" target="_blank" rel="noopener">إرشادات سلوك مستخدمي GABO LIVE</a></p>
+</section></main>
+<script>
+(function(){
+let mode='login',googleLoading=false,auth=null,db=null,authFns=null,storeFns=null,initError=null;
+const $=s=>document.querySelector(s),msg=$('#msg'),mainBtn=$('#mainBtn'),tabL=$('#tabLogin'),tabS=$('#tabSignup'),loginF=$('#loginFields'),signupF=$('#signupFields');
+function setMessage(t,type=''){msg.textContent=t;msg.className='msg'+(type?' '+type)}
+function clearErr(){document.querySelectorAll('input').forEach(i=>i.classList.remove('bad'));document.querySelectorAll('.fieldErr').forEach(e=>{e.textContent='';e.classList.remove('show')});$('#consentErr').classList.remove('show');setMessage('')}
+function fieldErr(input,error,text){$(input).classList.add('bad');$(error).textContent=text;$(error).classList.add('show')}
+function setMode(m){mode=m;tabL.classList.toggle('on',m==='login');tabS.classList.toggle('on',m==='signup');tabL.setAttribute('aria-selected',String(m==='login'));tabS.setAttribute('aria-selected',String(m==='signup'));loginF.hidden=m!=='login';signupF.hidden=m!=='signup';mainBtn.textContent=m==='login'?'تسجيل دخول':'إنشاء حساب';clearErr()}
+tabL.addEventListener('click',()=>setMode('login'));tabS.addEventListener('click',()=>setMode('signup'));
+document.querySelectorAll('[data-toggle]').forEach(b=>b.addEventListener('click',()=>{const input=$('#'+b.dataset.toggle);input.type=input.type==='password'?'text':'password';b.textContent=input.type==='password'?'إظهار':'إخفاء'}));
+function translateError(code){const errors={'auth/email-already-in-use':'هذا البريد مسجل من قبل، سجل دخولك','auth/invalid-credential':'البريد أو كلمة المرور غير صحيحة','auth/wrong-password':'كلمة المرور غير صحيحة','auth/user-not-found':'الحساب غير موجود، أنشئ حساباً جديداً','auth/weak-password':'كلمة المرور ضعيفة، استخدم 6 أحرف على الأقل','auth/invalid-email':'صيغة البريد الإلكتروني غير صحيحة','auth/network-request-failed':'تعذر الاتصال، تحقق من الإنترنت وحاول مجدداً','auth/popup-blocked':'تعذر فتح نافذة Google، اسمح بالنوافذ المنبثقة','auth/too-many-requests':'محاولات كثيرة، انتظر قليلاً ثم حاول','auth/unauthorized-domain':'هذا النطاق غير مضاف إلى نطاقات Firebase المصرح بها'};return errors[code]||''}
+async function ensureUserDoc(u,fullName=''){const ref=storeFns.doc(db,'users',u.uid),snap=await storeFns.getDoc(ref).catch(()=>null);if(!snap||!snap.exists())await storeFns.setDoc(ref,{email:u.email,name:fullName||u.displayName||u.email?.split('@')[0]||'مستخدم',photo:u.photoURL||'',uid:u.uid,createdAt:storeFns.serverTimestamp(),banned:false})}
+async function initialize(){try{const config=await import('/firebase-config.js');auth=config.auth;db=config.db;authFns=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');storeFns=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');authFns.onAuthStateChanged(auth,async u=>{if(u){try{await ensureUserDoc(u)}catch(e){console.error(e)}location.replace('/app/')}});const result=await authFns.getRedirectResult(auth);if(result?.user)await ensureUserDoc(result.user)}catch(e){initError=e;console.error('GABO login initialization failed:',e);setMessage('تعذر تحميل خدمة الدخول. حدّث الصفحة أو تحقق من اتصال الإنترنت.','e')}}
+const ready=initialize();
+mainBtn.addEventListener('click',async()=>{clearErr();mainBtn.disabled=true;const old=mode==='login'?'تسجيل دخول':'إنشاء حساب';mainBtn.textContent='لحظة من فضلك...';try{await ready;if(!authFns)throw initError||new Error('Firebase unavailable');if(mode==='login'){const email=$('#l_email').value.trim(),pass=$('#f_loginPass').value;let valid=true;if(!email){fieldErr('#l_email','#l_emailErr','أدخل البريد الإلكتروني');valid=false}if(!pass){fieldErr('#f_loginPass','#l_passErr','أدخل كلمة المرور');valid=false}if(!valid)return;await authFns.signInWithEmailAndPassword(auth,email,pass)}else{const first=$('#f_first').value.trim(),last=$('#f_last').value.trim(),email=$('#f_email').value.trim(),pass=$('#f_pass').value,confirm=$('#f_confirm').value;let valid=true;if(first.length<2){fieldErr('#f_first','#f_firstErr','اكتب الاسم الأول');valid=false}if(last.length<2){fieldErr('#f_last','#f_lastErr','اكتب اللقب');valid=false}if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){fieldErr('#f_email','#f_emailErr','أدخل بريداً إلكترونياً صحيحاً');valid=false}if(pass.length<6){fieldErr('#f_pass','#f_passErr','كلمة المرور 6 أحرف على الأقل');valid=false}if(pass!==confirm){fieldErr('#f_confirm','#f_confirmErr','كلمتا المرور غير متطابقتين');valid=false}if(!$('#termsConsent').checked){$('#consentErr').classList.add('show');$('#termsConsent').focus();valid=false}if(!valid)return;const cred=await authFns.createUserWithEmailAndPassword(auth,email,pass),fullName=first+' '+last;await authFns.updateProfile(cred.user,{displayName:fullName});await ensureUserDoc(cred.user,fullName);setMessage('تم إنشاء حسابك بنجاح، جارٍ فتح GABO LIVE','ok')}}catch(e){console.error(e);setMessage(translateError(e.code)||'تعذر تنفيذ العملية. تحقق من الاتصال وحاول مجدداً.','e')}finally{mainBtn.disabled=false;mainBtn.textContent=old}});
+$('#forgotBtn').addEventListener('click',async()=>{clearErr();const email=$('#l_email').value.trim();if(!email){fieldErr('#l_email','#l_emailErr','اكتب بريدك أولاً لإرسال رابط الاستعادة');return}const b=$('#forgotBtn');b.disabled=true;try{await ready;if(!authFns)throw initError||new Error('Firebase unavailable');await authFns.sendPasswordResetEmail(auth,email);setMessage('إذا كان البريد مسجلاً، سيصلك رابط إعادة تعيين كلمة المرور','ok')}catch(e){setMessage(translateError(e.code)||'تعذر إرسال رابط الاستعادة، حاول لاحقاً','e')}finally{b.disabled=false}});
+$('#googleBtn').addEventListener('click',async()=>{if(googleLoading)return;googleLoading=true;const b=$('#googleBtn');b.disabled=true;setMessage('جاري الاتصال بحساب Google...');try{await ready;if(!authFns)throw initError||new Error('Firebase unavailable');const provider=new authFns.GoogleAuthProvider();provider.setCustomParameters({prompt:'select_account'});const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);if(isIOS){await authFns.signInWithRedirect(auth,provider)}else{const result=await authFns.signInWithPopup(auth,provider);await ensureUserDoc(result.user)}}catch(e){console.error(e);setMessage(translateError(e.code)||'تعذر تسجيل الدخول عبر Google، حاول مجدداً','e')}finally{googleLoading=false;b.disabled=false}});
+$('#appleBtn').addEventListener('click',()=>setMessage('Apple قريباً - استخدم Google','e'));
+})();
+</script></body></html>
