@@ -49,3 +49,57 @@ input::placeholder,textarea::placeholder{color:#81798c}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-thumb{background:rgba(231,189,99,.28);border-radius:20px}
 @media(max-width:520px){.card,.mainCard,.plan,.box{border-radius:20px!important}}
+
+
+/* GABO LIVE — one premium navigation bar for every app page */
+body{padding-bottom:calc(104px + env(safe-area-inset-bottom))!important}
+#gaboUnifiedNav.bottomNav{
+ position:fixed!important;z-index:99999!important;left:50%!important;right:auto!important;
+ bottom:calc(10px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;
+ width:min(560px,calc(100% - 22px))!important;height:76px!important;min-height:76px!important;
+ display:flex!important;align-items:center!important;justify-content:space-around!important;
+ gap:5px!important;padding:8px 9px!important;direction:rtl!important;
+ background:linear-gradient(155deg,rgba(31,25,42,.97),rgba(10,9,16,.98))!important;
+ border:1px solid rgba(231,189,99,.32)!important;border-radius:25px!important;
+ box-shadow:0 16px 42px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.08)!important;
+ backdrop-filter:blur(22px) saturate(145%)!important;-webkit-backdrop-filter:blur(22px) saturate(145%)!important;
+}
+#gaboUnifiedNav.bottomNav a{
+ position:relative!important;flex:1 1 0!important;min-width:0!important;height:58px!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+ gap:3px!important;padding:5px 2px!important;margin:0!important;border:1px solid transparent!important;
+ border-radius:17px!important;background:transparent!important;color:#aaa3b4!important;
+ text-decoration:none!important;font-family:'Tajawal',sans-serif!important;font-size:10px!important;
+ font-weight:700!important;line-height:1.1!important;white-space:nowrap!important;
+ box-shadow:none!important;transform:none!important;transition:transform .22s ease,background .22s ease,color .22s ease,box-shadow .22s ease!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+#gaboUnifiedNav.bottomNav a .gaboNavIcon{
+ width:30px!important;height:29px!important;display:grid!important;place-items:center!important;
+ font-size:22px!important;line-height:1!important;color:inherit!important;
+}
+#gaboUnifiedNav.bottomNav a .gaboNavLabel{display:block!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#gaboUnifiedNav.bottomNav a.is-active{
+ color:#241707!important;
+ background:linear-gradient(145deg,#ffe8aa 0%,#e7bd63 48%,#b77c32 100%)!important;
+ border-color:rgba(255,239,190,.88)!important;
+ transform:translateY(-8px) perspective(700px) rotateX(5deg)!important;
+ box-shadow:0 7px 0 #79501f,0 12px 22px rgba(231,189,99,.28),inset 0 2px 1px rgba(255,255,255,.62)!important;
+}
+#gaboUnifiedNav.bottomNav a.is-active .gaboNavIcon{
+ color:#2b1b08!important;text-shadow:0 1px 0 rgba(255,255,255,.5)!important;
+}
+#gaboUnifiedNav .gaboNavBadge{
+ position:absolute!important;top:1px!important;right:calc(50% - 26px)!important;
+ min-width:17px!important;height:17px!important;padding:0 4px!important;border-radius:20px!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ background:#e84a54!important;color:#fff!important;border:2px solid #171320!important;
+ font-size:9px!important;font-weight:900!important;line-height:1!important;
+}
+#gaboUnifiedNav .gaboNavBadge.hide{display:none!important}
+@media(max-width:360px){
+ #gaboUnifiedNav.bottomNav{width:calc(100% - 14px)!important;padding-inline:5px!important;gap:2px!important}
+ #gaboUnifiedNav.bottomNav a{font-size:9px!important;border-radius:14px!important}
+ #gaboUnifiedNav.bottomNav a .gaboNavIcon{font-size:20px!important}
+}
+@media(prefers-reduced-motion:reduce){#gaboUnifiedNav.bottomNav a{transition:none!important}}
