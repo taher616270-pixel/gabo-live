@@ -286,10 +286,15 @@ window.sendMsg=async ()=>{
     const profile=userData||{};
     const displayName=profile.displayName||profile.name||localStorage.getItem('gabo_name')||'مستخدم';
     const photoURL=profile.photoURL||profile.photo||localStorage.getItem('gabo_photo')||'';
-    await addDoc(collection(db,'communities','global','messages'),{
+    const writePromise=addDoc(collection(db,'communities','global','messages'),{
       text:messageText,uid:currentUser.uid,displayName,name:displayName,
       photoURL,verified:profile.verified===true,createdAt:serverTimestamp()
     });
+    let sendTimeout;
+    await Promise.race([
+      writePromise,
+      new Promise((_,reject)=>{sendTimeout=setTimeout(()=>reject(Object.assign(new Error('انتهت مهلة الاتصال بخادم Firebase بعد 12 ثانية'),{code:'gabo/send-timeout'})),12000);})
+    ]).finally(()=>clearTimeout(sendTimeout));
     input.value='';
     document.getElementById('emojiPanel')?.classList.remove('on');
     input.focus();
@@ -299,6 +304,7 @@ window.sendMsg=async ()=>{
     const reason=code==='permission-denied'?'قواعد Firestore تمنع إرسال الرسائل (permission-denied).':
       code==='unauthenticated'?'يجب تسجيل الدخول لإرسال الرسائل.':
       code==='unavailable'?'تعذر الاتصال بخادم Firebase حالياً.':
+      code==='gabo/send-timeout'?'الاتصال بـ Firebase لم يستجب خلال 12 ثانية. لم يتم تأكيد إرسال الرسالة؛ افحص الاتصال وقواعد Firestore.':
       'فشل إرسال الرسالة ('+code+'): '+(error?.message||'خطأ غير معروف');
     alert(reason);
   }finally{
