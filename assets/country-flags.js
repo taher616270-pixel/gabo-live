@@ -1,5 +1,5 @@
 import { db } from '/firebase-config.js';
-import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { doc, getDoc, getDocs, collection } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const DEFAULT_SOUTH_ARABIA_FLAG = '/assets/south-arabia.png.JPG';
 let cachedSouthArabiaFlag = null;
@@ -9,9 +9,15 @@ const DEFAULT_COUNTRIES = [{code:'south-arabia',name:'الجنوب العربي'
 let cachedCountryRegistry = null;
 export async function getCountryRegistry(){
  if(cachedCountryRegistry) return cachedCountryRegistry;
- try{const snapshot=await getDoc(doc(db,'site_config','main'));const list=snapshot.exists()?snapshot.data()?.countryRegistry:null;if(Array.isArray(list)){cachedCountryRegistry=list.filter(c=>c&&typeof c.code==='string'&&typeof c.name==='string'&&typeof c.flag==='string');return cachedCountryRegistry;}}
- catch(error){console.warn('Using default country list:',error);}
- cachedCountryRegistry=DEFAULT_COUNTRIES;return cachedCountryRegistry;
+ try{
+  const [overrides,meta]=await Promise.all([getDocs(collection(db,'country_registry')),getDoc(doc(db,'country_registry_meta','main'))]);
+  const byCode=new Map(DEFAULT_COUNTRIES.map(c=>[c.code,c]));
+  overrides.forEach(s=>{const d=s.data();if(d&&typeof d.name==='string'&&typeof d.flag==='string')byCode.set(s.id,{code:s.id,name:d.name,flag:d.flag});});
+  const disabled=meta.exists()&&Array.isArray(meta.data()?.disabledCodes)?meta.data().disabledCodes:[];
+  disabled.forEach(code=>byCode.delete(code));
+  cachedCountryRegistry=[...byCode.values()].sort((a,b)=>a.name.localeCompare(b.name,'ar'));
+  return cachedCountryRegistry;
+ }catch(error){console.warn('Using default country list:',error);cachedCountryRegistry=DEFAULT_COUNTRIES;return cachedCountryRegistry;}
 }
 export function clearCountryRegistryCache(){cachedCountryRegistry=null;cachedSouthArabiaFlag=null;}
 
