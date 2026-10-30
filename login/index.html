@@ -158,7 +158,7 @@ async function initialize(){
       if(redirectResult && redirectResult.user){
         setMessage('تم تسجيل الدخول، جاري تحويلك...','ok');
         await saveUserProfile(redirectResult.user);
-        location.href='/';
+        location.href='/app/';
         return;
       }
     }catch(e){ console.log('redirect check', e); }
@@ -168,7 +168,7 @@ async function initialize(){
       if(user && !socialBusy){
         // تحقق هل في صفحة تسجيل؟ اذا ايه حوله للرئيسية
         if(location.pathname.includes('login') || location.pathname==='/login.html'){
-           location.href='/';
+           location.href='/app/';
         }
       }
     });
@@ -188,7 +188,7 @@ $('authForm').addEventListener('submit', async (e)=>{
       if(!email){ $('l_emailErr').textContent='ادخل البريد'; $('l_emailErr').classList.add('show'); throw '';}
       if(!pass){ $('l_passErr').textContent='ادخل كلمة المرور'; $('l_passErr').classList.add('show'); throw '';}
       const cred=await authFns.signInWithEmailAndPassword(auth,email,pass);
-      await saveUserProfile(cred.user); location.href='/';
+      await saveUserProfile(cred.user); location.href='/app/';
     }else{
       const first=$('f_first').value.trim(), last=$('f_last').value.trim(), email=$('f_email').value.trim(), pass=$('f_pass').value, confirm=$('f_confirm').value, country=$('f_country').value;
       if(!first || !last || !email || !pass || !confirm || !country){ setMessage('اكمل جميع الحقول','e'); throw '';}
@@ -196,7 +196,7 @@ $('authForm').addEventListener('submit', async (e)=>{
       const cred=await authFns.createUserWithEmailAndPassword(auth,email,pass);
       await authFns.updateProfile(cred.user,{displayName:first+' '+last});
       await saveUserProfile(cred.user,{firstName:first,lastName:last,country});
-      location.href='/';
+      location.href='/app/';
     }
   }catch(err){ if(err.code) setMessage(errorText(err.code),'e'); mainBtn.disabled=false; }
 });
@@ -216,7 +216,7 @@ $('googleBtn').addEventListener('click', async ()=>{
     }else{
       const result=await authFns.signInWithPopup(auth,provider);
       await saveUserProfile(result.user);
-      location.href='/';
+      location.href='/app/';
     }
   }catch(err){
     console.error(err);
@@ -236,7 +236,7 @@ $('appleBtn').addEventListener('click', async ()=>{
     const provider=new authFns.OAuthProvider('apple.com');
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     if(isIOS){ await authFns.signInWithRedirect(auth,provider); }
-    else{ const result=await authFns.signInWithPopup(auth,provider); await saveUserProfile(result.user); location.href='/'; }
+    else{ const result=await authFns.signInWithPopup(auth,provider); await saveUserProfile(result.user); location.href='/app/'; }
   }catch(err){ setMessage(errorText(err.code)||'فشل تسجيل Apple','e'); socialBusy=false; }
 });
 
