@@ -1,7 +1,7 @@
 const DEFAULT_ITEMS = [
   { icon: '⌂', label: 'الرئيسية', path: '/app/' },
   { icon: '✉', label: 'الرسائل', path: '/dm/' },
-  { icon: '◎', label: 'المجتمع', path: '/app/public/' },
+  { icon: '◎', label: 'المجتمع', path: '/community/' },
   { icon: '♛', label: 'VIP', path: '/vip/' },
   { icon: '◉', label: 'حسابي', path: '/profile/' }
 ];
@@ -32,9 +32,9 @@ function resolveActive(items) {
       if (target.length > longest) { winner = index; longest = target.length; }
     }
   });
-  if (here.startsWith('/community/')) {
-    const communityIndex = items.findIndex(item => normalizePath(item.path) === '/app/public/');
-    if (communityIndex >= 0) winner = communityIndex;
+  if (here.startsWith('/app/public/') || here.startsWith('/profile/view/')) {
+    const profileIndex = items.findIndex(item => normalizePath(item.path) === '/profile/');
+    if (profileIndex >= 0) winner = profileIndex;
   }
   if (winner < 0) winner = items.findIndex(item => normalizePath(item.path) === '/app/');
   return winner < 0 ? 0 : winner;
