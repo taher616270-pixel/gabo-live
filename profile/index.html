@@ -272,7 +272,7 @@ onAuthStateChanged(auth,async u=>{
     finalId=snap.data().gaboId||genId(u.uid);
     const d=snap.data();
     if(d.bio){document.getElementById('bioPublic').textContent=d.bio; document.getElementById('rowBioVal').textContent=d.bio;}
-    if(d.countryName){setCountryDisplay(d.countryName,d.country||'south-arabia',d.countryFlagImg||SOUTH_FLAG);} else{setCountryDisplay('الجنوب العربي','south-arabia',SOUTH_FLAG);}
+    if(d.countryName){const activeCountry=countries.find(c=>c.code===String(d.country||'').toLowerCase());setCountryDisplay(activeCountry?.name||'غير محدد',activeCountry?.code||'',activeCountry?.flagImg||'');} else{setCountryDisplay('الجنوب العربي','south-arabia',SOUTH_FLAG);}
     if(d.gender){savedGender=d.gender; document.getElementById('rowGenderVal').textContent=d.gender;}
     if(d.bday){savedBday=d.bday; document.getElementById('rowBdayVal').textContent=d.bday;}
     updateMeta(savedGender,savedBday);
