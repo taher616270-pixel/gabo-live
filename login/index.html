@@ -157,8 +157,9 @@ async function initialize(){
       const redirectResult = await authFns.getRedirectResult(auth);
       if(redirectResult && redirectResult.user){
         setMessage('تم تسجيل الدخول، جاري تحويلك...','ok');
-        await saveUserProfile(redirectResult.user);
-        location.href='/app/';
+        try{ await saveUserProfile(redirectResult.user); }
+        catch(profileError){ console.error('Profile save failed after redirect sign-in:',profileError); }
+        location.replace('/app/');
         return;
       }
     }catch(e){ console.log('redirect check', e); }
@@ -203,29 +204,41 @@ $('authForm').addEventListener('submit', async (e)=>{
 
 // *** تسجيل Google المصحح - بدون لوب ***
 $('googleBtn').addEventListener('click', async ()=>{
-  if(socialBusy) return; if(!requireConsent()) return;
-  socialBusy=true; setMessage('جاري فتح Google...','');
+  if(socialBusy) return;
+  if(!requireConsent()) return;
+  if(!auth || !authFns || !storeFns){ setMessage('انتظر حتى يكتمل تحميل تسجيل الدخول ثم حاول مرة أخرى','e'); return; }
+
+  socialBusy=true;
+  $('googleBtn').disabled=true;
+  setMessage('جاري الاتصال بحساب Google...','');
+
   try{
     const provider=new authFns.GoogleAuthProvider();
     provider.setCustomParameters({prompt:'select_account'});
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    // الايفون لازم Redirect
-    if(isIOS || isSafari){
-      await authFns.signInWithRedirect(auth,provider);
-    }else{
-      const result=await authFns.signInWithPopup(auth,provider);
-      await saveUserProfile(result.user);
-      location.href='/app/';
-    }
+
+    // استخدم Popup مباشرة حتى لا نعتمد على الرجوع عبر نطاق firebaseapp.com
+    // وهذا يتجنب مشكلة Safari/iPhone مع تخزين جلسة Redirect.
+    const result=await authFns.signInWithPopup(auth,provider);
+
+    setMessage('تم تسجيل الدخول، جاري فتح الصفحة الرئيسية...','ok');
+
+    // لا نمنع دخول المستخدم إذا تعذر حفظ بيانات الملف الشخصي في Firestore.
+    try{ await saveUserProfile(result.user); }
+    catch(profileError){ console.error('Profile save failed after Google sign-in:',profileError); }
+
+    location.replace('/app/');
   }catch(err){
-    console.error(err);
-    // لو فشل Popup جرب Redirect
-    if(err.code==='auth/popup-blocked' || err.code==='auth/popup-closed-by-user'){
-      try{ const provider=new authFns.GoogleAuthProvider(); await authFns.signInWithRedirect(auth,provider); return; }catch{}
+    console.error('Google sign-in failed:',err);
+    const code=err?.code||'';
+    if(code==='auth/popup-blocked' || code==='auth/cancelled-popup-request'){
+      setMessage('المتصفح منع نافذة Google. اسمح بالنوافذ المنبثقة لهذا الموقع ثم حاول مرة أخرى.','e');
+    }else if(code==='auth/popup-closed-by-user'){
+      setMessage('تم إغلاق نافذة Google قبل إكمال تسجيل الدخول.','e');
+    }else{
+      setMessage(errorText(code)||'تعذر تسجيل الدخول باستخدام Google. حاول مرة أخرى.','e');
     }
-    setMessage(errorText(err.code)||'فشل تسجيل Google','e');
     socialBusy=false;
+    $('googleBtn').disabled=false;
   }
 });
 
