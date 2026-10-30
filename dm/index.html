@@ -57,6 +57,11 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 .modalTop{height:60px;background:#0f0e18;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px;padding:0 12px}
 .modalList{flex:1;overflow:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
 </style>
+<!-- Vercel Speed Insights -->
+<script type="module">
+  import { injectSpeedInsights } from 'https://cdn.jsdelivr.net/npm/@vercel/speed-insights@1/dist/index.mjs';
+  injectSpeedInsights();
+</script>
 </head>
 <body>
 <div class="header"><div class="back" onclick="handleBack()">‹</div><div class="headerAvatar" id="hAvatarWrap" style="display:none"><img id="hImg"></div><div class="headerIcon" id="hIcon">💬</div><div class="hInfo"><b><span id="hName">دردشة خاصة</span> <span id="countBadge" class="badge" style="display:none">0</span></b><small id="hStatus">محادثاتي • أصدقائي</small></div></div>
