@@ -137,6 +137,175 @@ const commNameEl=document.getElementById('commName');
 const memberCountEl=document.getElementById('memberCount');
 const messagesEl=document.getElementById('messages');
 const msgInput=document.getElementById('msgInput');
+function setHeaderInstant(){
+  if(isGeneralPublicChat){document.body.classList.add('generalPublicChat');commFlagEl.innerHTML=GLOBAL_GLOBE;commNameEl.textContent='الشات العام';document.querySelector('.headerInfo small').textContent='دردشة عامة • عالم GABO LIVE';return;}
+  const data=COMM_DATA[communityId] || {name:'مجتمع '+communityId, flag:`<img src="https://flagcdn.com/w80/${communityId}.png">`, mini:`<img src="https://flagcdn.com/w80/${communityId}.png">`};
+  commFlagEl.innerHTML=data.flag;
+  commMiniFlagEl.innerHTML=data.mini;
+  commNameEl.textContent=data.name;
+}
+setHeaderInstant();
+onAuthStateChanged(auth, async (u)=>{
+  if(!u){ location.replace('/login/'); return; }
+  if(u){
+    uid=u.uid; localStorage.setItem('gabo_uid',uid);
+    const snap=await getDoc(doc(db,'users',uid)).catch(()=>null);
+    userData=snap?.exists()?snap.data():{displayName:localStorage.getItem('gabo_name')||'مستخدم', photoURL:localStorage.getItem('gabo_photo')||'', verified:false};
+    const commRef=doc(db,'communities',communityId);
+    const commSnap=await getDoc(commRef).catch(()=>null);
+    if(isGeneralPublicChat){
+      // الشات العام مفتوح لكل مستخدم مسجل؛ لا نوقف الإرسال على عضوية منفصلة.
+      hasJoinedGeneralChat=true;
+      updateGeneralChatGate();
+    }else if(!commSnap?.exists()){
+      const info=COMM_DATA[communityId] || {name:communityId};
+      await setDoc(commRef,{name:info.name||communityId,flag:communityId,members:[uid],membersCount:1,joinsToday:1,activityScore:2,activityDay:new Date().toISOString().slice(0,10),createdAt:serverTimestamp()},{merge:true});
+    }else{
+      const members=Array.isArray(commSnap.data().members)?commSnap.data().members:[];
+      if(!members.includes(uid)){
+        try{const today=new Date().toISOString().slice(0,10);const sameDay=commSnap.data().activityDay===today;await setDoc(commRef,{membersCount:increment(1),members:arrayUnion(uid),joinsToday:sameDay?increment(1):1,activityScore:sameDay?increment(2):2,activityDay:today},{merge:true});}catch{}
+      }
+    }
+  }
+});
+function updateGeneralChatGate(){if(!isGeneralPublicChat)return;const fab=document.getElementById('globalStatsFab');if(fab)fab.style.display='flex';const gate=document.getElementById('joinGate');const bar=document.querySelector('.inputBar');if(gate)gate.style.display='none';if(bar){bar.style.display=uid?'flex':'none';bar.setAttribute('aria-hidden',uid?'false':'true');}if(msgInput){msgInput.disabled=!uid;msgInput.placeholder=uid?'اكتب رسالتك في الشات العام...':'سجل الدخول للكتابة';}const send=document.querySelector('.sendBtn');if(send)send.disabled=!uid||sendingMessage;const emoji=document.querySelector('.inputBar .iconBtn');if(emoji)emoji.disabled=!uid;}
+updateGeneralChatGate();
+
+function openGlobalStats(){document.getElementById('globalStatsShade').style.display='block';document.getElementById('globalStatsPanel').classList.add('open');document.getElementById('globalStatsPanel').setAttribute('aria-hidden','false');}
+function closeGlobalStats(){document.getElementById('globalStatsShade').style.display='none';document.getElementById('globalStatsPanel').classList.remove('open');document.getElementById('globalStatsPanel').setAttribute('aria-hidden','true');}
+document.getElementById('globalStatsFab')?.addEventListener('click',openGlobalStats);
+document.getElementById('closeGlobalStats')?.addEventListener('click',closeGlobalStats);
+document.getElementById('globalStatsShade')?.addEventListener('click',closeGlobalStats);
+document.getElementById('showGlobalMembers')?.addEventListener('click',()=>{const box=document.getElementById('globalMembersList');box.style.display=box.style.display==='none'?'block':'none';if(box.style.display==='block')renderGlobalMembers(globalMembers);});
+async function renderGlobalMembers(ids){
+ const box=document.getElementById('globalMembersList');if(!box)return;
+ document.getElementById('globalTotalMembers').textContent=String(ids.length);
+ box.innerHTML='<div class="globalMembersEmpty">جاري تحميل قائمة الأعضاء...</div>';
+ if(!ids.length){box.innerHTML='<div class="globalMembersEmpty">لا يوجد أعضاء منضمون حالياً</div>';return;}
+ const rows=await Promise.all(ids.map(async id=>{try{const snap=await getDoc(doc(db,'users',id));const d=snap.exists()?snap.data():{};return {uid:id,name:d.displayName||d.name||'عضو GABO',photo:d.photoURL||d.photo||d.avatar||'',gaboId:d.gaboId||genId(id)};}catch{return {uid:id,name:'عضو GABO',photo:'',gaboId:genId(id)};}}));
+ box.replaceChildren();
+ rows.forEach(m=>{const row=document.createElement('button');row.type='button';row.className='globalMemberRow';
+ if(m.photo){const img=document.createElement('img');img.src=m.photo;img.alt='';img.loading='lazy';row.appendChild(img);}else{const av=document.createElement('span');av.className='globalMemberAvatar';av.textContent=(m.name||'؟').charAt(0);row.appendChild(av);}
+ const info=document.createElement('span');const name=document.createElement('b');name.textContent=m.name;const id=document.createElement('small');id.textContent='ID: '+m.gaboId;info.append(name,id);row.appendChild(info);
+ row.addEventListener('click',()=>{closeGlobalStats();window.openUserProfile(m.uid,m.photo,m.name);});box.appendChild(row);});
+}
+document.getElementById('leaveGlobalChat')?.addEventListener('click',async()=>{if(!uid||!hasJoinedGeneralChat)return;if(!confirm('هل تريد الخروج من الشات العام؟'))return;const btn=document.getElementById('leaveGlobalChat');btn.disabled=true;try{const ref=doc(db,'communities','global');const snap=await getDoc(ref);const members=snap.exists()&&Array.isArray(snap.data().members)?snap.data().members:[];if(members.includes(uid)){await setDoc(ref,{members:arrayRemove(uid),membersCount:Math.max(0,members.length-1)},{merge:true});}hasJoinedGeneralChat=false;updateGeneralChatGate();closeGlobalStats();document.getElementById('globalMembersList').style.display='none';}catch(e){alert('تعذر الخروج حالياً، حاول مرة ثانية.');}finally{btn.disabled=false;}});
+
+document.getElementById('joinPublicChat')?.addEventListener('click',async()=>{const btn=document.getElementById('joinPublicChat');if(!uid||hasJoinedGeneralChat)return;btn.disabled=true;btn.textContent='جارٍ الانضمام...';try{const ref=doc(db,'communities','global');const snap=await getDoc(ref);const members=snap.exists()&&Array.isArray(snap.data().members)?snap.data().members:[];if(!members.includes(uid)){const today=new Date().toISOString().slice(0,10);const sameDay=snap.exists()&&snap.data().activityDay===today;await setDoc(ref,{name:'الشات العام',type:'public-chat',members:arrayUnion(uid),membersCount:increment(1),joinsToday:sameDay?increment(1):1,activityScore:sameDay?increment(2):2,activityDay:today},{merge:true});}hasJoinedGeneralChat=true;updateGeneralChatGate();msgInput?.focus();}catch(e){btn.disabled=false;btn.innerHTML='حاول مرة ثانية ←';alert('تعذر الانضمام حالياً، تحقق من اتصالك أو صلاحيات قاعدة البيانات.');}});
+messagesEl.textContent='جاري تحميل الرسائل...';
+onSnapshot(query(collection(db,'communities',communityId,'messages'),orderBy('createdAt','asc'),limitToLast(100)), (snap)=>{
+  const msgs=[]; snap.forEach(d=>msgs.push({id:d.id,...d.data()}));
+  msgs.sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
+  messagesEl.replaceChildren();
+  if(!msgs.length){const empty=document.createElement('div');empty.className='globalMembersEmpty';empty.textContent='لا توجد رسائل بعد، كن أول من يبدأ الحديث';messagesEl.appendChild(empty);messageListenerReady=true;return;}
+  msgs.forEach(m=>{
+    const isMe=m.uid===uid;
+    const row=document.createElement('div'); row.className='msgRow '+(isMe?'me':'other');
+    let photo=m.photoURL||m.photo||m.avatar||localStorage.getItem('gabo_photo_'+m.uid)||''; if(!photo) photo='https://i.pravatar.cc/100?u='+m.uid;
+    let name=m.displayName||m.name||'مستخدم';
+    const verified=m.verified?`<span class="check">✓</span>`:'';
+    const time=m.createdAt?new Date(m.createdAt.seconds*1000).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}):'';
+    const avatar=document.createElement('button');avatar.type='button';avatar.className='avatar';avatar.setAttribute('aria-label','عرض ملف '+name);
+    if(photo){const img=document.createElement('img');img.src=photo;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';avatar.appendChild(img);}else{avatar.textContent=String(name).trim().charAt(0)||'؟';}
+    avatar.addEventListener('click',()=>window.openUserProfile(m.uid,photo,name));
+    const content=document.createElement('div');content.className='msgContent';
+    const line=document.createElement('div');line.className='nameLine';
+    const nameEl=document.createElement('span');nameEl.textContent=name;line.appendChild(nameEl);
+    if(m.verified){const badge=document.createElement('span');badge.className='check';badge.textContent='✓';badge.title='حساب موثق';line.appendChild(badge);}
+    const timeEl=document.createElement('span');timeEl.className='time';const stamp=m.createdAt?.toDate?m.createdAt.toDate():m.createdAt?.seconds?new Date(m.createdAt.seconds*1000):null;timeEl.textContent=stamp?stamp.toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'}):'الآن';line.appendChild(timeEl);
+    const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=String(m.text||'');
+    content.append(line,bubble);row.append(avatar,content);messagesEl.appendChild(row);
+  });
+  messagesEl.scrollTop=messagesEl.scrollHeight;
+  messageListenerReady=true;
+},(error)=>{
+  console.error('Global chat receive listener failed:',error);
+  messagesEl.replaceChildren();
+  const notice=document.createElement('div');notice.className='globalMembersEmpty';
+  notice.textContent=error.code==='permission-denied'?'لا تملك صلاحية قراءة رسائل الشات العام. راجع قواعد Firestore.':'تعذر استقبال الرسائل. تحقق من الاتصال ثم أعد تحميل الصفحة.';
+  messagesEl.appendChild(notice);
+});
+onSnapshot(doc(db,'communities',communityId), (snap)=>{
+  if(isGeneralPublicChat&&snap.exists()&&uid){const members=Array.isArray(snap.data().members)?snap.data().members:[];globalMembers=members;document.getElementById('globalTotalMembers').textContent=String(members.length);const joined=members.includes(uid);if(joined!==hasJoinedGeneralChat){hasJoinedGeneralChat=joined;updateGeneralChatGate();}if(document.getElementById('globalMembersList').style.display!=='none')renderGlobalMembers(members);}
+  if(snap.exists()){
+    const data=snap.data();
+    if(data.name) commNameEl.textContent=isGeneralPublicChat?'الشات العام':data.name;
+    const count=data.membersCount|| (data.members?data.members.length:0) || 0;
+    memberCountEl.textContent=isGeneralPublicChat?count+' عضو • شات مفتوح':' '+count+' عضو';
+  }
+});
+window.openUserProfile=async (targetUid, fallbackPhoto, fallbackName)=>{
+  lastOpenedUid=targetUid;
+  const modal=document.getElementById('profileModal');
+  modal.classList.add('on');
+  document.getElementById('pName').textContent=fallbackName||'تحميل...';
+  document.getElementById('pAvatarLetter').textContent=(fallbackName||'T')[0];
+  document.getElementById('pId').textContent='ID: '+genId(targetUid);
+  if(fallbackPhoto){ document.getElementById('pAvatarImg').src=fallbackPhoto; document.getElementById('pAvatarImg').style.display='block'; document.getElementById('pAvatarLetter').style.display='none'; }
+  document.getElementById('pBio').textContent='جاري التحميل...';
+  try{
+    const snap=await getDoc(doc(db,'users',targetUid));
+    if(snap.exists()){
+      const d=snap.data();
+      const photo=d.photoURL||d.photo||d.avatar||fallbackPhoto||'';
+      const name=d.displayName||d.name||fallbackName||'مستخدم';
+      const bio=d.bio||'مرحبا بكم في ملفي الشخصي 👋';
+      const countryInfo=(await getCountryRegistry()).find(c=>c.code===String(d.country||'').toLowerCase());
+      const countryName=countryInfo?.name||(d.country?'غير محدد':(d.countryName||'غير محدد'));
+      const flagImg=countryInfo?.code==='south-arabia'?await getSouthArabiaFlag():(countryInfo?.flag||(d.country?'':(d.countryFlagImg||'')));
+      const cover=d.cover||'';
+      const gender=d.gender||'';
+      const gaboId=d.gaboId||genId(targetUid);
+      document.getElementById('pName').textContent=name;
+      document.getElementById('pAvatarLetter').textContent=name[0];
+      if(photo){ const img=document.getElementById('pAvatarImg'); img.src=photo; img.style.display='block'; document.getElementById('pAvatarLetter').style.display='none'; }
+      if(cover){ const cImg=document.getElementById('pCoverImg'); cImg.src=cover; cImg.style.display='block'; }
+      document.getElementById('pCountryName').textContent=countryName;
+      document.getElementById('pFlag').innerHTML=flagImg?`<img src="${flagImg}" style="width:26px;height:18px;border-radius:3px">`:'';
+      document.getElementById('pGender').textContent=gender;
+      document.getElementById('pId').textContent='ID: '+gaboId;
+      document.getElementById('pBio').textContent=bio;
+    }
+  }catch{}
+}
+window.closeProfile=()=>{ document.getElementById('profileModal').classList.remove('on'); }
+document.getElementById('pChatBtn').onclick=()=>{ if(!lastOpenedUid) return; location.href=`/dm/?uid=${lastOpenedUid}`; }
+document.getElementById('pViewBtn').onclick=()=>{ if(!lastOpenedUid) return; location.href=`/profile/view/?uid=${lastOpenedUid}`; }
+window.sendMsg=async ()=>{
+  const input=document.getElementById('msgInput');
+  const button=document.getElementById('sendGlobalMessage');
+  const currentUser=auth.currentUser;
+  const messageText=(input?.value||'').trim();
+  if(!currentUser){alert('انتهت جلسة الدخول. سجل الدخول ثم حاول مرة أخرى.');return;}
+  if(!messageText){input?.focus();return;}
+  if(messageText.length>1000){alert('الرسالة طويلة جداً، الحد الأقصى 1000 حرف.');return;}
+  if(sendingMessage)return;
+  sendingMessage=true;
+  if(button)button.disabled=true;
+  try{
+    const profile=userData||{};
+    const displayName=profile.displayName||profile.name||localStorage.getItem('gabo_name')||'مستخدم';
+    const photoURL=profile.photoURL||profile.photo||localStorage.getItem('gabo_photo')||'';
+    await addDoc(collection(db,'communities','global','messages'),{
+      text:messageText,uid:currentUser.uid,displayName,name:displayName,
+      photoURL,verified:profile.verified===true,createdAt:serverTimestamp()
+    });
+    input.value='';
+    document.getElementById('emojiPanel')?.classList.remove('on');
+    input.focus();
+  }catch(error){
+    console.error('Global chat send failed:',error);
+    const code=error?.code||'unknown';
+    const reason=code==='permission-denied'?'قواعد Firestore تمنع إرسال الرسائل (permission-denied).':
+      code==='unauthenticated'?'يجب تسجيل الدخول لإرسال الرسائل.':
+      code==='unavailable'?'تعذر الاتصال بخادم Firebase حالياً.':
+      'فشل إرسال الرسالة ('+code+'): '+(error?.message||'خطأ غير معروف');
+    alert(reason);
+  }finally{
+    sendingMessage=false;
+    if(button)button.disabled=false;
+  }
+};
 window.toggleEmoji=()=>{ const p=document.getElementById('emojiPanel'); p.classList.toggle('on'); if(p.classList.contains('on')) showEmojiCat(null,'smile'); }
 window.showEmojiCat=(e,cat)=>{
   if(e) e.target.closest('.emojiTabs').querySelectorAll('button').forEach(b=>b.classList.remove('on'));
