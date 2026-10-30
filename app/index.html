@@ -172,12 +172,14 @@ onSnapshot(collection(db,'communities'),snap=>{
 
   grid.innerHTML='';
   activityGrid.innerHTML='';
-  const ranked=[...rankedDocs].sort((a,b)=>(Number(b.data.activityScore)||Number(b.data.messagesToday)||0)-(Number(a.data.activityScore)||Number(a.data.messagesToday)||0)).slice(0,5);
+  const todayKey=new Date().toISOString().slice(0,10);
+  const scoreOf=data=>data.activityDay===todayKey?(Number(data.activityScore)||Number(data.messagesToday)||0):0;
+  const ranked=[...rankedDocs].sort((a,b)=>scoreOf(b.data)-scoreOf(a.data)).slice(0,5);
   if(!ranked.length){activityGrid.innerHTML='<div class="activityEmpty">لا توجد بيانات تفاعل كافية حتى الآن</div>';}
   else ranked.forEach(({id,data},index)=>{
     const flagHtml=id==='south'?SOUTH_SVG:(data.img?'<img src="'+data.img+'" alt="">':(FLAG_HTML[id]||'<img src="https://flagcdn.com/w80/'+String(data.flag||'sa')+'.png" alt="">'));
     const item=document.createElement('div');item.className='activityCard';item.onclick=()=>window.goComm(id);
-    const score=Number(data.activityScore)||Number(data.messagesToday)||0;const messages=Number(data.messagesToday)||0;
+    const score=scoreOf(data);const messages=data.activityDay===todayKey?(Number(data.messagesToday)||0):0;
     item.innerHTML='<span class="activityRank">'+(index+1)+'</span><span class="activityFlag">'+flagHtml+'</span><span class="activityInfo"><b></b><small>'+Number(data.membersCount||data.members?.length||0)+' عضو • '+messages+' رسالة اليوم</small></span><span class="activityStats">'+score+' نقطة<br><small>تفاعل</small></span>';
     item.querySelector('.activityInfo b').textContent=data.name||NAMES[id]||'مجتمع';activityGrid.appendChild(item);
   });
