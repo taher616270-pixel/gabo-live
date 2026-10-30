@@ -90,29 +90,42 @@ export async function logout() { await signOut(auth); go('login', true); }
 const DEFAULT_NAV = [
   { icon: '⌂', label: 'الرئيسية', path: '/app/' },
   { icon: '✉', label: 'الرسائل', path: '/dm/' },
-  { icon: '🌍', label: 'المجتمع', path: '/app/public/' },
+  { icon: '◎', label: 'المجتمع', path: '/community/' },
   { icon: '♛', label: 'VIP', path: '/vip/' },
   { icon: '◉', label: 'حسابي', path: '/profile/' }
 ];
 const fixPath = p => (p === '/' ? '/app/' : p);
 
 function drawNav(items) {
-  let nav = $('#bottomNav');
-  if (!nav) { nav = Object.assign(document.createElement('nav'), { id: 'bottomNav', className: 'bottom-nav' }); document.body.append(nav); }
-  const here = location.pathname.replace(/index\.html$/, '').replace(/([^/])$/, '$1/');
-  let best = -1, len = 0;
-  items.forEach((n, i) => { const p = fixPath(n.path); if (here.startsWith(p) && p.length > len) { best = i; len = p.length; } });
-  nav.innerHTML = items.map((n, i) =>
-    `<a href="${esc(fixPath(n.path))}" class="${i === best ? 'active' : ''}"><b>${esc(n.icon)}</b><span>${esc(n.label)}</span></a>`).join('');
+  document.querySelectorAll('.bottomNav,.bottom-nav').forEach(node => node.remove());
+  const nav = Object.assign(document.createElement('nav'), { id: 'gaboUnifiedNav', className: 'bottomNav' });
+  nav.setAttribute('aria-label', 'التنقل الرئيسي');
+  const here = location.pathname.replace(/index\\.html$/, '') || '/app/';
+  let best = -1, len = -1;
+  items.forEach((item, index) => {
+    const path = fixPath(item.path);
+    if ((here === path || (path !== '/app/' && here.startsWith(path))) && path.length > len) {
+      best = index; len = path.length;
+    }
+  });
+  if (here.startsWith('/app/public/') || here.startsWith('/profile/view/')) {
+    best = items.findIndex(item => fixPath(item.path) === '/profile/');
+  }
+  if (here.startsWith('/community/')) best = items.findIndex(item => fixPath(item.path) === '/community/');
+  if (best < 0) best = items.findIndex(item => fixPath(item.path) === '/app/');
+  nav.innerHTML = items.map((item, index) => {
+    const path = fixPath(item.path);
+    const active = index === best;
+    const badge = path === '/dm/' ? '<span id="navCount" class="gaboNavBadge navBadge badgeNav" style="display:none">0</span>' : '';
+    return `<a href="${esc(path)}" class="${active ? 'is-active' : ''}" ${active ? 'aria-current="page"' : ''}>
+      <span class="gaboNavIcon" aria-hidden="true">${esc(item.icon)}</span>
+      <span class="gaboNavLabel">${esc(item.label)}</span>${badge}
+    </a>`;
+  }).join('');
+  document.body.append(nav);
 }
 async function mountNav() {
   drawNav(DEFAULT_NAV);
-  try {
-    await currentUser();
-    const s = await getDoc(doc(db, 'site_config', 'main'));
-    const nav = s.exists() && s.data().bottomNav;
-    if (Array.isArray(nav) && nav.length) drawNav(nav.filter(n => n.visible !== false).sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
-  } catch (e) { /* نبقى على الافتراضي */ }
 }
 
 /* ---------- تشغيل الصفحة: boot({auth:true}) او boot({admin:true}) او boot() للصفحات المفتوحة ---------- */
