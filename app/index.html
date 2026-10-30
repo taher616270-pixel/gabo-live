@@ -117,7 +117,7 @@ getCountryRegistry().then(items=>{items.forEach(country=>{if(country.code==='sou
 
 onAuthStateChanged(auth,u=>{ if(!u){ location.replace('/login/'); return; } uid=u.uid; localStorage.setItem('gabo_uid',u.uid); onSnapshot(doc(db,'users',u.uid),snap=>{const p=snap.exists()?snap.data():{};const a=document.getElementById('homeAvatar');if(!a)return;const photo=p.photoURL||p.photoUrl||p.avatar;if(photo){const im=document.createElement('img');im.src=photo;im.alt='الصورة الشخصية';a.replaceChildren(im);}else a.textContent=String(p.name||p.displayName||u.displayName||u.email||'م').trim().charAt(0);}); });
 
-window.goComm=(id)=>{ location.href=`/community/index.html?id=${encodeURIComponent(id)}`; };
+window.goComm=(id)=>{ location.href=id==='global'?'/global-chat/':`/community/index.html?id=${encodeURIComponent(id)}`; };
 window.openCreate=()=>document.getElementById('createModal').classList.add('on');
 window.closeCreate=()=>document.getElementById('createModal').classList.remove('on');
 window.selectFlag=(el,flag)=>{ document.querySelectorAll('.flagOpt').forEach(e=>e.classList.remove('on')); el.classList.add('on'); selectedFlag=flag; }
