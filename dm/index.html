@@ -72,6 +72,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 <div class="modal" id="addModal"><div class="modalTop"><div class="back" onclick="closeAddPeople()">‹</div><b>إضافة أشخاص</b></div><div style="padding:10px"><input id="addSearch" placeholder="🔍 ابحث..." oninput="filterAdd()" style="width:100%;background:#1a182a;border:1px solid #2a2840;border-radius:20px;padding:10px 14px;color:#fff;outline:0"></div><div class="modalList" id="addList"></div></div>
 <script type="module">
 import {auth,db} from '/firebase-config.js';
+import {getSouthArabiaFlag} from '/assets/country-flags.js';
 import {onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {doc,getDoc,setDoc,collection,addDoc,serverTimestamp,onSnapshot,query,orderBy,where,getDocs,limit,arrayUnion,increment,runTransaction} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 const SOUTH_FLAG=await getSouthArabiaFlag();
