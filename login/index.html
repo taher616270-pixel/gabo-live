@@ -157,8 +157,9 @@ async function initialize(){
       const redirectResult = await authFns.getRedirectResult(auth);
       if(redirectResult && redirectResult.user){
         setMessage('تم تسجيل الدخول، جاري تحويلك...','ok');
-        await saveUserProfile(redirectResult.user);
-        location.href='/';
+        try{ await saveUserProfile(redirectResult.user); }
+        catch(profileError){ console.error('Profile save failed after redirect sign-in:',profileError); }
+        location.replace('/app/');
         return;
       }
     }catch(e){ console.log('redirect check', e); }
@@ -168,7 +169,7 @@ async function initialize(){
       if(user && !socialBusy){
         // تحقق هل في صفحة تسجيل؟ اذا ايه حوله للرئيسية
         if(location.pathname.includes('login') || location.pathname==='/login.html'){
-           location.href='/';
+           location.href='/app/';
         }
       }
     });
@@ -188,7 +189,7 @@ $('authForm').addEventListener('submit', async (e)=>{
       if(!email){ $('l_emailErr').textContent='ادخل البريد'; $('l_emailErr').classList.add('show'); throw '';}
       if(!pass){ $('l_passErr').textContent='ادخل كلمة المرور'; $('l_passErr').classList.add('show'); throw '';}
       const cred=await authFns.signInWithEmailAndPassword(auth,email,pass);
-      await saveUserProfile(cred.user); location.href='/';
+      await saveUserProfile(cred.user); location.href='/app/';
     }else{
       const first=$('f_first').value.trim(), last=$('f_last').value.trim(), email=$('f_email').value.trim(), pass=$('f_pass').value, confirm=$('f_confirm').value, country=$('f_country').value;
       if(!first || !last || !email || !pass || !confirm || !country){ setMessage('اكمل جميع الحقول','e'); throw '';}
@@ -196,36 +197,48 @@ $('authForm').addEventListener('submit', async (e)=>{
       const cred=await authFns.createUserWithEmailAndPassword(auth,email,pass);
       await authFns.updateProfile(cred.user,{displayName:first+' '+last});
       await saveUserProfile(cred.user,{firstName:first,lastName:last,country});
-      location.href='/';
+      location.href='/app/';
     }
   }catch(err){ if(err.code) setMessage(errorText(err.code),'e'); mainBtn.disabled=false; }
 });
 
 // *** تسجيل Google المصحح - بدون لوب ***
 $('googleBtn').addEventListener('click', async ()=>{
-  if(socialBusy) return; if(!requireConsent()) return;
-  socialBusy=true; setMessage('جاري فتح Google...','');
+  if(socialBusy) return;
+  if(!requireConsent()) return;
+  if(!auth || !authFns || !storeFns){ setMessage('انتظر حتى يكتمل تحميل تسجيل الدخول ثم حاول مرة أخرى','e'); return; }
+
+  socialBusy=true;
+  $('googleBtn').disabled=true;
+  setMessage('جاري الاتصال بحساب Google...','');
+
   try{
     const provider=new authFns.GoogleAuthProvider();
     provider.setCustomParameters({prompt:'select_account'});
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    // الايفون لازم Redirect
-    if(isIOS || isSafari){
-      await authFns.signInWithRedirect(auth,provider);
-    }else{
-      const result=await authFns.signInWithPopup(auth,provider);
-      await saveUserProfile(result.user);
-      location.href='/';
-    }
+
+    // استخدم Popup مباشرة حتى لا نعتمد على الرجوع عبر نطاق firebaseapp.com
+    // وهذا يتجنب مشكلة Safari/iPhone مع تخزين جلسة Redirect.
+    const result=await authFns.signInWithPopup(auth,provider);
+
+    setMessage('تم تسجيل الدخول، جاري فتح الصفحة الرئيسية...','ok');
+
+    // لا نمنع دخول المستخدم إذا تعذر حفظ بيانات الملف الشخصي في Firestore.
+    try{ await saveUserProfile(result.user); }
+    catch(profileError){ console.error('Profile save failed after Google sign-in:',profileError); }
+
+    location.replace('/app/');
   }catch(err){
-    console.error(err);
-    // لو فشل Popup جرب Redirect
-    if(err.code==='auth/popup-blocked' || err.code==='auth/popup-closed-by-user'){
-      try{ const provider=new authFns.GoogleAuthProvider(); await authFns.signInWithRedirect(auth,provider); return; }catch{}
+    console.error('Google sign-in failed:',err);
+    const code=err?.code||'';
+    if(code==='auth/popup-blocked' || code==='auth/cancelled-popup-request'){
+      setMessage('المتصفح منع نافذة Google. اسمح بالنوافذ المنبثقة لهذا الموقع ثم حاول مرة أخرى.','e');
+    }else if(code==='auth/popup-closed-by-user'){
+      setMessage('تم إغلاق نافذة Google قبل إكمال تسجيل الدخول.','e');
+    }else{
+      setMessage(errorText(code)||'تعذر تسجيل الدخول باستخدام Google. حاول مرة أخرى.','e');
     }
-    setMessage(errorText(err.code)||'فشل تسجيل Google','e');
     socialBusy=false;
+    $('googleBtn').disabled=false;
   }
 });
 
@@ -236,7 +249,7 @@ $('appleBtn').addEventListener('click', async ()=>{
     const provider=new authFns.OAuthProvider('apple.com');
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     if(isIOS){ await authFns.signInWithRedirect(auth,provider); }
-    else{ const result=await authFns.signInWithPopup(auth,provider); await saveUserProfile(result.user); location.href='/'; }
+    else{ const result=await authFns.signInWithPopup(auth,provider); await saveUserProfile(result.user); location.href='/app/'; }
   }catch(err){ setMessage(errorText(err.code)||'فشل تسجيل Apple','e'); socialBusy=false; }
 });
 
