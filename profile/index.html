@@ -136,12 +136,13 @@ body{padding-bottom:110px}
 </div>
 <script type="module">
 import {auth,db} from '/firebase-config.js';
+import {getSouthArabiaFlag} from '/assets/country-flags.js';
 import {onAuthStateChanged,updateProfile,signOut,deleteUser} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {doc,getDoc,setDoc,onSnapshot,deleteDoc} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 let cur=null;
 let pending={name:null,bio:null,bday:null,gender:null,country:null,countryName:null,countryFlagImg:null,avatar:null,cover:null,coverDeleted:false};
 let tempGender=null; let selDay=3, selMonth=1, selYear=2000;
-const SOUTH_FLAG='/assets/south-arabia.png.JPG';
+let SOUTH_FLAG='/assets/south-arabia.png.JPG';
 const countries=[
   {code:'south-arabia',name:'الجنوب العربي',flagImg:SOUTH_FLAG},
   {code:'SA',name:'السعودية',flagImg:'https://flagcdn.com/w40/sa.png'},
@@ -210,7 +211,7 @@ function compressImage(file, maxSize, cb){
 }
 function calcAge(bdayStr){try{const [y,m,d]=bdayStr.split('-').map(Number);const today=new Date();let age=today.getFullYear()-y;if(today.getMonth()+1<m || (today.getMonth()+1===m && today.getDate()<d)) age--;return age;}catch{return null}}
 function setCountryDisplay(name,code,flagImg){
-  const imgUrl = flagImg || SOUTH_FLAG;
+  const imgUrl = code==='south-arabia' ? SOUTH_FLAG : (flagImg || SOUTH_FLAG);
   document.getElementById('countryNameMain').textContent=name;
   document.getElementById('countryFlagMain').innerHTML=`<img src="${imgUrl}" style="width:26px;height:18px;border-radius:3px">`;
   document.getElementById('flagMain').innerHTML=`<img src="${imgUrl}" style="width:32px;height:22px;border-radius:4px">`;
@@ -261,7 +262,7 @@ function showCoverInMain(coverData){
 }
 onAuthStateChanged(auth,async u=>{
   if(!u){location.replace('/login/');return}
-  cur=u; const ref=doc(db,'users',u.uid); const snap=await getDoc(ref);
+  cur=u; SOUTH_FLAG=await getSouthArabiaFlag(); countries[0].flagImg=SOUTH_FLAG; const ref=doc(db,'users',u.uid); const snap=await getDoc(ref);
   let finalId; let savedGender='أنثى ♀️'; let savedBday='2000-01-03';
   if(!snap.exists()){
     finalId=genId(u.uid); 
