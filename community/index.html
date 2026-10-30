@@ -88,7 +88,9 @@ kw:{name:'مجتمع الكويت', flag:`<img src="https://flagcdn.com/w80/kw.p
 bh:{name:'مجتمع البحرين', flag:`<img src="https://flagcdn.com/w80/bh.png">`, mini:`<img src="https://flagcdn.com/w80/bh.png">`}
 };
 const params=new URLSearchParams(location.search);
-let communityId=params.get('id')||'south';\nconst isGeneralPublicChat=communityId==='global';\nlet hasJoinedGeneralChat=false;
+let communityId=params.get('id')||'south';
+const isGeneralPublicChat=communityId==='global';
+let hasJoinedGeneralChat=false;
 let uid=localStorage.getItem('gabo_uid')||null;
 let userData=null;
 let lastOpenedUid=null;
@@ -132,7 +134,7 @@ onAuthStateChanged(auth, async (u)=>{
   }
 });
 function updateGeneralChatGate(){if(!isGeneralPublicChat)return;const gate=document.getElementById('joinGate');const bar=document.querySelector('.inputBar');if(gate)gate.style.display=hasJoinedGeneralChat?'none':'flex';if(bar)bar.style.display=hasJoinedGeneralChat?'flex':'none';if(hasJoinedGeneralChat)document.getElementById('memberCount').textContent=document.getElementById('memberCount').textContent.replace(' • انضم','');}
-updateGeneralChatGate();\nupdateGeneralChatGate();
+updateGeneralChatGate();
 document.getElementById('joinPublicChat')?.addEventListener('click',async()=>{const btn=document.getElementById('joinPublicChat');if(!uid||hasJoinedGeneralChat)return;btn.disabled=true;btn.textContent='جارٍ الانضمام...';try{const ref=doc(db,'communities','global');const snap=await getDoc(ref);const members=snap.exists()&&Array.isArray(snap.data().members)?snap.data().members:[];if(!members.includes(uid)){const today=new Date().toISOString().slice(0,10);const sameDay=snap.exists()&&snap.data().activityDay===today;await setDoc(ref,{name:'الشات العام',type:'public-chat',members:arrayUnion(uid),membersCount:increment(1),joinsToday:sameDay?increment(1):1,activityScore:sameDay?increment(2):2,activityDay:today},{merge:true});}hasJoinedGeneralChat=true;updateGeneralChatGate();msgInput?.focus();}catch(e){btn.disabled=false;btn.innerHTML='حاول مرة ثانية ←';alert('تعذر الانضمام حالياً، تحقق من اتصالك أو صلاحيات قاعدة البيانات.');}});
 onSnapshot(collection(db,'communities',communityId,'messages'), (snap)=>{
   const msgs=[]; snap.forEach(d=>msgs.push({id:d.id,...d.data()}));
