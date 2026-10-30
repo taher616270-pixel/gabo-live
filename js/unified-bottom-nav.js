@@ -1,11 +1,7 @@
-import { auth, db } from '/firebase-config.js';
-import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { collection, doc, getDoc, onSnapshot, query, where } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
 const DEFAULT_ITEMS = [
   { icon: '⌂', label: 'الرئيسية', path: '/app/' },
   { icon: '✉', label: 'الرسائل', path: '/dm/' },
-  { icon: '◎', label: 'المجتمع', path: '/app/public/' },
+  { icon: '◎', label: 'المجتمع', path: '/community/' },
   { icon: '♛', label: 'VIP', path: '/vip/' },
   { icon: '◉', label: 'حسابي', path: '/profile/' }
 ];
@@ -36,9 +32,9 @@ function resolveActive(items) {
       if (target.length > longest) { winner = index; longest = target.length; }
     }
   });
-  if (here.startsWith('/community/')) {
-    const communityIndex = items.findIndex(item => normalizePath(item.path) === '/app/public/');
-    if (communityIndex >= 0) winner = communityIndex;
+  if (here.startsWith('/app/public/') || here.startsWith('/profile/view/')) {
+    const profileIndex = items.findIndex(item => normalizePath(item.path) === '/profile/');
+    if (profileIndex >= 0) winner = profileIndex;
   }
   if (winner < 0) winner = items.findIndex(item => normalizePath(item.path) === '/app/');
   return winner < 0 ? 0 : winner;
@@ -61,56 +57,14 @@ function render(items) {
     return `<a href="${escapeHTML(path)}" class="${active ? 'is-active' : ''}" ${active ? 'aria-current="page"' : ''}>
       <span class="gaboNavIcon" aria-hidden="true">${escapeHTML(item.icon || '•')}</span>
       <span class="gaboNavLabel">${escapeHTML(item.label || 'قسم')}</span>
-      ${isMessages ? '<span id="gaboNavUnread" class="gaboNavBadge hide">0</span>' : ''}
+      ${isMessages ? '<span id="navCount" class="gaboNavBadge navBadge badgeNav" style="display:none">0</span>' : ''}
     </a>`;
   }).join('');
 
   document.body.appendChild(nav);
 }
 
-async function getItems() {
-  try {
-    const snapshot = await getDoc(doc(db, 'site_config', 'main'));
-    const configured = snapshot.exists() ? snapshot.data().bottomNav : null;
-    if (Array.isArray(configured)) {
-      const valid = configured
-        .filter(item => item && item.visible !== false && item.label && item.path)
-        .sort((a,b) => (a.order ?? 0) - (b.order ?? 0))
-        .slice(0, 5);
-      const unique = new Set(valid.map(item => normalizePath(item.path)));
-      if (valid.length === 5 && unique.size === 5) return valid;
-    }
-  } catch (error) {
-    console.info('Using default GABO navigation', error?.code || '');
-  }
-  return DEFAULT_ITEMS;
-}
-
-function watchUnread() {
-  let stop = null;
-  onAuthStateChanged(auth, user => {
-    stop?.(); stop = null;
-    if (!user) return;
-    const unreadQuery = query(
-      collection(db, 'privateChats'),
-      where('participants', 'array-contains', user.uid)
-    );
-    stop = onSnapshot(unreadQuery, snapshot => {
-      let total = 0;
-      snapshot.forEach(chat => { total += Number(chat.data().unread?.[user.uid] || 0); });
-      const badge = document.getElementById('gaboNavUnread');
-      if (!badge) return;
-      badge.textContent = total > 99 ? '99+' : String(total);
-      badge.classList.toggle('hide', total < 1);
-    }, error => console.warn('Unread count unavailable', error?.code || ''));
-  });
-}
-
-const start = async () => {
-  const items = await getItems();
-  render(items);
-  watchUnread();
-};
+const start = () => render(DEFAULT_ITEMS);
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', start, { once: true });
