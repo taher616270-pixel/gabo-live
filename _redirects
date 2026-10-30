@@ -15,7 +15,6 @@
 /chat /chat/index.html 200
 /host /host/index.html 200
 
-/global-chat /global-chat/index.html 200
 
 # اي مسار غير موجود يرجع للافتتاحية
 /* /index.html 404
