@@ -57,7 +57,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 .pBtn.primary{background:var(--v);color:#fff}
 .pBtn.secondary{background:#1e1c2e;border:1px solid var(--b);color:#fff}
 .pClose{position:absolute;top:10px;left:10px;width:32px;height:32px;background:rgba(0,0,0,.5);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px}
-</style>
+.joinGate{position:fixed;bottom:0;left:0;right:0;z-index:1100;padding:12px 14px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(135deg,#171526f5,#101b22f5);border-top:1px solid #a88be755;box-shadow:0 -12px 35px #0008;display:flex;align-items:center;gap:12px;backdrop-filter:blur(18px)}.joinGate>div{flex:1;min-width:0}.joinGate b{display:block;font-size:13px;color:#f2eaff}.joinGate small{display:block;color:#aaa4bd;font-size:10px;line-height:1.5;margin-top:3px}.joinGate button{border:1px solid #a88be7;color:#fff;background:linear-gradient(135deg,#6650a5,#3a5d72);border-radius:13px;padding:12px 15px;font:800 12px system-ui;box-shadow:0 5px 18px #51427d66;white-space:nowrap}.joinGate button:disabled{opacity:.6}.inputBar{bottom:0}.messages{padding-bottom:145px}body.generalPublicChat .commFlag,body.generalPublicChat #commMiniFlag{display:none}body.generalPublicChat .headerInfo b{color:#f0eaff}body.generalPublicChat .headerInfo small{color:#73d9b7}</style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
 </head>
 <body>
@@ -66,7 +66,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 <div class="commFlag" id="commFlag"></div>
 <div class="headerInfo"><b><span id="commName">تحميل...</span> <span class="miniFlagInHeader" id="commMiniFlag"></span></b><small><span id="memberCount">0 عضو</span> • 12k متصل • رسمي</small></div>
 </div>
-<div class="messages" id="messages"></div>
+<div class="messages" id="messages"></div><div class="joinGate" id="joinGate" style="display:none"><div><b>انضم إلى الشات العام</b><small>شاهد المحادثة أولاً، وانضم لتتمكن من الكتابة والإرسال</small></div><button id="joinPublicChat" type="button">انضم الآن <span>←</span></button></div>
 <div class="profileModal" id="profileModal" onclick="if(event.target===this)closeProfile()"><div class="profileBox"><div class="pCover" id="pCover"><img id="pCoverImg" style="display:none"><div class="pClose" onclick="closeProfile()">✕</div><div class="pAvatar" id="pAvatar"><span id="pAvatarLetter">T</span><img id="pAvatarImg" style="display:none"></div></div><div class="pInfo"><div class="pName"><span id="pName">تحميل...</span></div><div class="pCountry"><span id="pFlag"></span><span id="pCountryName">الجنوب العربي</span></div><div class="pMeta"><span id="pGender"></span><span id="pAge"></span><span id="pId">ID: --------</span></div><div class="pBio" id="pBio">...</div><div class="pActions"><button class="pBtn primary" id="pChatBtn">💬 دردشة خاصة</button><button class="pBtn secondary" id="pViewBtn">👁️ عرض الملف</button></div></div></div></div>
 <div class="emojiPanel" id="emojiPanel"><div class="emojiTabs"><button class="on" onclick="showEmojiCat(event,'smile')">😊</button><button onclick="showEmojiCat(event,'flags')">🏳️</button></div><div class="emojiGrid" id="emojiGrid"></div></div>
 <div class="inputBar"><button class="iconBtn" onclick="toggleEmoji()">😊</button><div class="inputWrap"><input id="msgInput" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMsg()"></div><button class="sendBtn" onclick="sendMsg()">➤</button></div>
@@ -89,6 +89,8 @@ bh:{name:'مجتمع البحرين', flag:`<img src="https://flagcdn.com/w80/bh
 };
 const params=new URLSearchParams(location.search);
 let communityId=params.get('id')||'south';
+const isGeneralPublicChat=communityId==='global';
+let hasJoinedGeneralChat=false;
 let uid=localStorage.getItem('gabo_uid')||null;
 let userData=null;
 let lastOpenedUid=null;
@@ -114,7 +116,13 @@ onAuthStateChanged(auth, async (u)=>{
     userData=snap?.exists()?snap.data():{displayName:localStorage.getItem('gabo_name')||'مستخدم', photoURL:localStorage.getItem('gabo_photo')||'', verified:false};
     const commRef=doc(db,'communities',communityId);
     const commSnap=await getDoc(commRef).catch(()=>null);
-    if(!commSnap?.exists()){
+    if(isGeneralPublicChat){
+      
+      const latest=commSnap;
+      const members=latest?.exists()&&Array.isArray(latest.data().members)?latest.data().members:[];
+      hasJoinedGeneralChat=members.includes(uid);
+      updateGeneralChatGate();
+    }else if(!commSnap?.exists()){
       const info=COMM_DATA[communityId] || {name:communityId};
       await setDoc(commRef,{name:info.name||communityId,flag:communityId,members:[uid],membersCount:1,joinsToday:1,activityScore:2,activityDay:new Date().toISOString().slice(0,10),createdAt:serverTimestamp()},{merge:true});
     }else{
@@ -125,6 +133,9 @@ onAuthStateChanged(auth, async (u)=>{
     }
   }
 });
+function updateGeneralChatGate(){if(!isGeneralPublicChat)return;const gate=document.getElementById('joinGate');const bar=document.querySelector('.inputBar');if(gate)gate.style.display=hasJoinedGeneralChat?'none':'flex';if(bar)bar.style.display=hasJoinedGeneralChat?'flex':'none';if(hasJoinedGeneralChat)document.getElementById('memberCount').textContent=document.getElementById('memberCount').textContent.replace(' • انضم','');}
+updateGeneralChatGate();
+document.getElementById('joinPublicChat')?.addEventListener('click',async()=>{const btn=document.getElementById('joinPublicChat');if(!uid||hasJoinedGeneralChat)return;btn.disabled=true;btn.textContent='جارٍ الانضمام...';try{const ref=doc(db,'communities','global');const snap=await getDoc(ref);const members=snap.exists()&&Array.isArray(snap.data().members)?snap.data().members:[];if(!members.includes(uid)){const today=new Date().toISOString().slice(0,10);const sameDay=snap.exists()&&snap.data().activityDay===today;await setDoc(ref,{name:'الشات العام',type:'public-chat',members:arrayUnion(uid),membersCount:increment(1),joinsToday:sameDay?increment(1):1,activityScore:sameDay?increment(2):2,activityDay:today},{merge:true});}hasJoinedGeneralChat=true;updateGeneralChatGate();msgInput?.focus();}catch(e){btn.disabled=false;btn.innerHTML='حاول مرة ثانية ←';alert('تعذر الانضمام حالياً، تحقق من اتصالك أو صلاحيات قاعدة البيانات.');}});
 onSnapshot(collection(db,'communities',communityId,'messages'), (snap)=>{
   const msgs=[]; snap.forEach(d=>msgs.push({id:d.id,...d.data()}));
   msgs.sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
@@ -144,9 +155,9 @@ onSnapshot(collection(db,'communities',communityId,'messages'), (snap)=>{
 onSnapshot(doc(db,'communities',communityId), (snap)=>{
   if(snap.exists()){
     const data=snap.data();
-    if(data.name) commNameEl.textContent=data.name;
+    if(data.name) commNameEl.textContent=isGeneralPublicChat?'الشات العام':data.name;
     const count=data.membersCount|| (data.members?data.members.length:0) || 0;
-    memberCountEl.textContent=count+' عضو';
+    memberCountEl.textContent=isGeneralPublicChat?count+' عضو • شات مفتوح':' '+count+' عضو';
   }
 });
 window.openUserProfile=async (targetUid, fallbackPhoto, fallbackName)=>{
@@ -187,7 +198,7 @@ window.closeProfile=()=>{ document.getElementById('profileModal').classList.remo
 document.getElementById('pChatBtn').onclick=()=>{ if(!lastOpenedUid) return; location.href=`/dm/?uid=${lastOpenedUid}`; }
 document.getElementById('pViewBtn').onclick=()=>{ if(!lastOpenedUid) return; location.href=`/profile/view/?uid=${lastOpenedUid}`; }
 window.sendMsg=async ()=>{
-  const text=msgInput.value.trim(); if(!text||!uid) return;
+  const text=msgInput.value.trim(); if(!text||!uid||(isGeneralPublicChat&&!hasJoinedGeneralChat)) return;
   const displayName=userData?.displayName||userData?.name||localStorage.getItem('gabo_name')||'مستخدم';
   const photoURL=userData?.photoURL||userData?.photo||localStorage.getItem('gabo_photo')||'';
   msgInput.value='';
