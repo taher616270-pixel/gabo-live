@@ -96,9 +96,9 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 
 
 
-<div class="globalChatOverlay" id="globalChatOverlay" role="dialog" aria-modal="true" aria-label="الشات العام"><button class="globalChatClose" type="button" onclick="closeGlobalChat()" aria-label="إغلاق الشات العام">×</button></div>
+<div class="globalChatOverlay" id="globalChatOverlay" role="dialog" aria-modal="true" aria-label="الشات العام"><button class="globalChatClose" type="button" onclick="closeGlobalChat()" aria-label="إغلاق الشات العام">×</button><iframe class="globalChatFrame" id="globalChatFrame" title="الشات العام"></iframe></div>
 <script>
-(function(){const overlay=document.getElementById('globalChatOverlay');window.openGlobalChat=function(){overlay.classList.add('open');document.body.style.overflow='hidden';};window.closeGlobalChat=function(){overlay.classList.remove('open');document.body.style.overflow='';};document.addEventListener('keydown',function(e){if(e.key==='Escape'&&overlay.classList.contains('open'))window.closeGlobalChat();});})();
+(function(){const overlay=document.getElementById('globalChatOverlay'),frame=document.getElementById('globalChatFrame');window.openGlobalChat=function(){overlay.classList.add('open');document.body.style.overflow='hidden';if(!frame.src||frame.src==='about:blank')frame.src='/global-chat/index.html';};window.closeGlobalChat=function(){overlay.classList.remove('open');document.body.style.overflow='';frame.src='about:blank';};document.addEventListener('keydown',function(e){if(e.key==='Escape'&&overlay.classList.contains('open'))window.closeGlobalChat();});})();
 </script>
 <script type="module">
 import { auth, db } from '/firebase-config.js';
