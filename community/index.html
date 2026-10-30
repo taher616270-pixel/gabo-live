@@ -66,7 +66,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 <div class="commFlag" id="commFlag"></div>
 <div class="headerInfo"><b><span id="commName">تحميل...</span> <span class="miniFlagInHeader" id="commMiniFlag"></span></b><small><span id="memberCount">0 عضو</span> • 12k متصل • رسمي</small></div>
 </div>
-<div class="messages" id="messages"></div><div class="joinGate" id="joinGate" style="display:none"><div><b>انضم إلى الشات العام</b><small>شاهد المحادثة أولاً، وانضم لتتمكن من الكتابة والإرسال</small></div><button id="joinPublicChat" type="button">انضم الآن <span>←</span></button></div>
+<div class="messages" id="messages"></div><div class="joinGate" id="joinGate" style="display:none"><div><b id="joinGateTitle">انضم إلى المجتمع</b><small id="joinGateDescription">انضم لتتمكن من المشاركة وإرسال الرسائل</small></div><button id="joinPublicChat" type="button">انضم الآن <span>←</span></button></div>
 <button class="globalStatsFab" id="globalStatsFab" type="button" aria-label="عدادات الشات العام" style="display:none">☷<i></i></button>
 <div class="globalStatsShade" id="globalStatsShade" style="display:none"></div>
 <aside class="globalStatsPanel" id="globalStatsPanel" aria-hidden="true">
@@ -100,7 +100,7 @@ bh:{name:'مجتمع البحرين', flag:`<img src="https://flagcdn.com/w80/bh
 const params=new URLSearchParams(location.search);
 let communityId=params.get('id')||'south';
 const isGeneralPublicChat=communityId==='global';
-let hasJoinedGeneralChat=false;
+let hasJoinedGeneralChat=false; // حالة الانضمام للمجتمع الحالي
 let globalMembers=[];
 let uid=localStorage.getItem('gabo_uid')||null;
 let userData=null;
@@ -128,24 +128,30 @@ onAuthStateChanged(auth, async (u)=>{
     userData=snap?.exists()?snap.data():{displayName:localStorage.getItem('gabo_name')||'مستخدم', photoURL:localStorage.getItem('gabo_photo')||'', verified:false};
     const commRef=doc(db,'communities',communityId);
     const commSnap=await getDoc(commRef).catch(()=>null);
-    if(isGeneralPublicChat){
-      
-      const latest=commSnap;
-      const members=latest?.exists()&&Array.isArray(latest.data().members)?latest.data().members:[];
-      hasJoinedGeneralChat=members.includes(uid);
-      updateGeneralChatGate();
-    }else if(!commSnap?.exists()){
+    if(!commSnap?.exists()){
       const info=COMM_DATA[communityId] || {name:communityId};
-      await setDoc(commRef,{name:info.name||communityId,flag:communityId,members:[uid],membersCount:1,joinsToday:1,activityScore:2,activityDay:new Date().toISOString().slice(0,10),createdAt:serverTimestamp()},{merge:true});
-    }else{
-      const members=Array.isArray(commSnap.data().members)?commSnap.data().members:[];
-      if(!members.includes(uid)){
-        try{const today=new Date().toISOString().slice(0,10);const sameDay=commSnap.data().activityDay===today;await setDoc(commRef,{membersCount:increment(1),members:arrayUnion(uid),joinsToday:sameDay?increment(1):1,activityScore:sameDay?increment(2):2,activityDay:today},{merge:true});}catch{}
-      }
+      await setDoc(commRef,{name:isGeneralPublicChat?'الشات العام':(info.name||communityId),type:isGeneralPublicChat?'public-chat':'community',flag:communityId,members:[],membersCount:0,createdAt:serverTimestamp()},{merge:true});
     }
+    const latestSnap=await getDoc(commRef).catch(()=>null);
+    const members=latestSnap?.exists()&&Array.isArray(latestSnap.data().members)?latestSnap.data().members:[];
+    hasJoinedGeneralChat=members.includes(uid);
+    updateGeneralChatGate();
   }
 });
-function updateGeneralChatGate(){if(!isGeneralPublicChat)return;const fab=document.getElementById('globalStatsFab');if(fab)fab.style.display='flex';const leave=document.getElementById('leaveGlobalChat');if(leave)leave.style.display=hasJoinedGeneralChat?'block':'none';const gate=document.getElementById('joinGate');const bar=document.querySelector('.inputBar');if(gate)gate.style.display=hasJoinedGeneralChat?'none':'flex';if(bar){bar.style.display=hasJoinedGeneralChat?'flex':'none';bar.setAttribute('aria-hidden',hasJoinedGeneralChat?'false':'true');}if(msgInput){msgInput.disabled=!hasJoinedGeneralChat;msgInput.placeholder=hasJoinedGeneralChat?'اكتب رسالتك في الشات العام...':'انضم إلى الشات العام للكتابة';}const send=document.querySelector('.sendBtn');if(send)send.disabled=!hasJoinedGeneralChat;const emoji=document.querySelector('.inputBar .iconBtn');if(emoji)emoji.disabled=!hasJoinedGeneralChat;}
+function updateGeneralChatGate(){
+  const fab=document.getElementById('globalStatsFab');if(fab)fab.style.display=isGeneralPublicChat?'flex':'none';
+  const leave=document.getElementById('leaveGlobalChat');if(leave)leave.style.display=isGeneralPublicChat&&hasJoinedGeneralChat?'block':'none';
+  const gate=document.getElementById('joinGate');const bar=document.querySelector('.inputBar');
+  if(gate)gate.style.display=hasJoinedGeneralChat?'none':'flex';
+  if(bar){bar.style.display=hasJoinedGeneralChat?'flex':'none';bar.setAttribute('aria-hidden',hasJoinedGeneralChat?'false':'true');}
+  const title=document.getElementById('joinGateTitle');const description=document.getElementById('joinGateDescription');const button=document.getElementById('joinPublicChat');
+  if(title)title.textContent=isGeneralPublicChat?'انضم إلى الشات العام':'انضم إلى '+(commNameEl.textContent||'المجتمع');
+  if(description)description.textContent='انضم إلى هذا المجتمع لتتمكن من المشاركة وإرسال الرسائل';
+  if(button)button.innerHTML='انضم الآن <span>←</span>';
+  if(msgInput){msgInput.disabled=!hasJoinedGeneralChat;msgInput.placeholder=hasJoinedGeneralChat?(isGeneralPublicChat?'اكتب رسالتك في الشات العام...':'اكتب رسالتك في المجتمع...'):'انضم للمجتمع للكتابة';}
+  const send=document.querySelector('.sendBtn');if(send)send.disabled=!hasJoinedGeneralChat;
+  const emoji=document.querySelector('.inputBar .iconBtn');if(emoji)emoji.disabled=!hasJoinedGeneralChat;
+}
 updateGeneralChatGate();
 
 function openGlobalStats(){document.getElementById('globalStatsShade').style.display='block';document.getElementById('globalStatsPanel').classList.add('open');document.getElementById('globalStatsPanel').setAttribute('aria-hidden','false');}
@@ -165,7 +171,19 @@ async function renderGlobalMembers(ids){
 }
 document.getElementById('leaveGlobalChat')?.addEventListener('click',async()=>{if(!uid||!hasJoinedGeneralChat)return;if(!confirm('هل تريد الخروج من الشات العام؟'))return;const btn=document.getElementById('leaveGlobalChat');btn.disabled=true;try{const ref=doc(db,'communities','global');const snap=await getDoc(ref);const members=snap.exists()&&Array.isArray(snap.data().members)?snap.data().members:[];if(members.includes(uid)){await setDoc(ref,{members:arrayRemove(uid),membersCount:Math.max(0,members.length-1)},{merge:true});}hasJoinedGeneralChat=false;updateGeneralChatGate();closeGlobalStats();document.getElementById('globalMembersList').style.display='none';}catch(e){alert('تعذر الخروج حالياً، حاول مرة ثانية.');}finally{btn.disabled=false;}});
 
-document.getElementById('joinPublicChat')?.addEventListener('click',async()=>{const btn=document.getElementById('joinPublicChat');if(!uid||hasJoinedGeneralChat)return;btn.disabled=true;btn.textContent='جارٍ الانضمام...';try{const ref=doc(db,'communities','global');const snap=await getDoc(ref);const members=snap.exists()&&Array.isArray(snap.data().members)?snap.data().members:[];if(!members.includes(uid)){const today=new Date().toISOString().slice(0,10);const sameDay=snap.exists()&&snap.data().activityDay===today;await setDoc(ref,{name:'الشات العام',type:'public-chat',members:arrayUnion(uid),membersCount:increment(1),joinsToday:sameDay?increment(1):1,activityScore:sameDay?increment(2):2,activityDay:today},{merge:true});}hasJoinedGeneralChat=true;updateGeneralChatGate();msgInput?.focus();}catch(e){btn.disabled=false;btn.innerHTML='حاول مرة ثانية ←';alert('تعذر الانضمام حالياً، تحقق من اتصالك أو صلاحيات قاعدة البيانات.');}});
+document.getElementById('joinPublicChat')?.addEventListener('click',async()=>{
+ const btn=document.getElementById('joinPublicChat');if(!uid||hasJoinedGeneralChat)return;
+ btn.disabled=true;btn.textContent='جارٍ الانضمام...';
+ try{
+  const ref=doc(db,'communities',communityId);const snap=await getDoc(ref);
+  const members=snap.exists()&&Array.isArray(snap.data().members)?snap.data().members:[];
+  if(!members.includes(uid)){
+   const today=new Date().toISOString().slice(0,10);const sameDay=snap.exists()&&snap.data().activityDay===today;
+   await setDoc(ref,{name:isGeneralPublicChat?'الشات العام':(snap.data()?.name||COMM_DATA[communityId]?.name||communityId),type:isGeneralPublicChat?'public-chat':'community',members:arrayUnion(uid),membersCount:increment(1),joinsToday:sameDay?increment(1):1,activityScore:sameDay?increment(2):2,activityDay:today},{merge:true});
+  }
+  hasJoinedGeneralChat=true;updateGeneralChatGate();msgInput?.focus();
+ }catch(e){btn.disabled=false;btn.innerHTML='حاول مرة ثانية ←';alert('تعذر الانضمام حالياً، تحقق من اتصالك أو صلاحيات قاعدة البيانات.');}
+});
 onSnapshot(collection(db,'communities',communityId,'messages'), (snap)=>{
   const msgs=[]; snap.forEach(d=>msgs.push({id:d.id,...d.data()}));
   msgs.sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
@@ -183,7 +201,7 @@ onSnapshot(collection(db,'communities',communityId,'messages'), (snap)=>{
   messagesEl.scrollTop=messagesEl.scrollHeight;
 });
 onSnapshot(doc(db,'communities',communityId), (snap)=>{
-  if(isGeneralPublicChat&&snap.exists()&&uid){const members=Array.isArray(snap.data().members)?snap.data().members:[];globalMembers=members;document.getElementById('globalTotalMembers').textContent=String(members.length);const joined=members.includes(uid);if(joined!==hasJoinedGeneralChat){hasJoinedGeneralChat=joined;updateGeneralChatGate();}if(document.getElementById('globalMembersList').style.display!=='none')renderGlobalMembers(members);}
+  if(snap.exists()&&uid){const members=Array.isArray(snap.data().members)?snap.data().members:[];const joined=members.includes(uid);if(joined!==hasJoinedGeneralChat){hasJoinedGeneralChat=joined;updateGeneralChatGate();}if(isGeneralPublicChat){globalMembers=members;document.getElementById('globalTotalMembers').textContent=String(members.length);if(document.getElementById('globalMembersList').style.display!=='none')renderGlobalMembers(members);}}
   if(snap.exists()){
     const data=snap.data();
     if(data.name) commNameEl.textContent=isGeneralPublicChat?'الشات العام':data.name;
