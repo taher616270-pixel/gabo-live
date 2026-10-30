@@ -57,8 +57,8 @@ else{
       const name=d.displayName||d.name||'مستخدم';
       const bio=d.bio||'مرحبا بكم في ملفي 👋';
       const countryInfo=(await getCountryRegistry()).find(c=>c.code===String(d.country||'').toLowerCase());
-      const country=countryInfo?.name||d.countryName||'غير محدد';
-      const flag=countryInfo?.flag||(d.countryFlagImg||'/assets/south-arabia.png.JPG');
+      const country=countryInfo?.name||(d.country?'غير محدد':(d.countryName||'غير محدد'));
+      const flag=countryInfo?.code==='south-arabia'?await getSouthArabiaFlag():(countryInfo?.flag||(d.country?'':(d.countryFlagImg||'')));
       const gender=d.gender||'';
       const bday=d.bday||'';
       const cover=d.cover||'';
@@ -67,7 +67,7 @@ else{
       if(photo){ document.getElementById('avImg').src=photo; document.getElementById('avImg').style.display='block'; document.getElementById('avL').style.display='none'; }
       if(cover){ document.getElementById('coverImg').src=cover; document.getElementById('coverImg').style.display='block'; document.getElementById('coverPH').style.display='none'; }
       document.getElementById('bio').textContent=bio;
-      document.getElementById('country').innerHTML=`<img src="${flag}" style="width:22px;height:15px;border-radius:2px"> ${country}`;
+      document.getElementById('country').innerHTML=(flag?`<img src="${flag}" style="width:22px;height:15px;border-radius:2px"> `:'')+country;
       document.getElementById('gender').textContent=gender;
       document.getElementById('uidText').textContent=d.gaboId||genId(targetUid);
       if(bday){ try{ const age=new Date().getFullYear()-parseInt(bday.split('-')[0]); document.getElementById('age').textContent=age+' سنة'; }catch{} }
