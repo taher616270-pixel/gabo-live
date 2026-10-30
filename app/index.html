@@ -117,7 +117,7 @@ kw:`<img src="https://flagcdn.com/w80/kw.png">`,
 bh:`<img src="https://flagcdn.com/w80/bh.png">`
 };
 
-onAuthStateChanged(auth,u=>{ if(u){ uid=u.uid; localStorage.setItem('gabo_uid',u.uid); }});
+onAuthStateChanged(auth,u=>{ if(!u){ location.replace('/login/'); return; } uid=u.uid; localStorage.setItem('gabo_uid',u.uid); });
 
 window.goComm=(id)=>{ location.href=`/community/index.html?id=${encodeURIComponent(id)}`; };
 window.openCreate=()=>document.getElementById('createModal').classList.add('on');
