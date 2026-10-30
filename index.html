@@ -91,6 +91,9 @@ body{position:fixed;inset:0;color:#fff;font-family:'Tajawal',sans-serif;-webkit-
   var LOGIN='/login/';
   var started=Date.now();
   var done=false;
+  var duration=3900;
+  var percent=document.getElementById('loadingPercent');
+  var ticker=setInterval(function(){var n=Math.min(100,Math.floor((Date.now()-started)/duration*100));if(percent)percent.textContent=n+'%';if(n>=100)clearInterval(ticker)},35);
   var warm=fetch(LOGIN,{credentials:'same-origin'}).catch(function(){});
   function go(){
     if(done)return;
