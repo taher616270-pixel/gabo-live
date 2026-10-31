@@ -140,7 +140,7 @@ export default {
    await env.OTP_KV.put(welcomeKey,"sending",{expirationTtl:86400});
    try{
     await sendMail(env,email,"","welcome");
-    await env.OTP_KV.put(welcomeKey,"sent",{expirationTtl:31536000});
+    await env.OTP_KV.put(welcomeKey,"sent");
     return json({success:true,sent:true});
    }catch{
     await env.OTP_KV.delete(welcomeKey);
