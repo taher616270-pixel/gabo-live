@@ -432,6 +432,55 @@ input,.country-trigger{
   opacity:.7;
   width:100%;
 }
+
+/* Definitive name-row layout override */
+#signupFields > .signup-name-row{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:12px !important;
+  width:100% !important;
+  grid-column:1 / -1 !important;
+  align-items:stretch !important;
+}
+#signupFields > .signup-name-row > .field{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:stretch !important;
+  width:100% !important;
+  min-width:0 !important;
+  margin:0 !important;
+}
+#signupFields > .signup-name-row > .field > label{
+  width:100% !important;
+  text-align:center !important;
+}
+#signupFields > .signup-name-row input#f_first,
+#signupFields > .signup-name-row input#f_last{
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  height:50px !important;
+  min-height:50px !important;
+  box-sizing:border-box !important;
+  margin:0 !important;
+  padding:0 12px !important;
+  text-align:center !important;
+  text-align-last:center !important;
+  font-size:15px !important;
+  font-weight:600 !important;
+  line-height:50px !important;
+  direction:rtl !important;
+}
+#signupFields > .signup-name-row input#f_first::placeholder,
+#signupFields > .signup-name-row input#f_last::placeholder{
+  display:block;
+  width:100%;
+  text-align:center !important;
+  text-align-last:center !important;
+  font-weight:500 !important;
+  opacity:.7 !important;
+}
 </style>
 </head>
 <body>
