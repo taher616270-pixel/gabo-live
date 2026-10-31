@@ -561,7 +561,7 @@ function fillCountries(){
       $('countrySearch').value='';
       options.querySelectorAll('.country-option').forEach(option=>{option.hidden=false;});
       $('countryEmpty').classList.remove('show');
-      $('countryMenu').classList.remove('open');
+      closeCountryMenu();
     });
     options.appendChild(item);
   });
@@ -577,18 +577,45 @@ function filterCountryOptions(query=''){
   });
   $('countryEmpty').classList.toggle('show',count===0);
 }
-$('countryPicker').addEventListener('click',()=>{
-  const menu=$('countryMenu');
-  const willOpen=!menu.classList.contains('open');
-  if(willOpen){
-    // كل مرة تفتح فيها القائمة ابدأ بعرض جميع الدول، حتى بعد اختيار الجنوب العربي.
-    $('countrySearch').value='';
-    filterCountryOptions('');
-  }
-  menu.classList.toggle('open',willOpen);
+// انقل القائمة إلى body حتى لا يقصّها overflow:hidden في إطار صفحة التسجيل على الجوال.
+const countryMenu=$('countryMenu');
+document.body.appendChild(countryMenu);
+countryMenu.style.position='fixed';
+countryMenu.style.zIndex='99999';
+countryMenu.style.right='auto';
+countryMenu.style.left='auto';
+countryMenu.style.top='auto';
+countryMenu.style.width='auto';
+
+function openCountryMenu(){
+  const trigger=$('countryPicker');
+  const rect=trigger.getBoundingClientRect();
+  const margin=8;
+  const menuHeight=Math.min(280,window.innerHeight-margin*2);
+  const below=window.innerHeight-rect.bottom;
+  const top=below>=menuHeight+6 ? rect.bottom+6 : Math.max(margin,rect.top-menuHeight-6);
+  const width=Math.min(rect.width,window.innerWidth-margin*2);
+  const left=Math.max(margin,Math.min(rect.left,window.innerWidth-width-margin));
+  countryMenu.style.top=top+'px';
+  countryMenu.style.left=left+'px';
+  countryMenu.style.width=width+'px';
+  $('countrySearch').value='';
+  filterCountryOptions('');
+  countryMenu.classList.add('open');
+}
+function closeCountryMenu(){countryMenu.classList.remove('open');}
+$('countryPicker').addEventListener('click',e=>{
+  e.preventDefault();
+  e.stopPropagation();
+  if(countryMenu.classList.contains('open')) closeCountryMenu();
+  else openCountryMenu();
 });
 $('countrySearch').addEventListener('input',e=>filterCountryOptions(e.target.value));
-document.addEventListener('click',e=>{if(!e.target.closest('.country-wrap')) $('countryMenu').classList.remove('open');});
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.country-wrap') && !countryMenu.contains(e.target)) closeCountryMenu();
+});
+window.addEventListener('resize',closeCountryMenu);
+window.addEventListener('scroll',closeCountryMenu,true);
 
 function errorText(code){const map={'auth/email-already-in-use':'هذا البريد مسجل من قبل','auth/invalid-credential':'البريد أو كلمة المرور غير صحيحة','auth/wrong-password':'كلمة المرور غير صحيحة','auth/user-not-found':'الحساب غير موجود','auth/weak-password':'كلمة المرور ضعيفة','auth/invalid-email':'البريد غير صحيح','auth/network-request-failed':'تحقق من اتصال الإنترنت','auth/popup-blocked':'المتصفح منع النافذة - سيتم استخدام طريقة أخرى','auth/popup-closed-by-user':'أغلقت النافذة','auth/too-many-requests':'محاولات كثيرة، حاول لاحقاً','auth/unauthorized-domain':'النطاق غير مصرح به','auth/operation-not-allowed':'طريقة الدخول غير مفعّلة','auth/account-exists-with-different-credential':'البريد مرتبط بطريقة دخول أخرى'}; return map[code]||code;}
 
