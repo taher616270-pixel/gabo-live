@@ -397,6 +397,41 @@ input,.country-trigger{
   #signupFields:not([hidden]){gap:10px}
   #signupFields .signup-row{gap:12px}
 }
+
+/* Center and fully size first/last-name inputs */
+#signupFields .row:first-child{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  width:100%;
+}
+#signupFields .row:first-child .field{
+  width:100%;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+}
+#signupFields .row:first-child input#f_first,
+#signupFields .row:first-child input#f_last{
+  width:100%;
+  height:50px!important;
+  min-width:0;
+  text-align:center!important;
+  text-align-last:center;
+  display:block;
+  font-weight:600;
+  font-size:15px!important;
+  line-height:50px;
+  padding:0 12px;
+  box-sizing:border-box;
+}
+#signupFields .row:first-child input#f_first::placeholder,
+#signupFields .row:first-child input#f_last::placeholder{
+  text-align:center;
+  font-weight:500;
+  opacity:.7;
+  width:100%;
+}
 </style>
 </head>
 <body>
@@ -421,7 +456,7 @@ input,.country-trigger{
 </div>
 
 <div id="signupFields" hidden>
-<div class="signup-row signup-name-row">
+<div class="row signup-row signup-name-row">
 <div class="field"><label>الاسم الأول</label><input id="f_first" type="text" placeholder="اسمك"><div class="fieldErr" id="f_firstErr"></div></div>
 <div class="field"><label>اللقب</label><input id="f_last" type="text" placeholder="اللقب"><div class="fieldErr" id="f_lastErr"></div></div>
 </div>
