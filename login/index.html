@@ -322,14 +322,14 @@ input,.country-trigger{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  min-width:27px;
-  font-size:22px;
+  min-width:21px;
+  font-size:18px;
   line-height:1;
   flex:0 0 auto;
 }
 .country-flag-image{
-  width:27px;
-  height:19px;
+  width:21px;
+  height:15px;
   object-fit:cover;
   border-radius:2px;
   flex:0 0 auto;
@@ -363,9 +363,10 @@ input,.country-trigger{
 }
 #signupFields .signup-email,
 #signupFields .signup-country{
-  grid-column:1 / -1;
+  grid-column:1 / 2;
   width:100%;
   min-width:0;
+  justify-self:stretch;
 }
 #signupFields .field{min-width:0;margin:0}
 #signupFields .signup-email input,
@@ -378,20 +379,25 @@ input,.country-trigger{
 }
 #signupFields .signup-country .country-trigger{
   white-space:nowrap;
-  overflow:visible;
-  text-overflow:unset;
-  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:5px;
+  padding-inline:8px;
 }
 #signupFields #countryChosen{
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:5px;
   width:100%;
   min-width:0;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
+#signupFields #countryChosen > :last-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
 #signupFields .country-trigger{width:100%}
 @media(max-width:375px){
   #signupFields:not([hidden]){gap:10px}
