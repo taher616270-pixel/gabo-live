@@ -557,14 +557,37 @@ function fillCountries(){
       select.value=country.code;
       const chosen=$('countryChosen');
       chosen.replaceChildren(makeCountryFlag(country),document.createTextNode(country.name));
+      // عند اختيار أي دولة، امسح البحث حتى تظهر القائمة كاملة عند فتحها مرة أخرى.
+      $('countrySearch').value='';
+      options.querySelectorAll('.country-option').forEach(option=>{option.hidden=false;});
+      $('countryEmpty').classList.remove('show');
       $('countryMenu').classList.remove('open');
     });
     options.appendChild(item);
   });
 }
 fillCountries();
-$('countryPicker').addEventListener('click',()=>{$('countryMenu').classList.toggle('open')});
-$('countrySearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase(); let count=0; document.querySelectorAll('.country-option').forEach(item=>{const show=item.dataset.name.toLowerCase().includes(q); item.hidden=!show; if(show) count++;}); $('countryEmpty').classList.toggle('show',count===0);});
+function filterCountryOptions(query=''){
+  const q=query.trim().toLocaleLowerCase('ar');
+  let count=0;
+  $('countryOptions').querySelectorAll('.country-option').forEach(item=>{
+    const show=item.dataset.name.toLocaleLowerCase('ar').includes(q);
+    item.hidden=!show;
+    if(show) count++;
+  });
+  $('countryEmpty').classList.toggle('show',count===0);
+}
+$('countryPicker').addEventListener('click',()=>{
+  const menu=$('countryMenu');
+  const willOpen=!menu.classList.contains('open');
+  if(willOpen){
+    // كل مرة تفتح فيها القائمة ابدأ بعرض جميع الدول، حتى بعد اختيار الجنوب العربي.
+    $('countrySearch').value='';
+    filterCountryOptions('');
+  }
+  menu.classList.toggle('open',willOpen);
+});
+$('countrySearch').addEventListener('input',e=>filterCountryOptions(e.target.value));
 document.addEventListener('click',e=>{if(!e.target.closest('.country-wrap')) $('countryMenu').classList.remove('open');});
 
 function errorText(code){const map={'auth/email-already-in-use':'هذا البريد مسجل من قبل','auth/invalid-credential':'البريد أو كلمة المرور غير صحيحة','auth/wrong-password':'كلمة المرور غير صحيحة','auth/user-not-found':'الحساب غير موجود','auth/weak-password':'كلمة المرور ضعيفة','auth/invalid-email':'البريد غير صحيح','auth/network-request-failed':'تحقق من اتصال الإنترنت','auth/popup-blocked':'المتصفح منع النافذة - سيتم استخدام طريقة أخرى','auth/popup-closed-by-user':'أغلقت النافذة','auth/too-many-requests':'محاولات كثيرة، حاول لاحقاً','auth/unauthorized-domain':'النطاق غير مصرح به','auth/operation-not-allowed':'طريقة الدخول غير مفعّلة','auth/account-exists-with-different-credential':'البريد مرتبط بطريقة دخول أخرى'}; return map[code]||code;}
