@@ -82,14 +82,15 @@ input,.country-trigger{width:100%;height:46px;min-width:0;padding:0 11px;font-si
 #signupFields:not([hidden]){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px 10px;width:100%;min-width:0}
 #signupFields>.signup-name-row,#signupFields>.signup-password-row{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;min-width:0}
 #signupFields>.signup-email{grid-column:1/-1;width:100%;min-width:0}
-#signupFields>.signup-country{grid-column:1/2;grid-row:auto;width:100%;min-width:0}
+#signupFields>.signup-country{grid-column:1/-1;grid-row:auto;width:100%;min-width:0}
 #signupFields .field{min-width:0;margin:0}
 #signupFields .field label{white-space:nowrap}
 #signupFields input{width:100%;min-width:0;height:44px;padding:0 9px;font-size:15px}
 #signupFields .signup-country .country-wrap{width:100%;min-width:0}
-#signupFields .signup-country .country-trigger{width:100%;height:44px;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:5px;padding:0 8px;white-space:nowrap;overflow:hidden}
-#signupFields #countryChosen{display:flex;align-items:center;gap:6px;min-width:0;max-width:100%;overflow:hidden;white-space:nowrap}
-#signupFields #countryChosen>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
+#signupFields .signup-country .country-trigger{width:100%;height:44px;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 10px;white-space:nowrap;overflow:hidden}
+#signupFields #countryChosen{display:flex;align-items:center;gap:7px;flex:1 1 auto;min-width:0;max-width:100%;overflow:hidden;white-space:nowrap;text-align:right;font-size:14px}
+#signupFields #countryChosen .country-name{display:block;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:clip;white-space:nowrap}
+#signupFields .signup-country .country-trigger{font-size:14px}
 .country-flag-emoji{display:inline-flex;align-items:center;justify-content:center;flex:0 0 21px;width:21px;min-width:21px;font-size:17px;line-height:1}
 .country-flag-image{display:block;flex:0 0 21px;width:21px;height:15px;object-fit:cover;border-radius:2px}
 .country-option{display:flex;align-items:center;gap:9px;width:100%;min-height:40px;padding:8px 9px;border:0;border-radius:8px;background:transparent;color:#fff;text-align:right;font:inherit;cursor:pointer}
@@ -239,7 +240,11 @@ function fillCountries(){
     item.addEventListener('click',()=>{
       select.value=country.code;
       const chosen=$('countryChosen');
-      chosen.replaceChildren(makeCountryFlag(country),document.createTextNode(country.name));
+      const chosenName=document.createElement('span');
+      chosenName.className='country-name';
+      chosenName.textContent=country.name;
+      chosen.replaceChildren(makeCountryFlag(country),chosenName);
+      chosen.title=country.name;
       // عند اختيار أي دولة، امسح البحث حتى تظهر القائمة كاملة عند فتحها مرة أخرى.
       $('countrySearch').value='';
       options.querySelectorAll('.country-option').forEach(option=>{option.hidden=false;});
