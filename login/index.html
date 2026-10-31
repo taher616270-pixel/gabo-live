@@ -63,6 +63,18 @@ button:disabled{opacity:.55}
 .country-empty.show{display:block}
 @media(max-width:420px){.card{padding:19px}.row{gap:7px}}
 
+.terms-modal[hidden]{display:none!important}
+.terms-modal{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;background:#000b;backdrop-filter:blur(5px)}
+.terms-box{width:min(100%,390px);padding:22px;border:1px solid #e8c77b66;border-radius:18px;background:#171323;color:#fff;box-shadow:0 20px 60px #0009;text-align:right}
+.terms-box h2{margin:0 0 10px;font-size:20px}
+.terms-box p{margin:0 0 18px;color:#d4cede;font-size:14px;line-height:1.8}
+.terms-check{display:flex;align-items:flex-start;gap:9px;font-size:13px;line-height:1.8}
+.terms-check input{width:18px;height:18px;flex:0 0 18px;margin:3px 0 0;accent-color:#d7ad58}
+.terms-check a{color:#e7c577;text-decoration:underline}
+.terms-error{margin-top:8px;color:#ff8585;font-size:12px}
+.terms-actions{display:flex;gap:9px;margin-top:20px}
+.terms-actions button{flex:1;min-height:43px;border:1px solid #ffffff22;border-radius:10px;background:#292238;color:#fff;font:inherit}
+.terms-actions #termsAccept{background:linear-gradient(135deg,#e8c77b,#b88938);color:#21180c;font-weight:700}
 /* Clean responsive login layout — single source of truth */
 html,body{width:100%;height:100%;height:100dvh;margin:0;overflow:hidden}
 body{position:fixed;inset:0;padding:0;display:block;overscroll-behavior:none}
@@ -183,8 +195,15 @@ input,.country-trigger{width:100%;height:46px;min-width:0;padding:0 11px;font-si
 <button class="social-btn" id="appleBtn" type="button"><span class="apple-icon"></span> Apple</button>
 </div>
 
-<label class="consent" for="termsConsent"><input id="termsConsent" type="checkbox"><span>لقد قرأت ووافقت على <a href="/terms.html" target="_blank">شروط الخدمة</a>، <a href="/privacy.html" target="_blank">سياسة الخصوصية</a></span></label>
-<div class="consentErr" id="consentErr">يجب الموافقة على الشروط والسياسات أولاً</div>
+<div class="terms-modal" id="termsModal" hidden role="dialog" aria-modal="true" aria-labelledby="termsModalTitle">
+  <div class="terms-box">
+    <h2 id="termsModalTitle">الموافقة على الشروط</h2>
+    <p>لإنشاء حساب جديد في GABO LIVE، يرجى قراءة شروط الخدمة وسياسة الخصوصية والموافقة عليهما.</p>
+    <label class="terms-check"><input id="termsConsent" type="checkbox"><span>لقد قرأت ووافقت على <a href="/terms.html" target="_blank">شروط الخدمة</a>، <a href="/privacy.html" target="_blank">سياسة الخصوصية</a></span></label>
+    <div class="terms-error" id="consentErr" hidden>يجب الموافقة على الشروط والسياسات للمتابعة</div>
+    <div class="terms-actions"><button id="termsCancel" type="button">إلغاء</button><button id="termsAccept" type="button">موافق وإنشاء الحساب</button></div>
+  </div>
+</div>
 <p class="legal">GABO LIVE — تواصل، شارك، وعِش اللحظة.</p>
 </section>
 </main>
@@ -196,8 +215,23 @@ let mode='login', auth=null, db=null, authFns=null, storeFns=null, socialBusy=fa
 const $=id=>document.getElementById(id);
 const msg=$('msg'), mainBtn=$('mainBtn');
 function setMessage(t,type=''){msg.textContent=t||'';msg.className='msg '+type}
-function clearErrors(){document.querySelectorAll('.fieldErr').forEach(el=>{el.textContent='';el.classList.remove('show')});$('consentErr').classList.remove('show');setMessage('')}
-function requireConsent(){if($('termsConsent').checked) return true; $('consentErr').classList.add('show'); setMessage('وافق على الشروط والسياسات أولاً','e'); return false;}
+function clearErrors(){document.querySelectorAll('.fieldErr').forEach(el=>{el.textContent='';el.classList.remove('show')});setMessage('')}
+function askTerms(){
+  return new Promise(resolve=>{
+    const modal=$('termsModal'), check=$('termsConsent'), error=$('consentErr');
+    check.checked=false; error.hidden=true; modal.hidden=false;
+    const finish=value=>{
+      modal.hidden=true;
+      $('termsAccept').removeEventListener('click',accept);
+      $('termsCancel').removeEventListener('click',cancel);
+      resolve(value);
+    };
+    const accept=()=>{if(!check.checked){error.hidden=false;return;}finish(true);};
+    const cancel=()=>finish(false);
+    $('termsAccept').addEventListener('click',accept);
+    $('termsCancel').addEventListener('click',cancel);
+  });
+}
 function setMode(next){mode=next; $('tabLogin').classList.toggle('on',mode==='login'); $('tabSignup').classList.toggle('on',mode==='signup'); $('loginFields').hidden=mode!=='login'; $('signupFields').hidden=mode!=='signup'; mainBtn.textContent=mode==='login'?'تسجيل دخول':'إنشاء حساب'; clearErrors();}
 $('tabLogin').addEventListener('click',()=>setMode('login')); $('tabSignup').addEventListener('click',()=>setMode('signup'));
 document.querySelectorAll('[data-toggle]').forEach(b=>{b.addEventListener('click',()=>{const i=$(b.dataset.toggle); i.type=i.type==='password'?'text':'password'; b.textContent=i.type==='password'?'إظهار':'إخفاء';})});
@@ -347,7 +381,7 @@ initialize();
 
 // تسجيل عادي و انشاء حساب
 $('authForm').addEventListener('submit', async (e)=>{
-  e.preventDefault(); if(!requireConsent()) return; clearErrors();
+  e.preventDefault(); clearErrors();
   if(!auth){ setMessage('النظام لم يتحمل بعد','e'); return; }
   mainBtn.disabled=true;
   try{
@@ -361,6 +395,7 @@ $('authForm').addEventListener('submit', async (e)=>{
       const first=$('f_first').value.trim(), last=$('f_last').value.trim(), email=$('f_email').value.trim(), pass=$('f_pass').value, confirm=$('f_confirm').value, country=$('f_country').value;
       if(!first || !last || !email || !pass || !confirm || !country){ setMessage('اكمل جميع الحقول','e'); throw '';}
       if(pass!==confirm){ $('f_confirmErr').textContent='كلمة المرور غير متطابقة'; $('f_confirmErr').classList.add('show'); throw '';}
+      const accepted=await askTerms(); if(!accepted){setMessage('تم إلغاء إنشاء الحساب','');return;}
       const cred=await authFns.createUserWithEmailAndPassword(auth,email,pass);
       await authFns.updateProfile(cred.user,{displayName:first+' '+last});
       await saveUserProfile(cred.user,{firstName:first,lastName:last,country});
@@ -372,7 +407,6 @@ $('authForm').addEventListener('submit', async (e)=>{
 // *** تسجيل Google المصحح - بدون لوب ***
 $('googleBtn').addEventListener('click', async ()=>{
   if(socialBusy) return;
-  if(!requireConsent()) return;
   if(!auth || !authFns || !storeFns){ setMessage('انتظر حتى يكتمل تحميل تسجيل الدخول ثم حاول مرة أخرى','e'); return; }
 
   socialBusy=true;
@@ -386,6 +420,7 @@ $('googleBtn').addEventListener('click', async ()=>{
     // استخدم Popup مباشرة حتى لا نعتمد على الرجوع عبر نطاق firebaseapp.com
     // وهذا يتجنب مشكلة Safari/iPhone مع تخزين جلسة Redirect.
     const result=await authFns.signInWithPopup(auth,provider);
+    if(authFns.getAdditionalUserInfo(result)?.isNewUser){const accepted=await askTerms();if(!accepted){try{await authFns.deleteUser(result.user);}finally{await authFns.signOut(auth);}socialBusy=false;$('googleBtn').disabled=false;setMessage('تم إلغاء إنشاء الحساب');return;}}
 
     setMessage('تم تسجيل الدخول، جاري فتح الصفحة الرئيسية...','ok');
 
@@ -410,13 +445,13 @@ $('googleBtn').addEventListener('click', async ()=>{
 });
 
 $('appleBtn').addEventListener('click', async ()=>{
-  if(socialBusy) return; if(!requireConsent()) return;
+  if(socialBusy) return;
   socialBusy=true; setMessage('جاري فتح Apple...','');
   try{
     const provider=new authFns.OAuthProvider('apple.com');
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     if(isIOS){ await authFns.signInWithRedirect(auth,provider); }
-    else{ const result=await authFns.signInWithPopup(auth,provider); await saveUserProfile(result.user); location.href='/app/'; }
+    else{ const result=await authFns.signInWithPopup(auth,provider); if(authFns.getAdditionalUserInfo(result)?.isNewUser){const accepted=await askTerms();if(!accepted){try{await authFns.deleteUser(result.user);}finally{await authFns.signOut(auth);}socialBusy=false;setMessage('تم إلغاء إنشاء الحساب');return;}} await saveUserProfile(result.user); location.href='/app/'; }
   }catch(err){ setMessage(errorText(err.code)||'فشل تسجيل Apple','e'); socialBusy=false; }
 });
 
