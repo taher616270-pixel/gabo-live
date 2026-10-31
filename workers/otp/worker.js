@@ -123,6 +123,30 @@ export default {
    if(!identity)return json({success:false,error:"VERIFICATION_EXPIRED"},400);
    return json({success:true,verified:true});
   }
+  if(action==="send_welcome"){
+   const authorization=request.headers.get("Authorization")||"";
+   const idToken=authorization.startsWith("Bearer ")?authorization.slice(7):String(body.idToken||"");
+   const uid=String(body.uid||"").trim();
+   if(!idToken||!uid)return json({success:false,error:"AUTH_REQUIRED"},401);
+   let account;try{account=JSON.parse(env.FIREBASE_SERVICE_ACCOUNT_JSON);}catch{return json({success:false,error:"FIREBASE_SERVICE_ACCOUNT_INVALID"},500);}
+   const token=await getFirebaseAccessToken(env);
+   const base="https://identitytoolkit.googleapis.com/v1/projects/"+encodeURIComponent(account.project_id);
+   const lookup=await fetch(base+"/accounts:lookup",{method:"POST",headers:{"Authorization":"Bearer "+token,"Content-Type":"application/json"},body:JSON.stringify({idToken})});
+   const lookupData=await lookup.json().catch(()=>({}));
+   const user=lookupData.users?.[0];
+   if(!lookup.ok||!user||user.localId!==uid||normalizeEmail(user.email)!==email)return json({success:false,error:"AUTH_INVALID"},401);
+   const welcomeKey="welcome:"+uid;
+   if(await env.OTP_KV.get(welcomeKey))return json({success:true,alreadySent:true});
+   await env.OTP_KV.put(welcomeKey,"sending",{expirationTtl:86400});
+   try{
+    await sendMail(env,email,"","welcome");
+    await env.OTP_KV.put(welcomeKey,"sent",{expirationTtl:31536000});
+    return json({success:true,sent:true});
+   }catch{
+    await env.OTP_KV.delete(welcomeKey);
+    return json({success:false,error:"WELCOME_EMAIL_FAILED"},502);
+   }
+  }
   if(action==="complete_reset"){
    const password=String(body.password||"");
    if(password.length<6||password.length>128)return json({success:false,error:"INVALID_PASSWORD"},400);
