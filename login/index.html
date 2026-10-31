@@ -357,6 +357,15 @@ async function initialize(){
     try{
       const redirectResult = await authFns.getRedirectResult(auth);
       if(redirectResult && redirectResult.user){
+        if(authFns.getAdditionalUserInfo(redirectResult)?.isNewUser){
+          const accepted=await askTerms();
+          if(!accepted){
+            try{await authFns.deleteUser(redirectResult.user);}catch(deleteError){console.error('Could not remove unaccepted new account:',deleteError);}
+            await authFns.signOut(auth);
+            setMessage('تم إلغاء إنشاء الحساب');
+            return;
+          }
+        }
         setMessage('تم تسجيل الدخول، جاري تحويلك...','ok');
         try{ await saveUserProfile(redirectResult.user); }
         catch(profileError){ console.error('Profile save failed after redirect sign-in:',profileError); }
