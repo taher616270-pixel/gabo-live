@@ -63,394 +63,71 @@ button:disabled{opacity:.55}
 .country-empty.show{display:block}
 @media(max-width:420px){.card{padding:19px}.row{gap:7px}}
 
-/* Compact responsive login: keep every action visible without page scrolling */
-
-
-html{height:100%;overflow:hidden}
-body{height:100vh;min-height:0;overflow:hidden;padding:clamp(6px,2vh,16px);padding-top:max(6px,env(safe-area-inset-top));padding-bottom:max(6px,env(safe-area-inset-bottom))}
-@supports(height:100dvh){body{height:100dvh}}
-.shell{width:min(100%,460px);max-height:100%;display:flex;align-items:center}
-.card{width:100%;max-height:100%;overflow:hidden;padding:clamp(12px,2.2vh,22px);border-radius:20px}
-.brand{margin-bottom:clamp(7px,1.5vh,14px)}
-.mark{font-size:clamp(34px,6vh,54px)}
-.brand h1{font-size:clamp(20px,3.5vh,26px);margin:4px 0}
-.brand p{font-size:12px;margin:3px 0 0}
-.tabs{margin-bottom:clamp(7px,1.5vh,13px);padding:3px}
-.tabs button{padding:9px 6px}
-.field{margin-bottom:clamp(6px,1.2vh,10px)}
-label{margin-bottom:4px;font-size:12px}
-input{height:42px;padding:0 10px;font-size:14px}
-.pass-toggle{top:8px}
-.row{gap:8px}
-.forgot{font-size:12px;margin:0 0 5px auto}
-.main-btn,.social-btn{min-height:42px;margin-top:6px;font-size:13px}
+/* Clean responsive login layout — single source of truth */
+html,body{width:100%;height:100%;height:100dvh;margin:0;overflow:hidden}
+body{position:fixed;inset:0;padding:0;display:block;overscroll-behavior:none}
+.shell{position:fixed;inset:0;width:100%;height:100%;max-width:none;margin:0;padding:0;display:flex;align-items:stretch;justify-content:center}
+.card{width:100%;height:100%;min-height:0;max-height:none;max-width:480px;margin:0;padding:clamp(14px,3.5vw,24px);padding-top:max(14px,env(safe-area-inset-top));padding-bottom:max(14px,env(safe-area-inset-bottom));border:0;border-radius:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;justify-content:center;box-shadow:none}
+.brand{margin-bottom:clamp(8px,2vh,18px)}
+.mark{display:block;width:max-content;margin:0 auto;transform-origin:bottom;animation:gaboLogoBounce 2.2s ease-in-out infinite;font-size:clamp(40px,12vw,66px)}
+.brand h1{font-size:clamp(24px,6vw,32px);margin:5px 0}
+.tabs{margin-bottom:clamp(8px,1.8vh,15px)}
+.tabs button{padding:10px 6px}
+.field{min-width:0;margin:0 0 10px}
+label{font-size:12px;margin-bottom:5px}
+input,.country-trigger{width:100%;height:46px;min-width:0;padding:0 11px;font-size:16px;box-sizing:border-box}
+.input-wrap{min-width:0}
+.pass-toggle{top:10px}
+#signupFields[hidden]{display:none!important}
+#signupFields:not([hidden]){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px 10px;width:100%;min-width:0}
+#signupFields>.signup-name-row,#signupFields>.signup-password-row{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;min-width:0}
+#signupFields>.signup-email{grid-column:1/-1;width:100%;min-width:0}
+#signupFields>.signup-country{grid-column:1/2;grid-row:auto;width:100%;min-width:0}
+#signupFields .field{min-width:0;margin:0}
+#signupFields .field label{white-space:nowrap}
+#signupFields input{width:100%;min-width:0;height:44px;padding:0 9px;font-size:15px}
+#signupFields .signup-country .country-wrap{width:100%;min-width:0}
+#signupFields .signup-country .country-trigger{width:100%;height:44px;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:5px;padding:0 8px;white-space:nowrap;overflow:hidden}
+#signupFields #countryChosen{display:flex;align-items:center;gap:6px;min-width:0;max-width:100%;overflow:hidden;white-space:nowrap}
+#signupFields #countryChosen>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.country-flag-emoji{display:inline-flex;align-items:center;justify-content:center;flex:0 0 21px;width:21px;min-width:21px;font-size:17px;line-height:1}
+.country-flag-image{display:block;flex:0 0 21px;width:21px;height:15px;object-fit:cover;border-radius:2px}
+.country-option{display:flex;align-items:center;gap:9px;width:100%;min-height:40px;padding:8px 9px;border:0;border-radius:8px;background:transparent;color:#fff;text-align:right;font:inherit;cursor:pointer}
+.country-option:active,.country-option:focus-visible{background:#30204d;outline:none}
+.country-option img{width:21px;height:15px;object-fit:cover;border-radius:2px;flex:0 0 21px}
+.country-menu{display:none;position:fixed;z-index:99999;padding:8px;background:#151222;border:1px solid #e8c77b55;border-radius:12px;box-shadow:0 16px 40px #000b;max-height:min(300px,70dvh);overflow:hidden}
+.country-menu.open{display:block}
+.country-search{width:100%;height:40px;margin-bottom:7px}
+.country-options{max-height:min(230px,52dvh);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.country-empty{display:none;padding:10px;text-align:center;color:var(--muted)}
+.country-empty.show{display:block}
+.main-btn,.social-btn{width:100%;min-height:46px;margin-top:8px;font-size:14px}
 .social-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.social-btn{margin-top:0;padding:4px 6px;white-space:nowrap}
-.social-btn img{width:17px;height:17px}
-.apple-icon{font-size:18px}
-.divider{margin:9px 0;font-size:11px}
-.msg{min-height:17px;margin-top:5px;font-size:12px}
-.consent{margin-top:9px;gap:7px;font-size:11px;line-height:1.45}
-.consent input{width:16px;height:16px;flex-basis:16px;margin:1px 0}
-.consentErr{font-size:11px}
-.legal{font-size:10px;margin:8px 0 0}
-.country-trigger{height:42px;padding:0 9px;font-size:13px}
-.country-menu{top:46px}
-.country-search{height:38px}
-.country-options{max-height:150px}
-.country-option{padding:7px;font-size:13px}
-#signupFields:not([hidden]){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px 9px}
-#signupFields .row{display:contents}
-#signupFields .field{min-width:0;margin:0}
-#signupFields .field label{white-space:nowrap}
-#signupFields input{height:40px;min-width:0;font-size:13px}
-#signupFields .country-wrap{min-width:0}
-#signupFields .country-trigger{height:40px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-@media(max-height:650px){
- .card{padding:10px 13px}
- .brand{margin-bottom:6px}
- .mark{font-size:34px}
- .brand h1{font-size:20px;margin:2px 0}
- .brand p{font-size:10px;margin:0}
- .tabs{margin-bottom:6px}
- .tabs button{padding:7px 5px}
- .field{margin-bottom:5px}
- input{height:38px}
- #signupFields input,#signupFields .country-trigger{height:36px}
- .main-btn,.social-btn{min-height:38px}
- .divider{margin:6px 0}
- .consent{margin-top:6px}
- .legal{margin-top:5px}
-}
-@media(max-width:350px){
- .card{padding:9px}
- #signupFields:not([hidden]){gap:5px 6px}
- .social-row{gap:6px}
- .social-btn{font-size:12px}
-}
-@media(max-height:520px) and (orientation:landscape){
- body{padding:4px}
- .shell{max-width:700px}
- .card{padding:7px 12px}
- .brand{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:4px}
- .mark{font-size:28px}
- .brand h1{font-size:18px;margin:0}
- .brand p{display:none}
- .tabs{margin-bottom:4px}
- .field{margin-bottom:3px}
- .divider{margin:4px 0}
- .legal{display:none}
-}
-
-/* Fuller app-like login frame: extend the card toward the top and bottom */
-.shell{height:100%;width:min(100%,480px);align-items:stretch}
-.card{min-height:100%;display:flex;flex-direction:column;justify-content:center;padding:clamp(20px,4vh,34px) clamp(18px,4vw,30px);border-radius:24px}
-.brand{margin-bottom:clamp(14px,3vh,24px)}
-.mark{font-size:clamp(48px,7vh,64px)}
-.brand h1{font-size:clamp(24px,4vh,30px);margin:6px 0}
-.tabs{margin-bottom:clamp(12px,2.4vh,20px)}
-.field{margin-bottom:clamp(9px,1.8vh,14px)}
-input{height:46px}
-.main-btn,.social-btn{min-height:46px}
-.divider{margin:clamp(12px,2.4vh,19px) 0}
-.consent{margin-top:clamp(12px,2.2vh,18px)}
-.legal{margin-top:clamp(12px,2.2vh,18px)}
+.social-btn{margin-top:0;padding:6px}
+.social-btn img{width:18px;height:18px}
+.divider{margin:10px 0}
+.msg{min-height:18px;margin-top:6px}
+.consent{margin-top:10px;gap:7px;font-size:11px;line-height:1.5}
+.consent input{width:17px;height:17px;flex:0 0 17px;margin:1px 0}
+.legal{margin:8px 0 0;font-size:10px}
 @media(max-height:700px){
- .card{padding:12px 14px}
- .brand{margin-bottom:7px}
- .mark{font-size:36px}
- .brand h1{font-size:21px;margin:2px 0}
- .brand p{font-size:10px}
- .tabs{margin-bottom:7px}
- .field{margin-bottom:5px}
- input{height:38px}
- .main-btn,.social-btn{min-height:38px}
- .divider{margin:6px 0}
- .consent{margin-top:6px}
- .legal{margin-top:5px}
+ .card{justify-content:flex-start;padding-top:max(10px,env(safe-area-inset-top));padding-bottom:max(10px,env(safe-area-inset-bottom))}
+ .brand{margin-bottom:6px}.mark{font-size:36px}.brand h1{font-size:22px;margin:2px 0}.brand p{font-size:11px;margin:2px 0}
+ .tabs{margin-bottom:6px}.tabs button{padding:8px 5px}
+ .field{margin-bottom:6px}input,.country-trigger{height:40px}
+ #signupFields:not([hidden]){gap:6px 8px}
+ #signupFields input,#signupFields .signup-country .country-trigger{height:39px}
+ .main-btn,.social-btn{min-height:40px;margin-top:5px}
+ .divider{margin:6px 0}.consent{margin-top:6px}.legal{margin-top:5px}
 }
-
-/* Responsive full-screen layout for iOS and Android */
-*,*::before,*::after{-webkit-tap-highlight-color:transparent}
-html,body{
-  width:100%;
-  height:100vh;
-  height:100dvh;
-  height:100svh;
-  margin:0;
-  padding:0;
-  position:fixed;
-  inset:0;
-  overflow:hidden;
-  overscroll-behavior:none;
-  -webkit-overflow-scrolling:auto;
+@media(max-width:360px){
+ .card{padding-left:10px;padding-right:10px}
+ #signupFields:not([hidden]){gap:6px}
+ #signupFields>.signup-name-row,#signupFields>.signup-password-row{gap:7px}
+ #signupFields input{padding-inline:7px;font-size:14px}
+ .country-flag-emoji{font-size:16px}
 }
-@supports not (height:100dvh){
-  html,body,.shell,.card{height:100vh}
-}
-body{display:block;touch-action:pan-x pan-y}
-.shell{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  width:100%;
-  height:100vh;
-  height:100dvh;
-  height:100svh;
-  max-width:100%;
-  padding:0;
-  margin:0;
-  box-sizing:border-box;
-}
-.card{
-  width:100%;
-  height:100vh;
-  height:100dvh;
-  height:100svh;
-  min-height:100vh;
-  min-height:100dvh;
-  min-height:100svh;
-  max-height:100vh;
-  max-height:100dvh;
-  max-height:100svh;
-  max-width:100%;
-  margin:0;
-  border-radius:0;
-  border:none;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  padding:clamp(12px,4vw,24px);
-  padding-top:max(12px,env(safe-area-inset-top));
-  padding-right:max(12px,env(safe-area-inset-right));
-  padding-bottom:max(12px,env(safe-area-inset-bottom));
-  padding-left:max(12px,env(safe-area-inset-left));
-  box-sizing:border-box;
-  overflow:hidden;
-  background:linear-gradient(155deg,#1a162a,#0f0d18);
-  box-shadow:none;
-}
-.brand{margin-bottom:clamp(8px,2.5vh,20px)}
-.mark{font-size:clamp(40px,15vw,75px)}
-.brand h1{font-size:clamp(20px,6vw,30px)}
-.tabs{margin-bottom:clamp(8px,2vh,16px)}
-label{font-size:clamp(11px,2.8vw,13px)}
-input,.country-trigger{
-  height:clamp(44px,11vw,50px)!important;
-  font-size:16px!important;
-  min-width:0;
-  box-sizing:border-box;
-}
-#signupFields:not([hidden]){
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:clamp(5px,1.4vh,10px) 10px;
-  min-width:0;
-}
-#signupFields .row{display:contents}
-#signupFields .field{min-width:0;margin:0}
-#signupFields .field label{white-space:nowrap}
-#signupFields .input-wrap{min-width:0}
-#signupFields .country-wrap{min-width:0}
-#signupFields .country-trigger{width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-inline:8px}
-#signupFields .signup-email,#signupFields .signup-country{grid-column:auto}
-.main-btn,.social-btn{
-  min-height:clamp(44px,11vw,50px);
-  font-size:clamp(13px,3.5vw,15px);
-}
-@media (min-width:769px){
-  .card{
-    width:100%;
-    max-width:460px;
-    border-radius:28px;
-    border:1px solid rgba(255,255,255,.1);
-    height:min(100svh,900px);
-    min-height:min(100svh,620px);
-  }
-}
-@media (max-height:700px),(max-width:375px){
-  .brand{margin-bottom:10px}
-  .field{margin-bottom:8px}
-  .tabs{margin-bottom:10px}
-  .mark{font-size:clamp(34px,10vw,52px)}
-  .brand h1{font-size:clamp(19px,5vw,24px)}
-  #signupFields:not([hidden]){gap:5px 8px}
-  #signupFields input,#signupFields .country-trigger{height:clamp(40px,8vh,46px)!important}
-  .main-btn,.social-btn{min-height:42px}
-  .divider{margin:8px 0}
-  .social-row{gap:8px}
-  .consent{margin-top:6px}
-  .legal{margin-top:5px}
-}
-@media(max-height:600px){
-  .card{justify-content:flex-start;padding-top:max(8px,env(safe-area-inset-top));padding-bottom:max(8px,env(safe-area-inset-bottom))}
-  .brand{margin-bottom:5px}
-  .mark{font-size:32px}
-  .brand p{margin:2px 0}
-  .tabs{margin-bottom:6px}
-  .tabs button{padding:7px 5px}
-  #signupFields:not([hidden]){gap:3px 7px}
-  #signupFields input,#signupFields .country-trigger{height:38px!important}
-  .main-btn,.social-btn{min-height:38px;margin-top:6px}
-  .divider{margin:5px 0}
-}
-
-/* GABO logo bounce */
-@keyframes gaboLogoBounce{
-  0%,100%{transform:translateY(0) scaleY(1)}
-  18%{transform:translateY(-22px) scaleY(1)}
-  29%{transform:translateY(0) scaleY(.85)}
-  37%{transform:translateY(-10px) scaleY(1)}
-  48%{transform:translateY(0) scaleY(1)}
-  100%{transform:translateY(0) scaleY(1)}
-}
-.mark{
-  display:block;
-  width:max-content;
-  margin:0 auto;
-  transform-origin:bottom;
-  animation:gaboLogoBounce 2.2s ease-in-out infinite;
-}
-.brand h1{
-  font-size:36px!important;
-  transform:scale(1.08);
-  transform-origin:center;
-}
-.country-flag-emoji{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-width:21px;
-  font-size:18px;
-  line-height:1;
-  flex:0 0 auto;
-}
-.country-flag-image{
-  width:21px;
-  height:15px;
-  object-fit:cover;
-  border-radius:2px;
-  flex:0 0 auto;
-}
-.country-option{gap:10px}
-.country-trigger #countryChosen{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  min-width:0;
-  vertical-align:middle;
-}
-@media(prefers-reduced-motion:reduce){
-  .mark{animation:none}
-}
-
-/* Signup fields: exact four-row layout */
-#signupFields:not([hidden]){
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:12px;
-  width:100%;
-  min-width:0;
-}
-#signupFields .signup-row{
-  grid-column:1 / -1;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  min-width:0;
-}
-#signupFields .signup-email,
-#signupFields .signup-country{
-  grid-column:1 / 2;
-  width:100%;
-  min-width:0;
-  justify-self:stretch;
-}
-#signupFields .field{min-width:0;margin:0}
-#signupFields .signup-email input,
-#signupFields .signup-country .country-trigger{width:100%}
-#signupFields .signup-country,
-#signupFields .signup-country .country-wrap,
-#signupFields .signup-country .country-trigger{
-  width:100%;
-  min-width:0;
-}
-#signupFields .signup-country .country-trigger{
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:5px;
-  padding-inline:8px;
-}
-#signupFields #countryChosen{
-  display:flex;
-  align-items:center;
-  gap:5px;
-  width:100%;
-  min-width:0;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-#signupFields #countryChosen > :last-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
-#signupFields .country-trigger{width:100%}
-@media(max-width:375px){
-  #signupFields:not([hidden]){gap:10px}
-  #signupFields .signup-row{gap:12px}
-}
-
-/* Exact first-row name fields fix */
-#signupFields > .row:nth-child(1) {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 12px !important;
-  width: 100% !important;
-}
-
-#signupFields > .row:nth-child(1) .field {
-  width: 100% !important;
-  min-width: 0 !important;
-}
-
-#signupFields > .row:nth-child(1) input#f_first,
-#signupFields > .row:nth-child(1) input#f_last {
-  width: 100% !important;
-  min-width: 0 !important;
-  height: 54px !important;
-  text-align: center !important;
-  direction: rtl !important;
-  font-weight: 700 !important;
-  font-size: 16px !important;
-  line-height: normal !important;
-  padding: 0 !important;
-  display: grid !important;
-  place-items: center !important;
-  place-content: center !important;
-}
-
-#signupFields > .row:nth-child(1) input#f_first::placeholder,
-#signupFields > .row:nth-child(1) input#f_last::placeholder {
-  text-align: center !important;
-  font-weight: 600 !important;
-  font-size: 15px !important;
-  color: rgba(255,255,255,0.6) !important;
-  opacity: 1 !important;
-  width: 100% !important;
-  margin: 0 auto !important;
-  position: relative !important;
-  left: 0 !important;
-  right: 0 !important;
-}
-
-#signupFields > .row:nth-child(1) .field label {
-  width: 100% !important;
-  text-align: right !important;
-}
+@media(prefers-reduced-motion:reduce){.mark{animation:none}}
 </style>
 </head>
 <body>
@@ -513,7 +190,7 @@ input,.country-trigger{
 
 <script type="module">
 import { getSouthArabiaFlag, getCountryRegistry } from '/assets/country-flags.js';
-const SOUTH_FLAG = await getSouthArabiaFlag();
+const [SOUTH_FLAG, countryRegistry] = await Promise.all([getSouthArabiaFlag(), getCountryRegistry()]);
 let mode='login', auth=null, db=null, authFns=null, storeFns=null, socialBusy=false;
 const $=id=>document.getElementById(id);
 const msg=$('msg'), mainBtn=$('mainBtn');
@@ -529,7 +206,7 @@ function countryEmoji(code){
   if(!/^[a-z]{2}$/i.test(code)) return '🏳️';
   return [...code.toUpperCase()].map(ch=>String.fromCodePoint(127397+ch.charCodeAt(0))).join('');
 }
-const countries=(await getCountryRegistry()).map(c=>({...c,emoji:c.code==='south-arabia'?'':countryEmoji(c.code),flag:c.code==='south-arabia'?SOUTH_FLAG:c.flag}));
+const countries=countryRegistry.map(c=>({...c,emoji:c.code==='south-arabia'?'':countryEmoji(c.code),flag:c.code==='south-arabia'?SOUTH_FLAG:c.flag}));
 function makeCountryFlag(country){
   if(country.code==='south-arabia'){
     const img=document.createElement('img');
@@ -601,7 +278,8 @@ function openCountryMenu(){
   const below=window.innerHeight-rect.bottom;
   const top=below>=menuHeight+6 ? rect.bottom+6 : Math.max(margin,rect.top-menuHeight-6);
   const width=Math.min(rect.width,window.innerWidth-margin*2);
-  const left=Math.max(margin,Math.min(rect.left,window.innerWidth-width-margin));
+  // RTL: align the menu's right edge with the selector's right edge.
+  const left=Math.max(margin,Math.min(rect.right-width,window.innerWidth-width-margin));
   countryMenu.style.top=top+'px';
   countryMenu.style.left=left+'px';
   countryMenu.style.width=width+'px';
@@ -621,7 +299,7 @@ document.addEventListener('click',e=>{
   if(!e.target.closest('.country-wrap') && !countryMenu.contains(e.target)) closeCountryMenu();
 });
 window.addEventListener('resize',closeCountryMenu);
-window.addEventListener('scroll',closeCountryMenu,true);
+window.addEventListener('orientationchange',closeCountryMenu);
 
 function errorText(code){const map={'auth/email-already-in-use':'هذا البريد مسجل من قبل','auth/invalid-credential':'البريد أو كلمة المرور غير صحيحة','auth/wrong-password':'كلمة المرور غير صحيحة','auth/user-not-found':'الحساب غير موجود','auth/weak-password':'كلمة المرور ضعيفة','auth/invalid-email':'البريد غير صحيح','auth/network-request-failed':'تحقق من اتصال الإنترنت','auth/popup-blocked':'المتصفح منع النافذة - سيتم استخدام طريقة أخرى','auth/popup-closed-by-user':'أغلقت النافذة','auth/too-many-requests':'محاولات كثيرة، حاول لاحقاً','auth/unauthorized-domain':'النطاق غير مصرح به','auth/operation-not-allowed':'طريقة الدخول غير مفعّلة','auth/account-exists-with-different-credential':'البريد مرتبط بطريقة دخول أخرى'}; return map[code]||code;}
 
