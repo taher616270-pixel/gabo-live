@@ -507,7 +507,7 @@ $('authForm').addEventListener('submit', async (e)=>{
       if(!verified){mainBtn.disabled=false;return;}
       const cred=await authFns.createUserWithEmailAndPassword(auth,email,pass);
       await authFns.updateProfile(cred.user,{displayName:first+' '+last});
-      await saveUserProfile(cred.user,{firstName:first,lastName:last,country,emailVerified:true});
+      await saveUserProfile(cred.user,{firstName:first,lastName:last,country});
       location.href='/app/';
     }
   }catch(err){
