@@ -521,9 +521,8 @@ $('appleBtn').addEventListener('click', async ()=>{
   }catch(err){ setMessage(errorText(err.code)||'فشل تسجيل Apple','e'); socialBusy=false; }
 });
 
-$('forgotBtn').addEventListener('click', async ()=>{
-  const email=$('l_email').value.trim(); if(!email){ setMessage('ادخل بريدك أولاً','e'); return; }
-  try{ await authFns.sendPasswordResetEmail(auth,email); setMessage('تم ارسال رابط اعادة التعيين','ok'); }catch(err){ setMessage(errorText(err.code)||'فشل الارسال','e'); }
+$('forgotBtn').addEventListener('click', ()=>{
+  location.href='/login/forgot-password.html';
 });
 </script>
 </body>
