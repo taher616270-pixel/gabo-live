@@ -170,61 +170,132 @@ input{height:46px}
  .legal{margin-top:5px}
 }
 
-/* Full-screen native-app layout for iOS and Android */
+/* Responsive full-screen layout for iOS and Android */
+*,*::before,*::after{-webkit-tap-highlight-color:transparent}
 html,body{
-  position:fixed;
-  inset:0;
   width:100%;
   height:100vh;
-  min-height:0;
+  height:100dvh;
+  height:100svh;
   margin:0;
+  padding:0;
+  position:fixed;
+  inset:0;
   overflow:hidden;
   overscroll-behavior:none;
   -webkit-overflow-scrolling:auto;
 }
-@supports (height:100dvh){
-  html,body{height:100dvh}
+@supports not (height:100dvh){
+  html,body,.shell,.card{height:100vh}
 }
-body{
-  display:block;
-  padding:0;
-  touch-action:pan-x pan-y;
-}
+body{display:block;touch-action:pan-x pan-y}
 .shell{
   position:fixed;
   inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   width:100%;
-  max-width:none;
   height:100vh;
-  max-height:none;
+  height:100dvh;
+  height:100svh;
+  max-width:100%;
+  padding:0;
   margin:0;
-  display:block;
-}
-@supports (height:100dvh){
-  .shell{height:100dvh}
+  box-sizing:border-box;
 }
 .card{
   width:100%;
   height:100vh;
-  min-height:0;
-  max-height:none;
+  height:100dvh;
+  height:100svh;
+  min-height:100vh;
+  min-height:100dvh;
+  min-height:100svh;
+  max-height:100vh;
+  max-height:100dvh;
+  max-height:100svh;
+  max-width:100%;
   margin:0;
-  overflow:hidden;
   border-radius:0;
-  padding:
-    max(12px,env(safe-area-inset-top))
-    max(14px,env(safe-area-inset-right))
-    max(12px,env(safe-area-inset-bottom))
-    max(14px,env(safe-area-inset-left));
+  border:none;
   display:flex;
   flex-direction:column;
   justify-content:center;
+  padding:clamp(12px,4vw,24px);
+  padding-top:max(12px,env(safe-area-inset-top));
+  padding-right:max(12px,env(safe-area-inset-right));
+  padding-bottom:max(12px,env(safe-area-inset-bottom));
+  padding-left:max(12px,env(safe-area-inset-left));
+  box-sizing:border-box;
+  overflow:hidden;
+  background:linear-gradient(155deg,#1a162a,#0f0d18);
+  box-shadow:none;
+}
+.brand{margin-bottom:clamp(8px,2.5vh,20px)}
+.mark{font-size:clamp(40px,15vw,75px)}
+.brand h1{font-size:clamp(20px,6vw,30px)}
+.tabs{margin-bottom:clamp(8px,2vh,16px)}
+label{font-size:clamp(11px,2.8vw,13px)}
+input,.country-trigger{
+  height:clamp(44px,11vw,50px)!important;
+  font-size:16px!important;
+  min-width:0;
   box-sizing:border-box;
 }
-@supports (height:100dvh){
-  .card{height:100dvh}
+#signupFields:not([hidden]){
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:clamp(5px,1.4vh,10px) 10px;
+  min-width:0;
 }
-
+#signupFields .row{display:contents}
+#signupFields .field{min-width:0;margin:0}
+#signupFields .field label{white-space:nowrap}
+#signupFields .input-wrap{min-width:0}
+#signupFields .country-wrap{min-width:0}
+#signupFields .country-trigger{width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-inline:8px}
+#signupFields .signup-email,#signupFields .signup-country{grid-column:auto}
+.main-btn,.social-btn{
+  min-height:clamp(44px,11vw,50px);
+  font-size:clamp(13px,3.5vw,15px);
+}
+@media (min-width:769px){
+  .card{
+    width:100%;
+    max-width:460px;
+    border-radius:28px;
+    border:1px solid rgba(255,255,255,.1);
+    height:min(100svh,900px);
+    min-height:min(100svh,620px);
+  }
+}
+@media (max-height:700px),(max-width:375px){
+  .brand{margin-bottom:10px}
+  .field{margin-bottom:8px}
+  .tabs{margin-bottom:10px}
+  .mark{font-size:clamp(34px,10vw,52px)}
+  .brand h1{font-size:clamp(19px,5vw,24px)}
+  #signupFields:not([hidden]){gap:5px 8px}
+  #signupFields input,#signupFields .country-trigger{height:clamp(40px,8vh,46px)!important}
+  .main-btn,.social-btn{min-height:42px}
+  .divider{margin:8px 0}
+  .social-row{gap:8px}
+  .consent{margin-top:6px}
+  .legal{margin-top:5px}
+}
+@media(max-height:600px){
+  .card{justify-content:flex-start;padding-top:max(8px,env(safe-area-inset-top));padding-bottom:max(8px,env(safe-area-inset-bottom))}
+  .brand{margin-bottom:5px}
+  .mark{font-size:32px}
+  .brand p{margin:2px 0}
+  .tabs{margin-bottom:6px}
+  .tabs button{padding:7px 5px}
+  #signupFields:not([hidden]){gap:3px 7px}
+  #signupFields input,#signupFields .country-trigger{height:38px!important}
+  .main-btn,.social-btn{min-height:38px;margin-top:6px}
+  .divider{margin:5px 0}
+}
 </style>
 </head>
 <body>
@@ -254,8 +325,6 @@ body{
 <div class="field"><label>اللقب</label><input id="f_last" type="text" placeholder="اللقب"><div class="fieldErr" id="f_lastErr"></div></div>
 </div>
 <div class="field"><label>البريد الإلكتروني</label><input id="f_email" type="email" placeholder="example@gmail.com" dir="ltr"><div class="fieldErr" id="f_emailErr"></div></div>
-<div class="field"><label>كلمة المرور</label><div class="input-wrap"><input id="f_pass" type="password" placeholder="6 أحرف على الأقل"><button class="pass-toggle" type="button" data-toggle="f_pass">إظهار</button></div><div class="fieldErr" id="f_passErr"></div></div>
-<div class="field"><label>تأكيد كلمة المرور</label><div class="input-wrap"><input id="f_confirm" type="password" placeholder="أعد كتابة كلمة المرور"><button class="pass-toggle" type="button" data-toggle="f_confirm">إظهار</button></div><div class="fieldErr" id="f_confirmErr"></div></div>
 <div class="field">
 <label>الدولة</label>
 <div class="country-wrap">
@@ -265,6 +334,8 @@ body{
 </div>
 <div class="fieldErr" id="f_countryErr"></div>
 </div>
+<div class="field"><label>كلمة المرور</label><div class="input-wrap"><input id="f_pass" type="password" placeholder="6 أحرف على الأقل"><button class="pass-toggle" type="button" data-toggle="f_pass">إظهار</button></div><div class="fieldErr" id="f_passErr"></div></div>
+<div class="field"><label>تأكيد كلمة المرور</label><div class="input-wrap"><input id="f_confirm" type="password" placeholder="أعد كتابة كلمة المرور"><button class="pass-toggle" type="button" data-toggle="f_confirm">إظهار</button></div><div class="fieldErr" id="f_confirmErr"></div></div>
 </div>
 
 <button class="main-btn" id="mainBtn" type="submit">تسجيل دخول</button>
