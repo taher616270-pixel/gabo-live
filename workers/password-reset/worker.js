@@ -48,7 +48,7 @@ export default {
     }
     if (!headers["access-control-allow-origin"]) return json({ error: "origin_not_allowed" }, 403);
     if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405, headers);
-    if (!env.RESET_CODES || !env.RESEND_API_KEY || !env.FROM_EMAIL || !env.OTP_HMAC_SECRET) {
+    if (!env.RESET_CODES || !env.EMAILJS_SERVICE_ID || !env.EMAILJS_TEMPLATE_ID || !env.EMAILJS_PUBLIC_KEY || !env.OTP_HMAC_SECRET) {
       return json({ error: "service_not_configured" }, 503, headers);
     }
 
@@ -78,20 +78,26 @@ export default {
       await env.RESET_CODES.put(cooldownKey, "1", { expirationTtl: RESEND_WAIT_SECONDS });
       await env.RESET_CODES.put(ipLimitKey, String(ipCount + 1), { expirationTtl: 3600 });
 
-      const mail = await fetch("https://api.resend.com/emails", {
+      const mail = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
         method: "POST",
-        headers: { "authorization": "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+        headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          from: env.FROM_EMAIL,
-          to: [email],
-          subject: "رمز استعادة كلمة مرور GABO LIVE",
-          html: '<div dir="rtl" style="font-family:Arial,sans-serif;background:#100d19;color:#fff;padding:28px;border-radius:16px"><h2 style="color:#e8c77b">GABO LIVE</h2><p>رمز استعادة كلمة المرور الخاص بك:</p><div style="font-size:34px;letter-spacing:9px;font-weight:bold;color:#e8c77b">' + code + '</div><p>تنتهي صلاحية الرمز خلال 10 دقائق. لا تشاركه مع أحد.</p></div>'
+          service_id: env.EMAILJS_SERVICE_ID,
+          template_id: env.EMAILJS_TEMPLATE_ID,
+          user_id: env.EMAILJS_PUBLIC_KEY,
+          template_params: {
+            to_email: email,
+            passcode: code,
+            app_name: "GABO LIVE",
+            expires_in: "10 دقائق",
+            support_email: "taher616380@gmail.com"
+          }
         })
       });
       if (!mail.ok) {
         await env.RESET_CODES.delete("code:" + emailKey);
         await env.RESET_CODES.delete(cooldownKey);
-        return json({ error: "email_delivery_failed" }, 502, headers);
+        return json({ error: "emailjs_delivery_failed" }, 502, headers);
       }
       return json({ ok: true, expiresIn: CODE_TTL_SECONDS, resendAfter: RESEND_WAIT_SECONDS }, 200, headers);
     }
