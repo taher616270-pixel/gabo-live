@@ -296,13 +296,62 @@ input,.country-trigger{
   .main-btn,.social-btn{min-height:38px;margin-top:6px}
   .divider{margin:5px 0}
 }
+
+/* GABO logo bounce */
+@keyframes gaboLogoBounce{
+  0%,100%{transform:translateY(0) scaleY(1)}
+  18%{transform:translateY(-22px) scaleY(1)}
+  29%{transform:translateY(0) scaleY(.85)}
+  37%{transform:translateY(-10px) scaleY(1)}
+  48%{transform:translateY(0) scaleY(1)}
+  100%{transform:translateY(0) scaleY(1)}
+}
+.mark{
+  display:block;
+  width:max-content;
+  margin:0 auto;
+  transform-origin:bottom;
+  animation:gaboLogoBounce 2.2s ease-in-out infinite;
+}
+.brand h1{
+  font-size:36px!important;
+  transform:scale(1.08);
+  transform-origin:center;
+}
+.country-flag-emoji{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:27px;
+  font-size:22px;
+  line-height:1;
+  flex:0 0 auto;
+}
+.country-flag-image{
+  width:27px;
+  height:19px;
+  object-fit:cover;
+  border-radius:2px;
+  flex:0 0 auto;
+}
+.country-option{gap:10px}
+.country-trigger #countryChosen{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+  vertical-align:middle;
+}
+@media(prefers-reduced-motion:reduce){
+  .mark{animation:none}
+}
 </style>
 </head>
 <body>
 <main class="shell">
 <section class="card">
 <header class="brand">
-<div class="mark">G</div>
+<div class="mark" aria-label="G">G</div>
 <h1>GABO <span>LIVE</span></h1>
 <p>عالمك... بلحظتك</p>
 </header>
@@ -367,9 +416,50 @@ function setMode(next){mode=next; $('tabLogin').classList.toggle('on',mode==='lo
 $('tabLogin').addEventListener('click',()=>setMode('login')); $('tabSignup').addEventListener('click',()=>setMode('signup'));
 document.querySelectorAll('[data-toggle]').forEach(b=>{b.addEventListener('click',()=>{const i=$(b.dataset.toggle); i.type=i.type==='password'?'text':'password'; b.textContent=i.type==='password'?'إظهار':'إخفاء';})});
 
-// دول
-const countries=(await getCountryRegistry()).map(c=>({...c, flag:c.code==='south-arabia'?SOUTH_FLAG:c.flag}));
-function fillCountries(){const select=$('f_country'), options=$('countryOptions'); countries.forEach(country=>{const o=document.createElement('option'); o.value=country.code; o.textContent=country.name; select.appendChild(o); const item=document.createElement('button'); item.type='button'; item.className='country-option'; item.dataset.name=country.name; const flag=document.createElement('img'); flag.src=country.flag; const name=document.createElement('span'); name.textContent=country.name; item.append(flag,name); item.addEventListener('click',()=>{select.value=country.code; $('countryChosen').textContent=country.name; $('countryMenu').classList.remove('open');}); options.appendChild(item);});}
+// أعلام الدول: رموز Emoji للدول، مع صورة علم الجنوب العربي المخصصة
+function countryEmoji(code){
+  if(!/^[a-z]{2}$/i.test(code)) return '🏳️';
+  return [...code.toUpperCase()].map(ch=>String.fromCodePoint(127397+ch.charCodeAt(0))).join('');
+}
+const countries=(await getCountryRegistry()).map(c=>({...c,emoji:c.code==='south-arabia'?'':countryEmoji(c.code),flag:c.code==='south-arabia'?SOUTH_FLAG:c.flag}));
+function makeCountryFlag(country){
+  if(country.code==='south-arabia'){
+    const img=document.createElement('img');
+    img.src=country.flag;
+    img.alt='علم الجنوب العربي';
+    img.className='country-flag-image';
+    return img;
+  }
+  const flag=document.createElement('span');
+  flag.className='country-flag-emoji';
+  flag.textContent=country.emoji||'🏳️';
+  flag.setAttribute('aria-hidden','true');
+  return flag;
+}
+function fillCountries(){
+  const select=$('f_country'), options=$('countryOptions');
+  countries.forEach(country=>{
+    const o=document.createElement('option');
+    o.value=country.code;
+    o.textContent=(country.code==='south-arabia'?'🏴':country.emoji)+' '+country.name;
+    select.appendChild(o);
+    const item=document.createElement('button');
+    item.type='button';
+    item.className='country-option';
+    item.dataset.name=country.name;
+    item.append(makeCountryFlag(country));
+    const name=document.createElement('span');
+    name.textContent=country.name;
+    item.append(name);
+    item.addEventListener('click',()=>{
+      select.value=country.code;
+      const chosen=$('countryChosen');
+      chosen.replaceChildren(makeCountryFlag(country),document.createTextNode(country.name));
+      $('countryMenu').classList.remove('open');
+    });
+    options.appendChild(item);
+  });
+}
 fillCountries();
 $('countryPicker').addEventListener('click',()=>{$('countryMenu').classList.toggle('open')});
 $('countrySearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase(); let count=0; document.querySelectorAll('.country-option').forEach(item=>{const show=item.dataset.name.toLowerCase().includes(q); item.hidden=!show; if(show) count++;}); $('countryEmpty').classList.toggle('show',count===0);});
