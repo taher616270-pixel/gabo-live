@@ -15,7 +15,9 @@ export async function getCountryRegistry(){
   overrides.forEach(s=>{const d=s.data();if(d&&typeof d.name==='string'&&typeof d.flag==='string')byCode.set(s.id,{code:s.id,name:d.name,flag:d.flag});});
   const disabled=meta.exists()&&Array.isArray(meta.data()?.disabledCodes)?meta.data().disabledCodes:[];
   disabled.forEach(code=>byCode.delete(code));
-  cachedCountryRegistry=[...byCode.values()].sort((a,b)=>a.name.localeCompare(b.name,'ar'));
+  const southArabia=byCode.get('south-arabia');
+  const rest=[...byCode.values()].filter(c=>c.code!=='south-arabia').sort((a,b)=>a.name.localeCompare(b.name,'ar'));
+  cachedCountryRegistry=southArabia?[southArabia,...rest]:rest;
   return cachedCountryRegistry;
  }catch(error){console.warn('Using default country list:',error);cachedCountryRegistry=DEFAULT_COUNTRIES;return cachedCountryRegistry;}
 }
