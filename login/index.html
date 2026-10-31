@@ -42,6 +42,9 @@ button:disabled{opacity:.55}
 .msg.e{color:var(--red)}
 .msg.ok{color:var(--green)}
 .fieldErr{display:none;color:var(--red);font-size:12px;margin-top:5px}
+.field.has-error input,.field.has-error .country-trigger,input.input-invalid{border-color:var(--red)!important;box-shadow:0 0 0 2px #ff718c22}
+.field.has-error label{color:var(--red)}
+
 .fieldErr.show{display:block}
 .consent{display:flex;gap:9px;margin-top:18px;font-size:12px;line-height:1.8}
 .consent input{width:18px;height:18px;flex:0 0 18px;margin:3px 0}
@@ -218,7 +221,34 @@ let mode='login', auth=null, db=null, authFns=null, storeFns=null, socialBusy=fa
 const $=id=>document.getElementById(id);
 const msg=$('msg'), mainBtn=$('mainBtn');
 function setMessage(t,type=''){msg.textContent=t||'';msg.className='msg '+type}
-function clearErrors(){document.querySelectorAll('.fieldErr').forEach(el=>{el.textContent='';el.classList.remove('show')});setMessage('')}
+function clearErrors(){document.querySelectorAll('.fieldErr').forEach(el=>{el.textContent='';el.classList.remove('show')});document.querySelectorAll('.field.has-error').forEach(el=>el.classList.remove('has-error'));document.querySelectorAll('.input-invalid').forEach(el=>el.classList.remove('input-invalid'));setMessage('')}
+function showFieldError(inputId,message){
+  const input=$(inputId), err=$(inputId+'Err'), field=input?.closest('.field');
+  if(err){err.textContent=message;err.classList.add('show');}
+  if(field)field.classList.add('has-error');
+  if(input)input.classList.add('input-invalid');
+}
+function validateFields(fields){
+  let firstInvalid=null;
+  fields.forEach(([id,message,valid])=>{
+    const input=$(id);
+    const value=(input?.value||'').trim();
+    let problem='';
+    if(!value)problem=message;
+    else if(valid && !valid(value))problem=valid.message||'تحقق من البيانات المدخلة';
+    if(problem){showFieldError(id,problem);if(!firstInvalid)firstInvalid=input;}
+  });
+  if(firstInvalid){firstInvalid.scrollIntoView({behavior:'smooth',block:'center'});firstInvalid.focus({preventScroll:true});return false;}
+  return true;
+}
+document.querySelectorAll('#authForm input').forEach(input=>{
+  input.addEventListener('input',()=>{
+    const field=input.closest('.field'),err=$(input.id+'Err');
+    if(field)field.classList.remove('has-error');
+    input.classList.remove('input-invalid');
+    if(err){err.textContent='';err.classList.remove('show');}
+  });
+});
 function askTerms(){
   return new Promise(resolve=>{
     const modal=$('termsModal'), check=$('termsConsent'), error=$('consentErr');
@@ -395,25 +425,49 @@ initialize();
 $('authForm').addEventListener('submit', async (e)=>{
   e.preventDefault(); clearErrors();
   if(!auth){ setMessage('النظام لم يتحمل بعد','e'); return; }
+  const emailRule=value=>/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(value);
+  emailRule.message='أدخل بريدًا إلكترونيًا صحيحًا';
+  if(mode==='login'){
+    if(!validateFields([['l_email','أدخل البريد الإلكتروني',emailRule],['f_loginPass','أدخل كلمة المرور']])){setMessage('راجع الحقول المحددة باللون الأحمر','e');return;}
+  }else{
+    const passRule=value=>value.length>=6;
+    passRule.message='كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+    if(!validateFields([
+      ['f_first','أدخل الاسم الأول'],
+      ['f_last','أدخل اللقب'],
+      ['f_email','أدخل البريد الإلكتروني',emailRule],
+      ['f_pass','أدخل كلمة المرور',passRule],
+      ['f_confirm','أكد كلمة المرور'],
+      ['f_country','اختر الدولة']
+    ])){setMessage('راجع الحقول المحددة باللون الأحمر','e');return;}
+    if($('f_pass').value!==$('f_confirm').value){
+      showFieldError('f_confirm','كلمتا المرور غير متطابقتين');
+      $('f_confirm').scrollIntoView({behavior:'smooth',block:'center'});
+      $('f_confirm').focus({preventScroll:true});
+      setMessage('تأكد من تطابق كلمتي المرور','e');return;
+    }
+  }
   mainBtn.disabled=true;
   try{
     if(mode==='login'){
       const email=$('l_email').value.trim(), pass=$('f_loginPass').value;
-      if(!email){ $('l_emailErr').textContent='ادخل البريد'; $('l_emailErr').classList.add('show'); throw '';}
-      if(!pass){ $('l_passErr').textContent='ادخل كلمة المرور'; $('l_passErr').classList.add('show'); throw '';}
       const cred=await authFns.signInWithEmailAndPassword(auth,email,pass);
       await saveUserProfile(cred.user); location.href='/app/';
     }else{
-      const first=$('f_first').value.trim(), last=$('f_last').value.trim(), email=$('f_email').value.trim(), pass=$('f_pass').value, confirm=$('f_confirm').value, country=$('f_country').value;
-      if(!first || !last || !email || !pass || !confirm || !country){ setMessage('اكمل جميع الحقول','e'); throw '';}
-      if(pass!==confirm){ $('f_confirmErr').textContent='كلمة المرور غير متطابقة'; $('f_confirmErr').classList.add('show'); throw '';}
-      const accepted=await askTerms(); if(!accepted){setMessage('تم إلغاء إنشاء الحساب','');return;}
+      const first=$('f_first').value.trim(), last=$('f_last').value.trim(), email=$('f_email').value.trim(), pass=$('f_pass').value, country=$('f_country').value;
+      const accepted=await askTerms(); if(!accepted){setMessage('تم إلغاء إنشاء الحساب','');mainBtn.disabled=false;return;}
       const cred=await authFns.createUserWithEmailAndPassword(auth,email,pass);
       await authFns.updateProfile(cred.user,{displayName:first+' '+last});
       await saveUserProfile(cred.user,{firstName:first,lastName:last,country});
       location.href='/app/';
     }
-  }catch(err){ if(err.code) setMessage(errorText(err.code),'e'); mainBtn.disabled=false; }
+  }catch(err){
+    if(err.code==='auth/invalid-email')showFieldError(mode==='login'?'l_email':'f_email','صيغة البريد الإلكتروني غير صحيحة');
+    if(err.code==='auth/weak-password')showFieldError('f_pass','كلمة المرور ضعيفة، استخدم 6 أحرف على الأقل');
+    if(err.code==='auth/email-already-in-use')showFieldError('f_email','هذا البريد مسجل مسبقًا، انتقل إلى تسجيل الدخول');
+    if(err.code)setMessage(errorText(err.code),'e');
+    mainBtn.disabled=false;
+  }
 });
 
 // *** تسجيل Google المصحح - بدون لوب ***
