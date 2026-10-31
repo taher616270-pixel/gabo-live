@@ -210,6 +210,15 @@ input,.country-trigger{width:100%;height:46px;min-width:0;padding:0 11px;font-si
     <div class="terms-actions"><button id="termsCancel" type="button">إلغاء</button><button id="termsAccept" type="button">موافق وإنشاء الحساب</button></div>
   </div>
 </div>
+<div class="terms-modal" id="signupOtpModal" hidden role="dialog" aria-modal="true" aria-labelledby="signupOtpTitle">
+ <div class="terms-box">
+  <h2 id="signupOtpTitle">تأكيد البريد الإلكتروني</h2>
+  <p>أرسلنا رمز تحقق من 6 أرقام إلى بريدك. الرمز صالح لمدة 5 دقائق.</p>
+  <input id="signupOtpCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" dir="ltr" placeholder="000000" style="text-align:center;letter-spacing:8px;font-size:22px">
+  <div class="terms-error" id="signupOtpError" hidden></div>
+  <div class="terms-actions"><button id="signupOtpCancel" type="button">إلغاء</button><button id="signupOtpVerify" type="button">تأكيد الرمز</button></div>
+ </div>
+</div>
 <p class="legal">GABO LIVE — تواصل، شارك، وعِش اللحظة.</p>
 </section>
 </main>
@@ -421,6 +430,44 @@ async function initialize(){
 }
 initialize();
 
+const OTP_API_URL='https://gabo-otp.taher616270.workers.dev/';
+async function otpCall(payload){
+  const response=await fetch(OTP_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok)throw new Error(data.error||'REQUEST_FAILED');
+  return data;
+}
+async function requestSignupOtp(email){
+  const modal=$('signupOtpModal'), input=$('signupOtpCode'), error=$('signupOtpError'), verify=$('signupOtpVerify');
+  try{
+    setMessage('جاري إرسال رمز التحقق إلى بريدك...','');
+    await otpCall({action:'send_signup',email});
+  }catch(e){
+    const map={EMAIL_SEND_FAILED:'تعذر إرسال الرمز. تحقق من إعداد البريد وحاول لاحقًا.',RESEND_WAIT:'انتظر دقيقة قبل طلب رمز جديد.',RATE_LIMITED:'وصلت إلى الحد المسموح لطلبات الرمز اليوم.'};
+    setMessage(map[e.message]||'تعذر إرسال رمز التحقق. حاول مرة أخرى.','e');return false;
+  }
+  input.value='';error.hidden=true;modal.hidden=false;input.focus();
+  return await new Promise(resolve=>{
+    const finish=value=>{modal.hidden=true;verify.disabled=false;verify.textContent='تأكيد الرمز';verify.removeEventListener('click',onVerify);$('signupOtpCancel').removeEventListener('click',onCancel);resolve(value);};
+    const onCancel=()=>finish(false);
+    const onVerify=async()=>{
+      const code=input.value.trim();
+      if(!/^\d{6}$/.test(code)){error.textContent='أدخل الرمز المكوّن من 6 أرقام';error.hidden=false;return;}
+      verify.disabled=true;verify.textContent='جارٍ التحقق...';
+      try{
+        const result=await otpCall({action:'verify_signup',email,code});
+        await otpCall({action:'consume_signup',email,verificationToken:result.verificationToken});
+        finish(true);
+      }catch(e){
+        const map={WRONG_CODE:'الرمز غير صحيح.',TOO_MANY_ATTEMPTS:'تجاوزت عدد المحاولات. اطلب رمزًا جديدًا.',CODE_EXPIRED_OR_MISSING:'انتهت صلاحية الرمز. اطلب رمزًا جديدًا.',VERIFICATION_EXPIRED:'انتهت صلاحية التحقق. ابدأ من جديد.'};
+        error.textContent=map[e.message]||'تعذر التحقق من الرمز.';error.hidden=false;verify.disabled=false;verify.textContent='تأكيد الرمز';
+      }
+    };
+    verify.addEventListener('click',onVerify);$('signupOtpCancel').addEventListener('click',onCancel);
+  });
+}
+$('signupOtpCode').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,6);});
+
 // تسجيل عادي و انشاء حساب
 $('authForm').addEventListener('submit', async (e)=>{
   e.preventDefault(); clearErrors();
@@ -456,9 +503,11 @@ $('authForm').addEventListener('submit', async (e)=>{
     }else{
       const first=$('f_first').value.trim(), last=$('f_last').value.trim(), email=$('f_email').value.trim(), pass=$('f_pass').value, country=$('f_country').value;
       const accepted=await askTerms(); if(!accepted){setMessage('تم إلغاء إنشاء الحساب','');mainBtn.disabled=false;return;}
+      const verified=await requestSignupOtp(email);
+      if(!verified){mainBtn.disabled=false;return;}
       const cred=await authFns.createUserWithEmailAndPassword(auth,email,pass);
       await authFns.updateProfile(cred.user,{displayName:first+' '+last});
-      await saveUserProfile(cred.user,{firstName:first,lastName:last,country});
+      await saveUserProfile(cred.user,{firstName:first,lastName:last,country,emailVerified:true});
       location.href='/app/';
     }
   }catch(err){
