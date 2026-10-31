@@ -399,7 +399,8 @@ async function initialize(){
     try{
       const redirectResult = await authFns.getRedirectResult(auth);
       if(redirectResult && redirectResult.user){
-        if(authFns.getAdditionalUserInfo(redirectResult)?.isNewUser){
+        const isNewUser=!!authFns.getAdditionalUserInfo(redirectResult)?.isNewUser;
+        if(isNewUser){
           const accepted=await askTerms();
           if(!accepted){
             try{await authFns.deleteUser(redirectResult.user);}catch(deleteError){console.error('Could not remove unaccepted new account:',deleteError);}
@@ -411,6 +412,7 @@ async function initialize(){
         setMessage('تم تسجيل الدخول، جاري تحويلك...','ok');
         try{ await saveUserProfile(redirectResult.user); }
         catch(profileError){ console.error('Profile save failed after redirect sign-in:',profileError); }
+        if(isNewUser)await sendWelcomeEmail(redirectResult.user);
         location.replace('/app/');
         return;
       }
@@ -436,6 +438,17 @@ async function otpCall(payload){
   const data=await response.json().catch(()=>({}));
   if(!response.ok)throw new Error(data.error||'REQUEST_FAILED');
   return data;
+}
+async function sendWelcomeEmail(user){
+  if(!user?.uid||!user?.email)return false;
+  try{
+    const idToken=await user.getIdToken();
+    await otpCall({action:'send_welcome',email:user.email,uid:user.uid,idToken});
+    return true;
+  }catch(error){
+    console.error('GABO welcome email failed:',error);
+    return false;
+  }
 }
 async function requestSignupOtp(email){
   const modal=$('signupOtpModal'), input=$('signupOtpCode'), error=$('signupOtpError'), verify=$('signupOtpVerify');
@@ -508,6 +521,7 @@ $('authForm').addEventListener('submit', async (e)=>{
       const cred=await authFns.createUserWithEmailAndPassword(auth,email,pass);
       await authFns.updateProfile(cred.user,{displayName:first+' '+last});
       await saveUserProfile(cred.user,{firstName:first,lastName:last,country});
+      await sendWelcomeEmail(cred.user);
       location.href='/app/';
     }
   }catch(err){
@@ -535,13 +549,15 @@ $('googleBtn').addEventListener('click', async ()=>{
     // استخدم Popup مباشرة حتى لا نعتمد على الرجوع عبر نطاق firebaseapp.com
     // وهذا يتجنب مشكلة Safari/iPhone مع تخزين جلسة Redirect.
     const result=await authFns.signInWithPopup(auth,provider);
-    if(authFns.getAdditionalUserInfo(result)?.isNewUser){const accepted=await askTerms();if(!accepted){try{await authFns.deleteUser(result.user);}finally{await authFns.signOut(auth);}socialBusy=false;$('googleBtn').disabled=false;setMessage('تم إلغاء إنشاء الحساب');return;}}
+    const isNewUser=!!authFns.getAdditionalUserInfo(result)?.isNewUser;
+    if(isNewUser){const accepted=await askTerms();if(!accepted){try{await authFns.deleteUser(result.user);}finally{await authFns.signOut(auth);}socialBusy=false;$('googleBtn').disabled=false;setMessage('تم إلغاء إنشاء الحساب');return;}}
 
     setMessage('تم تسجيل الدخول، جاري فتح الصفحة الرئيسية...','ok');
 
     // لا نمنع دخول المستخدم إذا تعذر حفظ بيانات الملف الشخصي في Firestore.
     try{ await saveUserProfile(result.user); }
     catch(profileError){ console.error('Profile save failed after Google sign-in:',profileError); }
+    if(isNewUser)await sendWelcomeEmail(result.user);
 
     location.replace('/app/');
   }catch(err){
@@ -566,7 +582,7 @@ $('appleBtn').addEventListener('click', async ()=>{
     const provider=new authFns.OAuthProvider('apple.com');
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     if(isIOS){ await authFns.signInWithRedirect(auth,provider); }
-    else{ const result=await authFns.signInWithPopup(auth,provider); if(authFns.getAdditionalUserInfo(result)?.isNewUser){const accepted=await askTerms();if(!accepted){try{await authFns.deleteUser(result.user);}finally{await authFns.signOut(auth);}socialBusy=false;setMessage('تم إلغاء إنشاء الحساب');return;}} await saveUserProfile(result.user); location.href='/app/'; }
+    else{ const result=await authFns.signInWithPopup(auth,provider); const isNewUser=!!authFns.getAdditionalUserInfo(result)?.isNewUser; if(isNewUser){const accepted=await askTerms();if(!accepted){try{await authFns.deleteUser(result.user);}finally{await authFns.signOut(auth);}socialBusy=false;setMessage('تم إلغاء إنشاء الحساب');return;}} await saveUserProfile(result.user); if(isNewUser)await sendWelcomeEmail(result.user); location.href='/app/'; }
   }catch(err){ setMessage(errorText(err.code)||'فشل تسجيل Apple','e'); socialBusy=false; }
 });
 
