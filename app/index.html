@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="preload" as="image" href="/assets/south-arabia.png.JPG" fetchpriority="high">
 <title>GABO LIVE</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
@@ -131,6 +132,8 @@ let latestCommunityCounts={},latestActivityScores={};
 
 // نعرض المجتمعات الافتراضية فوراً من ملفات الصفحة، ثم نحدّث العلم والأسماء من Firebase بالخلفية.
 let SOUTH_FLAG='/assets/south-arabia.png.JPG';
+// تحميل علم الجنوب مسبقاً عند فتح الصفحة حتى يظهر فور اختياره دون انتظار الشبكة.
+const southFlagPreload=new Image();southFlagPreload.decoding='sync';southFlagPreload.src=SOUTH_FLAG;
 let SOUTH_SVG=`<img src="${SOUTH_FLAG}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`;
 const southFlagOption=document.getElementById('southFlagOption');
 const STATIC_IDS=['south','sa','ye','ae','om','qa','kw','bh'];
@@ -147,7 +150,7 @@ const ARAB_FLAGS=[
 ];
 const flagGrid=document.getElementById('arabFlagGrid'),flagPicker=document.getElementById('arabFlagPicker'),flagTrigger=document.getElementById('flagPickerTrigger'),flagPreview=document.getElementById('selectedFlagPreview'),flagName=document.getElementById('selectedFlagName');
 function flagSource(item){return item.src?item.src():`https://flagcdn.com/w80/${item.code}.png`;}
-function renderArabFlags(){if(!flagGrid)return;flagGrid.innerHTML='';ARAB_FLAGS.forEach(item=>{const btn=document.createElement('button');btn.type='button';btn.className='arabFlagChoice'+(item.code===selectedFlag?' active':'');btn.dataset.flag=item.code;const img=document.createElement('img');img.src=flagSource(item);img.alt='علم '+item.name;if(item.code==='lb')img.onerror=()=>{img.onerror=null;img.src='https://flagcdn.com/lb.svg';};const label=document.createElement('span');label.textContent=item.name;btn.append(img,label);btn.addEventListener('click',()=>chooseArabFlag(item.code));flagGrid.appendChild(btn);});}
+function renderArabFlags(){if(!flagGrid)return;flagGrid.innerHTML='';ARAB_FLAGS.forEach(item=>{const btn=document.createElement('button');btn.type='button';btn.className='arabFlagChoice'+(item.code===selectedFlag?' active':'');btn.dataset.flag=item.code;const img=document.createElement('img');img.decoding='sync';img.loading='eager';img.src=item.code==='south'?(southFlagPreload.currentSrc||SOUTH_FLAG):flagSource(item);img.alt='علم '+item.name;if(item.code==='lb')img.onerror=()=>{img.onerror=null;img.src='https://flagcdn.com/lb.svg';};const label=document.createElement('span');label.textContent=item.name;btn.append(img,label);btn.addEventListener('click',()=>chooseArabFlag(item.code));flagGrid.appendChild(btn);});}
 function chooseArabFlag(code,automatic=false){const item=ARAB_FLAGS.find(x=>x.code===code);if(!item)return;if(!automatic)flagWasManuallyChosen=true;selectedFlag=code;flagPreview.innerHTML='';const img=document.createElement('img');img.src=flagSource(item);img.alt='علم '+item.name;if(item.code==='lb')img.onerror=()=>{img.onerror=null;img.src='https://flagcdn.com/lb.svg';};flagPreview.appendChild(img);flagName.textContent=item.name;flagGrid.querySelectorAll('.arabFlagChoice').forEach(btn=>btn.classList.toggle('active',btn.dataset.flag===code));flagPicker.hidden=true;flagTrigger.setAttribute('aria-expanded','false');}
 flagTrigger?.addEventListener('click',()=>{flagPicker.hidden=!flagPicker.hidden;flagTrigger.setAttribute('aria-expanded',String(!flagPicker.hidden));});
 // تحديد افتراضي سريع من المنطقة الزمنية حتى لا يظهر علم الجنوب أولاً بلا داعٍ.
