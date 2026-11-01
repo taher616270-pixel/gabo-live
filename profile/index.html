@@ -102,6 +102,11 @@ body{padding-bottom:110px}
 
 /* Show profile bio as plain text beside the country details */
 .bioPublic{margin:3px 0 0;background:transparent;border:0;border-radius:0;padding:0;min-height:0;font-size:12px;color:#c4c4d0;line-height:1.5;text-align:center}
+
+/* Place the edit pencil outside the avatar frame on its right */
+.head{position:relative}
+.pencil{position:absolute;top:30px;left:calc(50% + 59px);right:auto;bottom:auto;width:auto;height:auto;padding:5px;background:transparent;border:0;border-radius:0;box-shadow:none;color:#fbbf24;font-size:21px;line-height:1;cursor:pointer;z-index:3}
+@media(max-width:380px){.pencil{left:calc(50% + 54px);top:27px}}
 </style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
 </head>
@@ -109,7 +114,7 @@ body{padding-bottom:110px}
 <div class="mainCard">
   <div class="coverMain" id="coverMain"><div class="placeholder">🖼️</div><img id="coverMainImg"></div>
   <div class="head">
-    <div class="avatar" id="avatarMain"><img id="avatarImgMain"><span id="avL">…</span><div class="pencil" id="openEdit">✏️</div></div>
+    <div class="avatar" id="avatarMain"><img id="avatarImgMain"><span id="avL">…</span></div><button class="pencil" id="openEdit" type="button" aria-label="تعديل الملف الشخصي">✏️</button>
     <div class="info">
       <div class="nameRow"><span id="nameMain"></span></div>
       <div class="idRow"><span>ID:</span><span class="idValue" id="idMain">--------</span><button class="copyIdBtn" id="copyIdBtn" type="button" aria-label="نسخ المعرف">نسخ</button></div>
