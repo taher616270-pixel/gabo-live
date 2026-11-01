@@ -67,10 +67,8 @@ body{padding-bottom:110px}
 
 /* Profile header: keep every field inside the card on narrow screens */
 .info{min-width:0;width:0;flex:1;text-align:right;direction:rtl}
-.nameRow{display:flex;width:100%;min-width:0;flex-wrap:nowrap;gap:7px;overflow:hidden;line-height:1.35}
+.nameRow{display:flex;width:100%;min-width:0;flex-wrap:nowrap;overflow:hidden;line-height:1.35}
 #nameMain{display:block;flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#flagMain{display:flex;flex:0 0 auto;align-items:center}
-#flagMain img{width:27px!important;height:19px!important;object-fit:cover}
 .countryRow{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;justify-content:start;gap:6px 8px;width:100%;min-width:0;direction:rtl;flex-wrap:nowrap;margin-top:8px;text-align:right}
 #countryFlagMain{display:flex;align-items:center;flex:0 0 auto}
 #countryNameMain{display:block;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -88,7 +86,7 @@ body{padding-bottom:110px}
   <div class="head">
     <div class="avatar" id="avatarMain"><img id="avatarImgMain"><span id="avL">…</span><div class="pencil" id="openEdit">✏️</div></div>
     <div class="info">
-      <div class="nameRow"><span id="nameMain"></span><span id="flagMain"></span></div>
+      <div class="nameRow"><span id="nameMain"></span></div>
       <div class="countryRow">
         <span id="countryFlagMain"></span>
         <span id="countryNameMain"> </span>
@@ -231,7 +229,6 @@ function setCountryDisplay(name,code,flagImg){
   const imgUrl = code==='south-arabia' ? SOUTH_FLAG : (flagImg || SOUTH_FLAG);
   document.getElementById('countryNameMain').textContent=name;
   document.getElementById('countryFlagMain').innerHTML=`<img src="${imgUrl}" style="width:26px;height:18px;border-radius:3px">`;
-  document.getElementById('flagMain').innerHTML=`<img src="${imgUrl}" style="width:32px;height:22px;border-radius:4px">`;
   document.getElementById('rowCountryVal').textContent=name;
   document.getElementById('rowCountryImg').src=imgUrl;
 }
