@@ -89,6 +89,8 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 #createModal .createModalTop{top:0}
 #createModal .modalBtns{bottom:0;padding:12px 0 calc(8px + env(safe-area-inset-bottom));margin-top:8px;background:linear-gradient(180deg,rgba(22,20,38,.94),#161426 35%)}
 
+.homeFilters button[role="tab"]{flex:0 0 auto;min-height:0;height:auto;padding:8px 15px;border:1px solid #e7bd6330;border-radius:22px;background:#17131f;color:#bdb3c7;font:800 12px Tajawal,system-ui;line-height:normal}
+.homeFilters button[role="tab"].active{background:linear-gradient(135deg,#f3d58e,#bd8d3e);border-color:transparent;color:#1a1308}
 .homeFilters #allCustomTab{flex:0 0 auto;min-height:0;height:auto;padding:8px 15px;border:1px solid #e7bd6330;border-radius:22px;background:#17131f;color:#bdb3c7;font:800 12px Tajawal,system-ui;line-height:normal}
 .homeFilters #allCustomTab.active{background:linear-gradient(135deg,#f3d58e,#bd8d3e);border-color:transparent;color:#1a1308}
 /* Match My Communities button dimensions to neighboring filters */
@@ -135,13 +137,13 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 <body>
 <div class="top"><b>GABO LIVE ✦</b><div class="topActions"><a href="/notifications/" aria-label="الإشعارات" class="topIcon">♧</a><a href="/profile/" aria-label="الملف الشخصي" class="welcomeAvatar" id="homeAvatar">م</a></div></div><section class="welcomeHero"><div class="heroCopy"><small>YOUR SOCIAL UNIVERSE</small><h1>عالمك يبدأ من هنا</h1><p>اكتشف مجتمعاتك، تابع أصدقاءك وكن جزءاً من اللحظة</p><div class="heroPills"><span>✦ مجتمعك</span><span>● تواصل مباشر</span></div></div><div class="heroOrb" aria-hidden="true">G</div></section><div class="homeSearch"><span>⌕</span><input id="communitySearch" type="search" placeholder="ابحث عن مجتمع أو أدخل ID الحساب..." aria-label="البحث عن مجتمع أو حساب"><button type="button" id="clearSearch" aria-label="مسح البحث">×</button></div><div id="homeSearchResults" class="homeSearchResults" hidden></div>
 <div class="tabs homeTabs"><button class="on communitiesTab" type="button"><span>▦</span> المجتمعات</button><button class="publicChatTab" type="button" onclick="window.location.href='/global-chat/index.html'" aria-label="فتح الشات العام"><span class="chatGlobe" aria-hidden="true"><svg viewBox="0 0 48 48"><defs><radialGradient id="chatOrb" cx="28%" cy="22%"><stop stop-color="#b9fff5"/><stop offset=".35" stop-color="#45cfc3"/><stop offset="1" stop-color="#24558d"/></radialGradient></defs><circle cx="24" cy="24" r="20" fill="url(#chatOrb)" stroke="#b9fff5" stroke-width="1.2"/><path d="M12 16l7-5 5 3 1 5-5 4-2 6-6-4-2-5zm17-4 7 4 2 6-5 3-2 7-5-5 1-6-3-4zm-16 19 7-2 6 4 1 6-6 3-7-5zm19-1 6-3 4 4-3 7-6 1-3-5z" fill="#caffdf"/><path d="M4 24h40M24 4c-7 7-9 13-9 20s2 13 9 20M24 4c7 7 9 13 9 20s-2 13-9 20" fill="none" stroke="#e2fffa" stroke-opacity=".55"/></svg></span><span>الشات العام</span><span class="chatArrow">←</span></button></div>
-<div class="homeFilters" role="group" aria-label="تصفية المجتمعات"><button type="button" class="active" data-filter="all">الرسمي</button><button type="button" data-filter="active">الأكثر نشاطاً</button><button type="button" id="allCustomTab" role="tab" aria-selected="false">✦ مجتمعات</button><button type="button" id="customTab" role="tab" aria-selected="false">✦ مجتمعاتي</button></div>
+<div class="homeFilters" role="tablist" aria-label="أقسام المجتمعات"><button type="button" class="active" id="officialTab" role="tab" aria-selected="true">الرسمي</button><button type="button" id="activeTab" role="tab" aria-selected="false">الأكثر نشاطاً</button><button type="button" id="allCustomTab" role="tab" aria-selected="false">✦ مجتمعات</button><button type="button" id="customTab" role="tab" aria-selected="false">✦ مجتمعاتي</button></div>
 <div class="communityTypeTabs" role="tablist" aria-label="نوع المجتمعات">
 
 
 </div>
 
-<section class="engagementSection" aria-labelledby="engagementTitle"><div class="sectionHead"><div><small>COMMUNITY PULSE</small><h2 id="engagementTitle">🔥 الأكثر تفاعلاً</h2><p>نشاط المجتمعات الرسمية خلال آخر 24 ساعة</p></div><span class="liveBadge">● مباشر</span></div><div id="activityPage" class="activityList"><div class="activityEmpty">جارٍ تحميل نشاط المجتمعات...</div></div></section><div class="sectionHead communityHead"><div><small>DISCOVER</small><h2>🌍 مجتمعات GABO الرسمية</h2><p>خمسة مجتمعات رسمية تجمع أبناء المنطقة والخليج</p></div></div><div class="communityMeta"><span>اكتشف مكانك بين المجتمعات</span><strong id="communityCount">— مجتمع</strong></div><button type="button" class="createBtn" onclick="openCreate()">＋ إنشاء مجتمع</button><div id="commPage" class="grid"><div class="gridEmpty">جارٍ تحميل المجتمعات...</div></div>
+<section id="activeCommunitiesSection" class="engagementSection" aria-labelledby="engagementTitle" hidden><div class="sectionHead"><div><small>COMMUNITY PULSE</small><h2 id="engagementTitle">🔥 الأكثر تفاعلاً</h2><p>نشاط المجتمعات الرسمية خلال آخر 24 ساعة</p></div><span class="liveBadge">● مباشر</span></div><div id="activityPage" class="activityList"><div class="activityEmpty">جارٍ تحميل نشاط المجتمعات...</div></div></section><section id="officialCommunitiesSection"><div class="sectionHead communityHead"><div><small>DISCOVER</small><h2>🌍 مجتمعات GABO الرسمية</h2><p>خمسة مجتمعات رسمية تجمع أبناء المنطقة والخليج</p></div></div><div class="communityMeta"><span>اكتشف مكانك بين المجتمعات</span><strong id="communityCount">— مجتمع</strong></div><button type="button" class="createBtn" onclick="openCreate()">＋ إنشاء مجتمع</button><div id="commPage" class="grid"><div class="gridEmpty">جارٍ تحميل المجتمعات...</div></div></section>
 <section id="allCustomCommunitiesSection" class="customCommunitiesSection" hidden><div class="sectionHead customCommunityHead"><div><small>GABO COMMUNITY SPACE</small><h2>✦ المجتمعات</h2><p>جميع المجتمعات التي أنشأها المستخدمون</p></div><strong id="allCustomCommunityTotal">0 مجتمع</strong></div><div id="allCustomCommPage" class="grid"><div class="gridEmpty">جارٍ تحميل المجتمعات...</div></div></section>
 <section id="customCommunitiesSection" class="customCommunitiesSection" hidden>
 <div class="sectionHead customCommunityHead"><div><small>YOUR COMMUNITY SPACE</small><h2>✦ مجتمعاتي</h2><p>المجتمعات التي أنشأتها بنفسك</p></div><strong id="customCommunityTotal">0 مجتمع</strong></div>
@@ -316,22 +318,28 @@ function renderOfficialCommunities(counts=latestCommunityCounts,scores=latestAct
 renderOfficialCommunities();const communitySearch=document.getElementById("communitySearch"),clearSearch=document.getElementById("clearSearch");
 const customGrid=document.getElementById("customCommPage");
 const customSection=document.getElementById("customCommunitiesSection");
+const officialSection=document.getElementById("officialCommunitiesSection");
+const activeSection=document.getElementById("activeCommunitiesSection");
+const officialTab=document.getElementById("officialTab");
+const activeTab=document.getElementById("activeTab");
 const allCustomGrid=document.getElementById("allCustomCommPage");
 const allCustomSection=document.getElementById("allCustomCommunitiesSection");
 const allCustomTab=document.getElementById("allCustomTab");
 const allCustomCommunityTotal=document.getElementById("allCustomCommunityTotal");
 const customCommunityCount=document.getElementById("customCommunityCount");
 const customCommunityTotal=document.getElementById("customCommunityTotal");
-const officialTab=document.getElementById("officialTab"),customTab=document.getElementById("customTab");
+const customTab=document.getElementById("customTab");
 function setCommunityType(type){
- const isMine=type==="mine",isAll=type==="allCustom";
- grid.hidden=isMine||isAll;customSection.hidden=!isMine;allCustomSection.hidden=!isAll;
- [customTab,allCustomTab].forEach(tab=>{const active=(tab===customTab&&isMine)||(tab===allCustomTab&&isAll);tab.classList.toggle("active",active);tab.setAttribute("aria-selected",String(active));});
- activeFilter="all";
- document.querySelectorAll(".homeFilters button[data-filter]").forEach(button=>button.classList.toggle("active",button.dataset.filter==="all"));
+ const sections={official:officialSection,active:activeSection,allCustom:allCustomSection,mine:customSection};
+ Object.entries(sections).forEach(([key,section])=>{section.hidden=key!==type;});
+ const tabs={official:officialTab,active:activeTab,allCustom:allCustomTab,mine:customTab};
+ Object.entries(tabs).forEach(([key,tab])=>{const selected=key===type;tab.classList.toggle("active",selected);tab.setAttribute("aria-selected",String(selected));});
 }
+officialTab.addEventListener("click",()=>setCommunityType("official"));
+activeTab.addEventListener("click",()=>setCommunityType("active"));
 customTab.addEventListener("click",()=>setCommunityType("mine"));
 allCustomTab.addEventListener("click",()=>setCommunityType("allCustom"));
+setCommunityType("official");
 function applyCommunityFilters(){
  const q=(communitySearch?.value||"").trim().toLocaleLowerCase("ar");
  const officialCards=[...document.querySelectorAll("#commPage .comm")],customCards=[...document.querySelectorAll("#customCommPage .comm")],allCustomCards=[...document.querySelectorAll("#allCustomCommPage .comm")];
@@ -339,8 +347,7 @@ function applyCommunityFilters(){
  const filterCards=(cards,kind)=>cards.forEach(card=>{
   const searchable=(card.dataset.searchable||card.textContent).toLocaleLowerCase("ar");
   const mine=card.dataset.ownerUid===uid||(uid&&(card.dataset.members||"").split(",").includes(uid));
-  const active=Number(card.dataset.activityScore||0)>0;
-  const show=(!q||searchable.includes(q))&&(activeFilter==="all"||(activeFilter==="active"&&active)||(activeFilter==="mine"&&mine));
+  const show=!q||searchable.includes(q);
   card.style.display=show?"":"none";if(show){if(kind==="official")officialVisible++;else if(kind==="custom")customVisible++;else allCustomVisible++;}
  });
  filterCards(officialCards,"official");filterCards(customCards,"custom");filterCards(allCustomCards,"allCustom");
@@ -405,7 +412,7 @@ async function runHomeSearch(){
 communitySearch?.addEventListener("input",()=>{clearTimeout(homeSearchTimer);homeSearchTimer=setTimeout(runHomeSearch,250);});
 clearSearch?.addEventListener("click",()=>{clearTimeout(homeSearchTimer);runHomeSearch();});
 
-document.querySelectorAll(".homeFilters button").forEach(button=>button.addEventListener("click",()=>{activeFilter=button.dataset.filter;document.querySelectorAll(".homeFilters button").forEach(item=>item.classList.toggle("active",item===button));applyCommunityFilters();}));
+// Each community tab opens its own independent section.
 
 // نبني كل المجتمعات من Firestore - والرسمية نعرض عدد الأعضاء لايف
 onSnapshot(collection(db,'communities'),snap=>{
