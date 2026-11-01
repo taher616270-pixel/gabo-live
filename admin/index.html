@@ -45,9 +45,9 @@ textarea{min-height:90px}
 <!-- MAIN -->
 <div class="panel active" id="p-main">
 <div class="card">
-<b>🌍 إنشاء المجتمعات الستة بضغطة زر</b>
-<p style="color:#aaa3bd;font-size:13px">اضغط الزر مرة واحدة وينشئ كل المجتمعات في قاعدة البيانات</p>
-<button id="createAll" class="primary" style="width:100%;padding:14px;font-size:16px">إنشاء المجتمعات الستة الآن</button>
+<b>🌍 المجتمعات الرسمية الخمسة</b>
+<p style="color:#aaa3bd;font-size:13px">تهيئة المجتمعات الرسمية الخمسة فقط. يتم تحديث الاسم والعلم دون مسح عضويات المجتمع الموجود.</p>
+<button id="createAll" class="primary" style="width:100%;padding:14px;font-size:16px">تهيئة المجتمعات الخمسة</button>
 <div id="commList" style="margin-top:12px"></div>
 </div>
 <div class="grid">
@@ -147,13 +147,12 @@ import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnaps
 const EMAIL_URL = "https://script.google.com/macros/s/AKfycbyDYmsYoCBSkuzn97cD9bnl6Fo0IuI-MrcCO8q1H4fdnT1EvGXCYoxM3TW2zinmopqS/exec";
 
 const commsDefault = [
- {id:'general', name:'الشات العام', icon:'🔥'},
- {id:'saudi', name:'مجتمع السعودية', icon:'🇸🇦'},
- {id:'yemen', name:'مجتمع اليمن', icon:'🇾🇪'},
- {id:'kuwait', name:'مجتمع الكويت', icon:'🇰🇼'},
- {id:'uae', name:'مجتمع الإمارات', icon:'🇦🇪'},
- {id:'bahrain', name:'مجتمع البحرين', icon:'🇧🇭'}
-];
+ {id:'south',name:'مجتمع الجنوب العربي',flag:'south',type:'community',description:'المجتمع الرسمي للجنوب العربي'},
+ {id:'sa',name:'مجتمع السعودية',flag:'sa',type:'community',description:'المجتمع الرسمي للمملكة العربية السعودية'},
+ {id:'ae',name:'مجتمع الإمارات',flag:'ae',type:'community',description:'المجتمع الرسمي لدولة الإمارات العربية المتحدة'},
+ {id:'om',name:'مجتمع عُمان',flag:'om',type:'community',description:'المجتمع الرسمي لسلطنة عُمان'},
+ {id:'ye',name:'مجتمع اليمن',flag:'ye',type:'community',description:'المجتمع الرسمي لليمن'}
+ ];
 
 let me=null, countryRegistry=[];
 let cfg={brand:"GABO LIVE",bottomNav:[{icon:"⌂",label:"الرئيسية",path:"/",order:0,visible:true},{icon:"♬",label:"المجتمع",path:"/app/",order:1,visible:true},{icon:"✉",label:"الخاص",path:"/dm/",order:2,visible:true},{icon:"◉",label:"حسابي",path:"/profile/",order:3,visible:true}],agora:{appId:"",appCert:"",enabled:true,maxMic:8},payment:{key:"",currency:"SAR"},plans:[{id:"vip1",name:"VIP شهري",price:29,days:30}],pages:[],features:{privateChat:true}};
@@ -190,16 +189,29 @@ function initTabs(){
 async function saveCfg(){ await setDoc(doc(db,'site_config','main'),{...cfg,updatedAt:serverTimestamp(),updatedBy:me.uid},{merge:true}); alert('✅ تم الحفظ - الموقع تحدث فوراً'); }
 
 document.getElementById('createAll').onclick=async()=>{
- const btn=document.getElementById('createAll'); btn.innerText='جاري الإنشاء...'; btn.disabled=true;
- for(const c of commsDefault){ await setDoc(doc(db,'communities',c.id),{...c, createdAt:serverTimestamp()}); }
- btn.innerText='✅ تم'; setTimeout(()=>{btn.innerText='إنشاء المجتمعات الستة الآن'; btn.disabled=false;},2000);
+ const btn=document.getElementById('createAll'); btn.innerText='جارٍ التهيئة...'; btn.disabled=true;
+ try{
+  let created=0,updated=0;
+  for(const c of commsDefault){
+   const ref=doc(db,'communities',c.id),snap=await getDoc(ref);
+   if(snap.exists()){
+    await updateDoc(ref,{name:c.name,flag:c.flag,type:c.type,description:c.description});
+    updated++;
+   }else{
+    await setDoc(ref,{...c,members:[],membersCount:0,joinsToday:0,joinsDay:'',activityScore:0,activityDay:'',createdAt:serverTimestamp()});
+    created++;
+   }
+  }
+  btn.innerText='✅ تمت التهيئة';
+  alert('تمت تهيئة المجتمعات الرسمية الخمسة. جديدة: '+created+' • تم تحديثها دون مسح العضويات: '+updated);
+ }catch(error){
+  console.error('Official community setup failed',error);
+  alert('تعذرت التهيئة. تحقق من قواعد Firestore، خصوصاً سماح isAdmin بإنشاء الوثائق الرسمية الخمسة.');
+  btn.innerText='إعادة المحاولة';
+ }finally{btn.disabled=false;}
 };
-document.getElementById('addOne').onclick=async()=>{
- const name=document.getElementById('newName').value.trim(); const icon=document.getElementById('newIcon').value.trim()||'🌍';
- if(!name) return; const id='comm_'+Date.now();
- await setDoc(doc(db,'communities',id),{name,icon,createdAt:serverTimestamp()});
- document.getElementById('newName').value=''; document.getElementById('newIcon').value='';
-};
+const addOneCard=document.getElementById('addOne')?.closest('.card');
+if(addOneCard)addOneCard.style.display='none';
 
 // Agora
 function fillAgoraForm(){ document.getElementById('agAppId').value=cfg.agora?.appId||''; document.getElementById('agCert').value=cfg.agora?.appCert||''; document.getElementById('agEnabled').value=String(cfg.agora?.enabled??true); document.getElementById('agMaxMic').value=cfg.agora?.maxMic||8; }
