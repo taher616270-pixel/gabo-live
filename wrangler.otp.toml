@@ -1,0 +1,16 @@
+name = "gabo-otp"
+main = "workers/otp/worker.js"
+compatibility_date = "2026-10-31"
+workers_dev = true
+
+[vars]
+GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwe_RFqQHU45DcBFfoV-pOkI0stk4uvmzEkK8pYDqKOZPzWLICO85yFq6t_qBYRiKwTCg/exec"
+ADMIN_EMAIL = "taher616380@gmail.com"
+
+[[kv_namespaces]]
+binding = "OTP_KV"
+id = "a08b9049273f4576ac977ab5f793bf92"
+
+[observability]
+enabled = true
+head_sampling_rate = 1
