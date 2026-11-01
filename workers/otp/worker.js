@@ -52,7 +52,7 @@ async function getFirebaseAccessToken(env){
   if(!account.client_email||!account.private_key||!account.token_uri||!account.project_id)throw new Error("FIREBASE_SERVICE_ACCOUNT_INVALID");
   const now=Math.floor(Date.now()/1000);
   const header=b64url(new TextEncoder().encode(JSON.stringify({alg:"RS256",typ:"JWT"})));
-  const claim=b64url(new TextEncoder().encode(JSON.stringify({iss:account.client_email,scope:"https://www.googleapis.com/auth/identitytoolkit",aud:account.token_uri,iat:now,exp:now+3600})));
+  const claim=b64url(new TextEncoder().encode(JSON.stringify({iss:account.client_email,scope:"https://www.googleapis.com/auth/identitytoolkit https://www.googleapis.com/auth/datastore",aud:account.token_uri,iat:now,exp:now+3600})));
   const unsigned=header+"."+claim;
   const key=await crypto.subtle.importKey("pkcs8",pemToBytes(account.private_key),{name:"RSASSA-PKCS1-v1_5",hash:"SHA-256"},false,["sign"]);
   const signature=await crypto.subtle.sign("RSASSA-PKCS1-v1_5",key,new TextEncoder().encode(unsigned));
@@ -98,6 +98,16 @@ async function verifyFirebaseIdToken(env,idToken){
   const user=data.users?.[0];
   if(!response.ok||!user)throw new Error("AUTH_INVALID");
   return user;
+}
+async function verifyFirebaseAdmin(env,user){
+  if(normalizeEmail(user?.email)===normalizeEmail(env.ADMIN_EMAIL||"taher616380@gmail.com"))return true;
+  const account=JSON.parse(env.FIREBASE_SERVICE_ACCOUNT_JSON);
+  const token=await getFirebaseAccessToken(env);
+  const path="https://firestore.googleapis.com/v1/projects/"+encodeURIComponent(account.project_id)+"/databases/(default)/documents/users/"+encodeURIComponent(user.localId);
+  const response=await fetchWithTimeout(path,{headers:{"Authorization":"Bearer "+token}},12000);
+  if(!response.ok)return false;
+  const data=await response.json().catch(()=>({}));
+  return data.fields?.isAdmin?.booleanValue===true;
 }
 async function verifyGrant(env,email,purpose,grant){
   if(typeof grant!=="string"||grant.length<40||grant.length>200)return null;
@@ -183,8 +193,9 @@ export default {
    const idToken=String(body.idToken||"");
    let user;
    try{user=await verifyFirebaseIdToken(env,idToken);}catch{return json({success:false,error:"AUTH_INVALID"},401);}
-   const adminEmail=normalizeEmail(env.ADMIN_EMAIL||"taher616380@gmail.com");
-   if(normalizeEmail(user.email)!==adminEmail)return json({success:false,error:"ADMIN_ONLY"},403);
+   let allowedAdmin=false;
+   try{allowedAdmin=await verifyFirebaseAdmin(env,user);}catch(error){console.error("GABO_ADMIN_CHECK_FAILED",error?.message||"unknown");}
+   if(!allowedAdmin)return json({success:false,error:"ADMIN_ONLY"},403);
    const type=String(body.type||"");
    if(!["contact","host"].includes(type))return json({success:false,error:"INVALID_EMAIL_TYPE"},400);
    const name=String(body.name||"GABO LIVE").slice(0,120);
