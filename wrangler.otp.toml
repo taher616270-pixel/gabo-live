@@ -14,3 +14,6 @@ id = "a08b9049273f4576ac977ab5f793bf92"
 [observability]
 enabled = true
 head_sampling_rate = 1
+
+[secrets]
+required = ["FIREBASE_SERVICE_ACCOUNT_JSON", "GAS_SHARED_SECRET"]
