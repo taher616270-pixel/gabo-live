@@ -155,22 +155,41 @@ window.selectFlag=(el,flag)=>{ document.querySelectorAll('.flagOpt').forEach(e=>
 window.previewImg=async(input)=>{
   const file=input.files&&input.files[0];if(!file)return;
   if(!file.type.startsWith("image/")){alert("اختر ملف صورة صحيح");input.value="";return;}
-  if(file.size>5*1024*1024){alert("حجم الصورة كبير، الحد الأقصى 5 ميجابايت");input.value="";return;}
   const imageUrl=URL.createObjectURL(file),image=new Image();
   image.onload=()=>{
-    const scale=Math.min(1,640/Math.max(image.width,image.height));
-    const canvas=document.createElement("canvas");
-    canvas.width=Math.max(1,Math.round(image.width*scale));canvas.height=Math.max(1,Math.round(image.height*scale));
-    canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);
-    let quality=.78,output=canvas.toDataURL("image/webp",quality);
-    while(output.length>220000&&quality>.42){quality-=.08;output=canvas.toDataURL("image/webp",quality);}
-    URL.revokeObjectURL(imageUrl);
-    if(output.length>260000){alert("تعذر ضغط الصورة، اختر صورة أصغر");input.value="";return;}
-    selectedImgBase64=output;
-    const img=document.getElementById("imgPreview");img.src=output;img.style.display="block";
-    document.getElementById("imgPlus").style.display="none";
+    try{
+      const sourceWidth=image.naturalWidth||image.width,sourceHeight=image.naturalHeight||image.height;
+      if(!sourceWidth||!sourceHeight)throw new Error("Invalid image dimensions");
+      let maxSide=720,output="";
+      while(maxSide>=256){
+        const scale=Math.min(1,maxSide/Math.max(sourceWidth,sourceHeight));
+        const canvas=document.createElement("canvas");
+        canvas.width=Math.max(1,Math.round(sourceWidth*scale));
+        canvas.height=Math.max(1,Math.round(sourceHeight*scale));
+        const context=canvas.getContext("2d");
+        if(!context)throw new Error("Canvas unavailable");
+        context.drawImage(image,0,0,canvas.width,canvas.height);
+        for(const quality of [.78,.66,.54,.42,.34]){
+          output=canvas.toDataURL("image/webp",quality);
+          if(!output.startsWith("data:image/webp"))output=canvas.toDataURL("image/jpeg",quality);
+          if(output.length<=320000)break;
+        }
+        if(output.length<=320000)break;
+        maxSide=Math.floor(maxSide*.78);
+      }
+      if(!output||output.length>320000)throw new Error("Image compression limit");
+      selectedImgBase64=output;
+      const img=document.getElementById("imgPreview");img.src=output;img.style.display="block";
+      document.getElementById("imgPlus").style.display="none";
+    }catch(error){
+      console.error("Community image processing failed:",error);
+      alert("تعذر تجهيز الصورة تلقائياً. جرّب صورة أخرى.");
+      input.value="";selectedImgBase64=null;
+    }finally{
+      URL.revokeObjectURL(imageUrl);
+    }
   };
-  image.onerror=()=>{URL.revokeObjectURL(imageUrl);alert("تعذر قراءة الصورة");input.value="";};
+  image.onerror=()=>{URL.revokeObjectURL(imageUrl);alert("تعذر قراءة هذا النوع من الصور على الجهاز");input.value="";selectedImgBase64=null;};
   image.src=imageUrl;
 };
 window.doCreate=async()=>{
