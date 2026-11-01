@@ -107,6 +107,31 @@ body{padding-bottom:110px}
 .head{position:relative}
 .pencil{position:absolute;top:92px;left:calc(50% + 68px);right:auto;bottom:auto;transform:translateY(-50%);width:auto;height:auto;padding:5px;background:transparent;border:0;border-radius:0;box-shadow:none;color:#fbbf24;font-size:21px;line-height:1;cursor:pointer;z-index:3}
 @media(max-width:380px){.pencil{left:calc(50% + 64px);top:88px}}
+
+/* Final pencil alignment override */
+.head .pencil#openEdit{
+  position:absolute!important;
+  top:84px!important;
+  left:calc(50% + 78px)!important;
+  right:auto!important;
+  bottom:auto!important;
+  transform:translateY(-50%)!important;
+  margin:0!important;
+  width:auto!important;
+  height:auto!important;
+  padding:5px!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  color:#fbbf24!important;
+  font-size:21px!important;
+  line-height:1!important;
+  z-index:20!important;
+}
+@media(max-width:380px){
+  .head .pencil#openEdit{top:80px!important;left:calc(50% + 74px)!important}
+}
 </style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
 </head>
