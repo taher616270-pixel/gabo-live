@@ -172,24 +172,56 @@ window.previewImg=async(input)=>{
   image.src=imageUrl;
 };
 window.doCreate=async()=>{
-  const createButton=document.querySelector(".btnCreate");if(createButton.disabled)return;
   const name=document.getElementById("commNameInput").value.trim();
+  if(!name){alert("اكتب اسم المجتمع");return;}
   if(name.length<2||name.length>32){alert("اسم المجتمع يجب أن يكون بين حرفين و32 حرفاً");return;}
+  if(!uid){alert("سجل دخول أول");location.href="/login/";return;}
+  const createButton=document.querySelector(".btnCreate");
+  if(createButton.disabled)return;
   createButton.disabled=true;createButton.textContent="جارٍ الإنشاء...";
-  if(!name){ alert('اكتب اسم المجتمع'); return; }
-  if(!uid){ alert('سجل دخول أول'); location.href='/login/'; return; }
-  const id=name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-أ-ي]/g,'')+'-'+Date.now().toString(36).slice(-4);
+  const id=name.toLowerCase().replace(/\s+/g,"-").replace(/[^a-z0-9\-أ-ي]/g,"")+"-"+Date.now().toString(36).slice(-4);
   try{
-    await setDoc(doc(db,'communities',id),{name:name,flag:selectedFlag,img:selectedImgBase64||null,ownerUid:uid,members:[uid],membersCount:1,banned:[],closed:false,createdAt:serverTimestamp()});
-    closeCreate(); document.getElementById('commNameInput').value=''; selectedImgBase64=null; document.getElementById('imgPreview').style.display='none'; document.getElementById('imgPlus').style.display='block'; window.goComm(id);
-  }catch(e){ console.error('Community creation failed:',e); alert('تعذر إنشاء المجتمع حالياً. تحقق من الاتصال وحاول مرة أخرى.'); }
-  finally{createButton.disabled=false;createButton.textContent='إنشاء';}
-}
+    await setDoc(doc(db,"communities",id),{name:name,flag:selectedFlag,img:selectedImgBase64||null,ownerUid:uid,members:[uid],membersCount:1,banned:[],closed:false,createdAt:serverTimestamp()});
+    closeCreate();
+    document.getElementById("commNameInput").value="";
+    selectedImgBase64=null;
+    document.getElementById("fileInput").value="";
+    document.getElementById("imgPreview").style.display="none";
+    document.getElementById("imgPlus").style.display="block";
+    window.goComm(id);
+  }catch(e){
+    console.error("Community creation failed:",e);
+    alert("تعذر إنشاء المجتمع حالياً. تحقق من الاتصال وحاول مرة أخرى.");
+  }finally{
+    createButton.disabled=false;createButton.textContent="إنشاء";
+  }
+};
+ 
+
 
 const grid=document.getElementById('commPage');
 const communityCount=document.getElementById('communityCount');
 const activityGrid=document.getElementById('activityPage');
-function renderOfficialCommunities(counts={}){if(!grid)return;const customIds=new Set([...grid.querySelectorAll('.comm[data-community-id]')].map(el=>el.dataset.communityId));const existing=new Map([...grid.querySelectorAll('.comm[data-official-id]')].map(el=>[el.dataset.officialId,el]));['south','sa','ye','ae','om','qa','kw','bh'].forEach(id=>{let div=existing.get(id);if(!div){div=document.createElement('div');div.className='comm';div.dataset.officialId=id;div.onclick=()=>window.goComm(id);}const flagContent=id==='south'?SOUTH_SVG:FLAG_HTML[id];div.innerHTML=`<div class="flag">${flagContent}</div><b><span class="miniFlag">${flagContent}</span>${NAMES[id]}</b><small class="${(counts[id]||0)>0?'live':''}">${(counts[id]||0)>0?(counts[id]+' عضو'):'رسمي'}</small>`;if(!existing.has(id))grid.appendChild(div);});}
+function renderOfficialCommunities(counts={},scores={}){
+  if(!grid)return;
+  const existing=new Map([...grid.querySelectorAll(".comm[data-official-id]")].map(el=>[el.dataset.officialId,el]));
+  STATIC_IDS.forEach(id=>{
+    let card=existing.get(id);
+    if(!card){card=document.createElement("button");card.type="button";card.className="comm";card.dataset.officialId=id;card.onclick=()=>window.goComm(id);}
+    card.dataset.searchable=(NAMES[id]||id).toLocaleLowerCase("ar");
+    card.dataset.activityScore=String(Number(scores[id]||0));
+    const flagContent=id==="south"?SOUTH_SVG:FLAG_HTML[id];
+    const flag=document.createElement("div");flag.className="flag";flag.innerHTML=flagContent;
+    const title=document.createElement("b"),mini=document.createElement("span"),label=document.createElement("span");
+    mini.className="miniFlag";mini.innerHTML=flagContent;
+    label.className="communityName";label.textContent=NAMES[id]||id;title.append(mini,label);
+    const count=Number(counts[id]||0),meta=document.createElement("small");
+    meta.className=count>0?"live":"";meta.textContent=count>0?count+" عضو":"مجتمع رسمي";
+    const arrow=document.createElement("span");arrow.className="communityArrow";arrow.textContent="↗";
+    card.replaceChildren(flag,title,meta,arrow);
+    if(!existing.has(id))grid.appendChild(card);
+  });
+}
 renderOfficialCommunities();const communitySearch=document.getElementById("communitySearch"),clearSearch=document.getElementById("clearSearch");
 function applyCommunityFilters(){
   const q=(communitySearch?.value||"").trim().toLocaleLowerCase("ar"),cards=[...document.querySelectorAll("#commPage .comm")];let visible=0;
@@ -212,35 +244,31 @@ document.querySelectorAll(".homeFilters button").forEach(button=>button.addEvent
 
 // نبني كل المجتمعات من Firestore - والرسمية نعرض عدد الأعضاء لايف
 onSnapshot(collection(db,'communities'),snap=>{
-  // خريطة الأعداد من Firebase
-  const counts={};
-  const customDocs=[];
-  const rankedDocs=[];
+  // خريطة الأعداد والنشاط الفعلي من Firebase
+  const counts={},activityScores={},customDocs=[],rankedDocs=[];
   snap.forEach(d=>{
     const data=d.data();
-    counts[d.id]=data.membersCount || (data.members?data.members.length:0) || 0;
+    counts[d.id]=data.membersCount||(data.members?data.members.length:0)||0;
     rankedDocs.push({id:d.id,data});
-    if(!STATIC_IDS.includes(d.id)){
-      customDocs.push({id:d.id,data});
-    }
+    if(!STATIC_IDS.includes(d.id))customDocs.push({id:d.id,data});
   });
-
-  grid.innerHTML='';
-  activityGrid.innerHTML='';
+  grid.innerHTML="";
+  activityGrid.innerHTML="";
   const todayKey=new Date().toISOString().slice(0,10);
   const scoreOf=data=>data.activityDay===todayKey?(Number(data.activityScore)||Number(data.messagesToday)||0):0;
-  const ranked=[...rankedDocs].filter(item=>scoreOf(item.data)>0).sort((a,b)=>scoreOf(b.data)-scoreOf(a.data)).slice(0,5);
-  if(!ranked.length){activityGrid.innerHTML='<div class="activityEmpty">لا يوجد نشاط مسجل اليوم بعد — ستظهر المجتمعات هنا تلقائياً عند بدء التفاعل</div>'; }
+  rankedDocs.forEach(item=>activityScores[item.id]=scoreOf(item.data));
+  const ranked=rankedDocs.filter(item=>scoreOf(item.data)>0).sort((a,b)=>scoreOf(b.data)-scoreOf(a.data)).slice(0,5);
+  if(!ranked.length){activityGrid.innerHTML='<div class="activityEmpty">لا يوجد نشاط مسجل اليوم بعد — ستظهر المجتمعات هنا تلقائياً عند بدء التفاعل</div>';}
   else ranked.forEach(({id,data},index)=>{
-    const flagHtml=id==='south'?SOUTH_SVG:(data.img?'<img src="'+data.img+'" alt="">':(FLAG_HTML[id]||'<img src="https://flagcdn.com/w80/'+String(data.flag||'sa')+'.png" alt="">'));
-    const item=document.createElement('button');item.type='button';item.className='activityCard';item.onclick=()=>window.goComm(id);
-    const score=scoreOf(data);const messages=data.activityDay===todayKey?(Number(data.messagesToday)||0):0;
+    const flagHtml=id==="south"?SOUTH_SVG:(data.img?'<img src="'+data.img+'" alt="">':(FLAG_HTML[id]||'<img src="https://flagcdn.com/w80/'+String(data.flag||"sa")+'.png" alt="">'));
+    const item=document.createElement("button");item.type="button";item.className="activityCard";item.onclick=()=>window.goComm(id);
+    const score=scoreOf(data),messages=data.activityDay===todayKey?(Number(data.messagesToday)||0):0;
     item.innerHTML='<span class="activityRank">'+(index+1)+'</span><span class="activityFlag">'+flagHtml+'</span><span class="activityInfo"><b></b><small>'+Number(data.membersCount||data.members?.length||0)+' عضو • '+messages+' رسالة اليوم</small></span><span class="activityStats">'+score+' نقطة<br><small>تفاعل</small></span>';
-    item.querySelector('.activityInfo b').textContent=data.name||NAMES[id]||'مجتمع';activityGrid.appendChild(item);
+    item.querySelector(".activityInfo b").textContent=data.name||NAMES[id]||"مجتمع";activityGrid.appendChild(item);
   });
 
   // 1- المجتمعات الرسمية - يطلع عدد الأعضاء
-  renderOfficialCommunities(counts);
+  renderOfficialCommunities(counts,activityScores);
 
   // 2- المجتمعات اللي أنشأها المستخدمين
   customDocs.forEach(({id,data})=>{
