@@ -323,17 +323,22 @@ document.getElementById('joinPublicChat')?.addEventListener('click',async()=>{
       const today=new Date().toISOString().slice(0,10);
       const sameJoinDay=data.joinsDay===today;
       const sameActivityDay=data.activityDay===today;
-      const name=isGeneralPublicChat?'الشات العام':(data.name||COMM_DATA[communityId]?.name||commNameEl.textContent||communityId);
-      await withTimeout(setDoc(ref,{
-        name,
-        type:isGeneralPublicChat?'public-chat':'community',
+      const membershipUpdate={
         members:arrayUnion(uid),
         membersCount:increment(1),
         joinsToday:sameJoinDay?increment(1):1,
         joinsDay:today,
         activityScore:sameActivityDay?increment(2):2,
         activityDay:today
-      },{merge:true}),'انتهت مهلة حفظ العضوية في قاعدة البيانات');
+      };
+      // Only the global chat may rewrite its fixed title; custom community names stay unchanged during joins.
+      if(isGeneralPublicChat){
+        membershipUpdate.name='الشات العام';
+        membershipUpdate.type='public-chat';
+      }else{
+        membershipUpdate.type='community';
+      }
+      await withTimeout(setDoc(ref,membershipUpdate,{merge:true}),'انتهت مهلة حفظ العضوية في قاعدة البيانات');
     }
     const verify=await withTimeout(getDoc(ref),'انتهت مهلة التحقق من العضوية');
     const verifiedMembers=verify.exists()&&Array.isArray(verify.data().members)?verify.data().members:[];
