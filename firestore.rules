@@ -174,7 +174,8 @@ service cloud.firestore {
       allow create: if validUserCreate(userId);
       allow update: if
         (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-          'isAdmin', 'subscription', 'subPlan', 'subUntil', 'banned', 'verified'
+          'isAdmin', 'subscription', 'subPlan', 'subUntil', 'banned', 'verified',
+          'subPlanRequest', 'subRequestedAt'
         ])) ||
         (isOwner(userId) && validProfileUpdate(userId)) ||
         (isOwner(userId) && validFollowingUpdate()) ||
