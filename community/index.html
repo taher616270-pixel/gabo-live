@@ -97,7 +97,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 import { auth, db } from '/firebase-config.js';
 import { getSouthArabiaFlag,getCountryRegistry } from '/assets/country-flags.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { collection, doc, onSnapshot, addDoc, serverTimestamp, getDoc, setDoc, arrayUnion, arrayRemove, increment, decrement } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { collection, doc, onSnapshot, addDoc, serverTimestamp, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, increment, decrement, query, where, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 const SOUTH_FLAG=await getSouthArabiaFlag();
 const GLOBAL_GLOBE=`<svg viewBox="0 0 64 64" role="img" aria-label="الشات العام"><defs><radialGradient id="ocean" cx="30%" cy="24%"><stop stop-color="#a8fff4"/><stop offset=".3" stop-color="#37c9c0"/><stop offset=".72" stop-color="#246a9b"/><stop offset="1" stop-color="#18234c"/></radialGradient><linearGradient id="land" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d8ffe8"/><stop offset="1" stop-color="#4bd3a5"/></linearGradient></defs><circle cx="32" cy="32" r="27" fill="url(#ocean)" stroke="#b6fff2" stroke-width="1.5"/><path d="M17 14l7-4 7 3 1 6-5 4-1 7-7-2-4-6 2-8zm20-3 9 3 5 8-5 4-2 8-6-2-3-7 3-5-4-4zm-20 29 7-3 7 4 3 8-6 8-8-4-4-8zm23 3 7-5 7 4-2 9-8 5-5-6z" fill="url(#land)" opacity=".95"/><path d="M6 32h52M32 5c-9 9-12 18-12 27s3 18 12 27M32 5c9 9 12 18 12 27s-3 18-12 27" fill="none" stroke="#d4fff8" stroke-opacity=".45" stroke-width="1"/><ellipse cx="32" cy="32" rx="27" ry="10" fill="none" stroke="#d4fff8" stroke-opacity=".38"/></svg>`;
 const SOUTH_SVG=`<img src="${SOUTH_FLAG}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`
@@ -114,6 +114,9 @@ bh:{name:'مجتمع البحرين', flag:`<img src="https://flagcdn.com/w80/bh
 const params=new URLSearchParams(location.search);
 let communityId=params.get('id')||'south';
 const isGeneralPublicChat=communityId==='global';
+const inviteToken=params.get('invite')||'';
+const dayKey=()=>new Date().toISOString().slice(0,10);
+let communityData=null,communityOwner=false,communityAuthorized=false,communityInviteToken=inviteToken,communityListenersStarted=false,presenceTimer=null;
 let hasJoinedGeneralChat=false;
 let globalMembers=[];
 let uid=localStorage.getItem('gabo_uid')||null;
@@ -135,30 +138,67 @@ function setHeaderInstant(){
 }
 setHeaderInstant();
 onAuthStateChanged(auth, async (u)=>{
-  if(!u){ location.replace('/login/'); return; }
-  if(u){
-    uid=u.uid; localStorage.setItem('gabo_uid',uid);
-    const snap=await getDoc(doc(db,'users',uid)).catch(()=>null);
-    userData=snap?.exists()?snap.data():{displayName:localStorage.getItem('gabo_name')||'مستخدم', photoURL:localStorage.getItem('gabo_photo')||'', verified:false};
-    const commRef=doc(db,'communities',communityId);
-    const commSnap=await getDoc(commRef).catch(()=>null);
-    if(isGeneralPublicChat){
-      
-      const latest=commSnap;
-      const members=latest?.exists()&&Array.isArray(latest.data().members)?latest.data().members:[];
-      hasJoinedGeneralChat=members.includes(uid);
-      updateGeneralChatGate();
-    }else if(!commSnap?.exists()){
-      const info=COMM_DATA[communityId] || {name:communityId};
-      await setDoc(commRef,{name:info.name||communityId,flag:communityId,members:[uid],membersCount:1,joinsToday:1,activityScore:2,activityDay:new Date().toISOString().slice(0,10),createdAt:serverTimestamp()},{merge:true});
-    }else{
-      const members=Array.isArray(commSnap.data().members)?commSnap.data().members:[];
-      if(!members.includes(uid)){
-        try{const today=new Date().toISOString().slice(0,10);const sameDay=commSnap.data().activityDay===today;await setDoc(commRef,{membersCount:increment(1),members:arrayUnion(uid),joinsToday:sameDay?increment(1):1,activityScore:sameDay?increment(2):2,activityDay:today},{merge:true});}catch{}
-      }
-    }
+ if(!u){location.replace('/login/');return;}
+ uid=u.uid;localStorage.setItem('gabo_uid',uid);
+ const userSnap=await getDoc(doc(db,'users',uid)).catch(()=>null);
+ userData=userSnap?.exists()?userSnap.data():{displayName:localStorage.getItem('gabo_name')||'مستخدم',photoURL:localStorage.getItem('gabo_photo')||'',verified:false};
+ const commRef=doc(db,'communities',communityId);
+ if(isGeneralPublicChat){
+  const commSnap=await getDoc(commRef).catch(()=>null),members=commSnap?.exists()&&Array.isArray(commSnap.data().members)?commSnap.data().members:[];
+  hasJoinedGeneralChat=members.includes(uid);updateGeneralChatGate();startCommunityListeners();return;
+ }
+ const memberRef=doc(db,'communities',communityId,'members',uid),joinRef=doc(db,'communities',communityId,'joins',uid);
+ let memberSnap=await getDoc(memberRef).catch(()=>null),commSnap=null;
+ // رابط الدعوة هو نقطة الدخول الوحيدة لغير الأعضاء في المجتمع الخاص.
+ if(!memberSnap?.exists()&&inviteToken){
+  const invRef=doc(db,'communities',communityId,'invites',inviteToken),invSnap=await getDoc(invRef).catch(()=>null);
+  if(invSnap?.exists()&&invSnap.data().active===true&&invSnap.data().communityId===communityId){
+   try{
+    const batch=writeBatch(db),today=dayKey();
+    batch.update(commRef,{members:arrayUnion(uid),membersCount:increment(1),inviteJoins:increment(1)});
+    batch.set(memberRef,{uid,joinedAt:serverTimestamp(),role:'member',inviteToken});
+    batch.set(joinRef,{uid,dayKey:today,joinedAt:serverTimestamp(),inviteToken});
+    batch.update(invRef,{uses:increment(1)});
+    await batch.commit();memberSnap=await getDoc(memberRef);
+   }catch(e){console.error('Invite join failed:',e);}
   }
+ }
+ commSnap=await getDoc(commRef).catch(()=>null);
+ if(!commSnap?.exists()){
+  if(!COMM_DATA[communityId]){showPrivateGate();return;}
+  try{
+   const today=dayKey(),batch=writeBatch(db);
+   batch.set(commRef,{name:COMM_DATA[communityId].name,flag:communityId,visibility:'public',ownerUid:uid,members:[uid],membersCount:1,joinsToday:1,joinsDay:today,activityScore:0,createdAt:serverTimestamp()});
+   batch.set(memberRef,{uid,joinedAt:serverTimestamp(),role:'member'});
+   batch.set(joinRef,{uid,dayKey:today,joinedAt:serverTimestamp(),inviteToken:'public'});
+   await batch.commit();commSnap=await getDoc(commRef);memberSnap=await getDoc(memberRef);
+  }catch(e){console.error('Official community init failed:',e);showPrivateGate();return;}
+ }
+ communityData=commSnap.data();communityOwner=communityData.ownerUid===uid;
+ let isMember=communityOwner||memberSnap?.exists()||(Array.isArray(communityData.members)&&communityData.members.includes(uid));
+ if(communityData.visibility==='private'&&!isMember){showPrivateGate();return;}
+ if(!isMember){
+  try{
+   const today=dayKey(),batch=writeBatch(db);
+   batch.update(commRef,{members:arrayUnion(uid),membersCount:increment(1)});
+   batch.set(memberRef,{uid,joinedAt:serverTimestamp(),role:'member'});
+   batch.set(joinRef,{uid,dayKey:today,joinedAt:serverTimestamp(),inviteToken:'public'});
+   await batch.commit();memberSnap=await getDoc(memberRef);isMember=true;
+  }catch(e){console.error('Public community join failed:',e);showPrivateGate();return;}
+ }else if(!memberSnap?.exists()){
+  await setDoc(memberRef,{uid,joinedAt:serverTimestamp(),role:communityOwner?'owner':'member'},{merge:true}).catch(()=>{});
+ }
+ communityAuthorized=true;
+ document.getElementById('privateGate').style.display='none';
+ document.getElementById('communityStats').hidden=false;
+ if(communityData.visibility==='private')document.getElementById('statVisibility').textContent='خاص';
+ if(communityOwner&&communityData.visibility==='private'){
+  const inviteButton=document.getElementById('copyInviteLink');inviteButton.style.display='inline-block';
+  inviteButton.onclick=async()=>{try{let token=communityInviteToken;if(!token){token=Array.from(crypto.getRandomValues(new Uint8Array(24)),b=>b.toString(16).padStart(2,'0')).join('');await setDoc(doc(db,'communities',communityId,'invites',token),{communityId,active:true,uses:0,createdBy:uid,createdAt:serverTimestamp()});communityInviteToken=token;}const link=location.origin+'/community/index.html?id='+encodeURIComponent(communityId)+'&invite='+token;await navigator.clipboard.writeText(link);inviteButton.textContent='تم نسخ رابط الدعوة ✓';setTimeout(()=>inviteButton.textContent='نسخ رابط الدعوة',2200);}catch(e){alert('تعذر نسخ الرابط. حاول مرة أخرى.');}};
+ }
+ startCommunityListeners();
 });
+function showPrivateGate(){document.getElementById('privateGate').style.display='flex';document.getElementById('messages').style.display='none';document.querySelector('.inputBar').style.display='none';}
 function updateGeneralChatGate(){if(!isGeneralPublicChat)return;const fab=document.getElementById('globalStatsFab');if(fab)fab.style.display='flex';const leave=document.getElementById('leaveGlobalChat');if(leave)leave.style.display=hasJoinedGeneralChat?'block':'none';const gate=document.getElementById('joinGate');const bar=document.querySelector('.inputBar');if(gate)gate.style.display=hasJoinedGeneralChat?'none':'flex';if(bar){bar.style.display=hasJoinedGeneralChat?'flex':'none';bar.setAttribute('aria-hidden',hasJoinedGeneralChat?'false':'true');}if(msgInput){msgInput.disabled=!hasJoinedGeneralChat;msgInput.placeholder=hasJoinedGeneralChat?'اكتب رسالتك في الشات العام...':'انضم إلى الشات العام للكتابة';}const send=document.querySelector('.sendBtn');if(send)send.disabled=!hasJoinedGeneralChat;const emoji=document.querySelector('.inputBar .iconBtn');if(emoji)emoji.disabled=!hasJoinedGeneralChat;}
 updateGeneralChatGate();
 
