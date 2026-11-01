@@ -127,7 +127,7 @@ import { auth, db, storage } from "/firebase-config.js";
 
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnapshot, serverTimestamp, deleteField } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const EMAIL_URL = "https://script.google.com/macros/s/AKfycbyDYmsYoCBSkuzn97cD9bnl6Fo0IuI-MrcCO8q1H4fdnT1EvGXCYoxM3TW2zinmopqS/exec";
 
@@ -173,7 +173,7 @@ function initTabs(){
 }
 
 function cleanPublicConfig(){const safe={...cfg};delete safe.agora;if(safe.payment){safe.payment={...safe.payment};delete safe.payment.key;}return safe;}
-async function saveCfg(){const safe=cleanPublicConfig();await setDoc(doc(db,'site_config','main'),{...safe,updatedAt:serverTimestamp(),updatedBy:me.uid},{merge:true});cfg=safe;alert('✅ تم الحفظ - الموقع تحدث فوراً');}
+async function saveCfg(){const safe=cleanPublicConfig();await setDoc(doc(db,'site_config','main'),{...safe,agora:deleteField(),payment:{...(safe.payment||{}),key:deleteField()},updatedAt:serverTimestamp(),updatedBy:me.uid},{merge:true});cfg=safe;alert('✅ تم الحفظ - الموقع تحدث فوراً');}
 
 document.getElementById('createAll').onclick=async()=>{
  const btn=document.getElementById('createAll'); btn.innerText='جارٍ التهيئة...'; btn.disabled=true;
