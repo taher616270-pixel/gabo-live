@@ -1,42 +1,24 @@
-# Firebase rules required for global country management
+# إعداد قائمة الدول في GABO LIVE (Firestore فقط)
 
-Merge these match blocks into your existing rules; do not replace unrelated rules.
+تُحفظ تعديلات قائمة الدول داخل مجموعة Firestore `country_registry`، ويُحفظ إخفاء الدول الافتراضية داخل `country_registry_meta/main`.
 
-## Firestore
+## تخزين صور الأعلام
 
-Add inside your existing `match /databases/{database}/documents` block:
+- لا يستخدم المشروع Firebase Storage.
+- يضغط المتصفح الصورة إلى JPEG قبل الحفظ.
+- تُحفظ الصورة المضغوطة كـ Data URL داخل الحقل `flag` في وثيقة الدولة.
+- الحد الأقصى للحقل بعد الضغط 350,000 حرف، لتجنب تجاوز حجم وثيقة Firestore.
+- لا ترفع ملفات الأعلام إلى مسارات Storage ولا تنشر قواعد Storage.
 
-```javascript
-function isGaboAdmin() {
-  return request.auth != null &&
-    (request.auth.token.email == 'taher616380@gmail.com' ||
-     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true);
-}
+## الحقول
 
-match /country_registry/{countryCode} {
-  allow read: if true;
-  allow create, update, delete: if isGaboAdmin();
-}
+`country_registry/{countryCode}`:
+- `name`: اسم الدولة.
+- `flag`: رابط صورة عام أو Data URL مضغوط.
 
-match /country_registry_meta/{documentId} {
-  allow read: if true;
-  allow create, update, delete: if isGaboAdmin();
-}
-```
+`country_registry_meta/main`:
+- `disabledCodes`: قائمة رموز الدول الافتراضية المخفية.
+- `updatedAt`: وقت آخر تحديث.
+- `updatedBy`: UID المدير.
 
-## Firebase Storage
-
-Add this match block inside your existing `service firebase.storage { match /b/{bucket}/o { ... } }` block:
-
-```javascript
-match /country-flags/{fileName} {
-  allow read: if true;
-  allow write: if request.auth != null &&
-    (request.auth.token.email == 'taher616380@gmail.com' ||
-     firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin == true) &&
-    request.resource.size < 1 * 1024 * 1024 &&
-    request.resource.contentType.matches('image/.*');
-}
-```
-
-The country manager uploads optimized JPG images to `country-flags/{countryCode}.jpg`. Keep your existing rules for all other paths.
+تسمح قواعد Firestore للقراءة العامة لقائمة الدول، وتقيّد الإنشاء والتعديل والحذف بحساب الإدارة `taher616380@gmail.com` أو مستخدم موثوق بعلامة الإدارة في وثيقة المستخدم.
