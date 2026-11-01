@@ -146,7 +146,7 @@ onAuthStateChanged(auth, async (u)=>{
       await setDoc(commRef,{name:info.name||communityId,flag:communityId,members:[],membersCount:0,createdAt:serverTimestamp()},{merge:true});
     }
     const members=commSnap?.exists()&&Array.isArray(commSnap.data().members)?commSnap.data().members:[];
-    hasJoinedGeneralChat=isGeneralPublicChat?members.includes(uid):(commSnap?.exists()&&(commSnap.data().ownerUid===uid||members.includes(uid)|| (Array.isArray(userData?.joinedCommunityIds)&&userData.joinedCommunityIds.includes(communityId))));
+    hasJoinedGeneralChat=isGeneralPublicChat?members.includes(uid):(commSnap?.exists()&&(commSnap.data().ownerUid===uid|| (Array.isArray(userData?.joinedCommunityIds)&&userData.joinedCommunityIds.includes(communityId))));
     updateGeneralChatGate();
   }
 });
