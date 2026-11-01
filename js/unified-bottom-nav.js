@@ -1,9 +1,9 @@
 const NAV_ITEMS = [
-  { id:'home', label:'الرئيسية', path:'/app/', icon:'<path class="nav-outline" d="M5.5 8.2 12 3.8l6.5 4.4v9.1a2 2 0 0 1-2 2H7.5a2 2 0 0 1-2-2Z"/><path class="nav-detail" d="M9.2 13.8c2.2 1.2 4.2 1.2 5.8-.3l-.3 2.1m.3-2.1-2-.2"/><path class="nav-spark" d="m5.1 2.2.8 1.8 1.8.8-1.8.8-.8 1.8-.8-1.8-1.8-.8 1.8-.8Z"/>' },
-  { id:'posts', label:'منشورات', path:'/posts/', icon:'<circle class="nav-outline" cx="12" cy="12" r="7.4"/><path class="nav-outline" d="M5.2 7.8 3.9 5.4m14.9 11.1 1.3 2.2"/><path class="nav-detail" d="M4.4 14.8c2.1-1.5 3.5-1.4 5.4.2 1.8 1.6 3.6 1.6 5.4.1"/><path class="nav-spark" d="m6.4 3.1.6 1.3 1.3.6-1.3.6-.6 1.3-.6-1.3-1.3-.6 1.3-.6Z"/>' },
-  { id:'games', label:'ألعاب', path:'/games/', icon:'<path class="nav-outline" d="M6.2 6.2h11.6a3.8 3.8 0 0 1 3.7 4.6l-1.2 6.1a2.7 2.7 0 0 1-4.4 1.5L13.7 16h-3.4l-2.2 2.4a2.7 2.7 0 0 1-4.4-1.5l-1.2-6.1a3.8 3.8 0 0 1 3.7-4.6Z"/><path class="nav-detail" d="M7.2 9.5v4.2m-2.1-2.1h4.2m7.1-.8h.1m2.1 2.1h.1"/><path class="nav-spark" d="m5.2 2.2.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7Z"/>' },
-  { id:'messages', label:'رسائل', path:'/dm/', icon:'<path class="nav-outline" d="M19.8 11.4a7.6 7.6 0 0 1-7.7 7.5H7l-3.1 2v-5.2a7.5 7.5 0 1 1 15.9-4.3Z"/><path class="nav-detail" d="M10 8.8v5.1m4 0V8.8"/><path class="nav-spark" d="m5 2.6.6 1.3 1.3.6-1.3.6L5 6.4l-.6-1.3-1.3-.6 1.3-.6Z"/>' },
-  { id:'profile', label:'ملفي الشخصي', path:'/profile/', icon:'<circle class="nav-outline" cx="12" cy="7.4" r="4.1"/><path class="nav-outline" d="M4.1 20.5c.4-4 3.5-6.3 7.9-6.3s7.5 2.3 7.9 6.3Z"/><path class="nav-spark" d="m6.1 2.2.7 1.5 1.5.7-1.5.7-.7 1.5-.7-1.5-1.5-.7 1.5-.7Z"/>' }
+  { id:'home', label:'الرئيسية', path:'/app/', icon:'<path class="nav-outline" d="M5.5 8.2 12 3.8l6.5 4.4v9.1a2 2 0 0 1-2 2H7.5a2 2 0 0 1-2-2Z"/><path class="nav-detail" d="M9.2 13.8c2.2 1.2 4.2 1.2 5.8-.3l-.3 2.1m.3-2.1-2-.2"/>' },
+  { id:'posts', label:'منشورات', path:'/posts/', icon:'<circle class="nav-outline" cx="12" cy="12" r="7.4"/><path class="nav-outline" d="M5.2 7.8 3.9 5.4m14.9 11.1 1.3 2.2"/><path class="nav-detail" d="M4.4 14.8c2.1-1.5 3.5-1.4 5.4.2 1.8 1.6 3.6 1.6 5.4.1"/>' },
+  { id:'games', label:'ألعاب', path:'/games/', icon:'<path class="nav-outline" d="M6.2 6.2h11.6a3.8 3.8 0 0 1 3.7 4.6l-1.2 6.1a2.7 2.7 0 0 1-4.4 1.5L13.7 16h-3.4l-2.2 2.4a2.7 2.7 0 0 1-4.4-1.5l-1.2-6.1a3.8 3.8 0 0 1 3.7-4.6Z"/><path class="nav-detail" d="M7.2 9.5v4.2m-2.1-2.1h4.2m7.1-.8h.1m2.1 2.1h.1"/>' },
+  { id:'messages', label:'رسائل', path:'/dm/', icon:'<path class="nav-outline" d="M19.8 11.4a7.6 7.6 0 0 1-7.7 7.5H7l-3.1 2v-5.2a7.5 7.5 0 1 1 15.9-4.3Z"/><path class="nav-detail" d="M10 8.8v5.1m4 0V8.8"/>' },
+  { id:'profile', label:'ملفي الشخصي', path:'/profile/', icon:'<circle class="nav-outline" cx="12" cy="7.4" r="4.1"/><path class="nav-outline" d="M4.1 20.5c.4-4 3.5-6.3 7.9-6.3s7.5 2.3 7.9 6.3Z"/>' }
 ];
 
 const safe = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
@@ -33,20 +33,19 @@ function installStyles() {
   style.textContent = `
     body{padding-bottom:calc(66px + env(safe-area-inset-bottom))!important}
     #gaboUnifiedNav{position:fixed!important;inset:auto 0 0!important;z-index:99999!important;width:100%!important;height:calc(56px + env(safe-area-inset-bottom))!important;padding:2px 10px calc(3px + env(safe-area-inset-bottom))!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:2px!important;align-items:center!important;direction:rtl!important;background:rgba(8,7,13,.985)!important;border-top:1px solid rgba(231,189,99,.16)!important;box-shadow:0 -7px 22px rgba(0,0,0,.28)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important}
-    #gaboUnifiedNav .gaboNavItem{position:relative!important;min-width:0!important;width:100%!important;height:48px!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;border:0!important;border-radius:14px!important;background:transparent!important;text-decoration:none!important;color:#393641!important;-webkit-tap-highlight-color:transparent!important;touch-action:manipulation!important}
+    #gaboUnifiedNav .gaboNavItem{position:relative!important;min-width:0!important;width:100%!important;height:48px!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;border:0!important;border-radius:14px!important;background:transparent!important;text-decoration:none!important;color:#393641!important;-webkit-tap-highlight-color:transparent!important;touch-action:manipulation!important;isolation:isolate!important;overflow:hidden!important}
+    #gaboUnifiedNav .gaboNavItem::before{content:"";position:absolute;inset:0;border-radius:14px;background:linear-gradient(115deg,#bd8d3e 0%,#f3d58e 48%,#8b63d7 100%);z-index:-1;opacity:0;clip-path:inset(100% 0 0 0);pointer-events:none}
+    #gaboUnifiedNav .gaboNavItem.is-active::before{opacity:1;animation:gaboNavFill 2.4s cubic-bezier(.2,.7,.25,1) forwards}
+    #gaboUnifiedNav .gaboNavItem.is-active{color:#17121f!important}
     #gaboUnifiedNav .gaboNavIcon{width:48px!important;height:45px!important;display:grid!important;place-items:center!important;transform:translateZ(0)!important;transition:transform .18s cubic-bezier(.2,.8,.25,1.3),filter .2s ease!important}
     #gaboUnifiedNav .gaboNavIcon svg{width:40px!important;height:40px!important;overflow:visible!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important}
     #gaboUnifiedNav .nav-outline,#gaboUnifiedNav .nav-detail{stroke:currentColor!important;fill:none!important}
-    #gaboUnifiedNav .nav-spark{stroke:currentColor!important;fill:currentColor!important;stroke-width:.7!important}
-    #gaboUnifiedNav .gaboNavItem.is-active{color:#e7bd63!important}
     #gaboUnifiedNav .gaboNavItem.is-active .gaboNavIcon{filter:drop-shadow(0 0 5px rgba(231,189,99,.32))!important;animation:gaboNavActive .42s cubic-bezier(.2,.8,.25,1.25) both}
-    #gaboUnifiedNav .gaboNavItem.is-active .nav-outline{stroke:url(#gaboNavGradient)!important;stroke-dasharray:22 4 8 4!important;animation:gaboStrokeTravel 1.8s linear infinite!important}
-    #gaboUnifiedNav .gaboNavItem.is-active .nav-detail{stroke:#8b63d7!important}
-    #gaboUnifiedNav .gaboNavItem.is-active .nav-spark{fill:#e7bd63!important;stroke:#e7bd63!important;filter:drop-shadow(0 0 3px #e7bd63)!important}
+    #gaboUnifiedNav .gaboNavItem.is-active .nav-outline,#gaboUnifiedNav .gaboNavItem.is-active .nav-detail{stroke:url(#gaboNavGradient)!important}
     #gaboUnifiedNav .gaboNavBadge{position:absolute!important;top:1px!important;right:calc(50% - 26px)!important;min-width:17px!important;height:17px!important;padding:0 4px!important;display:none;align-items:center!important;justify-content:center!important;border-radius:20px!important;background:#e64b63!important;color:#fff!important;font:800 9px system-ui!important;border:2px solid #090711!important;z-index:3!important}
     #gaboUnifiedNav .gaboNavItem.is-pressing .gaboNavIcon{transform:scale(.86)!important;filter:drop-shadow(0 0 8px rgba(231,189,99,.48))!important}
     #gaboUnifiedNav .gaboNavItem.is-pressing svg{animation:gaboTap .34s cubic-bezier(.2,.8,.25,1.35)!important}
-    @keyframes gaboStrokeTravel{to{stroke-dashoffset:-76}}
+    @keyframes gaboNavFill{0%{clip-path:inset(100% 0 0 0)}100%{clip-path:inset(0 0 0 0)}}
     @keyframes gaboNavActive{0%{transform:scale(.82)}65%{transform:scale(1.09)}100%{transform:scale(1)}}
     @keyframes gaboTap{0%{transform:scale(1)}45%{transform:scale(.88)}100%{transform:scale(1.04)}}
     @media(max-width:360px){#gaboUnifiedNav{padding-inline:3px!important;gap:0!important}#gaboUnifiedNav .gaboNavIcon{width:44px!important;height:42px!important}#gaboUnifiedNav .gaboNavIcon svg{width:37px!important;height:37px!important}}
