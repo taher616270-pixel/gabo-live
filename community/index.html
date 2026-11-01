@@ -315,6 +315,9 @@ document.getElementById('joinPublicChat')?.addEventListener('click',async()=>{
     }
     const data=snap.data()||{};
     const members=Array.isArray(data.members)?data.members:[];
+    if(data.visibility==='private' && data.ownerUid!==uid && !members.includes(uid)){
+      throw new Error('هذا المجتمع خاص. تحتاج إلى دعوة من مالكه للانضمام.');
+    }
     if(data.closed&&data.ownerUid!==uid){throw new Error('مالك المجتمع أوقف استقبال أعضاء جدد حالياً.');}
     if(!members.includes(uid)){
       const today=new Date().toISOString().slice(0,10);
