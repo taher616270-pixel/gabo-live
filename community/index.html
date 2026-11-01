@@ -100,6 +100,68 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 <div class="profileModal" id="profileModal" onclick="if(event.target===this)closeProfile()"><div class="profileBox"><div class="pCover" id="pCover"><img id="pCoverImg" style="display:none"><div class="pClose" onclick="closeProfile()">✕</div><div class="pAvatar" id="pAvatar"><span id="pAvatarLetter">T</span><img id="pAvatarImg" style="display:none"></div></div><div class="pInfo"><div class="pName"><span id="pName">تحميل...</span></div><div class="pCountry"><span id="pFlag"></span><span id="pCountryName">الجنوب العربي</span></div><div class="pMeta"><span id="pGender"></span><span id="pAge"></span><span id="pId">ID: --------</span></div><div class="pBio" id="pBio">...</div><div class="pActions"><button class="pBtn primary" id="pChatBtn">💬 دردشة خاصة</button><button class="pBtn secondary" id="pViewBtn">👁️ عرض الملف</button></div></div></div></div>
 <div class="emojiPanel" id="emojiPanel"><div class="emojiTabs"><button class="on" onclick="showEmojiCat(event,'smile')">😊</button><button onclick="showEmojiCat(event,'flags')">🏳️</button></div><div class="emojiGrid" id="emojiGrid"></div></div>
 
+<script>
+/* Render the last locally cached messages before Firebase finishes connecting. */
+(function(){
+  const id=new URLSearchParams(location.search).get('id')||'south';
+  const cacheKey='gabo_community_messages_v1_'+id;
+  const box=document.getElementById('messages');
+  function render(list,save){
+    if(!box)return;
+    box.innerHTML='';
+    if(!Array.isArray(list)||!list.length){
+      box.innerHTML='<div style="text-align:center;color:#8b8ba7;padding:24px">لا توجد رسائل بعد، كن أول من يشارك 👋</div>';
+    }else{
+      list.forEach(m=>{
+        const name=String(m.displayName||m.name||'مستخدم');
+        const photo=String(m.photoURL||m.photo||m.avatar||'');
+        const row=document.createElement('div');
+        row.className='msgRow '+(m.uid&&m.uid===localStorage.getItem('gabo_uid')?'me':'other');
+        const avatar=document.createElement('button');
+        avatar.type='button';avatar.className='avatar';avatar.setAttribute('aria-label','عرض ملف '+name);
+        if(photo){
+          const img=document.createElement('img');img.src=photo;img.alt='صورة '+name;
+          img.onerror=()=>{img.remove();avatar.textContent=name.trim()[0]||'م';};
+          avatar.appendChild(img);
+        }else avatar.textContent=name.trim()[0]||'م';
+        avatar.addEventListener('click',()=>window.openUserProfile?.(m.uid,photo,name));
+        const content=document.createElement('div');content.className='msgContent';
+        const line=document.createElement('div');line.className='nameLine';
+        line.appendChild(document.createTextNode(name+' '));
+        if(m.verified){const badge=document.createElement('span');badge.className='check';badge.textContent='✓';line.appendChild(badge);}
+        const time=document.createElement('span');time.className='time';
+        const ms=Number(m.createdAtMs)||(m.createdAt?.seconds?m.createdAt.seconds*1000:0);
+        time.textContent=ms?new Date(ms).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}):'';
+        line.appendChild(time);
+        const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=String(m.text||'');
+        content.append(line,bubble);row.append(avatar,content);box.appendChild(row);
+      });
+    }
+    box.scrollTop=box.scrollHeight;
+    if(save){
+      try{
+        const compact=(list||[]).slice(-50).map(m=>({
+          id:m.id||'',uid:m.uid||'',text:String(m.text||''),
+          displayName:String(m.displayName||m.name||'مستخدم'),
+          photoURL:(String(m.photoURL||m.photo||m.avatar||'').startsWith('data:')?'':String(m.photoURL||m.photo||m.avatar||'').slice(0,2048)),
+          verified:!!m.verified,
+          createdAtMs:Number(m.createdAtMs)||(m.createdAt?.seconds?m.createdAt.seconds*1000:0)
+        }));
+        localStorage.setItem(cacheKey,JSON.stringify(compact));
+      }catch(e){console.warn('Community message cache skipped:',e);}
+    }
+  }
+  window.__gaboRenderCommunityMessages=render;
+  try{
+    const cached=JSON.parse(localStorage.getItem(cacheKey)||'[]');
+    if(Array.isArray(cached)&&cached.length)render(cached,false);
+    else box.innerHTML='<div style="text-align:center;color:#aaa;padding:18px">جارٍ تحميل الرسائل...</div>';
+  }catch(e){
+    box.innerHTML='<div style="text-align:center;color:#aaa;padding:18px">جارٍ تحميل الرسائل...</div>';
+  }
+})();
+</script>
+
 <script type="module">
 import { auth, db } from '/firebase-config.js';
 import { getSouthArabiaFlag,getCountryRegistry } from '/assets/country-flags.js';
@@ -364,35 +426,21 @@ document.getElementById('joinPublicChat')?.addEventListener('click',async()=>{
     if(!hasJoinedGeneralChat)btn.innerHTML=originalHtml;
   }
 });
-messagesEl.innerHTML='<div style="text-align:center;color:#aaa;padding:18px">جارٍ تحميل الرسائل...</div>';
 const latestMessagesQuery=query(collection(db,'communities',communityId,'messages'),orderBy('createdAt','desc'),limit(50));
 onSnapshot(latestMessagesQuery, (snap)=>{
   ownerMessagesTotal=snap.size;refreshOwnerCounters();
-  const msgs=snap.docs.map(d=>({id:d.id,...d.data()})).reverse();
-  messagesEl.innerHTML='';
-  if(!msgs.length){messagesEl.innerHTML='<div style="text-align:center;color:#8b8ba7;padding:24px">لا توجد رسائل بعد، كن أول من يشارك 👋</div>';return;}
-  msgs.forEach(m=>{
-    const isMe=m.uid===uid;
-    const row=document.createElement('div'); row.className='msgRow '+(isMe?'me':'other');
-    let photo=m.photoURL||m.photo||m.avatar||localStorage.getItem('gabo_photo_'+m.uid)||'';
-    let name=m.displayName||m.name||'مستخدم';
-    const verified=!!m.verified;
-    const time=m.createdAt?new Date(m.createdAt.seconds*1000).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}):'';
-    const avatar=document.createElement('button');avatar.type='button';avatar.className='avatar';avatar.setAttribute('aria-label','عرض ملف '+name);
-    if(photo){const image=document.createElement('img');image.src=photo;image.alt='صورة '+name;image.onerror=()=>{image.remove();avatar.textContent=(name.trim()[0]||'م');};avatar.appendChild(image);}
-    else avatar.textContent=(name.trim()[0]||'م');
-    avatar.addEventListener('click',()=>window.openUserProfile(m.uid,photo,name));
-    const content=document.createElement('div');content.className='msgContent';
-    const nameLine=document.createElement('div');nameLine.className='nameLine';nameLine.appendChild(document.createTextNode(name+' '));
-    if(verified){const badge=document.createElement('span');badge.className='check';badge.textContent='✓';nameLine.appendChild(badge);}
-    const timeEl=document.createElement('span');timeEl.className='time';timeEl.textContent=time;nameLine.appendChild(timeEl);
-    const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=String(m.text||'');
-    content.append(nameLine,bubble);row.append(avatar,content);messagesEl.appendChild(row);
-  });
-  messagesEl.scrollTop=messagesEl.scrollHeight;
+  const msgs=snap.docs.map(d=>{
+    const data=d.data()||{};
+    return {id:d.id,...data,createdAtMs:data.createdAt?.toMillis?.()||(data.createdAt?.seconds?data.createdAt.seconds*1000:0)};
+  }).reverse();
+  if(typeof window.__gaboRenderCommunityMessages==='function'){
+    window.__gaboRenderCommunityMessages(msgs,true);
+  }
 },error=>{
   console.error('Community messages listener:',error);
-  messagesEl.innerHTML='<div style="text-align:center;color:#fca5a5;padding:24px">تعذر تحميل الرسائل بسبب صلاحيات Firestore</div>';
+  if(!messagesEl.children.length){
+    messagesEl.innerHTML='<div style="text-align:center;color:#fca5a5;padding:24px">تعذر تحميل الرسائل بسبب صلاحيات Firestore</div>';
+  }
 });
 onSnapshot(doc(db,'communities',communityId), (snap)=>{
   if(isGeneralPublicChat&&snap.exists()&&uid){const members=Array.isArray(snap.data().members)?snap.data().members:[];globalMembers=members;document.getElementById('globalTotalMembers').textContent=String(members.length);const joined=members.includes(uid);if(joined!==hasJoinedGeneralChat){hasJoinedGeneralChat=joined;updateGeneralChatGate();}if(isGeneralPublicChat&&document.getElementById('globalMembersList').style.display!=='none')renderGlobalMembers(members);}
