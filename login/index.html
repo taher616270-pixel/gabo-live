@@ -485,7 +485,7 @@ $('signupOtpCode').addEventListener('input',e=>{e.target.value=e.target.value.re
 $('authForm').addEventListener('submit', async (e)=>{
   e.preventDefault(); clearErrors();
   if(!auth){ setMessage('النظام لم يتحمل بعد','e'); return; }
-  const emailRule=value=>/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(value);
+  const emailRule=value=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
   emailRule.message='أدخل بريدًا إلكترونيًا صحيحًا';
   if(mode==='login'){
     if(!validateFields([['l_email','أدخل البريد الإلكتروني',emailRule],['f_loginPass','أدخل كلمة المرور']])){setMessage('راجع الحقول المحددة باللون الأحمر','e');return;}
