@@ -99,6 +99,9 @@ body{padding-bottom:110px}
 
 /* Hide gender and age from the personal profile header */
 #metaRow{display:none!important}
+
+/* Show profile bio as plain text beside the country details */
+.bioPublic{margin:3px 0 0;background:transparent;border:0;border-radius:0;padding:0;min-height:0;font-size:12px;color:#c4c4d0;line-height:1.5;text-align:center}
 </style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
 </head>
@@ -115,9 +118,9 @@ body{padding-bottom:110px}
         <span id="countryNameMain"> </span>
         <span id="metaRow" class="metaInline"></span>
       </div>
+      <div class="bioPublic" id="bioPublic"></div>
     </div>
   </div>
-  <div class="bioPublic" id="bioPublic"></div>
   <div class="stats">
     <div class="stat"><b id="c1">0</b><span>متابعين</span></div>
     <div class="stat"><b id="c2">0</b><span>متابَع</span></div>
