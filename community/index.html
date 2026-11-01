@@ -191,14 +191,15 @@ onSnapshot(doc(db,'communities',communityId), (snap)=>{
   if(isGeneralPublicChat&&snap.exists()&&uid){const members=Array.isArray(snap.data().members)?snap.data().members:[];globalMembers=members;document.getElementById('globalTotalMembers').textContent=String(members.length);const joined=members.includes(uid);if(joined!==hasJoinedGeneralChat){hasJoinedGeneralChat=joined;updateGeneralChatGate();}if(isGeneralPublicChat&&document.getElementById('globalMembersList').style.display!=='none')renderGlobalMembers(members);}
   if(snap.exists()){
     const data=snap.data();
-    if(data.name) commNameEl.textContent=isGeneralPublicChat?'الشات العام':data.name;
+    if(data.name) commNameEl.textContent=isGeneralPublicChat?'الشات العام':(communityId==='south'?(COMM_DATA.south.name):data.name);
     if(!isGeneralPublicChat){
       const flagCode=String(data.flag||communityId).toLowerCase();
       const flagUrl=flagCode==='south'?SOUTH_FLAG:(/^[a-z]{2}$/.test(flagCode)?'https://flagcdn.com/w160/'+flagCode+'.png':'');
-      if(data.img){
+      if(flagCode==='south'){
+        commFlagEl.innerHTML='<img src="'+String(SOUTH_FLAG).replace(/"/g,'&quot;')+'" alt="صورة وعلم مجتمع الجنوب العربي" style="width:100%;height:100%;object-fit:cover">';
+        commMiniFlagEl.innerHTML=commFlagEl.innerHTML;
+      }else if(data.img){
         commFlagEl.innerHTML='<img src="'+String(data.img).replace(/"/g,'&quot;')+'" alt="صورة المجتمع" style="width:100%;height:100%;object-fit:cover">';
-      }else if(flagCode==='south'){
-        commFlagEl.innerHTML=SOUTH_SVG;
       }else if(flagUrl){
         commFlagEl.innerHTML='<img src="'+flagUrl+'" alt="علم المجتمع" style="width:100%;height:100%;object-fit:cover">';
       }
