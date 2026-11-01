@@ -85,7 +85,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 <div class="header">
 <div class="backBtn" onclick="location.href='/app/'">›</div>
 <div class="commFlag" id="commFlag"></div>
-<div class="headerInfo"><b><span id="commName">تحميل...</span> <span class="miniFlagInHeader" id="commMiniFlag"></span></b><small><span id="memberCount">0 عضو</span> • 12k متصل • رسمي</small></div>
+<div class="headerInfo"><b><span id="commName">تحميل...</span> <span class="miniFlagInHeader" id="commMiniFlag"></span></b><small><span id="memberCount">0 عضو</span> • مجتمع GABO LIVE</small></div>
 </div>
 <div class="messages" id="messages"></div><div class="actionDock" id="actionDock"><div class="joinGate" id="joinGate"><div class="joinGateText"><b id="joinGateTitle">انضم إلى المجتمع</b><small id="joinGateHint">انضم لتتمكن من المشاركة والكتابة في المجتمع</small></div><button id="joinPublicChat" type="button">انضم الآن <span>←</span></button><div id="ownerCommunityTools" class="ownerCommunityTools" style="display:none"><div class="ownerStatsGrid"><span>الأعضاء <b id="ownerMembersCount">0</b></span><span>الرسائل <b id="ownerMessagesCount">0</b></span><span>انضمام اليوم <b id="ownerJoinsToday">0</b></span><span>الدعوات <b id="ownerInviteJoins">0</b></span><span>النشاط <b id="ownerActivityScore">0</b></span></div><div class="ownerActions"><button id="ownerToggleJoin" type="button">إيقاف الانضمام</button><button id="ownerDeleteCommunity" type="button">حذف المجتمع</button></div></div><div id="communityClosedNotice" class="communityClosedNotice" style="display:none">هذا المجتمع متوقف عن استقبال أعضاء جدد حالياً</div></div><div class="inputBar"><button class="iconBtn" onclick="toggleEmoji()">😊</button><div class="inputWrap"><input id="msgInput" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMsg()"></div><button class="sendBtn" onclick="sendMsg()">➤</button></div></div>
 <button class="globalStatsFab" id="globalStatsFab" type="button" aria-label="عدادات الشات العام" style="display:none">☷<i></i></button>
@@ -104,7 +104,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 import { auth, db } from '/firebase-config.js';
 import { getSouthArabiaFlag,getCountryRegistry } from '/assets/country-flags.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { collection, doc, onSnapshot, addDoc, serverTimestamp, getDoc, getDocs, setDoc, deleteDoc, writeBatch, arrayUnion, arrayRemove, increment, decrement } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { collection, doc, onSnapshot, addDoc, serverTimestamp, getDoc, getDocs, setDoc, deleteDoc, writeBatch, arrayUnion, arrayRemove, increment } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 let SOUTH_FLAG='/assets/south-arabia.png.JPG';
 const GLOBAL_GLOBE=`<svg viewBox="0 0 64 64" role="img" aria-label="الشات العام"><defs><radialGradient id="ocean" cx="30%" cy="24%"><stop stop-color="#a8fff4"/><stop offset=".3" stop-color="#37c9c0"/><stop offset=".72" stop-color="#246a9b"/><stop offset="1" stop-color="#18234c"/></radialGradient><linearGradient id="land" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d8ffe8"/><stop offset="1" stop-color="#4bd3a5"/></linearGradient></defs><circle cx="32" cy="32" r="27" fill="url(#ocean)" stroke="#b6fff2" stroke-width="1.5"/><path d="M17 14l7-4 7 3 1 6-5 4-1 7-7-2-4-6 2-8zm20-3 9 3 5 8-5 4-2 8-6-2-3-7 3-5-4-4zm-20 29 7-3 7 4 3 8-6 8-8-4-4-8zm23 3 7-5 7 4-2 9-8 5-5-6z" fill="url(#land)" opacity=".95"/><path d="M6 32h52M32 5c-9 9-12 18-12 27s3 18 12 27M32 5c9 9 12 18 12 27s-3 18-12 27" fill="none" stroke="#d4fff8" stroke-opacity=".45" stroke-width="1"/><ellipse cx="32" cy="32" rx="27" ry="10" fill="none" stroke="#d4fff8" stroke-opacity=".38"/></svg>`;
 let SOUTH_SVG=`<img src="${SOUTH_FLAG}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`
@@ -144,13 +144,16 @@ async function loadCommunity(){
   if(!currentUser) throw new Error('يجب تسجيل الدخول أولاً');
   uid=currentUser.uid;
   const ref=doc(db,'communities',communityId);
-  let snap=await getDoc(ref);
-  if(!snap.exists()&&!isGeneralPublicChat){
-    const fallback=COMM_DATA[communityId]||{name:'مجتمع '+communityId};
-    await setDoc(ref,{name:fallback.name||('مجتمع '+communityId),flag:communityId,members:[],membersCount:0,createdAt:serverTimestamp()},{merge:true});
-    snap=await getDoc(ref);
+  const snap=await getDoc(ref);
+  if(!snap.exists()){
+    if(isGeneralPublicChat){
+      communityData={name:'الشات العام',members:[],membersCount:0};
+    }else{
+      throw new Error('المجتمع غير موجود في قاعدة البيانات حالياً. سيتم ربطه بعد تجهيز قاعدة البيانات.');
+    }
+  }else{
+    communityData=snap.data()||{};
   }
-  communityData=snap.exists()?snap.data():{name:isGeneralPublicChat?'الشات العام':(COMM_DATA[communityId]?.name||('مجتمع '+communityId))};
   const communityName=isGeneralPublicChat?'الشات العام':(communityData.name||COMM_DATA[communityId]?.name||('مجتمع '+communityId));
   commNameEl.textContent=communityName;
   const joinTitle=document.getElementById('joinGateTitle');
@@ -195,7 +198,11 @@ onAuthStateChanged(auth,async u=>{
   }catch(error){
     console.error('loadCommunity failed:',error);
     commNameEl.textContent='تعذر تحميل المجتمع';
-    messagesEl.innerHTML='<div style="text-align:center;color:#fca5a5;padding:24px">تعذر تحميل بيانات المجتمع. تحقق من صلاحيات Firestore.</div>';
+    messagesEl.textContent='';
+    const errorBox=document.createElement('div');
+    errorBox.style.cssText='text-align:center;color:#fca5a5;padding:24px;line-height:1.9';
+    errorBox.textContent=error?.message||'تعذر تحميل بيانات المجتمع. تحقق من الاتصال وصلاحيات Firestore.';
+    messagesEl.appendChild(errorBox);
   }
 });
 function updateGeneralChatGate(){
@@ -311,15 +318,17 @@ document.getElementById('joinPublicChat')?.addEventListener('click',async()=>{
     if(data.closed&&data.ownerUid!==uid){throw new Error('مالك المجتمع أوقف استقبال أعضاء جدد حالياً.');}
     if(!members.includes(uid)){
       const today=new Date().toISOString().slice(0,10);
-      const sameDay=data.activityDay===today;
+      const sameJoinDay=data.joinsDay===today;
+      const sameActivityDay=data.activityDay===today;
       const name=isGeneralPublicChat?'الشات العام':(data.name||COMM_DATA[communityId]?.name||commNameEl.textContent||communityId);
       await withTimeout(setDoc(ref,{
         name,
         type:isGeneralPublicChat?'public-chat':'community',
         members:arrayUnion(uid),
         membersCount:increment(1),
-        joinsToday:sameDay?increment(1):1,
-        activityScore:sameDay?increment(2):2,
+        joinsToday:sameJoinDay?increment(1):1,
+        joinsDay:today,
+        activityScore:sameActivityDay?increment(2):2,
         activityDay:today
       },{merge:true}),'انتهت مهلة حفظ العضوية في قاعدة البيانات');
     }
