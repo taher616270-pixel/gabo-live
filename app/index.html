@@ -132,6 +132,7 @@ let uid=localStorage.getItem('gabo_uid')||null;
 let selectedFlag='south';
 let selectedImgBase64=null;
 let activeFilter="all";
+let latestCommunityCounts={},latestActivityScores={};
 
 // نعرض المجتمعات الافتراضية فوراً من ملفات الصفحة، ثم نحدّث العلم والأسماء من Firebase بالخلفية.
 let SOUTH_FLAG='/assets/south-arabia.png.JPG';
@@ -202,7 +203,7 @@ window.doCreate=async()=>{
 const grid=document.getElementById('commPage');
 const communityCount=document.getElementById('communityCount');
 const activityGrid=document.getElementById('activityPage');
-function renderOfficialCommunities(counts={},scores={}){
+function renderOfficialCommunities(counts=latestCommunityCounts,scores=latestActivityScores){
   if(!grid)return;
   const existing=new Map([...grid.querySelectorAll(".comm[data-official-id]")].map(el=>[el.dataset.officialId,el]));
   STATIC_IDS.forEach(id=>{
@@ -257,6 +258,7 @@ onSnapshot(collection(db,'communities'),snap=>{
   const todayKey=new Date().toISOString().slice(0,10);
   const scoreOf=data=>data.activityDay===todayKey?(Number(data.activityScore)||Number(data.messagesToday)||0):0;
   rankedDocs.forEach(item=>activityScores[item.id]=scoreOf(item.data));
+  latestCommunityCounts=counts;latestActivityScores=activityScores;
   const ranked=rankedDocs.filter(item=>scoreOf(item.data)>0).sort((a,b)=>scoreOf(b.data)-scoreOf(a.data)).slice(0,5);
   if(!ranked.length){activityGrid.innerHTML='<div class="activityEmpty">لا يوجد نشاط مسجل اليوم بعد — ستظهر المجتمعات هنا تلقائياً عند بدء التفاعل</div>';}
   else ranked.forEach(({id,data},index)=>{
