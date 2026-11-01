@@ -30,7 +30,16 @@ h1{font-size:35px;line-height:1.2;margin:0;color:#f8e7c0;font-weight:900}
 .feature b{display:block;font-size:22px;margin-bottom:5px}.feature span{font-size:11px;color:#b8afc3;font-weight:700}
 @media(max-width:370px){h1{font-size:30px}.gameOrb{width:100px;height:100px;font-size:50px}}
 </style>
-</head>
+<style>
+#gaboUnifiedNav{position:fixed;inset:auto 0 0;z-index:99999;width:100%;height:calc(56px + env(safe-area-inset-bottom));padding:2px 10px calc(3px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;align-items:center;direction:rtl;background:rgba(8,7,13,.985);border-top:1px solid rgba(231,189,99,.16);box-shadow:0 -7px 22px rgba(0,0,0,.28);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+#gaboUnifiedNav .gaboNavItem{position:relative;min-width:0;width:100%;height:48px;display:flex;align-items:center;justify-content:center;border-radius:14px;color:#393641;text-decoration:none;overflow:hidden}
+#gaboUnifiedNav .gaboNavIcon{width:48px;height:45px;display:grid;place-items:center}
+#gaboUnifiedNav svg{width:40px;height:40px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#gaboUnifiedNav .gaboNavItem.is-active{color:#e7bd63}
+#gaboUnifiedNav .gaboNavItem.is-active:before{content:"";position:absolute;inset:0;border-radius:14px;padding:1.6px;background:linear-gradient(115deg,#bd8d3e,#f3d58e,#8b63d7);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+#gaboUnifiedNav .gaboNavBadge{position:absolute;top:1px;right:calc(50% - 26px);min-width:17px;height:17px;padding:0 4px;display:none;align-items:center;justify-content:center;border-radius:20px;background:#e64b63;color:#fff;font:800 9px system-ui;border:2px solid #090711;z-index:3}
+@media(max-width:360px){#gaboUnifiedNav{padding-inline:3px;gap:0}#gaboUnifiedNav svg{width:37px;height:37px}}
+</style></head>
 <body>
 <header class="top"><div class="brand">GABO <span>LIVE</span> ✦</div><a class="back" href="/app/">الرئيسية ←</a></header>
 <main class="wrap">
@@ -48,5 +57,12 @@ h1{font-size:35px;line-height:1.2;margin:0;color:#f8e7c0;font-weight:900}
 <div class="feature"><b>✨</b><span>تجربة مميزة</span></div>
 </div>
 </main>
+<nav id="gaboUnifiedNav" aria-label="التنقل الرئيسي">
+<a class="gaboNavItem" href="/app/" data-nav-id="home" aria-label="الرئيسية"><span class="gaboNavIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path class="nav-outline" d="M5.5 8.2 12 3.8l6.5 4.4v9.1a2 2 0 0 1-2 2H7.5a2 2 0 0 1-2-2Z"/><path class="nav-detail" d="M9.2 13.8c2.2 1.2 4.2 1.2 5.8-.3l-.3 2.1m.3-2.1-2-.2"/></svg></span></a>
+<a class="gaboNavItem" href="/posts/" data-nav-id="posts" aria-label="منشورات"><span class="gaboNavIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle class="nav-outline" cx="12" cy="12" r="7.4"/><path class="nav-outline" d="M5.2 7.8 3.9 5.4m14.9 11.1 1.3 2.2"/><path class="nav-detail" d="M4.4 14.8c2.1-1.5 3.5-1.4 5.4.2 1.8 1.6 3.6 1.6 5.4.1"/></svg></span></a>
+<a class="gaboNavItem is-active" href="/games/" data-nav-id="games" aria-label="ألعاب" aria-current="page"><span class="gaboNavIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path class="nav-outline" d="M6.2 6.2h11.6a3.8 3.8 0 0 1 3.7 4.6l-1.2 6.1a2.7 2.7 0 0 1-4.4 1.5L13.7 16h-3.4l-2.2 2.4a2.7 2.7 0 0 1-4.4-1.5l-1.2-6.1a3.8 3.8 0 0 1 3.7-4.6Z"/><path class="nav-detail" d="M7.2 9.5v4.2m-2.1-2.1h4.2m7.1-.8h.1m2.1 2.1h.1"/></svg></span></a>
+<a class="gaboNavItem" href="/dm/" data-nav-id="messages" aria-label="رسائل"><span class="gaboNavIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path class="nav-outline" d="M19.8 11.4a7.6 7.6 0 0 1-7.7 7.5H7l-3.1 2v-5.2a7.5 7.5 0 1 1 15.9-4.3Z"/><path class="nav-detail" d="M10 8.8v5.1m4 0V8.8"/></svg></span><span id="navBadge" class="gaboNavBadge navBadge" style="display:none">0</span></a>
+<a class="gaboNavItem" href="/profile/" data-nav-id="profile" aria-label="ملفي الشخصي"><span class="gaboNavIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle class="nav-outline" cx="12" cy="7.4" r="4.1"/><path class="nav-outline" d="M4.1 20.5c.4-4 3.5-6.3 7.9-6.3s7.5 2.3 7.9 6.3Z"/></svg></span></a>
+</nav>
 <script type="module" src="/js/unified-bottom-nav.js"></script>
 </body></html>

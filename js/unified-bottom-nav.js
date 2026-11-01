@@ -62,6 +62,21 @@ function addGradient(svg) {
   svg.prepend(defs);
 }
 
+function bindNavigation(nav) {
+  if (nav.dataset.gaboBound === '1') return;
+  nav.dataset.gaboBound = '1';
+  nav.addEventListener('click', event => {
+    const link = event.target.closest('a[data-nav-id]');
+    if (!link) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+    event.preventDefault();
+    if (link.classList.contains('is-active') || window.__gaboNavNavigating) return;
+    window.__gaboNavNavigating = true;
+    link.classList.add('is-pressing');
+    location.assign(link.href);
+  });
+}
+
 function mount() {
   installStyles();
   const selected = activeItem();
@@ -73,7 +88,11 @@ function mount() {
       link.classList.remove('is-pressing');
       if (active) link.setAttribute('aria-current','page');
       else link.removeAttribute('aria-current');
+      const svg = link.querySelector('svg');
+      if (svg) addGradient(svg);
     });
+    if (!existing.dataset.gaboBound) bindNavigation(existing);
+    import('/js/nav-badge.js').catch(() => {});
     return;
   }
   document.querySelectorAll('.bottomNav,.bottom-nav').forEach(node => node.remove());
@@ -88,18 +107,8 @@ function mount() {
     </a>`;
   }).join('');
   nav.querySelectorAll('svg').forEach(addGradient);
-  nav.addEventListener('click', event => {
-    const link = event.target.closest('a[data-nav-id]');
-    if (!link) return;
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
-    event.preventDefault();
-    if (link.classList.contains('is-active')) return;
-    if (window.__gaboNavNavigating) return;
-    window.__gaboNavNavigating = true;
-    link.classList.add('is-pressing');
-    location.assign(link.href);
-  });
   document.body.appendChild(nav);
+  bindNavigation(nav);
   import('/js/nav-badge.js').catch(() => {});
 }
 
