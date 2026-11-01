@@ -149,35 +149,18 @@ window.doCreate=async()=>{
  if(name.length<2||name.length>32){alert('اسم المجتمع يجب أن يكون بين حرفين و32 حرفاً');return;}
  if(description.length>180){alert('الوصف طويل جداً');return;}
  if(!uid){alert('سجل دخول أول');location.href='/login/';return;}
- const button=document.querySelector('.btnCreate');if(button.disabled)return;
- button.disabled=true;button.textContent='جارٍ إنشاء المجتمع...';
- const visibility=selectedVisibility;
- const id=name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-أ-ي]/g,'')+'-'+Date.now().toString(36).slice(-5);
- const dayKey=new Date().toISOString().slice(0,10);
+ const button=document.querySelector('.btnCreate');if(button.disabled)return;button.disabled=true;button.textContent='جارٍ إنشاء المجتمع...';
+ const visibility=selectedVisibility,id=name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-أ-ي]/g,'')+'-'+Date.now().toString(36).slice(-5),dayKey=new Date().toISOString().slice(0,10);
+ const inviteToken=visibility==='private'?Array.from(crypto.getRandomValues(new Uint8Array(24)),b=>b.toString(16).padStart(2,'0')).join(''):null;
  try{
-  await setDoc(doc(db,'communities',id),{
-   name,description,flag:selectedFlag,img:selectedImgBase64||null,
-   ownerUid:uid,visibility,members:[uid],membersCount:1,
-   banned:[],closed:false,joinsToday:1,joinsDay:dayKey,inviteJoins:0,
-   activityScore:0,createdAt:serverTimestamp()
-  });
-  closeCreate();
-  document.getElementById('commNameInput').value='';
-  document.getElementById('commDescInput').value='';
-  selectedImgBase64=null;selectedVisibility='public';selectVisibility('public');
-  document.getElementById('fileInput').value='';
-  document.getElementById('imgPreview').style.display='none';
-  document.getElementById('imgPlus').style.display='block';
-  if(visibility==='private'){
-   alert('تم إنشاء المجتمع. تفعيل الدخول بالدعوات وحماية الخصوصية سيتم في خطوة مستقلة.');
-  }
-  location.href='/community/index.html?id='+encodeURIComponent(id);
- }catch(e){
-  console.error('Community creation failed:',e);
-  alert('تعذر إنشاء المجتمع. تحقق من الاتصال وقواعد Firestore ثم حاول مرة أخرى.');
- }finally{
-  button.disabled=false;button.textContent='إنشاء المجتمع';
- }
+  await setDoc(doc(db,'communities',id),{name,description,flag:selectedFlag,img:selectedImgBase64||null,ownerUid:uid,visibility,members:[uid],membersCount:1,banned:[],closed:false,joinsToday:1,joinsDay:dayKey,inviteJoins:0,activityScore:0,createdAt:serverTimestamp()});
+  await setDoc(doc(db,'communities',id,'members',uid),{uid,joinedAt:serverTimestamp(),role:'owner'});
+  await setDoc(doc(db,'communities',id,'joins',uid),{uid,dayKey,joinedAt:serverTimestamp(),inviteToken:'owner'});
+  if(inviteToken)await setDoc(doc(db,'communities',id,'invites',inviteToken),{communityId:id,active:true,uses:0,createdBy:uid,createdAt:serverTimestamp()});
+  closeCreate();document.getElementById('commNameInput').value='';document.getElementById('commDescInput').value='';selectedImgBase64=null;selectedVisibility='public';selectVisibility('public');document.getElementById('fileInput').value='';document.getElementById('imgPreview').style.display='none';document.getElementById('imgPlus').style.display='block';
+  location.href='/community/index.html?id='+encodeURIComponent(id)+(inviteToken?'&invite='+inviteToken:'');
+ }catch(e){console.error('Community creation failed:',e);alert('تعذر إنشاء المجتمع. تحقق من قواعد Firestore ثم حاول مرة أخرى.');}
+ finally{button.disabled=false;button.textContent='إنشاء المجتمع';}
 };
 const grid=document.getElementById('commPage');
 const communityCount=document.getElementById('communityCount');
