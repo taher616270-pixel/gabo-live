@@ -151,7 +151,8 @@ window.doCreate=async()=>{
  if(!uid){alert('سجل دخول أول');location.href='/login/';return;}
  const button=document.querySelector('.btnCreate');if(button.disabled)return;
  button.disabled=true;button.textContent='جارٍ إنشاء المجتمع...';
- const id=name.toLowerCase().replace(/\\s+/g,'-').replace(/[^a-z0-9\\-أ-ي]/g,'')+'-'+Date.now().toString(36).slice(-5);
+ const visibility=selectedVisibility;
+ const id=name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-أ-ي]/g,'')+'-'+Date.now().toString(36).slice(-5);
  const dayKey=new Date().toISOString().slice(0,10);
  try{
   await setDoc(doc(db,'communities',id),{
