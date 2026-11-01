@@ -92,6 +92,17 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 </style>
 <style>
 /* Official five-community redesign */
+
+.communityTypeTabs{display:flex;gap:9px;margin:14px 13px 18px;padding:5px;border:1px solid rgba(231,189,99,.2);border-radius:17px;background:#100e17}
+.communityTypeTab{flex:1;min-height:46px;padding:9px 8px;border:1px solid transparent;border-radius:12px;background:transparent;color:#c9bfd4;font:800 12px 'Tajawal',sans-serif}
+.communityTypeTab span{display:inline-grid;place-items:center;min-width:22px;height:22px;margin-right:4px;padding:0 5px;border-radius:8px;background:#ffffff12;color:#f5d99d}
+.communityTypeTab.active{background:linear-gradient(135deg,#f3d58e,#bd8d3e);color:#1a1308;box-shadow:0 5px 16px #d6a84a25}
+.communityTypeTab.active span{background:#1a13081c;color:#1a1308}
+.customCommunitiesSection{margin-top:8px}
+.customCommunityHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 14px 14px}
+.customCommunityHead strong{white-space:nowrap;color:#f5d99d;font-size:12px}
+.customCommunitiesSection .grid{padding:0 13px 30px}
+
 /* Keep user-created communities enabled alongside the five official communities. */
 #commPage{grid-template-columns:1fr;gap:14px;padding:0 13px 28px;max-width:760px;margin:0 auto}
 #commPage .comm{position:relative;min-height:116px;display:grid;grid-template-columns:92px minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:center;justify-items:stretch;gap:5px 14px;padding:15px 16px;text-align:right;border:1px solid rgba(231,189,99,.28);border-radius:22px;background:radial-gradient(circle at 8% 10%,rgba(139,99,215,.20),transparent 42%),linear-gradient(120deg,#211a2b,#111019 72%);box-shadow:inset 0 1px rgba(255,255,255,.07),0 12px 28px rgba(0,0,0,.24);overflow:hidden}
@@ -120,8 +131,16 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 <div class="top"><b>GABO LIVE ✦</b><div class="topActions"><a href="/notifications/" aria-label="الإشعارات" class="topIcon">♧</a><a href="/profile/" aria-label="الملف الشخصي" class="welcomeAvatar" id="homeAvatar">م</a></div></div><section class="welcomeHero"><div class="heroCopy"><small>YOUR SOCIAL UNIVERSE</small><h1>عالمك يبدأ من هنا</h1><p>اكتشف مجتمعاتك، تابع أصدقاءك وكن جزءاً من اللحظة</p><div class="heroPills"><span>✦ مجتمعك</span><span>● تواصل مباشر</span></div></div><div class="heroOrb" aria-hidden="true">G</div></section><div class="homeSearch"><span>⌕</span><input id="communitySearch" type="search" placeholder="ابحث عن مجتمع أو أدخل ID الحساب..." aria-label="البحث عن مجتمع أو حساب"><button type="button" id="clearSearch" aria-label="مسح البحث">×</button></div><div id="homeSearchResults" class="homeSearchResults" hidden></div>
 <div class="tabs homeTabs"><button class="on communitiesTab" type="button"><span>▦</span> المجتمعات</button><button class="publicChatTab" type="button" onclick="window.location.href='/global-chat/index.html'" aria-label="فتح الشات العام"><span class="chatGlobe" aria-hidden="true"><svg viewBox="0 0 48 48"><defs><radialGradient id="chatOrb" cx="28%" cy="22%"><stop stop-color="#b9fff5"/><stop offset=".35" stop-color="#45cfc3"/><stop offset="1" stop-color="#24558d"/></radialGradient></defs><circle cx="24" cy="24" r="20" fill="url(#chatOrb)" stroke="#b9fff5" stroke-width="1.2"/><path d="M12 16l7-5 5 3 1 5-5 4-2 6-6-4-2-5zm17-4 7 4 2 6-5 3-2 7-5-5 1-6-3-4zm-16 19 7-2 6 4 1 6-6 3-7-5zm19-1 6-3 4 4-3 7-6 1-3-5z" fill="#caffdf"/><path d="M4 24h40M24 4c-7 7-9 13-9 20s2 13 9 20M24 4c7 7 9 13 9 20s-2 13-9 20" fill="none" stroke="#e2fffa" stroke-opacity=".55"/></svg></span><span>الشات العام</span><span class="chatArrow">←</span></button></div>
 <div class="homeFilters" role="group" aria-label="تصفية المجتمعات"><button type="button" class="active" data-filter="all">الكل</button><button type="button" data-filter="active">الأكثر نشاطاً</button></div>
+<div class="communityTypeTabs" role="tablist" aria-label="نوع المجتمعات">
+<button type="button" class="communityTypeTab active" id="officialTab" role="tab" aria-selected="true">🌍 المجتمعات الرسمية <span>5</span></button>
+<button type="button" class="communityTypeTab" id="customTab" role="tab" aria-selected="false">✦ المجتمعات المخصصة <span id="customCommunityCount">0</span></button>
+</div>
 
 <section class="engagementSection" aria-labelledby="engagementTitle"><div class="sectionHead"><div><small>COMMUNITY PULSE</small><h2 id="engagementTitle">🔥 الأكثر تفاعلاً</h2><p>نشاط المجتمعات الرسمية خلال آخر 24 ساعة</p></div><span class="liveBadge">● مباشر</span></div><div id="activityPage" class="activityList"><div class="activityEmpty">جارٍ تحميل نشاط المجتمعات...</div></div></section><div class="sectionHead communityHead"><div><small>DISCOVER</small><h2>🌍 مجتمعات GABO الرسمية</h2><p>خمسة مجتمعات رسمية تجمع أبناء المنطقة والخليج</p></div></div><div class="communityMeta"><span>اكتشف مكانك بين المجتمعات</span><strong id="communityCount">— مجتمع</strong></div><button type="button" class="createBtn" onclick="openCreate()">＋ إنشاء مجتمع</button><div id="commPage" class="grid"><div class="gridEmpty">جارٍ تحميل المجتمعات...</div></div>
+<section id="customCommunitiesSection" class="customCommunitiesSection" hidden>
+<div class="sectionHead customCommunityHead"><div><small>YOUR COMMUNITY SPACE</small><h2>✦ المجتمعات المخصصة</h2><p>المجتمعات التي أنشأها المستخدمون</p></div><strong id="customCommunityTotal">0 مجتمع</strong></div>
+<div id="customCommPage" class="grid"><div class="gridEmpty">لا توجد مجتمعات مخصصة حتى الآن</div></div>
+</section>
 
 
 
@@ -289,20 +308,41 @@ function renderOfficialCommunities(counts=latestCommunityCounts,scores=latestAct
   });
 }
 renderOfficialCommunities();const communitySearch=document.getElementById("communitySearch"),clearSearch=document.getElementById("clearSearch");
+const customGrid=document.getElementById("customCommPage");
+const customSection=document.getElementById("customCommunitiesSection");
+const customCommunityCount=document.getElementById("customCommunityCount");
+const customCommunityTotal=document.getElementById("customCommunityTotal");
+const officialTab=document.getElementById("officialTab"),customTab=document.getElementById("customTab");
+function setCommunityType(type){
+ const isCustom=type==="custom";
+ grid.hidden=isCustom;customSection.hidden=!isCustom;
+ officialTab.classList.toggle("active",!isCustom);customTab.classList.toggle("active",isCustom);
+ officialTab.setAttribute("aria-selected",String(!isCustom));customTab.setAttribute("aria-selected",String(isCustom));
+}
+officialTab.addEventListener("click",()=>setCommunityType("official"));
+customTab.addEventListener("click",()=>setCommunityType("custom"));
 function applyCommunityFilters(){
-  const q=(communitySearch?.value||"").trim().toLocaleLowerCase("ar"),cards=[...document.querySelectorAll("#commPage .comm")];let visible=0;
-  cards.forEach(card=>{
-    const searchable=(card.dataset.searchable||card.textContent).toLocaleLowerCase("ar");
-    const mine=card.dataset.ownerUid===uid||(uid&&(card.dataset.members||"").split(",").includes(uid));
-    const active=Number(card.dataset.activityScore||0)>0;
-    const show=(!q||searchable.includes(q))&&(activeFilter==="all"||(activeFilter==="active"&&active)||(activeFilter==="mine"&&mine));
-    card.style.display=show?"":"none";if(show)visible++;
-  });
-  if(clearSearch)clearSearch.style.display=q?"block":"none";
-  if(communityCount)communityCount.textContent=visible+" مجتمع";
-  let empty=document.getElementById("communityEmpty");
-  if(!visible){if(!empty){empty=document.createElement("div");empty.id="communityEmpty";empty.className="gridEmpty";grid.appendChild(empty);}empty.innerHTML="<b>ما لقينا مجتمعات تطابق اختيارك</b><span>جرّب كلمة بحث مختلفة أو غيّر التصفية</span>";}
-  else if(empty)empty.remove();
+ const q=(communitySearch?.value||"").trim().toLocaleLowerCase("ar");
+ const officialCards=[...document.querySelectorAll("#commPage .comm")],customCards=[...document.querySelectorAll("#customCommPage .comm")];
+ let officialVisible=0,customVisible=0;
+ const filterCards=(cards,kind)=>cards.forEach(card=>{
+  const searchable=(card.dataset.searchable||card.textContent).toLocaleLowerCase("ar");
+  const mine=card.dataset.ownerUid===uid||(uid&&(card.dataset.members||"").split(",").includes(uid));
+  const active=Number(card.dataset.activityScore||0)>0;
+  const show=(!q||searchable.includes(q))&&(activeFilter==="all"||(activeFilter==="active"&&active)||(activeFilter==="mine"&&mine));
+  card.style.display=show?"":"none";if(show){if(kind==="official")officialVisible++;else customVisible++;}
+ });
+ filterCards(officialCards,"official");filterCards(customCards,"custom");
+ if(clearSearch)clearSearch.style.display=q?"block":"none";
+ if(communityCount)communityCount.textContent=officialVisible+" مجتمع";
+ if(customCommunityCount)customCommunityCount.textContent=String(customVisible);
+ if(customCommunityTotal)customCommunityTotal.textContent=customVisible+" مجتمع";
+ let officialEmpty=document.getElementById("communityEmpty");
+ if(!officialVisible){if(!officialEmpty){officialEmpty=document.createElement("div");officialEmpty.id="communityEmpty";officialEmpty.className="gridEmpty";grid.appendChild(officialEmpty);}officialEmpty.innerHTML="<b>ما لقينا مجتمعات تطابق اختيارك</b><span>جرّب كلمة بحث مختلفة أو غيّر التصفية</span>";}
+ else if(officialEmpty)officialEmpty.remove();
+ let customEmpty=document.getElementById("customCommunityEmpty");
+ if(!customVisible){if(!customEmpty){customEmpty=document.createElement("div");customEmpty.id="customCommunityEmpty";customEmpty.className="gridEmpty";customGrid.appendChild(customEmpty);}customEmpty.innerHTML=customCards.length?"<b>ما لقينا مجتمعات مخصصة تطابق بحثك</b><span>جرّب كلمة بحث مختلفة</span>":"<b>لا توجد مجتمعات مخصصة بعد</b><span>أنشئ مجتمعك الخاص وسيظهر هنا</span>";}
+ else if(customEmpty)customEmpty.remove();
 }
 communitySearch?.addEventListener("input",applyCommunityFilters);
 clearSearch?.addEventListener("click",()=>{communitySearch.value="";applyCommunityFilters();communitySearch.focus();});
@@ -321,7 +361,7 @@ async function runHomeSearch(){
   if(!q){homeSearchResults.hidden=true;homeSearchResults.replaceChildren();return;}
   homeSearchResults.replaceChildren();showHomeSearchMessage("جارٍ البحث...");
   const normalized=q.toLocaleLowerCase("ar");
-  const cards=[...document.querySelectorAll("#commPage .comm")];
+  const cards=[...document.querySelectorAll("#commPage .comm,#customCommPage .comm")];
   const communities=cards.filter(card=>(card.dataset.searchable||card.textContent).toLocaleLowerCase("ar").includes(normalized)||(card.dataset.officialId||card.dataset.communityId||"").toLocaleLowerCase("ar")===normalized);
   homeSearchResults.replaceChildren();
   communities.slice(0,5).forEach(card=>{
@@ -362,6 +402,7 @@ onSnapshot(collection(db,'communities'),snap=>{
     if(!STATIC_IDS.includes(d.id))customDocs.push({id:d.id,data});
   });
   grid.innerHTML="";
+  customGrid.innerHTML="";
   activityGrid.innerHTML="";
   const todayKey=new Date().toISOString().slice(0,10);
   const scoreOf=data=>data.activityDay===todayKey?(Number(data.activityScore)||Number(data.messagesToday)||0):0;
@@ -391,7 +432,7 @@ onSnapshot(collection(db,'communities'),snap=>{
     label.className="communityName";label.textContent=data.name||"مجتمع جديد";title.append(mini,label);
     const meta=document.createElement("small");meta.className=count>0?"live":"";meta.textContent=count+" عضو";
     const arrow=document.createElement("span");arrow.className="communityArrow";arrow.textContent="↗";
-    div.append(flag,title,meta,arrow);grid.appendChild(div);
+    div.append(flag,title,meta,arrow);customGrid.appendChild(div);
   });
   applyCommunityFilters();
 },error=>{
