@@ -117,21 +117,14 @@ onAuthStateChanged(auth, async u=>{
 window.selectPlan=async(plan)=>{
   if(!cur) return;
   if(plan==='free'){
-    await setDoc(doc(db,'users',cur.uid),{subPlan:'free', subUpdated:new Date().toISOString()},{merge:true});
-    show('✅ تم تفعيل الباقة المجانية');
+    await setDoc(doc(db,'users',cur.uid),{subPlan:'free',subUpdated:new Date().toISOString()},{merge:true});
+    show('✅ تم اختيار الباقة المجانية');
     location.reload();
     return;
   }
-  // هنا تربط بوابة دفع مستقبلاً - الآن نحفظ كطلب
-  await setDoc(doc(db,'users',cur.uid),{subPlanRequest:plan, subPlan:'free', subRequestedAt:new Date().toISOString()},{merge:true});
-  show(`🔔 تم إرسال طلب اشتراك ${plan} - سيتم تفعيله قريباً! تواصل مع الإدارة`);
-  
-  // للتجربة فعلها مباشرة
-  if(confirm(`هل تريد تفعيل باقة ${plan} تجريبياً الآن؟`)){
-    await setDoc(doc(db,'users',cur.uid),{subPlan:plan, subUpdated:new Date().toISOString()},{merge:true});
-    show(`✅ تم تفعيل باقة ${plan.toUpperCase()} بنجاح!`);
-    setTimeout(()=>location.reload(),1000);
-  }
+  if(!['vip','pro'].includes(plan)){show('❌ الباقة غير معروفة');return;}
+  await setDoc(doc(db,'users',cur.uid),{subPlanRequest:plan,subRequestedAt:new Date().toISOString()},{merge:true});
+  show('🔔 تم إرسال طلب الاشتراك للإدارة. لن تتفعل الباقة المدفوعة إلا بعد اعتمادها.');
 }
 </script>
 
