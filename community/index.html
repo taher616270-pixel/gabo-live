@@ -104,7 +104,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 import { auth, db } from '/firebase-config.js';
 import { getSouthArabiaFlag,getCountryRegistry } from '/assets/country-flags.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { collection, doc, onSnapshot, addDoc, serverTimestamp, getDoc, getDocs, setDoc, deleteDoc, writeBatch, arrayUnion, arrayRemove, increment, query, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { collection, doc, onSnapshot, addDoc, serverTimestamp, getDoc, getDocs, setDoc, deleteDoc, writeBatch, arrayUnion, arrayRemove, increment, query, orderBy, limit, getCountFromServer } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 let SOUTH_FLAG='/assets/south-arabia.png.JPG';
 const GLOBAL_GLOBE=`<svg viewBox="0 0 64 64" role="img" aria-label="الشات العام"><defs><radialGradient id="ocean" cx="30%" cy="24%"><stop stop-color="#a8fff4"/><stop offset=".3" stop-color="#37c9c0"/><stop offset=".72" stop-color="#246a9b"/><stop offset="1" stop-color="#18234c"/></radialGradient><linearGradient id="land" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d8ffe8"/><stop offset="1" stop-color="#4bd3a5"/></linearGradient></defs><circle cx="32" cy="32" r="27" fill="url(#ocean)" stroke="#b6fff2" stroke-width="1.5"/><path d="M17 14l7-4 7 3 1 6-5 4-1 7-7-2-4-6 2-8zm20-3 9 3 5 8-5 4-2 8-6-2-3-7 3-5-4-4zm-20 29 7-3 7 4 3 8-6 8-8-4-4-8zm23 3 7-5 7 4-2 9-8 5-5-6z" fill="url(#land)" opacity=".95"/><path d="M6 32h52M32 5c-9 9-12 18-12 27s3 18 12 27M32 5c9 9 12 18 12 27s-3 18-12 27" fill="none" stroke="#d4fff8" stroke-opacity=".45" stroke-width="1"/><ellipse cx="32" cy="32" rx="27" ry="10" fill="none" stroke="#d4fff8" stroke-opacity=".38"/></svg>`;
 let SOUTH_SVG=`<img src="${SOUTH_FLAG}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`
@@ -199,6 +199,11 @@ onAuthStateChanged(auth,async u=>{
     const userSnap=await getDoc(doc(db,'users',uid)).catch(()=>null);
     userData=userSnap?.exists()?userSnap.data():{displayName:localStorage.getItem('gabo_name')||'مستخدم',photoURL:localStorage.getItem('gabo_photo')||'',verified:false};
     await loadCommunity();
+    if(communityData?.ownerUid===uid&&!ownerCountInitialized){
+      getCountFromServer(collection(db,'communities',communityId,'messages'))
+        .then(count=>{ownerMessagesTotal=count.data().count;ownerCountInitialized=true;refreshOwnerCounters();})
+        .catch(()=>{ownerCountInitialized=true;refreshOwnerCounters();});
+    }
   }catch(error){
     console.error('loadCommunity failed:',error);
     commNameEl.textContent='تعذر تحميل المجتمع';
@@ -242,6 +247,7 @@ function updateGeneralChatGate(){
 updateGeneralChatGate();
 
 let ownerMessagesTotal=0;
+let ownerCountInitialized=false;
 function refreshOwnerCounters(){
  const el=document.getElementById('ownerMessagesCount');
  if(el&&communityData?.ownerUid===uid)el.textContent=String(ownerMessagesTotal);
@@ -365,9 +371,12 @@ document.getElementById('joinPublicChat')?.addEventListener('click',async()=>{
   }
 });
 messagesEl.innerHTML='<div style="text-align:center;color:#aaa;padding:18px">جارٍ تحميل الرسائل...</div>';
-const latestMessagesQuery=query(collection(db,'communities',communityId,'messages'),orderBy('createdAt','desc'),limit(50));
+const latestMessagesQuery=query(collection(db,'communities',communityId,'messages'),orderBy('createdAt','desc'),limit(20));
 onSnapshot(latestMessagesQuery, (snap)=>{
-  ownerMessagesTotal=snap.size;refreshOwnerCounters();
+  if(communityData?.ownerUid===uid && ownerCountInitialized){
+    ownerMessagesTotal+=snap.docChanges().filter(change=>change.type==='added').length;
+    refreshOwnerCounters();
+  }
   const msgs=snap.docs.map(d=>({id:d.id,...d.data()})).reverse();
   messagesEl.innerHTML='';
   if(!msgs.length){messagesEl.innerHTML='<div style="text-align:center;color:#8b8ba7;padding:24px">لا توجد رسائل بعد، كن أول من يشارك 👋</div>';return;}
@@ -379,7 +388,7 @@ onSnapshot(latestMessagesQuery, (snap)=>{
     const verified=!!m.verified;
     const time=m.createdAt?new Date(m.createdAt.seconds*1000).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}):'';
     const avatar=document.createElement('button');avatar.type='button';avatar.className='avatar';avatar.setAttribute('aria-label','عرض ملف '+name);
-    if(photo){const image=document.createElement('img');image.src=photo;image.alt='صورة '+name;image.onerror=()=>{image.remove();avatar.textContent=(name.trim()[0]||'م');};avatar.appendChild(image);}
+    if(photo){const image=document.createElement('img');image.src=photo;image.alt='صورة '+name;image.loading='lazy';image.decoding='async';image.onerror=()=>{image.remove();avatar.textContent=(name.trim()[0]||'م');};avatar.appendChild(image);}
     else avatar.textContent=(name.trim()[0]||'م');
     avatar.addEventListener('click',()=>window.openUserProfile(m.uid,photo,name));
     const content=document.createElement('div');content.className='msgContent';
@@ -464,7 +473,7 @@ window.sendMsg=async ()=>{
   try{
     const displayName=userData?.displayName||userData?.name||userData?.fullName||currentUser.displayName||currentUser.email?.split('@')[0]||localStorage.getItem('gabo_name')||'مستخدم';
     const photoURL=userData?.photoURL||userData?.photoUrl||userData?.photo||userData?.avatar||userData?.avatarUrl||currentUser.photoURL||localStorage.getItem('gabo_photo')||'';
-    await addDoc(collection(db,'communities',communityId,'messages'),{text,uid:currentUser.uid,displayName,name:displayName,photoURL,avatar:photoURL,photo:photoURL,verified:userData?.verified||false,createdAt:serverTimestamp()});
+    await addDoc(collection(db,'communities',communityId,'messages'),{text,uid:currentUser.uid,displayName,name:displayName,photoURL,verified:userData?.verified||false,createdAt:serverTimestamp()});
     msgInput.value='';
     const commRef=doc(db,'communities',communityId);
     const today=new Date().toISOString().slice(0,10);
