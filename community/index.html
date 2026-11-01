@@ -107,14 +107,11 @@ let SOUTH_FLAG='/assets/south-arabia.png.JPG';
 const GLOBAL_GLOBE=`<svg viewBox="0 0 64 64" role="img" aria-label="الشات العام"><defs><radialGradient id="ocean" cx="30%" cy="24%"><stop stop-color="#a8fff4"/><stop offset=".3" stop-color="#37c9c0"/><stop offset=".72" stop-color="#246a9b"/><stop offset="1" stop-color="#18234c"/></radialGradient><linearGradient id="land" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d8ffe8"/><stop offset="1" stop-color="#4bd3a5"/></linearGradient></defs><circle cx="32" cy="32" r="27" fill="url(#ocean)" stroke="#b6fff2" stroke-width="1.5"/><path d="M17 14l7-4 7 3 1 6-5 4-1 7-7-2-4-6 2-8zm20-3 9 3 5 8-5 4-2 8-6-2-3-7 3-5-4-4zm-20 29 7-3 7 4 3 8-6 8-8-4-4-8zm23 3 7-5 7 4-2 9-8 5-5-6z" fill="url(#land)" opacity=".95"/><path d="M6 32h52M32 5c-9 9-12 18-12 27s3 18 12 27M32 5c9 9 12 18 12 27s-3 18-12 27" fill="none" stroke="#d4fff8" stroke-opacity=".45" stroke-width="1"/><ellipse cx="32" cy="32" rx="27" ry="10" fill="none" stroke="#d4fff8" stroke-opacity=".38"/></svg>`;
 let SOUTH_SVG=`<img src="${SOUTH_FLAG}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`
 const COMM_DATA={
-south:{name:'مجتمع الجنوب العربي', flag:SOUTH_SVG, mini:SOUTH_SVG},
-sa:{name:'مجتمع السعودية', flag:`<img src="https://flagcdn.com/w80/sa.png">`, mini:`<img src="https://flagcdn.com/w80/sa.png">`},
-ye:{name:'مجتمع اليمن', flag:`<img src="https://flagcdn.com/w80/ye.png">`, mini:`<img src="https://flagcdn.com/w80/ye.png">`},
-ae:{name:'مجتمع الإمارات', flag:`<img src="https://flagcdn.com/w80/ae.png">`, mini:`<img src="https://flagcdn.com/w80/ae.png">`},
-om:{name:'مجتمع عمان', flag:`<img src="https://flagcdn.com/w80/om.png">`, mini:`<img src="https://flagcdn.com/w80/om.png">`},
-qa:{name:'مجتمع قطر', flag:`<img src="https://flagcdn.com/w80/qa.png">`, mini:`<img src="https://flagcdn.com/w80/qa.png">`},
-kw:{name:'مجتمع الكويت', flag:`<img src="https://flagcdn.com/w80/kw.png">`, mini:`<img src="https://flagcdn.com/w80/kw.png">`},
-bh:{name:'مجتمع البحرين', flag:`<img src="https://flagcdn.com/w80/bh.png">`, mini:`<img src="https://flagcdn.com/w80/bh.png">`}
+south:{name:'مجتمع الجنوب العربي',flag:SOUTH_SVG,mini:SOUTH_SVG},
+sa:{name:'مجتمع السعودية',flag:`<img src="https://flagcdn.com/w80/sa.png" alt="علم السعودية">`,mini:`<img src="https://flagcdn.com/w80/sa.png" alt="">`},
+ae:{name:'مجتمع الإمارات',flag:`<img src="https://flagcdn.com/w80/ae.png" alt="علم الإمارات">`,mini:`<img src="https://flagcdn.com/w80/ae.png" alt="">`},
+om:{name:'مجتمع عُمان',flag:`<img src="https://flagcdn.com/w80/om.png" alt="علم عُمان">`,mini:`<img src="https://flagcdn.com/w80/om.png" alt="">`},
+ye:{name:'مجتمع اليمن',flag:`<img src="https://flagcdn.com/w80/ye.png" alt="علم اليمن">`,mini:`<img src="https://flagcdn.com/w80/ye.png" alt="">`}
 };
 const params=new URLSearchParams(location.search);
 let communityId=params.get('id')||'south';
