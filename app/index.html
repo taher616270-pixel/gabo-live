@@ -133,12 +133,12 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 <div class="homeFilters" role="group" aria-label="تصفية المجتمعات"><button type="button" class="active" data-filter="all">الرسمي</button><button type="button" data-filter="active">الأكثر نشاطاً</button></div>
 <div class="communityTypeTabs" role="tablist" aria-label="نوع المجتمعات">
 
-<button type="button" class="communityTypeTab" id="customTab" role="tab" aria-selected="false">✦ المجتمعات المخصصة <span id="customCommunityCount">0</span></button>
+<button type="button" class="communityTypeTab" id="customTab" role="tab" aria-selected="false">✦ مجتمعاتي <span id="customCommunityCount">0</span></button>
 </div>
 
 <section class="engagementSection" aria-labelledby="engagementTitle"><div class="sectionHead"><div><small>COMMUNITY PULSE</small><h2 id="engagementTitle">🔥 الأكثر تفاعلاً</h2><p>نشاط المجتمعات الرسمية خلال آخر 24 ساعة</p></div><span class="liveBadge">● مباشر</span></div><div id="activityPage" class="activityList"><div class="activityEmpty">جارٍ تحميل نشاط المجتمعات...</div></div></section><div class="sectionHead communityHead"><div><small>DISCOVER</small><h2>🌍 مجتمعات GABO الرسمية</h2><p>خمسة مجتمعات رسمية تجمع أبناء المنطقة والخليج</p></div></div><div class="communityMeta"><span>اكتشف مكانك بين المجتمعات</span><strong id="communityCount">— مجتمع</strong></div><button type="button" class="createBtn" onclick="openCreate()">＋ إنشاء مجتمع</button><div id="commPage" class="grid"><div class="gridEmpty">جارٍ تحميل المجتمعات...</div></div>
 <section id="customCommunitiesSection" class="customCommunitiesSection" hidden>
-<div class="sectionHead customCommunityHead"><div><small>YOUR COMMUNITY SPACE</small><h2>✦ المجتمعات المخصصة</h2><p>المجتمعات التي أنشأها المستخدمون</p></div><strong id="customCommunityTotal">0 مجتمع</strong></div>
+<div class="sectionHead customCommunityHead"><div><small>YOUR COMMUNITY SPACE</small><h2>✦ مجتمعاتي</h2><p>المجتمعات التي أنشأتها بنفسك</p></div><strong id="customCommunityTotal">0 مجتمع</strong></div>
 <div id="customCommPage" class="grid"><div class="gridEmpty">لا توجد مجتمعات مخصصة حتى الآن</div></div>
 </section>
 
@@ -340,7 +340,7 @@ function applyCommunityFilters(){
  if(!officialVisible){if(!officialEmpty){officialEmpty=document.createElement("div");officialEmpty.id="communityEmpty";officialEmpty.className="gridEmpty";grid.appendChild(officialEmpty);}officialEmpty.innerHTML="<b>ما لقينا مجتمعات تطابق اختيارك</b><span>جرّب كلمة بحث مختلفة أو غيّر التصفية</span>";}
  else if(officialEmpty)officialEmpty.remove();
  let customEmpty=document.getElementById("customCommunityEmpty");
- if(!customVisible){if(!customEmpty){customEmpty=document.createElement("div");customEmpty.id="customCommunityEmpty";customEmpty.className="gridEmpty";customGrid.appendChild(customEmpty);}customEmpty.innerHTML=customCards.length?"<b>ما لقينا مجتمعات مخصصة تطابق بحثك</b><span>جرّب كلمة بحث مختلفة</span>":"<b>لا توجد مجتمعات مخصصة بعد</b><span>أنشئ مجتمعك الخاص وسيظهر هنا</span>";}
+ if(!customVisible){if(!customEmpty){customEmpty=document.createElement("div");customEmpty.id="customCommunityEmpty";customEmpty.className="gridEmpty";customGrid.appendChild(customEmpty);}customEmpty.innerHTML=customCards.length?"<b>ما لقينا مجتمعات تطابق بحثك</b><span>جرّب كلمة بحث مختلفة</span>":"<b>ما أنشأت أي مجتمع حتى الآن</b><span>اضغط على إنشاء مجتمع وسيظهر هنا</span>";}
  else if(customEmpty)customEmpty.remove();
 }
 communitySearch?.addEventListener("input",applyCommunityFilters);
@@ -398,7 +398,7 @@ onSnapshot(collection(db,'communities'),snap=>{
     const data=d.data();
     counts[d.id]=data.membersCount||(data.members?data.members.length:0)||0;
     if(STATIC_IDS.includes(d.id))rankedDocs.push({id:d.id,data});
-    if(!STATIC_IDS.includes(d.id))customDocs.push({id:d.id,data});
+    if(!STATIC_IDS.includes(d.id)&&data.ownerUid===uid)customDocs.push({id:d.id,data});
   });
   grid.innerHTML="";
   customGrid.innerHTML="";
