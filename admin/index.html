@@ -144,7 +144,16 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const EMAIL_URL = "https://script.google.com/macros/s/AKfycbyDYmsYoCBSkuzn97cD9bnl6Fo0IuI-MrcCO8q1H4fdnT1EvGXCYoxM3TW2zinmopqS/exec";
+const EMAIL_URL = "https://gabo-otp.taher616270.workers.dev/";
+async function sendAdminEmail(payload){
+ const user=auth.currentUser;
+ if(!user)throw new Error('AUTH_REQUIRED');
+ const idToken=await user.getIdToken();
+ const response=await fetch(EMAIL_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'admin_email',idToken,...payload})});
+ const data=await response.json().catch(()=>({}));
+ if(!response.ok||data.success!==true)throw new Error(data.error||'EMAIL_SEND_FAILED');
+ return data;
+}
 
 const commsDefault = [
  {id:'general', name:'الشات العام', icon:'🔥'},
@@ -309,7 +318,7 @@ window.giveVIP=async uid=>{
  const userEmail=userSnap.data().email;
  await updateDoc(doc(db,'users',uid),{subscription:'VIP',subUntil:Date.now()+30*24*3600*1000});
  if(userEmail){
-  try{ await fetch(EMAIL_URL,{method:"POST",body:JSON.stringify({type:"contact",name:"نظام GABO",email:userEmail,message:"تمت ترقيتك الى VIP ✅"})}); }catch{}
+  try{ await sendAdminEmail({type:"contact",name:"نظام GABO",email:userEmail,message:"تمت ترقيتك الى VIP ✅"}); }catch(error){console.error('VIP email failed',error);}
   alert('تمت الترقية وإرسال طلب إشعار البريد');
  }else{ alert('تمت الترقية، لكن لا يوجد بريد إلكتروني محفوظ لهذا المستخدم'); }
 }
@@ -329,7 +338,7 @@ function loadHosts(){
 }
 window.approveHost=async(id,email,name)=>{
  await updateDoc(doc(db,'hosts',id),{approved:true,approvedAt:serverTimestamp()});
- fetch(EMAIL_URL,{method:"POST",body:JSON.stringify({type:"host",name,email,city:"موافقة",details:"تمت الموافقة عليك كمضيف في GABO LIVE 🎉 - رح يجيك ايميل الآن"})});
+ sendAdminEmail({type:"host",name,email,city:"موافقة",details:"تمت الموافقة عليك كمضيف في GABO LIVE 🎉 - رح يجيك ايميل الآن"}).catch(error=>console.error('Host approval email failed',error));
  alert('✅ تمت الموافقة + ارسال ايميل للمضيف + تنبيه لك على taher616270@gmail.com');
 }
 window.delHost=async id=>{ if(confirm('حذف؟')) await deleteDoc(doc(db,'hosts',id)); }
