@@ -64,7 +64,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 <div class="header">
 <div class="backBtn" onclick="location.href='/app/'">›</div>
 <div class="commFlag" id="commFlag"></div>
-<div class="headerInfo"><b><span id="commName">تحميل...</span> <span class="miniFlagInHeader" id="commMiniFlag"></span></b><small><span id="memberCount">0 عضو</span> • 12k متصل • رسمي</small></div>
+<div class="headerInfo"><b><span id="commName">تحميل...</span> <span class="miniFlagInHeader" id="commMiniFlag"></span></b><small><span id="memberCount">0 عضو</span></small></div>
 </div>
 <section class="communityStats" id="communityStats" hidden>
  <div class="communityStatsHead"><b>✦ إحصائيات المجتمع</b><button id="copyInviteLink" class="inviteCopy" type="button" style="display:none">نسخ رابط الدعوة</button></div>
@@ -155,7 +155,7 @@ onAuthStateChanged(auth, async (u)=>{
   if(invSnap?.exists()&&invSnap.data().active===true&&invSnap.data().communityId===communityId){
    try{
     const batch=writeBatch(db),today=dayKey();
-    batch.update(commRef,{members:arrayUnion(uid),membersCount:increment(1),inviteJoins:increment(1)});
+    batch.update(commRef,{members:arrayUnion(uid),membersCount:increment(1),inviteJoins:increment(1),lastInviteToken:inviteToken});
     batch.set(memberRef,{uid,joinedAt:serverTimestamp(),role:'member',inviteToken});
     batch.set(joinRef,{uid,dayKey:today,joinedAt:serverTimestamp(),inviteToken});
     batch.update(invRef,{uses:increment(1)});
