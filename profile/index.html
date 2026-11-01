@@ -266,6 +266,25 @@ function showCoverInMain(coverData){
 onAuthStateChanged(auth,async u=>{
   if(!u){location.replace('/login/');return}
   cur=u;
+  // عرض آخر نسخة محفوظة فورًا، ثم تحديثها من Firestore بالخلفية
+  try{
+    const cached=JSON.parse(localStorage.getItem('gabo_profile_cache_'+u.uid)||'null');
+    if(cached){
+      if(cached.name)document.getElementById('nameMain').textContent=cached.name;
+      if(cached.id){document.getElementById('idMain').textContent=cached.id;document.getElementById('userId').textContent=cached.id;}
+      if(cached.bio)document.getElementById('bioPublic').textContent=cached.bio;
+      if(cached.countryName)setCountryDisplay(cached.countryName,cached.countryCode||'south-arabia',cached.countryFlag||'');
+      updateMeta(cached.gender||'',cached.bday||'');
+      if(cached.photo){
+        const img=document.getElementById('avatarImgMain');img.src=cached.photo;img.style.display='block';document.getElementById('avL').style.display='none';
+        document.getElementById('rowAvImg').src=cached.photo;document.getElementById('rowAvImg').style.display='block';document.getElementById('rowAvLetter').style.display='none';
+      }
+      if(cached.cover)showCoverInMain(cached.cover);
+      if(Number.isFinite(cached.followers))document.getElementById('c1').textContent=cached.followers;
+      if(Number.isFinite(cached.following))document.getElementById('c2').textContent=cached.following;
+      if(Number.isFinite(cached.visitors))document.getElementById('c3').textContent=cached.visitors;
+    }
+  }catch(cacheErr){console.warn('Profile cache read error:',cacheErr);}
   try{
     SOUTH_FLAG=await getSouthArabiaFlag();
     countries=(await getCountryRegistry()).map(c=>({code:String(c.code).toLowerCase(),name:c.name,flagImg:c.code==='south-arabia'?SOUTH_FLAG:c.flag}));
@@ -298,6 +317,15 @@ onAuthStateChanged(auth,async u=>{
     updateMeta(savedGender,savedBday);
     const photo=localStorage.getItem('gabo_photo_'+u.uid)||d.photoURL||d.photo||d.avatar||u.photoURL||'';
     const cover=localStorage.getItem('gabo_cover_'+u.uid)||d.cover||'';
+    try{
+      localStorage.setItem('gabo_profile_cache_'+u.uid,JSON.stringify({
+        name:displayName,id:finalId,bio:d.bio||'مرحبا بك في ملفك الشخصي 👋',
+        countryName:d.countryName||country?.name||'الجنوب العربي',countryCode,
+        countryFlag:d.countryFlagImg||country?.flagImg||SOUTH_FLAG,
+        gender:savedGender,bday:savedBday,photo,cover,
+        followers:Number(d.followers)||0,following:Number(d.following)||0,visitors:Number(d.visitors)||0
+      }));
+    }catch(cacheErr){console.warn('Profile cache write error:',cacheErr);}
     if(photo){
       const img=document.getElementById('avatarImgMain');img.src=photo;img.style.display='block';document.getElementById('avL').style.display='none';
       document.getElementById('rowAvImg').src=photo;document.getElementById('rowAvImg').style.display='block';document.getElementById('rowAvLetter').style.display='none';
