@@ -49,6 +49,22 @@ body{padding-bottom:110px}
 .bdayPreview{background:#0f0e18;border:1px solid var(--b);border-radius:10px;padding:10px;text-align:center;font-size:14px;margin:10px 0;font-family:monospace}
 .statusBar{position:fixed;bottom:90px;left:16px;right:16px;background:#201e32;border:1px solid var(--b);padding:12px;border-radius:12px;text-align:center;font-size:13px;display:none;z-index:10001}.statusBar.on{display:block}
 .coverArea{display:flex;gap:12px;padding:0 16px;justify-content:flex-end;margin-top:14px}.coverBox{width:140px;height:160px;border-radius:16px;overflow:hidden;position:relative;background:#16161f;border:1px solid var(--b)}.coverBox img{width:100%;height:100%;object-fit:cover}.coverBox.add{background:var(--card);display:flex;align-items:center;justify-content:center;border:1px dashed var(--b);cursor:pointer}.coverLabel{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.7);font-size:9px;padding:3px 8px;border-radius:20px}.coverDel{position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.6);width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer}.coverHint{padding:8px 16px;text-align:right;font-size:11px;color:#8b8ba7}
+
+/* Profile header visual polish */
+.mainCard{box-shadow:0 14px 38px rgba(0,0,0,.28);border-color:rgba(168,85,247,.24)}
+.coverMain{height:218px;background:radial-gradient(circle at 78% 15%,rgba(168,85,247,.34),transparent 38%),linear-gradient(135deg,#17152c,#101a35 58%,#211338)}
+.coverMain img{object-fit:cover}
+.head{gap:15px;padding:14px 16px 18px;margin-top:-48px;align-items:flex-end}
+.avatar{width:94px;height:94px;border-radius:25px;border:4px solid var(--card);box-shadow:0 8px 24px rgba(0,0,0,.48),0 0 0 1px rgba(251,191,36,.25)}
+.info{min-width:0;text-align:right;direction:rtl;padding-bottom:3px}
+.nameRow{display:flex;align-items:center;flex-wrap:wrap;gap:7px;font-size:19px;line-height:1.4;color:#fff}
+.countryRow{gap:8px;margin-top:8px;font-size:13px;line-height:1.5;color:#e4e1f0}
+.countryRow img{width:25px;height:17px;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.metaInline{gap:7px;font-size:12px;flex-wrap:wrap}
+.metaInline .age,.metaInline .male,.metaInline .female{background:#29243d;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:3px 8px}
+.idRow{margin-top:7px;font-size:10px;letter-spacing:1.2px}
+@media(max-width:380px){.coverMain{height:190px}.avatar{width:82px;height:82px}.nameRow{font-size:17px}.head{gap:11px}}
+
 </style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
 </head>
