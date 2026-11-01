@@ -214,10 +214,10 @@ function updateGeneralChatGate(){
  if(join)join.style.display=isOwner||hasJoinedGeneralChat||closed?'none':'inline-flex';
  if(ownerTools)ownerTools.style.display=isOwner?'flex':'none';
  if(closedNotice)closedNotice.style.display=!isOwner&&!hasJoinedGeneralChat&&closed?'block':'none';
- if(bar){const canWrite=hasJoinedGeneralChat&&!closed;bar.style.display=canWrite?'flex':'none';bar.setAttribute('aria-hidden',canWrite?'false':'true');}
- if(msgInput){const canWrite=hasJoinedGeneralChat&&!closed;msgInput.disabled=!canWrite;msgInput.placeholder=canWrite?'اكتب رسالتك...':(closed?'المجتمع متوقف حالياً':'انضم للمجتمع للكتابة');}
- const send=document.querySelector('.sendBtn');if(send)send.disabled=!hasJoinedGeneralChat||closed;
- const emoji=document.querySelector('.inputBar .iconBtn');if(emoji)emoji.disabled=!hasJoinedGeneralChat||closed;
+ if(bar){const canWrite=hasJoinedGeneralChat;bar.style.display=canWrite?'flex':'none';bar.setAttribute('aria-hidden',canWrite?'false':'true');}
+ if(msgInput){const canWrite=hasJoinedGeneralChat;msgInput.disabled=!canWrite;msgInput.placeholder=canWrite?'اكتب رسالتك...':(closed?'المجتمع متوقف عن استقبال أعضاء جدد':'انضم للمجتمع للكتابة');}
+ const send=document.querySelector('.sendBtn');if(send)send.disabled=!hasJoinedGeneralChat;
+ const emoji=document.querySelector('.inputBar .iconBtn');if(emoji)emoji.disabled=!hasJoinedGeneralChat;
  const toggle=document.getElementById('ownerToggleJoin');if(toggle)toggle.textContent=closed?'إعادة فتح الانضمام':'إيقاف الانضمام';
  if(isOwner&&communityData){
   const members=Array.isArray(communityData.members)?communityData.members:[];
@@ -308,6 +308,7 @@ document.getElementById('joinPublicChat')?.addEventListener('click',async()=>{
     }
     const data=snap.data()||{};
     const members=Array.isArray(data.members)?data.members:[];
+    if(data.closed&&data.ownerUid!==uid){throw new Error('مالك المجتمع أوقف استقبال أعضاء جدد حالياً.');}
     if(!members.includes(uid)){
       const today=new Date().toISOString().slice(0,10);
       const sameDay=data.activityDay===today;
