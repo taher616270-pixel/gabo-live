@@ -150,17 +150,31 @@ function flagSource(item){return item.src?item.src():`https://flagcdn.com/w80/${
 function renderArabFlags(){if(!flagGrid)return;flagGrid.innerHTML='';ARAB_FLAGS.forEach(item=>{const btn=document.createElement('button');btn.type='button';btn.className='arabFlagChoice'+(item.code===selectedFlag?' active':'');btn.dataset.flag=item.code;const img=document.createElement('img');img.src=flagSource(item);img.alt='علم '+item.name;if(item.code==='lb')img.onerror=()=>{img.onerror=null;img.src='https://flagcdn.com/lb.svg';};const label=document.createElement('span');label.textContent=item.name;btn.append(img,label);btn.addEventListener('click',()=>chooseArabFlag(item.code));flagGrid.appendChild(btn);});}
 function chooseArabFlag(code,automatic=false){const item=ARAB_FLAGS.find(x=>x.code===code);if(!item)return;if(!automatic)flagWasManuallyChosen=true;selectedFlag=code;flagPreview.innerHTML='';const img=document.createElement('img');img.src=flagSource(item);img.alt='علم '+item.name;if(item.code==='lb')img.onerror=()=>{img.onerror=null;img.src='https://flagcdn.com/lb.svg';};flagPreview.appendChild(img);flagName.textContent=item.name;flagGrid.querySelectorAll('.arabFlagChoice').forEach(btn=>btn.classList.toggle('active',btn.dataset.flag===code));flagPicker.hidden=true;flagTrigger.setAttribute('aria-expanded','false');}
 flagTrigger?.addEventListener('click',()=>{flagPicker.hidden=!flagPicker.hidden;flagTrigger.setAttribute('aria-expanded',String(!flagPicker.hidden));});
+// تحديد افتراضي سريع من المنطقة الزمنية حتى لا يظهر علم الجنوب أولاً بلا داعٍ.
+function timezoneCountryCode(){
+ const zone=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
+ const map={'Asia/Riyadh':'sa','Asia/Aden':'ye','Asia/Dubai':'ae','Asia/Muscat':'om','Asia/Qatar':'qa','Asia/Kuwait':'kw','Asia/Bahrain':'bh','Asia/Baghdad':'iq','Asia/Amman':'jo','Asia/Beirut':'lb','Asia/Gaza':'ps','Asia/Hebron':'ps','Asia/Damascus':'sy','Africa/Cairo':'eg','Africa/Khartoum':'sd','Africa/Tripoli':'ly','Africa/Tunis':'tn','Africa/Algiers':'dz','Africa/Casablanca':'ma','Africa/Nouakchott':'mr','Africa/Mogadishu':'so','Africa/Djibouti':'dj','Indian/Comoro':'km'};
+ return map[zone]||'';
+}
+const timezoneCode=timezoneCountryCode();
+if(timezoneCode)selectedFlag=timezoneCode;
 renderArabFlags();
-// اختيار علم الدولة تلقائياً اعتماداً على موقع اتصال الإنترنت، مع إبقاء الاختيار اليدوي متاحاً.
+if(timezoneCode)chooseArabFlag(timezoneCode,true);
+// تحديث الاختيار حسب الدولة الفعلية لاتصال الإنترنت إن أمكن، مع احترام أي اختيار يدوي.
 async function detectCommunityCountry(){
- try{
-  const response=await fetch('https://ipapi.co/json/',{headers:{Accept:'application/json'},signal:AbortSignal.timeout(4500),cache:'no-store'});
-  if(!response.ok)throw new Error('country lookup failed');
-  const data=await response.json();
-  const countryCode=String(data.country_code||'').toLowerCase();
-  const matched=ARAB_FLAGS.find(item=>item.code===countryCode);
-  if(matched&&!flagWasManuallyChosen)chooseArabFlag(matched.code,true);
- }catch(error){console.info('تعذر تحديد الدولة تلقائياً؛ يمكنك اختيار العلم يدوياً.');}
+ const endpoints=[
+  async()=>{const r=await fetch('https://ipwho.is/',{signal:AbortSignal.timeout(5000),cache:'no-store'});if(!r.ok)throw 0;const d=await r.json();if(d.success===false)throw 0;return d.country_code;},
+  async()=>{const r=await fetch('https://ipapi.co/json/',{headers:{Accept:'application/json'},signal:AbortSignal.timeout(5000),cache:'no-store'});if(!r.ok)throw 0;const d=await r.json();return d.country_code;}
+ ];
+ for(const getCountry of endpoints){
+  try{
+   const code=String(await getCountry()||'').toLowerCase();
+   const matched=ARAB_FLAGS.find(item=>item.code===code);
+   if(matched&&!flagWasManuallyChosen)chooseArabFlag(matched.code,true);
+   return;
+  }catch(error){}
+ }
+ console.info('تعذر تحديد الدولة تلقائياً؛ تم استخدام المنطقة الزمنية أو الاختيار اليدوي.');
 }
 detectCommunityCountry();
 function updateSouthFlag(url){if(!url)return;SOUTH_FLAG=url;SOUTH_SVG=`<img src="${url}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`;FLAG_HTML.south=SOUTH_SVG;if(southFlagOption)southFlagOption.src=url;document.querySelectorAll('[data-south-flag]').forEach(img=>img.src=url);}
