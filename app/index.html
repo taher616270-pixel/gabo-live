@@ -90,6 +90,20 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 #createModal .modalBtns{bottom:0;padding:12px 0 calc(8px + env(safe-area-inset-bottom));margin-top:8px;background:linear-gradient(180deg,rgba(22,20,38,.94),#161426 35%)}
 
 </style>
+<style>
+/* Official five-community redesign */
+.createBtn,#createModal{display:none!important}
+.homeFilters [data-filter="mine"]{display:none!important}
+#commPage{grid-template-columns:1fr;gap:14px;padding:0 13px 28px;max-width:760px;margin:0 auto}
+#commPage .comm{position:relative;min-height:116px;display:grid;grid-template-columns:92px minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:center;justify-items:stretch;gap:5px 14px;padding:15px 16px;text-align:right;border:1px solid rgba(231,189,99,.28);border-radius:22px;background:radial-gradient(circle at 8% 10%,rgba(139,99,215,.20),transparent 42%),linear-gradient(120deg,#211a2b,#111019 72%);box-shadow:inset 0 1px rgba(255,255,255,.07),0 12px 28px rgba(0,0,0,.24);overflow:hidden}
+#commPage .comm:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(#f5d99d,#8b63d7);opacity:.9}
+#commPage .comm .flag{grid-row:1/3;width:92px;height:68px;border-radius:15px;border:1px solid rgba(245,217,157,.35);box-shadow:0 7px 18px #0006}
+#commPage .comm b{grid-column:2;grid-row:1;justify-content:flex-start;font-size:16px;color:#fff2d6;min-width:0}
+#commPage .comm .miniFlag{display:none}
+#commPage .comm small{grid-column:2;grid-row:2;text-align:right;font-size:11px;color:#c5b9d1}
+#commPage .comm .communityArrow{grid-column:3;grid-row:1/3;display:grid;place-items:center;width:34px;height:34px;border:1px solid #e7bd6340;border-radius:12px;color:#f5d99d;background:#e7bd6310;font-size:18px}
+@media(min-width:620px){#commPage{grid-template-columns:repeat(2,minmax(0,1fr))}#commPage .comm{grid-template-columns:76px minmax(0,1fr) auto;min-height:104px}#commPage .comm .flag{width:76px;height:58px}}
+</style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
 <style>
 .homeSearchResults{margin:-2px 14px 14px;padding:8px;border:1px solid #e7bd6330;border-radius:15px;background:#11101b;box-shadow:0 12px 28px #0005}
@@ -106,11 +120,11 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 <body>
 <div class="top"><b>GABO LIVE ✦</b><div class="topActions"><a href="/notifications/" aria-label="الإشعارات" class="topIcon">♧</a><a href="/profile/" aria-label="الملف الشخصي" class="welcomeAvatar" id="homeAvatar">م</a></div></div><section class="welcomeHero"><div class="heroCopy"><small>YOUR SOCIAL UNIVERSE</small><h1>عالمك يبدأ من هنا</h1><p>اكتشف مجتمعاتك، تابع أصدقاءك وكن جزءاً من اللحظة</p><div class="heroPills"><span>✦ مجتمعك</span><span>● تواصل مباشر</span></div></div><div class="heroOrb" aria-hidden="true">G</div></section><div class="homeSearch"><span>⌕</span><input id="communitySearch" type="search" placeholder="ابحث عن مجتمع أو أدخل ID الحساب..." aria-label="البحث عن مجتمع أو حساب"><button type="button" id="clearSearch" aria-label="مسح البحث">×</button></div><div id="homeSearchResults" class="homeSearchResults" hidden></div>
 <div class="tabs homeTabs"><button class="on communitiesTab" type="button"><span>▦</span> المجتمعات</button><button class="publicChatTab" type="button" onclick="window.location.href='/global-chat/index.html'" aria-label="فتح الشات العام"><span class="chatGlobe" aria-hidden="true"><svg viewBox="0 0 48 48"><defs><radialGradient id="chatOrb" cx="28%" cy="22%"><stop stop-color="#b9fff5"/><stop offset=".35" stop-color="#45cfc3"/><stop offset="1" stop-color="#24558d"/></radialGradient></defs><circle cx="24" cy="24" r="20" fill="url(#chatOrb)" stroke="#b9fff5" stroke-width="1.2"/><path d="M12 16l7-5 5 3 1 5-5 4-2 6-6-4-2-5zm17-4 7 4 2 6-5 3-2 7-5-5 1-6-3-4zm-16 19 7-2 6 4 1 6-6 3-7-5zm19-1 6-3 4 4-3 7-6 1-3-5z" fill="#caffdf"/><path d="M4 24h40M24 4c-7 7-9 13-9 20s2 13 9 20M24 4c7 7 9 13 9 20s-2 13-9 20" fill="none" stroke="#e2fffa" stroke-opacity=".55"/></svg></span><span>الشات العام</span><span class="chatArrow">←</span></button></div>
-<div class="homeFilters" role="group" aria-label="تصفية المجتمعات"><button type="button" class="active" data-filter="all">الكل</button><button type="button" data-filter="active">الأكثر نشاطاً</button><button type="button" data-filter="mine">مجتمعاتي</button></div>
+<div class="homeFilters" role="group" aria-label="تصفية المجتمعات"><button type="button" class="active" data-filter="all">الكل</button><button type="button" data-filter="active">الأكثر نشاطاً</button></div>
 
-<section class="engagementSection" aria-labelledby="engagementTitle"><div class="sectionHead"><div><small>COMMUNITY PULSE</small><h2 id="engagementTitle">🔥 الأكثر تفاعلاً</h2><p>المجتمعات الأكثر نشاطاً خلال آخر 24 ساعة</p></div><span class="liveBadge">● مباشر</span></div><div id="activityPage" class="activityList"><div class="activityEmpty">جارٍ تحميل نشاط المجتمعات...</div></div></section><div class="sectionHead communityHead"><div><small>DISCOVER</small><h2>🌍 المجتمعات</h2><p>اكتشف المجتمعات وانضم إلى اهتماماتك</p></div></div><div class="communityMeta"><span>اكتشف مكانك بين المجتمعات</span><strong id="communityCount">— مجتمع</strong></div><div id="commPage" class="grid"><div class="gridEmpty">جارٍ تحميل المجتمعات...</div></div>
+<section class="engagementSection" aria-labelledby="engagementTitle"><div class="sectionHead"><div><small>COMMUNITY PULSE</small><h2 id="engagementTitle">🔥 الأكثر تفاعلاً</h2><p>نشاط المجتمعات الرسمية خلال آخر 24 ساعة</p></div><span class="liveBadge">● مباشر</span></div><div id="activityPage" class="activityList"><div class="activityEmpty">جارٍ تحميل نشاط المجتمعات...</div></div></section><div class="sectionHead communityHead"><div><small>DISCOVER</small><h2>🌍 مجتمعات GABO الرسمية</h2><p>خمسة مجتمعات رسمية تجمع أبناء المنطقة والخليج</p></div></div><div class="communityMeta"><span>اكتشف مكانك بين المجتمعات</span><strong id="communityCount">— مجتمع</strong></div><div id="commPage" class="grid"><div class="gridEmpty">جارٍ تحميل المجتمعات...</div></div>
 
-<button class="createBtn" onclick="openCreate()">+ إنشاء مجتمع جديد</button>
+
 
 <div id="createModal" class="modal" onclick="if(event.target===this)closeCreate()"><div class="modalBox createCommunityBox">
 <div class="createModalTop"><span class="createModalMark">G</span><div><small>GABO LIVE • COMMUNITY</small><h3>أنشئ عالمك الخاص</h3><p>اجمع الأشخاص حول اهتماماتك</p></div><button type="button" class="createClose" onclick="closeCreate()">×</button></div>
@@ -147,9 +161,9 @@ let SOUTH_FLAG='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAQFBQkGC
 const southFlagPreload=new Image();southFlagPreload.decoding='sync';southFlagPreload.src=SOUTH_FLAG;
 let SOUTH_SVG=`<img src="${SOUTH_FLAG}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`;
 const southFlagOption=document.getElementById('southFlagOption');
-const STATIC_IDS=['south','sa','ye','ae','om','qa','kw','bh'];
-const NAMES={south:'الجنوب العربي',sa:'السعودية',ye:'اليمن',ae:'الإمارات',om:'عمان',qa:'قطر',kw:'الكويت',bh:'البحرين'};
-const FLAG_HTML={south:SOUTH_SVG,sa:'<img src="https://flagcdn.com/w80/sa.png">',ye:'<img src="https://flagcdn.com/w80/ye.png">',ae:'<img src="https://flagcdn.com/w80/ae.png">',om:'<img src="https://flagcdn.com/w80/om.png">',qa:'<img src="https://flagcdn.com/w80/qa.png">',kw:'<img src="https://flagcdn.com/w80/kw.png">',bh:'<img src="https://flagcdn.com/w80/bh.png">'};
+const STATIC_IDS=['south','sa','ae','om','ye'];
+const NAMES={south:'الجنوب العربي',sa:'السعودية',ae:'الإمارات',om:'عُمان',ye:'اليمن'};
+const FLAG_HTML={south:SOUTH_SVG,sa:'<img src="https://flagcdn.com/w80/sa.png" alt="علم السعودية">',ae:'<img src="https://flagcdn.com/w80/ae.png" alt="علم الإمارات">',om:'<img src="https://flagcdn.com/w80/om.png" alt="علم عُمان">',ye:'<img src="https://flagcdn.com/w80/ye.png" alt="علم اليمن">'};
 const ARAB_FLAGS=[
  {code:'south',name:'الجنوب العربي',src:()=>SOUTH_FLAG},
  {code:'sa',name:'السعودية'},{code:'ye',name:'اليمن'},{code:'ae',name:'الإمارات'},
@@ -345,7 +359,7 @@ onSnapshot(collection(db,'communities'),snap=>{
   snap.forEach(d=>{
     const data=d.data();
     counts[d.id]=data.membersCount||(data.members?data.members.length:0)||0;
-    rankedDocs.push({id:d.id,data});
+    if(STATIC_IDS.includes(d.id))rankedDocs.push({id:d.id,data});
     if(!STATIC_IDS.includes(d.id))customDocs.push({id:d.id,data});
   });
   grid.innerHTML="";
