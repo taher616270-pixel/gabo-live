@@ -373,9 +373,7 @@ window.showEmojiCat=(e,cat)=>{
   list.forEach(em=>{ const s=document.createElement('span'); s.textContent=em; s.onclick=()=>{ msgInput.value+=em; msgInput.focus(); }; grid.appendChild(s); });
   if(cat==='flags'){ const s=document.createElement('span'); s.className='flagCustom'; s.innerHTML=SOUTH_SVG; s.onclick=()=>{ msgInput.value+=' 🏴 '; }; grid.appendChild(s); }
 }
-</script>
-
-<script type="module" src="/js/unified-bottom-nav.js">// Load the configured South Arabia flag in the background; never block page event handlers on Firestore.
+// Load the configured South Arabia flag in the background; never block page event handlers on Firestore.
 getSouthArabiaFlag().then(flag=>{
   if(typeof flag==='string'&&flag){
     SOUTH_FLAG=flag;
@@ -387,5 +385,7 @@ getSouthArabiaFlag().then(flag=>{
   }
 }).catch(error=>console.warn('South Arabia flag load skipped:',error));
 </script>
+
+<script type="module" src="/js/unified-bottom-nav.js"></script>
 </body>
 </html>
