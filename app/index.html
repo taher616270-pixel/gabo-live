@@ -127,7 +127,7 @@ function updateSouthFlag(url){if(!url)return;SOUTH_FLAG=url;SOUTH_SVG=`<img src=
 getSouthArabiaFlag().then(updateSouthFlag).catch(()=>{});
 getCountryRegistry().then(items=>{items.forEach(country=>{if(country.code==='south-arabia')NAMES.south=country.name;else if(NAMES[country.code]!==undefined)NAMES[country.code]=country.name;});renderOfficialCommunities();}).catch(()=>{});
 
-onAuthStateChanged(auth,u=>{ if(!u){ location.replace('/login/'); return; } uid=u.uid; localStorage.setItem('gabo_uid',u.uid); onSnapshot(doc(db,'users',u.uid),snap=>{const p=snap.exists()?snap.data():{};const a=document.getElementById('homeAvatar');if(!a)return;const photo=p.photoURL||p.photoUrl||p.avatar;if(photo){const im=document.createElement('img');im.src=photo;im.alt='الصورة الشخصية';a.replaceChildren(im);}else a.textContent=String(p.name||p.displayName||u.displayName||u.email||'م').trim().charAt(0);}); });
+onAuthStateChanged(auth,u=>{ if(!u){ location.replace('/login/'); return; } uid=u.uid; localStorage.setItem('gabo_uid',u.uid); onSnapshot(doc(db,'users',u.uid),snap=>{const p=snap.exists()?snap.data():{};const a=document.getElementById('homeAvatar');if(!a)return;const photo=p.photoURL||p.photoUrl||p.avatar;if(photo){const im=document.createElement('img');im.src=photo;im.alt='الصورة الشخصية';a.replaceChildren(im);}else a.textContent=String(p.name||p.displayName||u.displayName||u.email||'م').trim().charAt(0);}); startCommunityListeners(); });
 
 window.goComm=(id)=>{ location.href=`/community/index.html?id=${encodeURIComponent(id)}`; };
 window.openCreate=()=>document.getElementById('createModal').classList.add('on');
@@ -202,54 +202,39 @@ communitySearch?.addEventListener("input",applyCommunityFilters);
 clearSearch?.addEventListener("click",()=>{communitySearch.value="";applyCommunityFilters();communitySearch.focus();});
 document.querySelectorAll(".homeFilters button").forEach(button=>button.addEventListener("click",()=>{activeFilter=button.dataset.filter;document.querySelectorAll(".homeFilters button").forEach(item=>item.classList.toggle("active",item===button));applyCommunityFilters();}));
 
-// نبني كل المجتمعات من Firestore - والرسمية نعرض عدد الأعضاء لايف
-onSnapshot(collection(db,'communities'),snap=>{
-  // خريطة الأعداد والنشاط الفعلي من Firebase
-  const counts={},activityScores={},customDocs=[],rankedDocs=[];
-  snap.forEach(d=>{
-    const data=d.data();
-    counts[d.id]=data.membersCount||(data.members?data.members.length:0)||0;
-    rankedDocs.push({id:d.id,data});
-    if(!STATIC_IDS.includes(d.id))customDocs.push({id:d.id,data});
-  });
-  grid.innerHTML="";
-  activityGrid.innerHTML="";
-  const todayKey=new Date().toISOString().slice(0,10);
-  const scoreOf=data=>data.activityDay===todayKey?(Number(data.activityScore)||Number(data.messagesToday)||0):0;
-  rankedDocs.forEach(item=>activityScores[item.id]=scoreOf(item.data));
-  latestCommunityCounts=counts;latestActivityScores=activityScores;
-  const ranked=rankedDocs.filter(item=>scoreOf(item.data)>0).sort((a,b)=>scoreOf(b.data)-scoreOf(a.data)).slice(0,5);
-  if(!ranked.length){activityGrid.innerHTML='<div class="activityEmpty">لا يوجد نشاط مسجل اليوم بعد — ستظهر المجتمعات هنا تلقائياً عند بدء التفاعل</div>';}
-  else ranked.forEach(({id,data},index)=>{
-    const flagHtml=id==="south"?SOUTH_SVG:(data.img?'<img src="'+data.img+'" alt="">':(FLAG_HTML[id]||'<img src="https://flagcdn.com/w80/'+String(data.flag||"sa")+'.png" alt="">'));
-    const item=document.createElement("button");item.type="button";item.className="activityCard";item.onclick=()=>window.goComm(id);
-    const score=scoreOf(data),messages=data.activityDay===todayKey?(Number(data.messagesToday)||0):0;
-    item.innerHTML='<span class="activityRank">'+(index+1)+'</span><span class="activityFlag">'+flagHtml+'</span><span class="activityInfo"><b></b><small>'+Number(data.membersCount||data.members?.length||0)+' عضو • '+messages+' رسالة اليوم</small></span><span class="activityStats">'+score+' نقطة<br><small>تفاعل</small></span>';
-    item.querySelector(".activityInfo b").textContent=data.name||NAMES[id]||"مجتمع";activityGrid.appendChild(item);
-  });
-
-  // 1- المجتمعات الرسمية - يطلع عدد الأعضاء
-  renderOfficialCommunities(counts,activityScores);
-
-  // 2- المجتمعات اللي أنشأها المستخدمين
+// لا نستعلم عن كل المجتمعات دفعة واحدة؛ قواعد Firestore تمنع تسريب المجتمعات الخاصة.
+let communityListenersStarted=false;
+function startCommunityListeners(){
+ if(communityListenersStarted||!uid)return;communityListenersStarted=true;
+ const sources={public:new Map(),owned:new Map(),member:new Map(),official:new Map()};
+ const update=(key,snap)=>{const map=sources[key];map.clear();snap.forEach(d=>map.set(d.id,{id:d.id,data:d.data()}));paint();};
+ const allDocs=()=>{const merged=new Map();Object.values(sources).forEach(map=>map.forEach((v,k)=>merged.set(k,v)));return [...merged.values()];};
+ function paint(){
+  const docs=allDocs(),counts={},scores={},customDocs=docs.filter(x=>!STATIC_IDS.includes(x.id)),rankedDocs=docs;
+  docs.forEach(({id,data})=>counts[id]=Number(data.membersCount||data.members?.length||0));
+  const todayKey=new Date().toISOString().slice(0,10),scoreOf=data=>data.activityDay===todayKey?(Number(data.activityScore)||Number(data.messagesToday)||0):0;
+  rankedDocs.forEach(({id,data})=>scores[id]=scoreOf(data));
+  latestCommunityCounts=counts;latestActivityScores=scores;grid.innerHTML='';activityGrid.innerHTML='';
+  const ranked=rankedDocs.filter(x=>x.data.visibility!=='private'&&scoreOf(x.data)>0).sort((x,y)=>scoreOf(y.data)-scoreOf(x.data)).slice(0,5);
+  if(!ranked.length)activityGrid.innerHTML='<div class="activityEmpty">لا يوجد نشاط عام مسجل اليوم بعد</div>';
+  else ranked.forEach(({id,data},index)=>{const flagHtml=id==='south'?SOUTH_SVG:(data.img||data.imageUrl?'<img src="'+(data.img||data.imageUrl)+'" alt="">':(FLAG_HTML[id]||'<img src="https://flagcdn.com/w80/'+String(data.flag||'sa')+'.png" alt="">'));const item=document.createElement('button');item.type='button';item.className='activityCard';item.onclick=()=>window.goComm(id);const score=scoreOf(data),messages=Number(data.messagesToday||0);item.innerHTML='<span class="activityRank">'+(index+1)+'</span><span class="activityFlag">'+flagHtml+'</span><span class="activityInfo"><b></b><small>'+Number(data.membersCount||data.members?.length||0)+' عضو • '+messages+' رسالة اليوم</small></span><span class="activityStats">'+score+' نقطة<br><small>تفاعل</small></span>';item.querySelector('.activityInfo b').textContent=data.name||NAMES[id]||'مجتمع';activityGrid.appendChild(item);});
+  renderOfficialCommunities(counts,scores);
   customDocs.forEach(({id,data})=>{
-    const div=document.createElement('button');div.type='button';div.className='comm';div.dataset.communityId=id;div.dataset.ownerUid=data.ownerUid||'';div.dataset.members=Array.isArray(data.members)?data.members.join(','):'';div.dataset.activityScore=String(scoreOf(data));div.dataset.searchable=[data.name||'',data.description||'',data.flag||''].join(' ').toLocaleLowerCase('ar');div.onclick=()=>window.goComm(id);
-    const flagHtml=data.img?'<img src="'+data.img+'" alt="">':(data.flag==='south'?SOUTH_SVG:'<img src="https://flagcdn.com/w80/'+String(data.flag||'sa')+'.png" alt="">');
-    const count=Number(data.membersCount||data.members?.length||1);
-    const flag=document.createElement("div");flag.className="flag";flag.innerHTML=flagHtml;
-    const title=document.createElement("b"),mini=document.createElement("span"),label=document.createElement("span");
-    mini.className="miniFlag";mini.innerHTML=data.flag==="south"?SOUTH_SVG:'<img src="https://flagcdn.com/w80/'+String(data.flag||'sa')+'.png" alt="">';
-    label.className="communityName";label.textContent=data.name||"مجتمع جديد";title.append(mini,label);
-    const meta=document.createElement("small");meta.className=count>0?"live":"";meta.textContent=count+" عضو";
-    const arrow=document.createElement("span");arrow.className="communityArrow";arrow.textContent="↗";
-    div.append(flag,title,meta,arrow);grid.appendChild(div);
+   const div=document.createElement('button');div.type='button';div.className='comm';div.dataset.communityId=id;div.dataset.ownerUid=data.ownerUid||'';div.dataset.members=Array.isArray(data.members)?data.members.join(','):'';div.dataset.activityScore=String(scoreOf(data));div.dataset.searchable=[data.name||'',data.description||'',data.flag||''].join(' ').toLocaleLowerCase('ar');div.onclick=()=>window.goComm(id);
+   const src=data.img||data.imageUrl||'',flagHtml=src?'<img src="'+src+'" alt="">':(data.flag==='south'?SOUTH_SVG:'<img src="https://flagcdn.com/w80/'+String(data.flag||'sa')+'.png" alt="">');
+   const flag=document.createElement('div');flag.className='flag';flag.innerHTML=flagHtml;
+   const title=document.createElement('b'),mini=document.createElement('span'),label=document.createElement('span');mini.className='miniFlag';mini.innerHTML=data.flag==='south'?SOUTH_SVG:'<img src="https://flagcdn.com/w80/'+String(data.flag||'sa')+'.png" alt="">';label.className='communityName';label.textContent=data.name||'مجتمع جديد';title.append(mini,label);
+   const count=Number(data.membersCount||data.members?.length||1),meta=document.createElement('small');meta.className=count>0?'live':'';meta.textContent=count+' عضو'+(data.visibility==='private'?' • 🔒 خاص':'');
+   const arrow=document.createElement('span');arrow.className='communityArrow';arrow.textContent='↗';div.append(flag,title,meta,arrow);grid.appendChild(div);
   });
   applyCommunityFilters();
-},error=>{
-  console.error('Communities listener failed:',error);
-  grid.innerHTML='<div class="gridEmpty"><b>تعذر تحميل المجتمعات</b><span>تحقق من اتصالك بالإنترنت ثم أعد تحميل الصفحة</span></div>';
-  activityGrid.innerHTML='<div class="activityEmpty">تعذر تحميل النشاط حالياً</div>';
-});
+ }
+ const col=collection(db,'communities');
+ onSnapshot(query(col,where('visibility','==','public')),snap=>update('public',snap),err=>console.error('Public communities query:',err));
+ onSnapshot(query(col,where('ownerUid','==',uid)),snap=>update('owned',snap),err=>console.error('Owned communities query:',err));
+ onSnapshot(query(col,where('members','array-contains',uid)),snap=>update('member',snap),err=>console.error('Member communities query:',err));
+ STATIC_IDS.forEach(id=>onSnapshot(doc(db,'communities',id),snap=>{if(snap.exists())sources.official.set(id,{id,data:snap.data()});else sources.official.delete(id);paint();},err=>console.warn('Official community read:',id,err)));
+}
 </script>
 
 <script type="module" src="/js/unified-bottom-nav.js"></script>
