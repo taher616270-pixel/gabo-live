@@ -61,31 +61,41 @@ import {doc,getDoc} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-fi
 function genId(uid){let h=0;for(let i=0;i<uid.length;i++){h=(h*31+uid.charCodeAt(i))%1000000000;}return (10000000+(h%90000000)).toString().padStart(8,'0');}
 const params=new URLSearchParams(location.search);
 const targetUid=params.get('uid');
-if(!targetUid){ document.getElementById('name').textContent='معرف غير صحيح'; }
-else{
-  document.getElementById('uidText').textContent=genId(targetUid);
+if(!targetUid){
+  document.getElementById('name').textContent='معرف غير صحيح';
+}else{
   (async()=>{
-    const snap=await getDoc(doc(db,'users',targetUid));
-    if(snap.exists()){
+    try{
+      const snap=await getDoc(doc(db,'users',targetUid));
+      if(!snap.exists()){
+        document.getElementById('name').textContent='الحساب غير موجود';
+        return;
+      }
       const d=snap.data();
-      const photo=d.photoURL||d.photo||d.avatar||'';
       const name=d.displayName||d.name||'مستخدم';
+      const photo=d.photoURL||d.photoUrl||d.photo||d.avatar||'';
+      const cover=d.cover||d.coverURL||d.coverUrl||'';
       const bio=d.bio||'مرحبا بكم في ملفي 👋';
-      const countryInfo=(await getCountryRegistry()).find(c=>c.code===String(d.country||'').toLowerCase());
-      const country=countryInfo?.name||(d.country?'غير محدد':(d.countryName||'غير محدد'));
-      const flag=countryInfo?.code==='south-arabia'?await getSouthArabiaFlag():(countryInfo?.flag||(d.country?'':(d.countryFlagImg||'')));
-      const gender=d.gender||'';
-      const bday=d.bday||'';
-      const cover=d.cover||'';
+      const registry=await getCountryRegistry();
+      const code=String(d.country||'south-arabia').toLowerCase();
+      const countryInfo=registry.find(x=>String(x.code).toLowerCase()===code);
+      const country=d.countryName||countryInfo?.name||'الجنوب العربي';
+      const flag=code==='south-arabia'?await getSouthArabiaFlag():(d.countryFlagImg||countryInfo?.flag||'');
       document.getElementById('name').textContent=name;
-      document.getElementById('avL').textContent=name[0];
-      if(photo){ document.getElementById('avImg').src=photo; document.getElementById('avImg').style.display='block'; document.getElementById('avL').style.display='none'; }
-      if(cover){ document.getElementById('coverImg').src=cover; document.getElementById('coverImg').style.display='block'; document.getElementById('coverPH').style.display='none'; }
-      document.getElementById('bio').textContent=bio;
-      document.getElementById('country').innerHTML=(flag?`<img src="${flag}" style="width:22px;height:15px;border-radius:2px"> `:'')+country;
-      document.getElementById('gender').textContent=gender;
+      document.getElementById('avL').textContent=name.charAt(0);
       document.getElementById('uidText').textContent=d.gaboId||genId(targetUid);
-      if(bday){ try{ const age=new Date().getFullYear()-parseInt(bday.split('-')[0]); document.getElementById('age').textContent=age+' سنة'; }catch{} }
+      if(photo){const img=document.getElementById('avImg');img.src=photo;img.style.display='block';document.getElementById('avL').style.display='none';}
+      if(cover){const img=document.getElementById('coverImg');img.src=cover;img.style.display='block';document.getElementById('coverPH').style.display='none';}
+      document.getElementById('bio').textContent=bio;
+      document.getElementById('country').innerHTML=(flag?'<img src="'+flag+'" alt=""> ':'')+country;
+      document.getElementById('gender').textContent=d.gender||'';
+      if(d.bday){
+        const [y,m,day]=String(d.bday).split('-').map(Number);
+        if(y&&m&&day){const now=new Date();let age=now.getFullYear()-y;if(now.getMonth()+1<m||(now.getMonth()+1===m&&now.getDate()<day))age--;if(age>=0)document.getElementById('age').textContent=age+' سنة';}
+      }
+    }catch(err){
+      console.error('Public profile load error:',err);
+      document.getElementById('name').textContent='تعذر تحميل بيانات الحساب';
     }
   })();
 }
