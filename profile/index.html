@@ -65,6 +65,20 @@ body{padding-bottom:110px}
 .idRow{margin-top:7px;font-size:10px;letter-spacing:1.2px}
 @media(max-width:380px){.coverMain{height:190px}.avatar{width:82px;height:82px}.nameRow{font-size:17px}.head{gap:11px}}
 
+/* Profile header: keep every field inside the card on narrow screens */
+.info{min-width:0;width:0;flex:1;text-align:right;direction:rtl}
+.nameRow{display:flex;width:100%;min-width:0;flex-wrap:nowrap;gap:7px;overflow:hidden;line-height:1.35}
+#nameMain{display:block;flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#flagMain{display:flex;flex:0 0 auto;align-items:center}
+#flagMain img{width:27px!important;height:19px!important;object-fit:cover}
+.countryRow{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;justify-content:start;gap:6px 8px;width:100%;min-width:0;direction:rtl;flex-wrap:nowrap;margin-top:8px;text-align:right}
+#countryFlagMain{display:flex;align-items:center;flex:0 0 auto}
+#countryNameMain{display:block;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.metaInline{grid-column:1/-1;display:flex;align-items:center;justify-self:start;gap:7px;flex-wrap:nowrap;min-width:0;margin-top:2px}
+.metaInline .male,.metaInline .female,.metaInline .age{white-space:nowrap;background:#29243d;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:3px 8px}
+.idRow{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:380px){.info{min-width:0}.nameRow{font-size:16px}.countryRow{font-size:12px}.countryRow img{width:23px!important;height:16px!important}.metaInline{font-size:11px;gap:5px}}
+
 </style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
 </head>
