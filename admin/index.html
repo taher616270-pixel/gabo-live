@@ -294,7 +294,7 @@ function loadUsersFull(){
  onSnapshot(collection(db,'users'), s=>{
    document.getElementById('cUsers').innerText=s.size;
    const list=document.getElementById('usersListFull'); list.innerHTML='';
-   s.forEach(d=>{ const u=d.data(); const div=document.createElement('div'); div.className='row'; div.innerHTML=`<span>🟢 ${u.name||u.email}<br><small>${u.email} | ${u.subscription||u.subPlan||'مجاني'} ${u.isAdmin?'⭐ أدمن':''}</small></span><div style="display:flex;gap:4px;flex-wrap:wrap"><button class="small" onclick="toggleAdmin('${d.id}',${!!u.isAdmin})">${u.isAdmin?'إلغاء أدمن':'جعله أدمن'}</button><button class="small" onclick="giveVIP('${d.id}')">VIP</button><button class="small" onclick="location.href='/dm/?uid=${d.id}'">خاص</button><button class="small danger" onclick="banUser('${d.id}')">حظر</button></div>`; list.appendChild(div); });
+   s.forEach(d=>{ const u=d.data(); const div=document.createElement('div'); div.className='row'; div.innerHTML=`<span>🟢 ${u.name||u.email}<br><small>${u.email} | ${u.subscription||u.subPlan||'مجاني'} | طلب: ${u.subPlanRequest||'لا يوجد'} ${u.isAdmin?'⭐ أدمن':''}</small></span><div style="display:flex;gap:4px;flex-wrap:wrap"><button class="small" onclick="toggleAdmin('${d.id}',${!!u.isAdmin})">${u.isAdmin?'إلغاء أدمن':'جعله أدمن'}</button><button class="small" onclick="giveVIP('${d.id}')">VIP</button><button class="small" onclick="location.href='/dm/?uid=${d.id}'">خاص</button><button class="small danger" onclick="banUser('${d.id}')">حظر</button></div>`; list.appendChild(div); });
  });
 }
 window.toggleAdmin=async(uid,cur)=>{await updateDoc(doc(db,'users',uid),{isAdmin:!cur});}
@@ -302,9 +302,9 @@ window.giveVIP=async uid=>{
  const userSnap=await getDoc(doc(db,'users',uid));
  if(!userSnap.exists()) return alert('المستخدم غير موجود');
  const userEmail=userSnap.data().email;
- await updateDoc(doc(db,'users',uid),{subscription:'VIP',subPlan:'vip',subUntil:Date.now()+30*24*3600*1000});
+ const plan=userSnap.data().subPlanRequest==='pro'?'pro':'vip';const label=plan.toUpperCase();await updateDoc(doc(db,'users',uid),{subscription:label,subPlan:plan,subUntil:Date.now()+30*24*3600*1000,subPlanRequest:deleteField(),subRequestedAt:deleteField()});
  if(userEmail){
-  try{ await fetch(EMAIL_URL,{method:"POST",body:JSON.stringify({type:"contact",name:"نظام GABO",email:userEmail,message:"تمت ترقيتك الى VIP ✅"})}); }catch{}
+  try{ await fetch(EMAIL_URL,{method:"POST",body:JSON.stringify({type:"contact",name:"نظام GABO",email:userEmail,message:"تم تفعيل باقة "+label+" بنجاح ✅"})}); }catch{}
   alert('تمت الترقية وإرسال طلب إشعار البريد');
  }else{ alert('تمت الترقية، لكن لا يوجد بريد إلكتروني محفوظ لهذا المستخدم'); }
 }
