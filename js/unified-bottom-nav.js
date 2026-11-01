@@ -34,9 +34,10 @@ function installStyles() {
     body{padding-bottom:calc(66px + env(safe-area-inset-bottom))!important}
     #gaboUnifiedNav{position:fixed!important;inset:auto 0 0!important;z-index:99999!important;width:100%!important;height:calc(56px + env(safe-area-inset-bottom))!important;padding:2px 10px calc(3px + env(safe-area-inset-bottom))!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:2px!important;align-items:center!important;direction:rtl!important;background:rgba(8,7,13,.985)!important;border-top:1px solid rgba(231,189,99,.16)!important;box-shadow:0 -7px 22px rgba(0,0,0,.28)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important}
     #gaboUnifiedNav .gaboNavItem{position:relative!important;min-width:0!important;width:100%!important;height:48px!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;border:0!important;border-radius:14px!important;background:transparent!important;text-decoration:none!important;color:#393641!important;-webkit-tap-highlight-color:transparent!important;touch-action:manipulation!important;isolation:isolate!important;overflow:hidden!important}
-    #gaboUnifiedNav .gaboNavItem::before{content:"";position:absolute;inset:0;border-radius:14px;background:linear-gradient(115deg,#bd8d3e 0%,#f3d58e 48%,#8b63d7 100%);z-index:-1;opacity:0;clip-path:inset(100% 0 0 0);pointer-events:none}
-    #gaboUnifiedNav .gaboNavItem.is-active::before{opacity:1;animation:gaboNavFill 2.4s cubic-bezier(.2,.7,.25,1) forwards}
-    #gaboUnifiedNav .gaboNavItem.is-active{color:#17121f!important}
+    #gaboUnifiedNav .gaboNavItem::before{content:"";position:absolute;inset:0;border-radius:14px;padding:1.6px;background:linear-gradient(115deg,#bd8d3e 0%,#f3d58e 48%,#8b63d7 100%);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;z-index:0;opacity:0;pointer-events:none}
+    #gaboUnifiedNav .gaboNavItem.is-active::before{opacity:1;animation:gaboNavEdge 2.4s ease-out both}
+    #gaboUnifiedNav .gaboNavItem.is-active{color:#e7bd63!important}
+    #gaboUnifiedNav .gaboNavItem>*{position:relative;z-index:1}
     #gaboUnifiedNav .gaboNavIcon{width:48px!important;height:45px!important;display:grid!important;place-items:center!important;transform:translateZ(0)!important;transition:transform .18s cubic-bezier(.2,.8,.25,1.3),filter .2s ease!important}
     #gaboUnifiedNav .gaboNavIcon svg{width:40px!important;height:40px!important;overflow:visible!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important}
     #gaboUnifiedNav .nav-outline,#gaboUnifiedNav .nav-detail{stroke:currentColor!important;fill:none!important}
@@ -45,7 +46,7 @@ function installStyles() {
     #gaboUnifiedNav .gaboNavBadge{position:absolute!important;top:1px!important;right:calc(50% - 26px)!important;min-width:17px!important;height:17px!important;padding:0 4px!important;display:none;align-items:center!important;justify-content:center!important;border-radius:20px!important;background:#e64b63!important;color:#fff!important;font:800 9px system-ui!important;border:2px solid #090711!important;z-index:3!important}
     #gaboUnifiedNav .gaboNavItem.is-pressing .gaboNavIcon{transform:scale(.86)!important;filter:drop-shadow(0 0 8px rgba(231,189,99,.48))!important}
     #gaboUnifiedNav .gaboNavItem.is-pressing svg{animation:gaboTap .34s cubic-bezier(.2,.8,.25,1.35)!important}
-    @keyframes gaboNavFill{0%{clip-path:inset(100% 0 0 0)}100%{clip-path:inset(0 0 0 0)}}
+    @keyframes gaboNavEdge{0%{filter:brightness(.75);opacity:.35}45%{filter:brightness(1.65);opacity:1}100%{filter:brightness(1);opacity:1}}
     @keyframes gaboNavActive{0%{transform:scale(.82)}65%{transform:scale(1.09)}100%{transform:scale(1)}}
     @keyframes gaboTap{0%{transform:scale(1)}45%{transform:scale(.88)}100%{transform:scale(1.04)}}
     @media(max-width:360px){#gaboUnifiedNav{padding-inline:3px!important;gap:0!important}#gaboUnifiedNav .gaboNavIcon{width:44px!important;height:42px!important}#gaboUnifiedNav .gaboNavIcon svg{width:37px!important;height:37px!important}}
@@ -104,3 +105,11 @@ function mount() {
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount, {once:true});
 else mount();
+
+// Restore the fixed navigation if a page script or a soft page transition removes it.
+window.addEventListener('pageshow', () => {
+  if (!document.getElementById('gaboUnifiedNav')) mount();
+});
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && !document.getElementById('gaboUnifiedNav')) mount();
+});
