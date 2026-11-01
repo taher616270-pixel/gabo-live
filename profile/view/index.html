@@ -20,6 +20,21 @@ body{background:var(--bg);color:#fff;font-family:system-ui;min-height:100vh;padd
 .btn{width:calc(100% - 32px);margin:10px 16px;padding:13px;border-radius:14px;border:0;font-weight:800;font-size:14px;cursor:pointer;display:block;text-align:center}
 .primary{background:var(--v);color:#fff}
 .back{margin:12px;background:#1e1c2e;border:1px solid var(--b);color:#fff;padding:12px;border-radius:12px;text-align:center;cursor:pointer}
+
+/* Public profile header visual polish */
+.mainCard{box-shadow:0 14px 38px rgba(0,0,0,.28);border-color:rgba(168,85,247,.24)}
+.coverMain{height:218px;background:radial-gradient(circle at 78% 15%,rgba(168,85,247,.34),transparent 38%),linear-gradient(135deg,#17152c,#101a35 58%,#211338);overflow:hidden}
+.coverMain img{object-fit:cover}
+.head{gap:15px;padding:14px 16px 18px;margin-top:-48px;align-items:flex-end}
+.avatar{width:94px;height:94px;border-radius:25px;border:4px solid var(--card);box-shadow:0 8px 24px rgba(0,0,0,.48),0 0 0 1px rgba(251,191,36,.25);flex-shrink:0}
+.info{min-width:0;text-align:right;direction:rtl;padding-bottom:3px}
+.nameRow{font-size:19px;line-height:1.4;display:flex;align-items:center;flex-wrap:wrap;gap:7px;color:#fff}
+.idRow{margin-top:7px;font-size:10px;letter-spacing:1.2px;direction:ltr;text-align:right}
+.profileMeta{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-top:9px;font-size:12px;color:#e4e1f0}
+.profileMeta span{background:#29243d;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:4px 9px}
+.profileMeta img{width:23px;height:16px;object-fit:cover;border-radius:3px;vertical-align:middle}
+@media(max-width:380px){.coverMain{height:190px}.avatar{width:82px;height:82px}.nameRow{font-size:17px}.head{gap:11px}}
+
 </style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
 </head>
@@ -31,7 +46,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;min-height:100vh;padd
 <div class="info">
 <div class="nameRow"><span id="name">تحميل...</span> <span id="flag"></span></div>
 <div class="idRow">ID: <span id="uidText">--------</span></div>
-<div style="margin-top:6px;font-size:13px;color:#d0d0e0"><span id="country"></span> • <span id="gender"></span> • <span id="age"></span></div>
+<div class="profileMeta"><span id="country"></span><span id="gender"></span><span id="age"></span></div>
 </div>
 </div>
 <div class="bio" id="bio">...</div>
