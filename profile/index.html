@@ -112,8 +112,8 @@ body{padding-bottom:110px}
 .head .pencil#openEdit{
   position:absolute!important;
   top:84px!important;
-  left:clamp(calc(50% + 78px), calc(50% + 78px + 5cm), calc(100% - 30px))!important;
-  right:auto!important;
+  right:calc(50% + 78px)!important;
+  left:auto!important;
   bottom:auto!important;
   transform:translateY(-50%)!important;
   margin:0!important;
@@ -130,7 +130,7 @@ body{padding-bottom:110px}
   z-index:20!important;
 }
 @media(max-width:380px){
-  .head .pencil#openEdit{top:80px!important;left:calc(50% + 74px)!important}
+  .head .pencil#openEdit{top:80px!important;right:calc(50% + 74px)!important;left:auto!important}
 }
 </style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
