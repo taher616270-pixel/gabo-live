@@ -54,7 +54,7 @@ body{padding-bottom:110px}
 .mainCard{box-shadow:0 14px 38px rgba(0,0,0,.28);border-color:rgba(168,85,247,.24)}
 .coverMain{height:218px;background:radial-gradient(circle at 78% 15%,rgba(168,85,247,.34),transparent 38%),linear-gradient(135deg,#17152c,#101a35 58%,#211338)}
 .coverMain img{object-fit:cover}
-.head{gap:15px;padding:14px 16px 18px;margin-top:-48px;align-items:flex-end}
+.head{gap:15px;padding:14px 16px 18px;margin-top:-48px;align-items:center}
 .avatar{width:94px;height:94px;border-radius:25px;border:4px solid var(--card);box-shadow:0 8px 24px rgba(0,0,0,.48),0 0 0 1px rgba(251,191,36,.25)}
 .info{min-width:0;text-align:right;direction:rtl;padding-bottom:3px}
 .nameRow{display:flex;align-items:center;flex-wrap:wrap;gap:7px;font-size:19px;line-height:1.4;color:#fff}
@@ -74,7 +74,7 @@ body{padding-bottom:110px}
 #countryNameMain{display:block;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .metaInline{grid-column:1/-1;display:flex;align-items:center;justify-self:start;gap:7px;flex-wrap:nowrap;min-width:0;margin-top:2px}
 .metaInline .male,.metaInline .female,.metaInline .age{white-space:nowrap;background:#29243d;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:3px 8px}
-.idRow{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.idRow{max-width:100%;display:flex;align-items:center;justify-content:flex-start;gap:8px;direction:rtl;white-space:nowrap;margin-top:8px;color:#aaa7bd;font-size:11px}\n.idValue{direction:ltr;unicode-bidi:isolate;font-family:monospace;letter-spacing:1px;color:#fff}\n.copyIdBtn{border:1px solid rgba(251,191,36,.35);background:#29243d;color:#fbbf24;border-radius:8px;padding:4px 8px;font-size:11px;font-weight:700;cursor:pointer;flex:0 0 auto}\n.copyIdBtn:active{transform:scale(.96)}
 @media(max-width:380px){.info{min-width:0}.nameRow{font-size:16px}.countryRow{font-size:12px}.countryRow img{width:23px!important;height:16px!important}.metaInline{font-size:11px;gap:5px}}
 
 </style>
@@ -92,7 +92,7 @@ body{padding-bottom:110px}
         <span id="countryNameMain"> </span>
         <span id="metaRow" class="metaInline"></span>
       </div>
-      <div class="idRow">ID: <span id="idMain">--------</span></div>
+      <div class="idRow"><span>ID</span><span class="idValue" id="idMain">--------</span><button class="copyIdBtn" id="copyIdBtn" type="button" aria-label="نسخ المعرف">نسخ</button></div>
     </div>
   </div>
   <div class="bioPublic" id="bioPublic"></div>
@@ -384,6 +384,7 @@ onAuthStateChanged(auth,async u=>{
     showStatus('تعذر تحميل بيانات الحساب: '+(err.message||'خطأ غير معروف'));
   }
 });
+document.getElementById('copyIdBtn').onclick=async()=>{const value=document.getElementById('idMain').textContent.trim();if(!value||value==='--------')return;try{await navigator.clipboard.writeText(value);showStatus('✅ تم نسخ GABO ID');}catch{const input=document.createElement('textarea');input.value=value;document.body.appendChild(input);input.select();try{document.execCommand('copy');showStatus('✅ تم نسخ GABO ID');}catch{showStatus('تعذر النسخ، حاول مرة أخرى');}input.remove();}};
 document.getElementById('openEdit').onclick=()=>{document.getElementById('editPage').classList.add('on');};
 document.getElementById('closeEdit').onclick=()=>document.getElementById('editPage').classList.remove('on');
 document.getElementById('openSettingsPage').onclick=()=>{document.getElementById('settingsPage').classList.add('on');};
