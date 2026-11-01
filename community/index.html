@@ -103,9 +103,9 @@ import { auth, db } from '/firebase-config.js';
 import { getSouthArabiaFlag,getCountryRegistry } from '/assets/country-flags.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { collection, doc, onSnapshot, addDoc, serverTimestamp, getDoc, setDoc, arrayUnion, arrayRemove, increment, decrement } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-const SOUTH_FLAG=await getSouthArabiaFlag();
+let SOUTH_FLAG='/assets/south-arabia.png.JPG';
 const GLOBAL_GLOBE=`<svg viewBox="0 0 64 64" role="img" aria-label="الشات العام"><defs><radialGradient id="ocean" cx="30%" cy="24%"><stop stop-color="#a8fff4"/><stop offset=".3" stop-color="#37c9c0"/><stop offset=".72" stop-color="#246a9b"/><stop offset="1" stop-color="#18234c"/></radialGradient><linearGradient id="land" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d8ffe8"/><stop offset="1" stop-color="#4bd3a5"/></linearGradient></defs><circle cx="32" cy="32" r="27" fill="url(#ocean)" stroke="#b6fff2" stroke-width="1.5"/><path d="M17 14l7-4 7 3 1 6-5 4-1 7-7-2-4-6 2-8zm20-3 9 3 5 8-5 4-2 8-6-2-3-7 3-5-4-4zm-20 29 7-3 7 4 3 8-6 8-8-4-4-8zm23 3 7-5 7 4-2 9-8 5-5-6z" fill="url(#land)" opacity=".95"/><path d="M6 32h52M32 5c-9 9-12 18-12 27s3 18 12 27M32 5c9 9 12 18 12 27s-3 18-12 27" fill="none" stroke="#d4fff8" stroke-opacity=".45" stroke-width="1"/><ellipse cx="32" cy="32" rx="27" ry="10" fill="none" stroke="#d4fff8" stroke-opacity=".38"/></svg>`;
-const SOUTH_SVG=`<img src="${SOUTH_FLAG}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`
+let SOUTH_SVG=`<img src="${SOUTH_FLAG}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`
 const COMM_DATA={
 south:{name:'مجتمع الجنوب العربي', flag:SOUTH_SVG, mini:SOUTH_SVG},
 sa:{name:'مجتمع السعودية', flag:`<img src="https://flagcdn.com/w80/sa.png">`, mini:`<img src="https://flagcdn.com/w80/sa.png">`},
@@ -200,7 +200,68 @@ async function renderGlobalMembers(ids){
 }
 document.getElementById('leaveGlobalChat')?.addEventListener('click',async()=>{if(!uid||!hasJoinedGeneralChat)return;if(!confirm('هل تريد الخروج من الشات العام؟'))return;const btn=document.getElementById('leaveGlobalChat');btn.disabled=true;try{const ref=doc(db,'communities','global');const snap=await getDoc(ref);const members=snap.exists()&&Array.isArray(snap.data().members)?snap.data().members:[];if(members.includes(uid)){await setDoc(ref,{members:arrayRemove(uid),membersCount:Math.max(0,members.length-1)},{merge:true});}hasJoinedGeneralChat=false;updateGeneralChatGate();closeGlobalStats();document.getElementById('globalMembersList').style.display='none';}catch(e){alert('تعذر الخروج حالياً، حاول مرة ثانية.');}finally{btn.disabled=false;}});
 
-document.getElementById('joinPublicChat')?.addEventListener('click',async()=>{const btn=document.getElementById('joinPublicChat');if(!uid||hasJoinedGeneralChat)return;btn.disabled=true;btn.textContent='جارٍ الانضمام...';try{const ref=doc(db,'communities',communityId);const snap=await getDoc(ref);const members=snap.exists()&&Array.isArray(snap.data().members)?snap.data().members:[];if(!members.includes(uid)){const today=new Date().toISOString().slice(0,10);const sameDay=snap.exists()&&snap.data().activityDay===today;const name=isGeneralPublicChat?'الشات العام':(COMM_DATA[communityId]?.name||commNameEl.textContent||communityId);await setDoc(ref,{name,type:isGeneralPublicChat?'public-chat':'community',members:arrayUnion(uid),membersCount:increment(1),joinsToday:sameDay?increment(1):1,activityScore:sameDay?increment(2):2,activityDay:today},{merge:true});}if(!isGeneralPublicChat){await setDoc(doc(db,'users',uid),{joinedCommunityIds:arrayUnion(communityId)},{merge:true});}hasJoinedGeneralChat=true;updateGeneralChatGate();msgInput?.focus();}catch(e){btn.disabled=false;btn.innerHTML='حاول مرة ثانية ←';alert('تعذر الانضمام حالياً، تحقق من اتصالك أو صلاحيات قاعدة البيانات.');}});
+document.getElementById('joinPublicChat')?.addEventListener('click',async()=>{
+  const btn=document.getElementById('joinPublicChat');
+  const currentUser=auth.currentUser;
+  if(!currentUser){alert('انتهت جلسة الدخول، سجل الدخول من جديد.');location.href='/login/';return;}
+  if(hasJoinedGeneralChat)return;
+  uid=currentUser.uid;
+  const originalHtml='انضم الآن <span>←</span>';
+  const withTimeout=(promise,label,ms=12000)=>Promise.race([
+    promise,
+    new Promise((_,reject)=>setTimeout(()=>reject(new Error(label)),ms))
+  ]);
+  btn.disabled=true;
+  btn.textContent='جارٍ الانضمام...';
+  try{
+    const ref=doc(db,'communities',communityId);
+    const snap=await withTimeout(getDoc(ref),'انتهت مهلة الاتصال بقاعدة البيانات أثناء قراءة المجتمع');
+    if(!snap.exists()){
+      throw new Error(isGeneralPublicChat
+        ? 'وثيقة الشات العام غير موجودة في قاعدة البيانات. يجب إنشاء communities/global من حساب الإدارة أولاً.'
+        : 'وثيقة المجتمع غير موجودة في قاعدة البيانات. أعد تحميل الصفحة أو تحقق من إعداد المجتمع.');
+    }
+    const data=snap.data()||{};
+    const members=Array.isArray(data.members)?data.members:[];
+    if(!members.includes(uid)){
+      const today=new Date().toISOString().slice(0,10);
+      const sameDay=data.activityDay===today;
+      const name=isGeneralPublicChat?'الشات العام':(data.name||COMM_DATA[communityId]?.name||commNameEl.textContent||communityId);
+      await withTimeout(setDoc(ref,{
+        name,
+        type:isGeneralPublicChat?'public-chat':'community',
+        members:arrayUnion(uid),
+        membersCount:increment(1),
+        joinsToday:sameDay?increment(1):1,
+        activityScore:sameDay?increment(2):2,
+        activityDay:today
+      },{merge:true}),'انتهت مهلة حفظ العضوية في قاعدة البيانات');
+    }
+    const verify=await withTimeout(getDoc(ref),'انتهت مهلة التحقق من العضوية');
+    const verifiedMembers=verify.exists()&&Array.isArray(verify.data().members)?verify.data().members:[];
+    if(!verifiedMembers.includes(uid)){
+      throw new Error('تم إرسال طلب الانضمام لكن قاعدة البيانات لم تؤكد إضافة عضويتك.');
+    }
+    hasJoinedGeneralChat=true;
+    communityData=verify.data();
+    updateGeneralChatGate();
+    if(msgInput){msgInput.disabled=false;msgInput.focus();}
+    if(!isGeneralPublicChat){
+      try{
+        await withTimeout(setDoc(doc(db,'users',uid),{joinedCommunityIds:arrayUnion(communityId)},{merge:true}),'تعذرت مزامنة قائمة المجتمعات في الملف الشخصي',8000);
+      }catch(profileError){
+        console.warn('Membership saved; profile community mirror could not be updated:',profileError);
+      }
+    }
+  }catch(e){
+    console.error('Community join failed:',e);
+    const detail=e?.code?e.code+': '+(e.message||''):((e?.message)||'خطأ غير معروف');
+    alert('تعذر الانضمام: '+detail);
+  }finally{
+    btn.disabled=false;
+    if(!hasJoinedGeneralChat)btn.innerHTML=originalHtml;
+  }
+});
 messagesEl.innerHTML='<div style="text-align:center;color:#aaa;padding:18px">جارٍ تحميل الرسائل...</div>';
 onSnapshot(collection(db,'communities',communityId,'messages'), (snap)=>{
   const msgs=[]; snap.forEach(d=>msgs.push({id:d.id,...d.data()}));
@@ -314,6 +375,17 @@ window.showEmojiCat=(e,cat)=>{
 }
 </script>
 
-<script type="module" src="/js/unified-bottom-nav.js"></script>
+<script type="module" src="/js/unified-bottom-nav.js">// Load the configured South Arabia flag in the background; never block page event handlers on Firestore.
+getSouthArabiaFlag().then(flag=>{
+  if(typeof flag==='string'&&flag){
+    SOUTH_FLAG=flag;
+    SOUTH_SVG=`<img src="${SOUTH_FLAG}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`;
+    if(!isGeneralPublicChat&&communityId==='south'){
+      commFlagEl.innerHTML=SOUTH_SVG;
+      commMiniFlagEl.innerHTML=SOUTH_SVG;
+    }
+  }
+}).catch(error=>console.warn('South Arabia flag load skipped:',error));
+</script>
 </body>
 </html>
