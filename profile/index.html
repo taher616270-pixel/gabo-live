@@ -112,7 +112,7 @@ body{padding-bottom:110px}
 .head .pencil#openEdit{
   position:absolute!important;
   top:84px!important;
-  left:calc(50% + 78px)!important;
+  left:clamp(calc(50% + 78px), calc(50% + 78px + 5cm), calc(100% - 30px))!important;
   right:auto!important;
   bottom:auto!important;
   transform:translateY(-50%)!important;
