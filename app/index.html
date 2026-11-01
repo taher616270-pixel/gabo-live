@@ -360,7 +360,7 @@ onSnapshot(collection(db,'communities'),snap=>{
     const data=d.data();
     counts[d.id]=data.membersCount||(data.members?data.members.length:0)||0;
     if(STATIC_IDS.includes(d.id))rankedDocs.push({id:d.id,data});
-    if(!STATIC_IDS.includes(d.id))customDocs.push({id:d.id,data});
+    // المجتمعات المخصصة القديمة لا تظهر في الواجهة الجديدة؛ بياناتها لم تُحذف من Firestore.
   });
   grid.innerHTML="";
   activityGrid.innerHTML="";
