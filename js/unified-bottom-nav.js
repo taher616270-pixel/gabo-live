@@ -31,25 +31,25 @@ function installStyles() {
   const style = document.createElement('style');
   style.id = 'gaboUnifiedNavStyles';
   style.textContent = `
-    body{padding-bottom:calc(78px + env(safe-area-inset-bottom))!important}
-    #gaboUnifiedNav{position:fixed!important;inset:auto 0 0!important;z-index:99999!important;width:100%!important;height:calc(66px + env(safe-area-inset-bottom))!important;padding:4px 10px calc(5px + env(safe-area-inset-bottom))!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:3px!important;align-items:center!important;direction:rtl!important;background:rgba(7,5,14,.985)!important;border-top:1px solid rgba(154,115,220,.08)!important;box-shadow:0 -8px 25px rgba(0,0,0,.24)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important}
-    #gaboUnifiedNav .gaboNavItem{position:relative!important;min-width:0!important;width:100%!important;height:55px!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;border:0!important;border-radius:14px!important;background:transparent!important;text-decoration:none!important;color:#393641!important;-webkit-tap-highlight-color:transparent!important;touch-action:manipulation!important}
-    #gaboUnifiedNav .gaboNavIcon{width:58px!important;height:52px!important;display:grid!important;place-items:center!important;transform:translateZ(0)!important;transition:transform .18s cubic-bezier(.2,.8,.25,1.3),filter .2s ease!important}
-    #gaboUnifiedNav .gaboNavIcon svg{width:48px!important;height:48px!important;overflow:visible!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+    body{padding-bottom:calc(66px + env(safe-area-inset-bottom))!important}
+    #gaboUnifiedNav{position:fixed!important;inset:auto 0 0!important;z-index:99999!important;width:100%!important;height:calc(56px + env(safe-area-inset-bottom))!important;padding:2px 10px calc(3px + env(safe-area-inset-bottom))!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:2px!important;align-items:center!important;direction:rtl!important;background:rgba(8,7,13,.985)!important;border-top:1px solid rgba(231,189,99,.16)!important;box-shadow:0 -7px 22px rgba(0,0,0,.28)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important}
+    #gaboUnifiedNav .gaboNavItem{position:relative!important;min-width:0!important;width:100%!important;height:48px!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;border:0!important;border-radius:14px!important;background:transparent!important;text-decoration:none!important;color:#393641!important;-webkit-tap-highlight-color:transparent!important;touch-action:manipulation!important}
+    #gaboUnifiedNav .gaboNavIcon{width:48px!important;height:45px!important;display:grid!important;place-items:center!important;transform:translateZ(0)!important;transition:transform .18s cubic-bezier(.2,.8,.25,1.3),filter .2s ease!important}
+    #gaboUnifiedNav .gaboNavIcon svg{width:40px!important;height:40px!important;overflow:visible!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important}
     #gaboUnifiedNav .nav-outline,#gaboUnifiedNav .nav-detail{stroke:currentColor!important;fill:none!important}
     #gaboUnifiedNav .nav-spark{stroke:currentColor!important;fill:currentColor!important;stroke-width:.7!important}
-    #gaboUnifiedNav .gaboNavItem.is-active{color:#9d46ff!important}
-    #gaboUnifiedNav .gaboNavItem.is-active .gaboNavIcon{filter:drop-shadow(0 0 5px rgba(162,55,255,.38))!important;animation:gaboNavActive .42s cubic-bezier(.2,.8,.25,1.25) both}
+    #gaboUnifiedNav .gaboNavItem.is-active{color:#e7bd63!important}
+    #gaboUnifiedNav .gaboNavItem.is-active .gaboNavIcon{filter:drop-shadow(0 0 5px rgba(231,189,99,.32))!important;animation:gaboNavActive .42s cubic-bezier(.2,.8,.25,1.25) both}
     #gaboUnifiedNav .gaboNavItem.is-active .nav-outline{stroke:url(#gaboNavGradient)!important;stroke-dasharray:22 4 8 4!important;animation:gaboStrokeTravel 1.8s linear infinite!important}
-    #gaboUnifiedNav .gaboNavItem.is-active .nav-detail{stroke:#c34cff!important}
-    #gaboUnifiedNav .gaboNavItem.is-active .nav-spark{fill:#b94cff!important;stroke:#b94cff!important;filter:drop-shadow(0 0 3px #c34cff)!important}
+    #gaboUnifiedNav .gaboNavItem.is-active .nav-detail{stroke:#8b63d7!important}
+    #gaboUnifiedNav .gaboNavItem.is-active .nav-spark{fill:#e7bd63!important;stroke:#e7bd63!important;filter:drop-shadow(0 0 3px #e7bd63)!important}
     #gaboUnifiedNav .gaboNavBadge{position:absolute!important;top:1px!important;right:calc(50% - 26px)!important;min-width:17px!important;height:17px!important;padding:0 4px!important;display:none;align-items:center!important;justify-content:center!important;border-radius:20px!important;background:#e64b63!important;color:#fff!important;font:800 9px system-ui!important;border:2px solid #090711!important;z-index:3!important}
-    #gaboUnifiedNav .gaboNavItem.is-pressing .gaboNavIcon{transform:scale(.86)!important;filter:drop-shadow(0 0 8px rgba(185,65,255,.65))!important}
+    #gaboUnifiedNav .gaboNavItem.is-pressing .gaboNavIcon{transform:scale(.86)!important;filter:drop-shadow(0 0 8px rgba(231,189,99,.48))!important}
     #gaboUnifiedNav .gaboNavItem.is-pressing svg{animation:gaboTap .34s cubic-bezier(.2,.8,.25,1.35)!important}
     @keyframes gaboStrokeTravel{to{stroke-dashoffset:-76}}
     @keyframes gaboNavActive{0%{transform:scale(.82)}65%{transform:scale(1.09)}100%{transform:scale(1)}}
     @keyframes gaboTap{0%{transform:scale(1)}45%{transform:scale(.88)}100%{transform:scale(1.04)}}
-    @media(max-width:360px){#gaboUnifiedNav{padding-inline:3px!important;gap:0!important}#gaboUnifiedNav .gaboNavIcon{width:52px!important;height:48px!important}#gaboUnifiedNav .gaboNavIcon svg{width:44px!important;height:44px!important}}
+    @media(max-width:360px){#gaboUnifiedNav{padding-inline:3px!important;gap:0!important}#gaboUnifiedNav .gaboNavIcon{width:44px!important;height:42px!important}#gaboUnifiedNav .gaboNavIcon svg{width:37px!important;height:37px!important}}
     @media(prefers-reduced-motion:reduce){#gaboUnifiedNav *{animation:none!important;transition:none!important}}
   `;
   document.head.appendChild(style);
@@ -58,7 +58,7 @@ function installStyles() {
 function addGradient(svg) {
   if (svg.querySelector('#gaboNavGradient')) return;
   const defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
-  defs.innerHTML = '<linearGradient id="gaboNavGradient" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#fa36bf"/><stop offset="48%" stop-color="#a43cff"/><stop offset="100%" stop-color="#258cff"/></linearGradient>';
+  defs.innerHTML = '<linearGradient id="gaboNavGradient" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#bd8d3e"/><stop offset="48%" stop-color="#f3d58e"/><stop offset="100%" stop-color="#8b63d7"/></linearGradient>';
   svg.prepend(defs);
 }
 
