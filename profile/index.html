@@ -263,6 +263,23 @@ function showCoverInMain(coverData){
     coverMain.style.background='linear-gradient(135deg,#1a2a4a,#0f3460,#161426)';
   }
 }
+// ارسم آخر بيانات الحساب المحفوظة قبل انتظار استعادة جلسة Firebase
+try{
+  const latest=JSON.parse(localStorage.getItem('gabo_profile_cache_latest')||'null');
+  const knownUid=localStorage.getItem('gabo_profile_cache_latest_uid');
+  if(latest && knownUid && auth.currentUser?.uid===knownUid){
+    if(latest.name)document.getElementById('nameMain').textContent=latest.name;
+    if(latest.id){document.getElementById('idMain').textContent=latest.id;document.getElementById('userId').textContent=latest.id;}
+    if(latest.bio)document.getElementById('bioPublic').textContent=latest.bio;
+    if(latest.countryName)setCountryDisplay(latest.countryName,latest.countryCode||'south-arabia',latest.countryFlag||'');
+    updateMeta(latest.gender||'',latest.bday||'');
+    if(latest.photo){const img=document.getElementById('avatarImgMain');img.src=latest.photo;img.style.display='block';document.getElementById('avL').style.display='none';}
+    if(latest.cover)showCoverInMain(latest.cover);
+    if(Number.isFinite(latest.followers))document.getElementById('c1').textContent=latest.followers;
+    if(Number.isFinite(latest.following))document.getElementById('c2').textContent=latest.following;
+    if(Number.isFinite(latest.visitors))document.getElementById('c3').textContent=latest.visitors;
+  }
+}catch(cacheErr){console.warn('Instant profile cache error:',cacheErr);}
 onAuthStateChanged(auth,async u=>{
   if(!u){location.replace('/login/');return}
   cur=u;
@@ -325,6 +342,8 @@ onAuthStateChanged(auth,async u=>{
         gender:savedGender,bday:savedBday,photo,cover,
         followers:Number(d.followers)||0,following:Number(d.following)||0,visitors:Number(d.visitors)||0
       }));
+      localStorage.setItem('gabo_profile_cache_latest',localStorage.getItem('gabo_profile_cache_'+u.uid));
+      localStorage.setItem('gabo_profile_cache_latest_uid',u.uid);
     }catch(cacheErr){console.warn('Profile cache write error:',cacheErr);}
     if(photo){
       const img=document.getElementById('avatarImgMain');img.src=photo;img.style.display='block';document.getElementById('avL').style.display='none';
