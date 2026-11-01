@@ -70,6 +70,12 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
   z-index:100000!important;
 }
 .messages{padding-bottom:calc(150px + env(safe-area-inset-bottom))!important}
+
+/* One shared dock: join button and message composer occupy the exact same slot */
+.actionDock{position:fixed;left:0;right:0;bottom:calc(56px + env(safe-area-inset-bottom));z-index:100000;display:block;padding:0;margin:0}
+.actionDock .joinGate,.actionDock .inputBar{position:static!important;left:auto!important;right:auto!important;bottom:auto!important;width:100%;margin:0;z-index:auto!important}
+.actionDock .joinGate{min-height:64px}
+.actionDock .inputBar{min-height:64px}
 </style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
 </head>
@@ -79,7 +85,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 <div class="commFlag" id="commFlag"></div>
 <div class="headerInfo"><b><span id="commName">تحميل...</span> <span class="miniFlagInHeader" id="commMiniFlag"></span></b><small><span id="memberCount">0 عضو</span> • 12k متصل • رسمي</small></div>
 </div>
-<div class="messages" id="messages"></div><div class="joinGate" id="joinGate" style="display:none"><div><b id="joinGateTitle">انضم إلى المجتمع</b><small id="joinGateHint">انضم لتتمكن من المشاركة والكتابة في المجتمع</small></div><button id="joinPublicChat" type="button">انضم الآن <span>←</span></button></div>
+<div class="messages" id="messages"></div><div class="actionDock" id="actionDock"><div class="joinGate" id="joinGate" style="display:none"><div><b id="joinGateTitle">انضم إلى المجتمع</b><small id="joinGateHint">انضم لتتمكن من المشاركة والكتابة في المجتمع</small></div><button id="joinPublicChat" type="button">انضم الآن <span>←</span></button></div>
 <button class="globalStatsFab" id="globalStatsFab" type="button" aria-label="عدادات الشات العام" style="display:none">☷<i></i></button>
 <div class="globalStatsShade" id="globalStatsShade" style="display:none"></div>
 <aside class="globalStatsPanel" id="globalStatsPanel" aria-hidden="true">
@@ -91,7 +97,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 </aside>
 <div class="profileModal" id="profileModal" onclick="if(event.target===this)closeProfile()"><div class="profileBox"><div class="pCover" id="pCover"><img id="pCoverImg" style="display:none"><div class="pClose" onclick="closeProfile()">✕</div><div class="pAvatar" id="pAvatar"><span id="pAvatarLetter">T</span><img id="pAvatarImg" style="display:none"></div></div><div class="pInfo"><div class="pName"><span id="pName">تحميل...</span></div><div class="pCountry"><span id="pFlag"></span><span id="pCountryName">الجنوب العربي</span></div><div class="pMeta"><span id="pGender"></span><span id="pAge"></span><span id="pId">ID: --------</span></div><div class="pBio" id="pBio">...</div><div class="pActions"><button class="pBtn primary" id="pChatBtn">💬 دردشة خاصة</button><button class="pBtn secondary" id="pViewBtn">👁️ عرض الملف</button></div></div></div></div>
 <div class="emojiPanel" id="emojiPanel"><div class="emojiTabs"><button class="on" onclick="showEmojiCat(event,'smile')">😊</button><button onclick="showEmojiCat(event,'flags')">🏳️</button></div><div class="emojiGrid" id="emojiGrid"></div></div>
-<div class="inputBar"><button class="iconBtn" onclick="toggleEmoji()">😊</button><div class="inputWrap"><input id="msgInput" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMsg()"></div><button class="sendBtn" onclick="sendMsg()">➤</button></div>
+<div class="inputBar"><button class="iconBtn" onclick="toggleEmoji()">😊</button><div class="inputWrap"><input id="msgInput" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMsg()"></div><button class="sendBtn" onclick="sendMsg()">➤</button></div></div>
 <script type="module">
 import { auth, db } from '/firebase-config.js';
 import { getSouthArabiaFlag,getCountryRegistry } from '/assets/country-flags.js';
