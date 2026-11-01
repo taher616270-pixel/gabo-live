@@ -463,7 +463,7 @@ async function requestSignupOtp(email){
     setMessage('جاري إرسال رمز التحقق إلى بريدك...','');
     await otpCall({action:'send_signup',email});
   }catch(e){
-    const map={EMAIL_SEND_FAILED:'تعذر إرسال الرمز. تحقق من إعداد البريد وحاول لاحقًا.',RESEND_WAIT:'انتظر دقيقة قبل طلب رمز جديد.',RATE_LIMITED:'وصلت إلى الحد المسموح لطلبات الرمز اليوم.'};
+    const map={EMAIL_SEND_FAILED:'تعذر إرسال الرمز. تحقق من إعداد البريد وحاول لاحقًا.',EMAIL_SERVICE_TIMEOUT:'تأخر خادم البريد. حاول مرة أخرى بعد قليل.',REQUEST_TIMEOUT:'انتهت مهلة الاتصال. حاول مرة أخرى.',RESEND_WAIT:'انتظر دقيقة قبل طلب رمز جديد.',RATE_LIMITED:'وصلت إلى الحد المسموح لطلبات الرمز اليوم.'};
     setMessage(map[e.message]||'تعذر إرسال رمز التحقق. حاول مرة أخرى.','e');return false;
   }
   input.value='';error.hidden=true;modal.hidden=false;input.focus();
