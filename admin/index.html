@@ -158,7 +158,7 @@ onAuthStateChanged(auth, async u=>{
   return;
  }
  me=u; document.getElementById('adminEmail').innerText=u.email;
- const c=await getDoc(doc(db,'site_config','main')); if(c.exists()) cfg={...cfg,...c.data()}; delete cfg.agora; if(cfg.payment) delete cfg.payment.key;
+ const c=await getDoc(doc(db,'site_config','main')); if(c.exists()){const data=c.data();cfg={...cfg,...data};const cleanup={};if(Object.prototype.hasOwnProperty.call(data,'agora'))cleanup.agora=deleteField();if(data.payment&&Object.prototype.hasOwnProperty.call(data.payment,'key'))cleanup['payment.key']=deleteField();if(Object.keys(cleanup).length){try{await updateDoc(doc(db,'site_config','main'),cleanup);}catch(cleanupError){console.warn('Legacy public config cleanup could not run:',cleanupError);}}} delete cfg.agora; if(cfg.payment) delete cfg.payment.key;
  initTabs(); listenAll(); renderNav(); renderPlans(); renderPages(); renderSouthFlag(); try{countryRegistry=await getCountryRegistryAdmin();renderCountryRegistry();}catch(countryError){console.error('Country manager setup:',countryError);document.getElementById('countryAdminList').innerHTML='<p style="color:#fbbf24;line-height:1.8">لتفعيل إدارة الدول، انشر قواعد Firestore وStorage الموضحة في ملف FIREBASE_COUNTRY_RULES.md داخل المستودع.</p>';} loadHosts(); loadUsersFull();
 });
 
