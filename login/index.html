@@ -434,10 +434,17 @@ initialize();
 
 const OTP_API_URL='https://gabo-otp.taher616270.workers.dev/';
 async function otpCall(payload){
-  const response=await fetch(OTP_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-  const data=await response.json().catch(()=>({}));
-  if(!response.ok)throw new Error(data.error||'REQUEST_FAILED');
-  return data;
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),23000);
+  try{
+    const response=await fetch(OTP_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(data.error||'REQUEST_FAILED');
+    return data;
+  }catch(error){
+    if(error?.name==='AbortError')throw new Error('REQUEST_TIMEOUT');
+    throw error;
+  }finally{clearTimeout(timer);}
 }
 async function sendWelcomeEmail(user){
   if(!user?.uid||!user?.email)return false;
