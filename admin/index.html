@@ -59,7 +59,7 @@ textarea{min-height:90px}
 <div class="card panel" id="p-subs">
 <b>💳 نظام الاشتراكات + ربط الدفع السعودي</b>
 <div class="grid">
-<div><label>مفتاح الدفع Moyasar/Tap</label><input id="payKey" placeholder="sk_test_..."></div>
+<div><label>حالة الربط</label><small style="color:#aaa3bd;line-height:1.8">بوابة الدفع لم تُربط بعد. لا تضع مفاتيح سرية في إعدادات الموقع العامة.</small></div>
 <div><label>العملة</label><select id="payCurrency"><option>SAR</option><option>USD</option></select></div>
 </div>
 <div style="display:flex;gap:6px;margin-top:10px"><input id="planName" placeholder="VIP ذهبي"><input id="planPrice" type="number" placeholder="29"><input id="planDays" type="number" placeholder="30 يوم"><button id="addPlan" class="primary">+ خطة</button></div>
@@ -141,7 +141,7 @@ const commsDefault = [
  ];
 
 let me=null, countryRegistry=[];
-let cfg={brand:"GABO LIVE",bottomNav:[{icon:"⌂",label:"الرئيسية",path:"/",order:0,visible:true},{icon:"♬",label:"المجتمع",path:"/app/",order:1,visible:true},{icon:"✉",label:"الخاص",path:"/dm/",order:2,visible:true},{icon:"◉",label:"حسابي",path:"/profile/",order:3,visible:true}],payment:{key:"",currency:"SAR"},plans:[{id:"vip1",name:"VIP شهري",price:29,days:30}],pages:[],features:{privateChat:true}};
+let cfg={brand:"GABO LIVE",bottomNav:[{icon:"⌂",label:"الرئيسية",path:"/",order:0,visible:true},{icon:"♬",label:"المجتمع",path:"/app/",order:1,visible:true},{icon:"✉",label:"الخاص",path:"/dm/",order:2,visible:true},{icon:"◉",label:"حسابي",path:"/profile/",order:3,visible:true}],payment:{currency:"SAR"},plans:[{id:"vip1",name:"VIP شهري",price:29,days:30}],pages:[],features:{privateChat:true}};
 
 onAuthStateChanged(auth, async u=>{
  if(!u){ location.replace('/login/'); return; }
@@ -158,7 +158,7 @@ onAuthStateChanged(auth, async u=>{
   return;
  }
  me=u; document.getElementById('adminEmail').innerText=u.email;
- const c=await getDoc(doc(db,'site_config','main')); if(c.exists()) cfg={...cfg,...c.data()};
+ const c=await getDoc(doc(db,'site_config','main')); if(c.exists()) cfg={...cfg,...c.data()}; delete cfg.agora; if(cfg.payment) delete cfg.payment.key;
  initTabs(); listenAll(); renderNav(); renderPlans(); renderPages(); renderSouthFlag(); try{countryRegistry=await getCountryRegistryAdmin();renderCountryRegistry();}catch(countryError){console.error('Country manager setup:',countryError);document.getElementById('countryAdminList').innerHTML='<p style="color:#fbbf24;line-height:1.8">لتفعيل إدارة الدول، انشر قواعد Firestore وStorage الموضحة في ملف FIREBASE_COUNTRY_RULES.md داخل المستودع.</p>';} loadHosts(); loadUsersFull();
 });
 
@@ -172,7 +172,8 @@ function initTabs(){
  });
 }
 
-async function saveCfg(){ await setDoc(doc(db,'site_config','main'),{...cfg,updatedAt:serverTimestamp(),updatedBy:me.uid},{merge:true}); alert('✅ تم الحفظ - الموقع تحدث فوراً'); }
+function cleanPublicConfig(){const safe={...cfg};delete safe.agora;if(safe.payment){safe.payment={...safe.payment};delete safe.payment.key;}return safe;}
+async function saveCfg(){const safe=cleanPublicConfig();await setDoc(doc(db,'site_config','main'),{...safe,updatedAt:serverTimestamp(),updatedBy:me.uid},{merge:true});cfg=safe;alert('✅ تم الحفظ - الموقع تحدث فوراً');}
 
 document.getElementById('createAll').onclick=async()=>{
  const btn=document.getElementById('createAll'); btn.innerText='جارٍ التهيئة...'; btn.disabled=true;
@@ -268,7 +269,7 @@ document.getElementById('resetSouthFlag').onclick=async()=>{
 // Plans
 function renderPlans(){const el=document.getElementById('plansList'); el.innerHTML=''; (cfg.plans||[]).forEach((p,i)=>{const d=document.createElement('div'); d.className='row'; d.innerHTML=`<span><b>${p.name}</b> — ${p.price} SAR / ${p.days} يوم</span><button class="small danger" onclick="delPlan(${i})">حذف</button>`; el.appendChild(d);});}
 window.delPlan=i=>{cfg.plans.splice(i,1); renderPlans(); saveCfg();}
-document.getElementById('addPlan').onclick=()=>{const name=document.getElementById('planName').value; const price=parseFloat(document.getElementById('planPrice').value); const days=parseInt(document.getElementById('planDays').value); if(!name||!price) return; cfg.plans.push({id:'plan_'+Date.now(),name,price,days}); cfg.payment={key:document.getElementById('payKey').value,currency:document.getElementById('payCurrency').value}; renderPlans(); saveCfg();}
+document.getElementById('addPlan').onclick=()=>{const name=document.getElementById('planName').value; const price=parseFloat(document.getElementById('planPrice').value); const days=parseInt(document.getElementById('planDays').value); if(!name||!price) return; cfg.plans.push({id:'plan_'+Date.now(),name,price,days}); cfg.payment={currency:document.getElementById('payCurrency').value}; renderPlans(); saveCfg();}
 
 // Pages
 function renderPages(){const el=document.getElementById('pagesList'); el.innerHTML=''; (cfg.pages||[]).forEach((p,i)=>{const d=document.createElement('div'); d.className='row'; d.innerHTML=`<span><b>${p.title}</b> — ${p.path}</span><button class="small danger" onclick="delPage(${i})">حذف</button>`; el.appendChild(d);});}
