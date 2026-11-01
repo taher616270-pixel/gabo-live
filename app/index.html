@@ -156,7 +156,7 @@ window.doCreate=async()=>{
  try{
   await setDoc(doc(db,'communities',id),{
    name,description,flag:selectedFlag,img:selectedImgBase64||null,
-   ownerUid:uid,visibility:selectedVisibility,members:[uid],membersCount:1,
+   ownerUid:uid,visibility,members:[uid],membersCount:1,
    banned:[],closed:false,joinsToday:1,joinsDay:dayKey,inviteJoins:0,
    activityScore:0,createdAt:serverTimestamp()
   });
@@ -167,7 +167,7 @@ window.doCreate=async()=>{
   document.getElementById('fileInput').value='';
   document.getElementById('imgPreview').style.display='none';
   document.getElementById('imgPlus').style.display='block';
-  if(selectedVisibility==='private'){
+  if(visibility==='private'){
    alert('تم إنشاء المجتمع. تفعيل الدخول بالدعوات وحماية الخصوصية سيتم في خطوة مستقلة.');
   }
   location.href='/community/index.html?id='+encodeURIComponent(id);
