@@ -83,7 +83,7 @@ body{padding-bottom:110px}
       <div class="idRow">ID: <span id="idMain">--------</span></div>
     </div>
   </div>
-  <div class="bioPublic" id="bioPublic">مرحبا بك في ملفك الشخصي 👋</div>
+  <div class="bioPublic" id="bioPublic"></div>
   <div class="stats">
     <div class="stat"><b id="c1">0</b><span>متابعين</span></div>
     <div class="stat"><b id="c2">0</b><span>متابَع</span></div>
@@ -315,7 +315,7 @@ onAuthStateChanged(auth,async u=>{
     let d=snap.exists()?snap.data():{};
     if(!snap.exists()){
       const finalId=genId(u.uid);
-      const defaults={uid:u.uid,name:u.displayName||u.email?.split('@')[0]||'مستخدم',displayName:u.displayName||u.email?.split('@')[0]||'مستخدم',photo:u.photoURL||'',photoURL:u.photoURL||'',followers:0,following:0,visitors:0,gaboId:finalId,bio:'مرحبا بكم في ملفي الشخصي 👋',country:'south-arabia',countryName:'الجنوب العربي',countryFlagImg:SOUTH_FLAG,gender:'',bday:''};
+      const defaults={uid:u.uid,name:u.displayName||u.email?.split('@')[0]||'مستخدم',displayName:u.displayName||u.email?.split('@')[0]||'مستخدم',photo:u.photoURL||'',photoURL:u.photoURL||'',followers:0,following:0,visitors:0,gaboId:finalId,bio:'',country:'south-arabia',countryName:'الجنوب العربي',countryFlagImg:SOUTH_FLAG,gender:'',bday:''};
       await setDoc(ref,defaults,{merge:true});
       d=defaults;
     }
@@ -327,7 +327,9 @@ onAuthStateChanged(auth,async u=>{
     document.getElementById('rowNameVal').textContent=displayName;
     document.getElementById('avL').textContent=displayName.charAt(0);
     document.getElementById('rowAvLetter').textContent=displayName.charAt(0);
-    document.getElementById('bioPublic').textContent=d.bio||'مرحبا بك في ملفك الشخصي 👋';
+    const profileBio=(d.bio||'').trim();
+    const visibleBio=profileBio==='مرحبا بك في ملفك الشخصي 👋'||profileBio==='مرحبا بكم في ملفي الشخصي 👋'?'':profileBio;
+    document.getElementById('bioPublic').textContent=visibleBio;
     document.getElementById('rowBioVal').textContent=d.bio||'اكتب لتعريف نفسك';
     const savedGender=d.gender||'';
     const savedBday=d.bday||'';
@@ -341,7 +343,7 @@ onAuthStateChanged(auth,async u=>{
     const cover=localStorage.getItem('gabo_cover_'+u.uid)||d.cover||'';
     try{
       localStorage.setItem('gabo_profile_cache_'+u.uid,JSON.stringify({
-        name:displayName,id:finalId,bio:d.bio||'مرحبا بك في ملفك الشخصي 👋',
+        name:displayName,id:finalId,bio:visibleBio,
         countryName:d.countryName||country?.name||'الجنوب العربي',countryCode,
         countryFlag:d.countryFlagImg||country?.flagImg||SOUTH_FLAG,
         gender:savedGender,bday:savedBday,photo,cover,
