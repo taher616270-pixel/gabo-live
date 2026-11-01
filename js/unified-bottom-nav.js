@@ -1,9 +1,9 @@
 const NAV_ITEMS = [
-  { id:'home', label:'الرئيسية', path:'/app/', icon:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>' },
-  { id:'posts', label:'منشورات', path:'/posts/', icon:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>' },
-  { id:'games', label:'ألعاب', path:'/games/', icon:'<path d="M6 10h12a4 4 0 0 1 3.8 5.2l-.7 2.2a2 2 0 0 1-3.2 1l-2.4-1.9h-3l-2.4 1.9a2 2 0 0 1-3.2-1l-.7-2.2A4 4 0 0 1 6 10Z"/><path d="M8 13v4m-2-2h4m7-1h.01M18 16h.01"/>' },
-  { id:'messages', label:'رسائل', path:'/dm/', icon:'<path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H5l-2 2v-6.5A7.5 7.5 0 1 1 20 11.5Z"/><path d="M7.5 11.5h9M7.5 15h6"/>' },
-  { id:'profile', label:'ملفي الشخصي', path:'/profile/', icon:'<circle cx="12" cy="8" r="3.5"/><path d="M5 21a7 7 0 0 1 14 0"/>' }
+  { id:'home', label:'الرئيسية', path:'/app/', icon:'<path class="nav-outline" d="M5.5 8.2 12 3.8l6.5 4.4v9.1a2 2 0 0 1-2 2H7.5a2 2 0 0 1-2-2Z"/><path class="nav-detail" d="M9.2 13.8c2.2 1.2 4.2 1.2 5.8-.3l-.3 2.1m.3-2.1-2-.2"/><path class="nav-spark" d="m5.1 2.2.8 1.8 1.8.8-1.8.8-.8 1.8-.8-1.8-1.8-.8 1.8-.8Z"/>' },
+  { id:'posts', label:'منشورات', path:'/posts/', icon:'<circle class="nav-outline" cx="12" cy="12" r="7.4"/><path class="nav-outline" d="M5.2 7.8 3.9 5.4m14.9 11.1 1.3 2.2"/><path class="nav-detail" d="M4.4 14.8c2.1-1.5 3.5-1.4 5.4.2 1.8 1.6 3.6 1.6 5.4.1"/><path class="nav-spark" d="m6.4 3.1.6 1.3 1.3.6-1.3.6-.6 1.3-.6-1.3-1.3-.6 1.3-.6Z"/>' },
+  { id:'games', label:'ألعاب', path:'/games/', icon:'<path class="nav-outline" d="M6.2 6.2h11.6a3.8 3.8 0 0 1 3.7 4.6l-1.2 6.1a2.7 2.7 0 0 1-4.4 1.5L13.7 16h-3.4l-2.2 2.4a2.7 2.7 0 0 1-4.4-1.5l-1.2-6.1a3.8 3.8 0 0 1 3.7-4.6Z"/><path class="nav-detail" d="M7.2 9.5v4.2m-2.1-2.1h4.2m7.1-.8h.1m2.1 2.1h.1"/><path class="nav-spark" d="m5.2 2.2.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7Z"/>' },
+  { id:'messages', label:'رسائل', path:'/dm/', icon:'<path class="nav-outline" d="M19.8 11.4a7.6 7.6 0 0 1-7.7 7.5H7l-3.1 2v-5.2a7.5 7.5 0 1 1 15.9-4.3Z"/><path class="nav-detail" d="M10 8.8v5.1m4 0V8.8"/><path class="nav-spark" d="m5 2.6.6 1.3 1.3.6-1.3.6L5 6.4l-.6-1.3-1.3-.6 1.3-.6Z"/>' },
+  { id:'profile', label:'ملفي الشخصي', path:'/profile/', icon:'<circle class="nav-outline" cx="12" cy="7.4" r="4.1"/><path class="nav-outline" d="M4.1 20.5c.4-4 3.5-6.3 7.9-6.3s7.5 2.3 7.9 6.3Z"/><path class="nav-spark" d="m6.1 2.2.7 1.5 1.5.7-1.5.7-.7 1.5-.7-1.5-1.5-.7 1.5-.7Z"/>' }
 ];
 
 const safe = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
@@ -31,26 +31,35 @@ function installStyles() {
   const style = document.createElement('style');
   style.id = 'gaboUnifiedNavStyles';
   style.textContent = `
-    body{padding-bottom:calc(100px + env(safe-area-inset-bottom))!important}
-    #gaboUnifiedNav{position:fixed!important;inset:auto 0 0!important;z-index:99999!important;width:100%!important;height:calc(76px + env(safe-area-inset-bottom))!important;padding:5px 8px calc(6px + env(safe-area-inset-bottom))!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:5px!important;align-items:center!important;direction:rtl!important;background:linear-gradient(180deg,rgba(16,13,23,.98),rgba(10,8,15,.995))!important;border-top:1px solid rgba(180,145,220,.12)!important;box-shadow:0 -10px 30px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.025)!important;backdrop-filter:blur(24px) saturate(145%)!important;-webkit-backdrop-filter:blur(24px) saturate(145%)!important}
-    #gaboUnifiedNav .gaboNavItem{position:relative!important;isolation:isolate!important;min-width:0!important;width:100%!important;height:66px!important;padding:3px 1px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:5px!important;border:0!important;border-radius:16px!important;background:transparent!important;text-decoration:none!important;color:#a49cac!important;font-family:'Tajawal',system-ui,sans-serif!important;font-size:11px!important;font-weight:800!important;line-height:1.15!important;white-space:nowrap!important;-webkit-tap-highlight-color:transparent!important;transition:color .22s ease,transform .22s ease!important}
-    #gaboUnifiedNav .gaboNavIcon{position:relative!important;width:48px!important;height:43px!important;display:grid!important;place-items:center!important;border-radius:12px!important;color:inherit!important;transform:translateZ(0)!important;transform-style:preserve-3d!important;transition:transform .32s cubic-bezier(.2,.85,.25,1.35),filter .25s ease!important}
-    #gaboUnifiedNav .gaboNavIcon:before{content:''!important;position:absolute!important;inset:0!important;z-index:-1!important;border-radius:12px!important;background:linear-gradient(145deg,#d879ff 0%,#a33cff 48%,#792cff 100%)!important;border:1px solid rgba(241,205,255,.9)!important;box-shadow:0 3px 0 #55208f,0 7px 17px rgba(147,52,255,.38),0 0 19px rgba(205,77,255,.3),inset 0 1px 0 rgba(255,255,255,.8)!important;transform:scale(.72) translateY(5px)!important;transform-origin:center!important;opacity:0!important;transition:transform .24s cubic-bezier(.2,.8,.2,1),opacity .18s ease!important}
-    #gaboUnifiedNav .gaboNavIcon svg{width:23px!important;height:23px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important;position:relative!important;z-index:1!important;transition:transform .28s ease,color .2s ease!important}
-    #gaboUnifiedNav .gaboNavLabel{display:block!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;transition:transform .25s ease,color .2s ease!important}
-    #gaboUnifiedNav .gaboNavItem.is-active{color:#f1d58c!important}
-    #gaboUnifiedNav .gaboNavItem.is-active .gaboNavIcon{color:#fff!important;transform:translateY(-2px)!important;filter:drop-shadow(0 3px 6px rgba(190,75,235,.35))!important}
-    #gaboUnifiedNav .gaboNavItem.is-active .gaboNavIcon:before{opacity:1!important;transform:scale(1) translateY(0)!important}
-    #gaboUnifiedNav .gaboNavItem.is-active .gaboNavIcon svg{transform:scale(1)!important}
-    #gaboUnifiedNav .gaboNavItem.is-active .gaboNavLabel{transform:translateY(-1px)!important;color:#f6d995!important}
-    #gaboUnifiedNav .gaboNavItem.is-pressing .gaboNavIcon{transform:translateY(0) scale(.96)!important}
-    #gaboUnifiedNav .gaboNavItem.is-pressing .gaboNavIcon:before{opacity:1!important;transform:scaleY(1)!important}
-    #gaboUnifiedNav .gaboNavItem.is-pressing .gaboNavIcon svg{color:#fff!important;transform:scale(1.04)!important}
-    #gaboUnifiedNav .gaboNavBadge{position:absolute!important;top:1px!important;right:calc(50% - 25px)!important;min-width:17px!important;height:17px!important;padding:0 4px!important;display:none;align-items:center!important;justify-content:center!important;border-radius:20px!important;background:#e64b63!important;color:#fff!important;font:800 9px system-ui!important;border:2px solid #100d16!important;z-index:3!important}
-    @media(max-width:360px){#gaboUnifiedNav{gap:2px!important;padding-inline:4px!important}#gaboUnifiedNav .gaboNavItem{font-size:9px!important}#gaboUnifiedNav .gaboNavIcon{width:44px!important;height:40px!important}}
-    @media(prefers-reduced-motion:reduce){#gaboUnifiedNav *{transition:none!important}}
+    body{padding-bottom:calc(78px + env(safe-area-inset-bottom))!important}
+    #gaboUnifiedNav{position:fixed!important;inset:auto 0 0!important;z-index:99999!important;width:100%!important;height:calc(66px + env(safe-area-inset-bottom))!important;padding:4px 10px calc(5px + env(safe-area-inset-bottom))!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:3px!important;align-items:center!important;direction:rtl!important;background:rgba(7,5,14,.985)!important;border-top:1px solid rgba(154,115,220,.08)!important;box-shadow:0 -8px 25px rgba(0,0,0,.24)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important}
+    #gaboUnifiedNav .gaboNavItem{position:relative!important;min-width:0!important;width:100%!important;height:55px!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;border:0!important;border-radius:14px!important;background:transparent!important;text-decoration:none!important;color:#393641!important;-webkit-tap-highlight-color:transparent!important;touch-action:manipulation!important}
+    #gaboUnifiedNav .gaboNavIcon{width:58px!important;height:52px!important;display:grid!important;place-items:center!important;transform:translateZ(0)!important;transition:transform .18s cubic-bezier(.2,.8,.25,1.3),filter .2s ease!important}
+    #gaboUnifiedNav .gaboNavIcon svg{width:48px!important;height:48px!important;overflow:visible!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+    #gaboUnifiedNav .nav-outline,#gaboUnifiedNav .nav-detail{stroke:currentColor!important;fill:none!important}
+    #gaboUnifiedNav .nav-spark{stroke:currentColor!important;fill:currentColor!important;stroke-width:.7!important}
+    #gaboUnifiedNav .gaboNavItem.is-active{color:#9d46ff!important}
+    #gaboUnifiedNav .gaboNavItem.is-active .gaboNavIcon{filter:drop-shadow(0 0 5px rgba(162,55,255,.38))!important;animation:gaboNavActive .42s cubic-bezier(.2,.8,.25,1.25) both}
+    #gaboUnifiedNav .gaboNavItem.is-active .nav-outline{stroke:url(#gaboNavGradient)!important;stroke-dasharray:22 4 8 4!important;animation:gaboStrokeTravel 1.8s linear infinite!important}
+    #gaboUnifiedNav .gaboNavItem.is-active .nav-detail{stroke:#c34cff!important}
+    #gaboUnifiedNav .gaboNavItem.is-active .nav-spark{fill:#b94cff!important;stroke:#b94cff!important;filter:drop-shadow(0 0 3px #c34cff)!important}
+    #gaboUnifiedNav .gaboNavBadge{position:absolute!important;top:1px!important;right:calc(50% - 26px)!important;min-width:17px!important;height:17px!important;padding:0 4px!important;display:none;align-items:center!important;justify-content:center!important;border-radius:20px!important;background:#e64b63!important;color:#fff!important;font:800 9px system-ui!important;border:2px solid #090711!important;z-index:3!important}
+    #gaboUnifiedNav .gaboNavItem.is-pressing .gaboNavIcon{transform:scale(.86)!important;filter:drop-shadow(0 0 8px rgba(185,65,255,.65))!important}
+    #gaboUnifiedNav .gaboNavItem.is-pressing svg{animation:gaboTap .34s cubic-bezier(.2,.8,.25,1.35)!important}
+    @keyframes gaboStrokeTravel{to{stroke-dashoffset:-76}}
+    @keyframes gaboNavActive{0%{transform:scale(.82)}65%{transform:scale(1.09)}100%{transform:scale(1)}}
+    @keyframes gaboTap{0%{transform:scale(1)}45%{transform:scale(.88)}100%{transform:scale(1.04)}}
+    @media(max-width:360px){#gaboUnifiedNav{padding-inline:3px!important;gap:0!important}#gaboUnifiedNav .gaboNavIcon{width:52px!important;height:48px!important}#gaboUnifiedNav .gaboNavIcon svg{width:44px!important;height:44px!important}}
+    @media(prefers-reduced-motion:reduce){#gaboUnifiedNav *{animation:none!important;transition:none!important}}
   `;
   document.head.appendChild(style);
+}
+
+function addGradient(svg) {
+  if (svg.querySelector('#gaboNavGradient')) return;
+  const defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+  defs.innerHTML = '<linearGradient id="gaboNavGradient" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#fa36bf"/><stop offset="48%" stop-color="#a43cff"/><stop offset="100%" stop-color="#258cff"/></linearGradient>';
+  svg.prepend(defs);
 }
 
 function mount() {
@@ -73,12 +82,12 @@ function mount() {
   nav.setAttribute('aria-label','التنقل الرئيسي');
   nav.innerHTML = NAV_ITEMS.map(item => {
     const active = item.id === selected;
-    return `<a class="gaboNavItem ${active?'is-active':''}" href="${safe(item.path)}" data-nav-id="${item.id}" ${active?'aria-current="page"':''}>
+    return `<a class="gaboNavItem ${active?'is-active':''}" href="${safe(item.path)}" data-nav-id="${item.id}" aria-label="${safe(item.label)}" ${active?'aria-current="page"':''}>
       <span class="gaboNavIcon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">${item.icon}</svg></span>
-      <span class="gaboNavLabel">${safe(item.label)}</span>
       ${item.id==='messages'?'<span id="navBadge" class="gaboNavBadge navBadge" style="display:none">0</span>':''}
     </a>`;
   }).join('');
+  nav.querySelectorAll('svg').forEach(addGradient);
   nav.addEventListener('click', event => {
     const link = event.target.closest('a[data-nav-id]');
     if (!link) return;
@@ -88,7 +97,6 @@ function mount() {
     if (window.__gaboNavNavigating) return;
     window.__gaboNavNavigating = true;
     link.classList.add('is-pressing');
-    // Navigate immediately instead of leaving the old tab selected during an artificial delay.
     location.assign(link.href);
   });
   document.body.appendChild(nav);
