@@ -127,9 +127,9 @@ const messagesEl=document.getElementById('messages');
 const msgInput=document.getElementById('msgInput');
 function setHeaderInstant(){
   if(isGeneralPublicChat){document.body.classList.add('generalPublicChat');commFlagEl.innerHTML=GLOBAL_GLOBE;commNameEl.textContent='الشات العام';document.querySelector('.headerInfo small').textContent='دردشة عامة • عالم GABO LIVE';return;}
-  const data=COMM_DATA[communityId] || {name:'مجتمع '+communityId, flag:`<img src="https://flagcdn.com/w80/${communityId}.png">`, mini:`<img src="https://flagcdn.com/w80/${communityId}.png">`};
-  commFlagEl.innerHTML=data.flag;
-  commMiniFlagEl.innerHTML=data.mini;
+  const data=COMM_DATA[communityId] || {name:'جاري تحميل المجتمع', flag:'', mini:''};
+  commFlagEl.innerHTML=data.flag || '<span style="display:grid;place-items:center;width:100%;height:100%;font-size:22px">🌐</span>';
+  commMiniFlagEl.innerHTML=data.mini || '';
   commNameEl.textContent=data.name;
 }
 setHeaderInstant();
@@ -146,7 +146,7 @@ onAuthStateChanged(auth, async (u)=>{
       await setDoc(commRef,{name:info.name||communityId,flag:communityId,members:[],membersCount:0,createdAt:serverTimestamp()},{merge:true});
     }
     const members=commSnap?.exists()&&Array.isArray(commSnap.data().members)?commSnap.data().members:[];
-    hasJoinedGeneralChat=isGeneralPublicChat?members.includes(uid):Array.isArray(userData?.joinedCommunityIds)&&userData.joinedCommunityIds.includes(communityId);
+    hasJoinedGeneralChat=isGeneralPublicChat?members.includes(uid):(commSnap?.exists()&&(commSnap.data().ownerUid===uid||members.includes(uid)|| (Array.isArray(userData?.joinedCommunityIds)&&userData.joinedCommunityIds.includes(communityId))));
     updateGeneralChatGate();
   }
 });
@@ -192,6 +192,18 @@ onSnapshot(doc(db,'communities',communityId), (snap)=>{
   if(snap.exists()){
     const data=snap.data();
     if(data.name) commNameEl.textContent=isGeneralPublicChat?'الشات العام':data.name;
+    if(!isGeneralPublicChat){
+      const flagCode=String(data.flag||communityId).toLowerCase();
+      const flagUrl=flagCode==='south'?SOUTH_FLAG:(/^[a-z]{2}$/.test(flagCode)?'https://flagcdn.com/w160/'+flagCode+'.png':'');
+      if(data.img){
+        commFlagEl.innerHTML='<img src="'+String(data.img).replace(/"/g,'&quot;')+'" alt="صورة المجتمع" style="width:100%;height:100%;object-fit:cover">';
+      }else if(flagCode==='south'){
+        commFlagEl.innerHTML=SOUTH_SVG;
+      }else if(flagUrl){
+        commFlagEl.innerHTML='<img src="'+flagUrl+'" alt="علم المجتمع" style="width:100%;height:100%;object-fit:cover">';
+      }
+      commMiniFlagEl.innerHTML=flagUrl?'<img src="'+flagUrl+'" alt="علم الدولة" style="width:100%;height:100%;object-fit:cover">':(flagCode==='south'?SOUTH_SVG:'');
+    }
     const count=data.membersCount|| (data.members?data.members.length:0) || 0;
     memberCountEl.textContent=isGeneralPublicChat?count+' عضو • شات مفتوح':' '+count+' عضو';
   }
@@ -234,7 +246,7 @@ window.closeProfile=()=>{ document.getElementById('profileModal').classList.remo
 document.getElementById('pChatBtn').onclick=()=>{ if(!lastOpenedUid) return; location.href=`/dm/?uid=${lastOpenedUid}`; }
 document.getElementById('pViewBtn').onclick=()=>{ if(!lastOpenedUid) return; location.href=`/profile/view/?uid=${lastOpenedUid}`; }
 window.sendMsg=async ()=>{
-  const text=msgInput.value.trim(); if(!text||!uid||(isGeneralPublicChat&&!hasJoinedGeneralChat)) return;
+  const text=msgInput.value.trim(); if(!text||!uid||!hasJoinedGeneralChat) return;
   const displayName=userData?.displayName||userData?.name||localStorage.getItem('gabo_name')||'مستخدم';
   const photoURL=userData?.photoURL||userData?.photo||localStorage.getItem('gabo_photo')||'';
   msgInput.value='';
