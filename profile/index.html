@@ -77,6 +77,17 @@ body{padding-bottom:110px}
 .idRow{max-width:100%;display:flex;align-items:center;justify-content:flex-start;gap:8px;direction:rtl;white-space:nowrap;margin-top:8px;color:#aaa7bd;font-size:11px}\n.idValue{direction:ltr;unicode-bidi:isolate;font-family:monospace;letter-spacing:1px;color:#fff}\n.copyIdBtn{border:1px solid rgba(251,191,36,.35);background:#29243d;color:#fbbf24;border-radius:8px;padding:4px 8px;font-size:11px;font-weight:700;cursor:pointer;flex:0 0 auto}\n.copyIdBtn:active{transform:scale(.96)}
 @media(max-width:380px){.info{min-width:0}.nameRow{font-size:16px}.countryRow{font-size:12px}.countryRow img{width:23px!important;height:16px!important}.metaInline{font-size:11px;gap:5px}}
 
+
+/* Centered avatar overlapping the lower edge of the cover */
+.head{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:-48px;padding:0 16px 18px}
+.avatar{width:104px;height:104px;border-radius:28px;flex:0 0 104px}
+.info{width:100%;min-width:0;flex:0 0 auto;text-align:center;direction:rtl;padding:0}
+.nameRow{justify-content:center;text-align:center}
+.countryRow{display:flex;justify-content:center;justify-items:center;text-align:center;direction:rtl;flex-wrap:wrap}
+.metaInline{justify-self:auto;grid-column:auto;justify-content:center}
+.idRow{justify-content:center;direction:rtl;text-align:center;flex-wrap:wrap}
+@media(max-width:380px){.avatar{width:96px;height:96px;flex-basis:96px}.head{gap:9px}}
+
 </style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
 </head>
