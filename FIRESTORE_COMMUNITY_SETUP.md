@@ -1,44 +1,31 @@
-# إعداد المجتمعات الرسمية الخمسة في GABO LIVE
+# إعداد مجتمعات GABO LIVE
 
-هذه الإضافة تسمح لحساب الإدارة بإنشاء وثائق المجتمعات الرسمية الخمسة فقط إذا كانت غير موجودة. زر التهيئة في `/admin/` يحدّث اسم وعلم الوثيقة الموجودة دون استبدال قائمة الأعضاء.
+تُدار المجتمعات في `communities/{communityId}`، وتُحفظ الرسائل في `communities/{communityId}/messages/{messageId}`.
 
-## قبل الضغط على زر التهيئة
+## المجتمعات الرسمية
 
-داخل `match /databases/{database}/documents` في Firestore Rules، أضف كتلة السماح التالية. تعتمد على دالة `isAdmin()` الموجودة في قواعد المشروع:
+- `global` — الشات العام.
+- `south` — مجتمع الجنوب العربي.
+- `sa` — مجتمع السعودية.
+- `ae` — مجتمع الإمارات.
+- `om` — مجتمع عُمان.
+- `ye` — مجتمع اليمن.
 
-```javascript
-match /communities/{communityId} {
-  allow create: if isAdmin()
-    && communityId in ['south', 'sa', 'ae', 'om', 'ye']
-    && request.resource.data.keys().hasOnly([
-      'id', 'name', 'flag', 'type', 'description',
-      'members', 'membersCount', 'joinsToday', 'joinsDay',
-      'activityScore', 'activityDay', 'createdAt'
-    ])
-    && request.resource.data.members is list
-    && request.resource.data.members.size() == 0
-    && request.resource.data.membersCount == 0
-    && request.resource.data.type == 'community'
-    && (
-      (communityId == 'south' && request.resource.data.name == 'مجتمع الجنوب العربي' && request.resource.data.flag == 'south') ||
-      (communityId == 'sa' && request.resource.data.name == 'مجتمع السعودية' && request.resource.data.flag == 'sa') ||
-      (communityId == 'ae' && request.resource.data.name == 'مجتمع الإمارات' && request.resource.data.flag == 'ae') ||
-      (communityId == 'om' && request.resource.data.name == 'مجتمع عُمان' && request.resource.data.flag == 'om') ||
-      (communityId == 'ye' && request.resource.data.name == 'مجتمع اليمن' && request.resource.data.flag == 'ye')
-    );
-}
-```
+## إنشاء مجتمع من التطبيق
 
-هذه كتلة إضافية داخل المسار الرئيسي وليست بديلاً عن قواعد المشروع الحالية. لا تستبدل بقية القواعد بها.
+الحقول الأساسية التي يكتبها التطبيق:
+`name`, `description`, `category`, `rules`, `flag`, `img`, `ownerUid`, `visibility`, `members`, `membersCount`, `banned`, `closed`, `joinsToday`, `joinsDay`, `inviteJoins`, `activityScore`, `createdAt`.
 
-## معرّفات المجتمعات الرسمية
+تُضغط صورة المجتمع في المتصفح وتُحفظ في Firestore داخل `img`؛ لا يستخدم المشروع Firebase Storage.
 
-- `south` — مجتمع الجنوب العربي
-- `sa` — مجتمع السعودية
-- `ae` — مجتمع الإمارات
-- `om` — مجتمع عُمان
-- `ye` — مجتمع اليمن
+## الخصوصية
 
-## تنبيه مهم بشأن حذف البيانات القديمة
+- بيانات المجتمع الوصفية متاحة للمستخدمين المسجلين كي تظهر قائمة المجتمعات.
+- رسائل المجتمع الخاص لا تُقرأ إلا للمالك أو الأعضاء أو الإدارة.
+- الانضمام من التطبيق مسموح للمجتمعات العامة فقط.
+- المجتمع الخاص يحتاج دعوة من مالكه؛ لا تسمح القواعد بالانضمام العام إلى مجتمع خاص.
+- لا تُحذف بيانات Firestore القديمة بمجرد نشر القواعد أو تحديث ملفات الموقع.
 
-تعديل ملفات الموقع لا يحذف بيانات Firestore. لم يتم حذف أي وثيقة أو رسالة أو عضوية. يلزم أولاً إنشاء نسخة احتياطية قابلة للاستعادة، ثم تنفيذ حذف إداري موثوق للوثائق القديمة ورسائلها وعضوياتها. لا تستخدم زر حذف وثيقة منفردة في لوحة الإدارة كبديل عن عملية الترحيل الكاملة.
+## الحذف
+
+حذف المجتمع من لوحة الإدارة/صفحة المجتمع يزيل وثائق الرسائل والعضويات الفرعية على دفعات ثم يحذف الوثيقة الأساسية. لا تحذف أي بيانات قديمة يدويًا قبل أخذ نسخة احتياطية.
