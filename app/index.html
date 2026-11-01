@@ -91,9 +91,20 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 
 </style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
+<style>
+.homeSearchResults{margin:-2px 14px 14px;padding:8px;border:1px solid #e7bd6330;border-radius:15px;background:#11101b;box-shadow:0 12px 28px #0005}
+.homeSearchResults[hidden]{display:none}
+.homeSearchResult{width:100%;display:flex;align-items:center;gap:11px;padding:10px;border:0;border-bottom:1px solid #ffffff12;background:transparent;color:#fff;text-align:right;cursor:pointer}
+.homeSearchResult:last-child{border-bottom:0}
+.homeSearchResult img,.homeSearchResult .searchResultAvatar{width:42px;height:42px;flex:0 0 42px;border-radius:13px;object-fit:cover;background:#29213b;display:grid;place-items:center;font-weight:900;color:#f5d99d}
+.homeSearchResult span{min-width:0;display:block}
+.homeSearchResult b{display:block;font-size:13px;color:#f5d99d}
+.homeSearchResult small{display:block;margin-top:3px;font-size:10px;color:#aaa3b4}
+.homeSearchMessage{padding:12px;text-align:center;color:#aaa3b4;font-size:11px}
+</style>
 </head>
 <body>
-<div class="top"><b>GABO LIVE ✦</b><div class="topActions"><a href="/notifications/" aria-label="الإشعارات" class="topIcon">♧</a><a href="/profile/" aria-label="الملف الشخصي" class="welcomeAvatar" id="homeAvatar">م</a></div></div><section class="welcomeHero"><div class="heroCopy"><small>YOUR SOCIAL UNIVERSE</small><h1>عالمك يبدأ من هنا</h1><p>اكتشف مجتمعاتك، تابع أصدقاءك وكن جزءاً من اللحظة</p><div class="heroPills"><span>✦ مجتمعك</span><span>● تواصل مباشر</span></div></div><div class="heroOrb" aria-hidden="true">G</div></section><div class="homeSearch"><span>⌕</span><input id="communitySearch" type="search" placeholder="ابحث عن اسم المجتمع أو الدولة..." aria-label="البحث عن مجتمع"><button type="button" id="clearSearch" aria-label="مسح البحث">×</button></div>
+<div class="top"><b>GABO LIVE ✦</b><div class="topActions"><a href="/notifications/" aria-label="الإشعارات" class="topIcon">♧</a><a href="/profile/" aria-label="الملف الشخصي" class="welcomeAvatar" id="homeAvatar">م</a></div></div><section class="welcomeHero"><div class="heroCopy"><small>YOUR SOCIAL UNIVERSE</small><h1>عالمك يبدأ من هنا</h1><p>اكتشف مجتمعاتك، تابع أصدقاءك وكن جزءاً من اللحظة</p><div class="heroPills"><span>✦ مجتمعك</span><span>● تواصل مباشر</span></div></div><div class="heroOrb" aria-hidden="true">G</div></section><div class="homeSearch"><span>⌕</span><input id="communitySearch" type="search" placeholder="ابحث عن مجتمع أو أدخل ID الحساب..." aria-label="البحث عن مجتمع أو حساب"><button type="button" id="clearSearch" aria-label="مسح البحث">×</button></div><div id="homeSearchResults" class="homeSearchResults" hidden></div>
 <div class="tabs homeTabs"><button class="on communitiesTab" type="button"><span>▦</span> المجتمعات</button><button class="publicChatTab" type="button" onclick="window.location.href='/global-chat/index.html'" aria-label="فتح الشات العام"><span class="chatGlobe" aria-hidden="true"><svg viewBox="0 0 48 48"><defs><radialGradient id="chatOrb" cx="28%" cy="22%"><stop stop-color="#b9fff5"/><stop offset=".35" stop-color="#45cfc3"/><stop offset="1" stop-color="#24558d"/></radialGradient></defs><circle cx="24" cy="24" r="20" fill="url(#chatOrb)" stroke="#b9fff5" stroke-width="1.2"/><path d="M12 16l7-5 5 3 1 5-5 4-2 6-6-4-2-5zm17-4 7 4 2 6-5 3-2 7-5-5 1-6-3-4zm-16 19 7-2 6 4 1 6-6 3-7-5zm19-1 6-3 4 4-3 7-6 1-3-5z" fill="#caffdf"/><path d="M4 24h40M24 4c-7 7-9 13-9 20s2 13 9 20M24 4c7 7 9 13 9 20s-2 13-9 20" fill="none" stroke="#e2fffa" stroke-opacity=".55"/></svg></span><span>الشات العام</span><span class="chatArrow">←</span></button></div>
 <div class="homeFilters" role="group" aria-label="تصفية المجتمعات"><button type="button" class="active" data-filter="all">الكل</button><button type="button" data-filter="active">الأكثر نشاطاً</button><button type="button" data-filter="mine">مجتمعاتي</button></div>
 
@@ -120,7 +131,7 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 import { auth, db } from '/firebase-config.js';
 import { getSouthArabiaFlag, getCountryRegistry } from '/assets/country-flags.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { collection, onSnapshot, doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { collection, onSnapshot, doc, setDoc, serverTimestamp, getDocs, query, where, limit } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 let uid=localStorage.getItem('gabo_uid')||null;
 let selectedFlag='south';
@@ -282,6 +293,49 @@ function applyCommunityFilters(){
 }
 communitySearch?.addEventListener("input",applyCommunityFilters);
 clearSearch?.addEventListener("click",()=>{communitySearch.value="";applyCommunityFilters();communitySearch.focus();});
+const homeSearchResults=document.getElementById("homeSearchResults");
+let homeSearchTimer=null,homeSearchRequest=0;
+function showHomeSearchMessage(message){if(!homeSearchResults)return;homeSearchResults.innerHTML='<div class="homeSearchMessage"></div>';homeSearchResults.querySelector('.homeSearchMessage').textContent=message;homeSearchResults.hidden=false;}
+function addHomeSearchResult({title,subtitle,photo,letter,kind,onClick}){
+  const row=document.createElement("button");row.type="button";row.className="homeSearchResult";
+  if(photo){const img=document.createElement("img");img.src=photo;img.alt="";row.appendChild(img);}
+  else{const avatar=document.createElement("span");avatar.className="searchResultAvatar";avatar.textContent=letter|| (kind==="account"?"👤":"🌍");row.appendChild(avatar);}
+  const info=document.createElement("span"),name=document.createElement("b"),meta=document.createElement("small");
+  name.textContent=title;meta.textContent=subtitle;info.append(name,meta);row.appendChild(info);row.addEventListener("click",onClick);homeSearchResults.appendChild(row);
+}
+async function runHomeSearch(){
+  const q=(communitySearch?.value||"").trim(),request=++homeSearchRequest;
+  if(!q){homeSearchResults.hidden=true;homeSearchResults.replaceChildren();return;}
+  homeSearchResults.replaceChildren();showHomeSearchMessage("جارٍ البحث...");
+  const normalized=q.toLocaleLowerCase("ar");
+  const cards=[...document.querySelectorAll("#commPage .comm")];
+  const communities=cards.filter(card=>(card.dataset.searchable||card.textContent).toLocaleLowerCase("ar").includes(normalized)||(card.dataset.officialId||card.dataset.communityId||"").toLocaleLowerCase("ar")===normalized);
+  homeSearchResults.replaceChildren();
+  communities.slice(0,5).forEach(card=>{
+    const id=card.dataset.officialId||card.dataset.communityId||"";
+    const title=card.querySelector(".communityName")?.textContent||card.querySelector("b")?.textContent||"مجتمع";
+    addHomeSearchResult({title,subtitle:"مجتمع • "+(id?"ID: "+id:"افتح المجتمع"),kind:"community",onClick:()=>window.goComm(id)});
+  });
+  let accountFound=false;
+  if(/^\d{5,12}$/.test(q)){
+    try{
+      const result=await getDocs(query(collection(db,"users"),where("gaboId","==",q),limit(1)));
+      if(request!==homeSearchRequest)return;
+      if(!result.empty){
+        const userDoc=result.docs[0],p=userDoc.data(),name=p.displayName||p.name||"عضو GABO";
+        addHomeSearchResult({title:name,subtitle:"حساب • ID: "+(p.gaboId||q),photo:p.photoURL||p.photo||p.avatar||"",letter:name.charAt(0),kind:"account",onClick:()=>location.href="/profile/view/?uid="+encodeURIComponent(userDoc.id)});
+        accountFound=true;
+      }
+    }catch(error){console.error("Account search failed:",error);}
+  }
+  if(request!==homeSearchRequest)return;
+  if(!communities.length&&!accountFound){
+    showHomeSearchMessage(/^\d{5,12}$/.test(q)?"ما لقينا مجتمع أو حساب بهذا البحث":"اكتب ID الحساب للبحث عن مستخدم، أو اسم المجتمع");
+  }
+}
+communitySearch?.addEventListener("input",()=>{clearTimeout(homeSearchTimer);homeSearchTimer=setTimeout(runHomeSearch,250);});
+clearSearch?.addEventListener("click",()=>{clearTimeout(homeSearchTimer);runHomeSearch();});
+
 document.querySelectorAll(".homeFilters button").forEach(button=>button.addEventListener("click",()=>{activeFilter=button.dataset.filter;document.querySelectorAll(".homeFilters button").forEach(item=>item.classList.toggle("active",item===button));applyCommunityFilters();}));
 
 // نبني كل المجتمعات من Firestore - والرسمية نعرض عدد الأعضاء لايف
