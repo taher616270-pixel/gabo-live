@@ -123,6 +123,7 @@ import { collection, onSnapshot, doc, setDoc, serverTimestamp } from 'https://ww
 
 let uid=localStorage.getItem('gabo_uid')||null;
 let selectedFlag='south';
+let flagWasManuallyChosen=false;
 let selectedImgBase64=null;
 let selectedVisibility='public';
 let activeFilter="all";
@@ -147,9 +148,21 @@ const ARAB_FLAGS=[
 const flagGrid=document.getElementById('arabFlagGrid'),flagPicker=document.getElementById('arabFlagPicker'),flagTrigger=document.getElementById('flagPickerTrigger'),flagPreview=document.getElementById('selectedFlagPreview'),flagName=document.getElementById('selectedFlagName');
 function flagSource(item){return item.src?item.src():`https://flagcdn.com/w80/${item.code}.png`;}
 function renderArabFlags(){if(!flagGrid)return;flagGrid.innerHTML='';ARAB_FLAGS.forEach(item=>{const btn=document.createElement('button');btn.type='button';btn.className='arabFlagChoice'+(item.code===selectedFlag?' active':'');btn.dataset.flag=item.code;const img=document.createElement('img');img.src=flagSource(item);img.alt='علم '+item.name;if(item.code==='lb')img.onerror=()=>{img.onerror=null;img.src='https://flagcdn.com/lb.svg';};const label=document.createElement('span');label.textContent=item.name;btn.append(img,label);btn.addEventListener('click',()=>chooseArabFlag(item.code));flagGrid.appendChild(btn);});}
-function chooseArabFlag(code){const item=ARAB_FLAGS.find(x=>x.code===code);if(!item)return;selectedFlag=code;flagPreview.innerHTML='';const img=document.createElement('img');img.src=flagSource(item);img.alt='علم '+item.name;if(item.code==='lb')img.onerror=()=>{img.onerror=null;img.src='https://flagcdn.com/lb.svg';};flagPreview.appendChild(img);flagName.textContent=item.name;flagGrid.querySelectorAll('.arabFlagChoice').forEach(btn=>btn.classList.toggle('active',btn.dataset.flag===code));flagPicker.hidden=true;flagTrigger.setAttribute('aria-expanded','false');}
+function chooseArabFlag(code,automatic=false){const item=ARAB_FLAGS.find(x=>x.code===code);if(!item)return;if(!automatic)flagWasManuallyChosen=true;selectedFlag=code;flagPreview.innerHTML='';const img=document.createElement('img');img.src=flagSource(item);img.alt='علم '+item.name;if(item.code==='lb')img.onerror=()=>{img.onerror=null;img.src='https://flagcdn.com/lb.svg';};flagPreview.appendChild(img);flagName.textContent=item.name;flagGrid.querySelectorAll('.arabFlagChoice').forEach(btn=>btn.classList.toggle('active',btn.dataset.flag===code));flagPicker.hidden=true;flagTrigger.setAttribute('aria-expanded','false');}
 flagTrigger?.addEventListener('click',()=>{flagPicker.hidden=!flagPicker.hidden;flagTrigger.setAttribute('aria-expanded',String(!flagPicker.hidden));});
 renderArabFlags();
+// اختيار علم الدولة تلقائياً اعتماداً على موقع اتصال الإنترنت، مع إبقاء الاختيار اليدوي متاحاً.
+async function detectCommunityCountry(){
+ try{
+  const response=await fetch('https://ipapi.co/json/',{headers:{Accept:'application/json'},signal:AbortSignal.timeout(4500),cache:'no-store'});
+  if(!response.ok)throw new Error('country lookup failed');
+  const data=await response.json();
+  const countryCode=String(data.country_code||'').toLowerCase();
+  const matched=ARAB_FLAGS.find(item=>item.code===countryCode);
+  if(matched&&!flagWasManuallyChosen)chooseArabFlag(matched.code,true);
+ }catch(error){console.info('تعذر تحديد الدولة تلقائياً؛ يمكنك اختيار العلم يدوياً.');}
+}
+detectCommunityCountry();
 function updateSouthFlag(url){if(!url)return;SOUTH_FLAG=url;SOUTH_SVG=`<img src="${url}" alt="علم الجنوب العربي" style="width:100%;height:100%;object-fit:cover">`;FLAG_HTML.south=SOUTH_SVG;if(southFlagOption)southFlagOption.src=url;document.querySelectorAll('[data-south-flag]').forEach(img=>img.src=url);}
 getSouthArabiaFlag().then(updateSouthFlag).catch(()=>{});
 getCountryRegistry().then(items=>{items.forEach(country=>{if(country.code==='south-arabia')NAMES.south=country.name;else if(NAMES[country.code]!==undefined)NAMES[country.code]=country.name;});renderOfficialCommunities();}).catch(()=>{});
