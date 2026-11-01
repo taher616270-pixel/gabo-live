@@ -318,8 +318,10 @@ window.giveVIP=async uid=>{
  const userEmail=userSnap.data().email;
  await updateDoc(doc(db,'users',uid),{subscription:'VIP',subUntil:Date.now()+30*24*3600*1000});
  if(userEmail){
-  try{ await sendAdminEmail({type:"contact",name:"نظام GABO",email:userEmail,message:"تمت ترقيتك الى VIP ✅"}); }catch(error){console.error('VIP email failed',error);}
-  alert('تمت الترقية وإرسال طلب إشعار البريد');
+  let emailSent=false;
+  try{ await sendAdminEmail({type:"contact",name:"نظام GABO",email:userEmail,message:"تمت ترقيتك الى VIP ✅"});emailSent=true; }
+  catch(error){console.error('VIP email failed',error);}
+  alert(emailSent?'تمت الترقية وإرسال البريد بنجاح':'تمت الترقية لكن تعذر إرسال البريد');
  }else{ alert('تمت الترقية، لكن لا يوجد بريد إلكتروني محفوظ لهذا المستخدم'); }
 }
 window.banUser=async uid=>{ if(confirm('حظر؟')) await updateDoc(doc(db,'users',uid),{banned:true}); }
@@ -338,8 +340,10 @@ function loadHosts(){
 }
 window.approveHost=async(id,email,name)=>{
  await updateDoc(doc(db,'hosts',id),{approved:true,approvedAt:serverTimestamp()});
- sendAdminEmail({type:"host",name,email,city:"موافقة",details:"تمت الموافقة عليك كمضيف في GABO LIVE 🎉 - رح يجيك ايميل الآن"}).catch(error=>console.error('Host approval email failed',error));
- alert('✅ تمت الموافقة + ارسال ايميل للمضيف + تنبيه لك على taher616270@gmail.com');
+ let emailSent=false;
+ try{await sendAdminEmail({type:"host",name,email,city:"موافقة",details:"تمت الموافقة عليك كمضيف في GABO LIVE 🎉 - رح يجيك ايميل الآن"});emailSent=true;}
+ catch(error){console.error('Host approval email failed',error);}
+ alert(emailSent?'✅ تمت الموافقة وإرسال البريد للمضيف':'تمت الموافقة، لكن تعذر إرسال بريد المضيف');
 }
 window.delHost=async id=>{ if(confirm('حذف؟')) await deleteDoc(doc(db,'hosts',id)); }
 </script>
