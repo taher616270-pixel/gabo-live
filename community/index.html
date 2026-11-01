@@ -87,7 +87,7 @@ body{background:var(--bg);color:#fff;font-family:system-ui;height:100dvh;display
 <div class="commFlag" id="commFlag"></div>
 <div class="headerInfo"><b><span id="commName">تحميل...</span> <span class="miniFlagInHeader" id="commMiniFlag"></span></b><small><span id="memberCount">0 عضو</span> • مجتمع GABO LIVE</small></div>
 </div>
-<div class="messages" id="messages"></div><div class="actionDock" id="actionDock"><div class="joinGate" id="joinGate"><div class="joinGateText"><b id="joinGateTitle">انضم إلى المجتمع</b><small id="joinGateHint">انضم لتتمكن من المشاركة والكتابة في المجتمع</small></div><button id="joinPublicChat" type="button">انضم الآن <span>←</span></button><div id="ownerCommunityTools" class="ownerCommunityTools" style="display:none"><div class="ownerStatsGrid"><span>الأعضاء <b id="ownerMembersCount">0</b></span><span>الرسائل <b id="ownerMessagesCount">0</b></span><span>انضمام اليوم <b id="ownerJoinsToday">0</b></span><span>الدعوات <b id="ownerInviteJoins">0</b></span><span>النشاط <b id="ownerActivityScore">0</b></span></div><div class="ownerActions"><button id="ownerToggleJoin" type="button">إيقاف الانضمام</button><button id="ownerDeleteCommunity" type="button">حذف المجتمع</button></div></div><div id="communityClosedNotice" class="communityClosedNotice" style="display:none">هذا المجتمع متوقف عن استقبال أعضاء جدد حالياً</div></div><div class="inputBar"><button class="iconBtn" onclick="toggleEmoji()">😊</button><div class="inputWrap"><input id="msgInput" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMsg()"></div><button class="sendBtn" onclick="sendMsg()">➤</button></div></div>
+<div class="messages" id="messages"></div><div class="actionDock" id="actionDock"><div class="joinGate" id="joinGate" style="display:none"><div class="joinGateText"><b id="joinGateTitle">انضم إلى المجتمع</b><small id="joinGateHint">انضم لتتمكن من المشاركة والكتابة في المجتمع</small></div><button id="joinPublicChat" type="button">انضم الآن <span>←</span></button><div id="ownerCommunityTools" class="ownerCommunityTools" style="display:none"><div class="ownerStatsGrid"><span>الأعضاء <b id="ownerMembersCount">0</b></span><span>الرسائل <b id="ownerMessagesCount">0</b></span><span>انضمام اليوم <b id="ownerJoinsToday">0</b></span><span>الدعوات <b id="ownerInviteJoins">0</b></span><span>النشاط <b id="ownerActivityScore">0</b></span></div><div class="ownerActions"><button id="ownerToggleJoin" type="button">إيقاف الانضمام</button><button id="ownerDeleteCommunity" type="button">حذف المجتمع</button></div></div><div id="communityClosedNotice" class="communityClosedNotice" style="display:none">هذا المجتمع متوقف عن استقبال أعضاء جدد حالياً</div></div><div class="inputBar"><button class="iconBtn" onclick="toggleEmoji()">😊</button><div class="inputWrap"><input id="msgInput" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMsg()"></div><button class="sendBtn" onclick="sendMsg()">➤</button></div></div>
 <button class="globalStatsFab" id="globalStatsFab" type="button" aria-label="عدادات الشات العام" style="display:none">☷<i></i></button>
 <div class="globalStatsShade" id="globalStatsShade" style="display:none"></div>
 <aside class="globalStatsPanel" id="globalStatsPanel" aria-hidden="true">
@@ -119,6 +119,7 @@ const params=new URLSearchParams(location.search);
 let communityId=params.get('id')||'south';
 const isGeneralPublicChat=communityId==='global';
 let hasJoinedGeneralChat=false;
+let membershipReady=false;
 let globalMembers=[];
 let uid=localStorage.getItem('gabo_uid')||null;
 let userData=null;
@@ -175,7 +176,9 @@ async function loadCommunity(){
     commMiniFlagEl.innerHTML=flagUrl?'<img src="'+flagUrl+'" alt="علم الدولة" style="width:100%;height:100%;object-fit:cover">':(flagCode==='south'?(fallback.mini||SOUTH_SVG):'');
   }
   const members=Array.isArray(communityData.members)?communityData.members:[];
-  hasJoinedGeneralChat=communityData.ownerUid===uid||members.includes(uid);
+  const savedMemberships=Array.isArray(userData?.joinedCommunityIds)?userData.joinedCommunityIds:[];
+  hasJoinedGeneralChat=communityData.ownerUid===uid||members.includes(uid)||(!isGeneralPublicChat&&savedMemberships.includes(communityId));
+  membershipReady=true;
   updateGeneralChatGate();
   return communityData;
 }
@@ -184,7 +187,8 @@ onSnapshot(doc(db,'communities',communityId),(snap)=>{
  communityData=snap.data()||communityData;
  if(communityData?.name)commNameEl.textContent=communityData.name;
  const members=Array.isArray(communityData?.members)?communityData.members:[];
- hasJoinedGeneralChat=!!uid&&(communityData?.ownerUid===uid||members.includes(uid));
+ const savedMemberships=Array.isArray(userData?.joinedCommunityIds)?userData.joinedCommunityIds:[];
+ hasJoinedGeneralChat=!!uid&&(communityData?.ownerUid===uid||members.includes(uid)||(!isGeneralPublicChat&&savedMemberships.includes(communityId)));
  const count=document.getElementById('memberCount');if(count)count.textContent=members.length+' عضو';
  updateGeneralChatGate();refreshOwnerCounters();
 },error=>console.warn('Community live stats listener:',error));
@@ -216,7 +220,7 @@ function updateGeneralChatGate(){
  const closed=!!communityData?.closed;
  if(title)title.textContent=isGeneralPublicChat?'انضم إلى الشات العام':'انضم إلى '+(commNameEl.textContent||'المجتمع');
  if(hint)hint.textContent=isOwner?'أنت مالك هذا المجتمع ويمكنك إدارة الانضمام والعدادات':'انضم لتتمكن من المشاركة والكتابة في المجتمع';
- if(gate)gate.style.display=(isOwner||!hasJoinedGeneralChat)?'flex':'none';
+ if(gate)gate.style.display=membershipReady&&(isOwner||!hasJoinedGeneralChat)?'flex':'none';
  if(gate)gate.classList.toggle('ownerMode',isOwner);
  if(join)join.style.display=isOwner||hasJoinedGeneralChat||closed?'none':'inline-flex';
  if(ownerTools)ownerTools.style.display=isOwner?'flex':'none';
