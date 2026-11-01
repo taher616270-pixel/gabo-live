@@ -341,10 +341,10 @@ function applyCommunityFilters(){
   const mine=card.dataset.ownerUid===uid||(uid&&(card.dataset.members||"").split(",").includes(uid));
   const active=Number(card.dataset.activityScore||0)>0;
   const show=(!q||searchable.includes(q))&&(activeFilter==="all"||(activeFilter==="active"&&active)||(activeFilter==="mine"&&mine));
-  card.style.display=show?"":"none";if(show){if(kind==="official")officialVisible++;else customVisible++;}
+  card.style.display=show?"":"none";if(show){if(kind==="official")officialVisible++;else if(kind==="custom")customVisible++;else allCustomVisible++;}
  });
  filterCards(officialCards,"official");filterCards(customCards,"custom");filterCards(allCustomCards,"allCustom");
- allCustomVisible=allCustomCards.filter(card=>card.style.display!=="none").length;
+ 
  if(clearSearch)clearSearch.style.display=q?"block":"none";
  if(communityCount)communityCount.textContent=officialVisible+" مجتمع";
  if(customCommunityCount)customCommunityCount.textContent=String(customVisible);
