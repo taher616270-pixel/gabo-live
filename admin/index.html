@@ -127,7 +127,7 @@ import { auth, db, storage } from "/firebase-config.js";
 
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnapshot, serverTimestamp, deleteField } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnapshot, serverTimestamp, deleteField, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const EMAIL_URL = "https://script.google.com/macros/s/AKfycbyDYmsYoCBSkuzn97cD9bnl6Fo0IuI-MrcCO8q1H4fdnT1EvGXCYoxM3TW2zinmopqS/exec";
 
@@ -276,10 +276,24 @@ function renderPages(){const el=document.getElementById('pagesList'); el.innerHT
 window.delPage=i=>{cfg.pages.splice(i,1); renderPages(); saveCfg();}
 document.getElementById('addPage').onclick=()=>{const id=document.getElementById('pgId').value.trim(); const title=document.getElementById('pgTitle').value.trim(); const path=document.getElementById('pgPath').value.trim(); const content=document.getElementById('pgContent').value.trim(); if(!id||!title||!path) return alert('اكمل'); cfg.pages.push({id,title,path,content}); renderPages(); saveCfg();}
 
+async function deleteCommunityCompletely(id){
+ if(!confirm('حذف المجتمع ورسائله وعضوياته نهائياً؟'))return;
+ try{
+  for(const sub of ['messages','members']){
+   const snap=await getDocs(collection(db,'communities',id,sub));
+   for(let i=0;i<snap.docs.length;i+=400){
+    const batch=writeBatch(db);
+    snap.docs.slice(i,i+400).forEach(item=>batch.delete(item.ref));
+    await batch.commit();
+   }
+  }
+  await deleteDoc(doc(db,'communities',id));
+ }catch(error){console.error('Community deletion failed:',error);alert('تعذر حذف المجتمع بالكامل. راجع صلاحيات Firestore وحاول مرة أخرى.');}
+}
 function listenAll(){
  onSnapshot(collection(db,'communities'), s=>{
    const list=document.getElementById('commList'); list.innerHTML=''; let count=0;
-   s.forEach(d=>{ count++; const c=d.data(); const div=document.createElement('div'); div.className='row'; div.innerHTML=`<span>${c.icon||'🌍'} ${c.name}</span><button class="danger" data-id="${d.id}">حذف</button>`; div.querySelector('button').onclick=()=>deleteDoc(doc(db,'communities',d.id)); list.appendChild(div); });
+   s.forEach(d=>{ count++; const c=d.data(); const div=document.createElement('div'); div.className='row'; div.innerHTML=`<span>${c.icon||'🌍'} ${c.name}</span><button class="danger" data-id="${d.id}">حذف</button>`; div.querySelector('button').onclick=()=>deleteCommunityCompletely(d.id); list.appendChild(div); });
    document.getElementById('cComm').innerText=count;
  });
  onSnapshot(collection(db,'messages'), s=>{
