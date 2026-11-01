@@ -303,10 +303,15 @@ onAuthStateChanged(auth,async u=>{
     }
   }catch(cacheErr){console.warn('Profile cache read error:',cacheErr);}
   try{
-    SOUTH_FLAG=await getSouthArabiaFlag();
-    countries=(await getCountryRegistry()).map(c=>({code:String(c.code).toLowerCase(),name:c.name,flagImg:c.code==='south-arabia'?SOUTH_FLAG:c.flag}));
+    // ابدأ قراءة الملف الشخصي وإعدادات الدول بالتوازي بدل انتظار كل طلب بالتتابع
     const ref=doc(db,'users',u.uid);
-    const snap=await getDoc(ref);
+    const [southFlag,countryRegistry,snap]=await Promise.all([
+      getSouthArabiaFlag(),
+      getCountryRegistry(),
+      getDoc(ref)
+    ]);
+    SOUTH_FLAG=southFlag;
+    countries=countryRegistry.map(c=>({code:String(c.code).toLowerCase(),name:c.name,flagImg:c.code==='south-arabia'?SOUTH_FLAG:c.flag}));
     let d=snap.exists()?snap.data():{};
     if(!snap.exists()){
       const finalId=genId(u.uid);
