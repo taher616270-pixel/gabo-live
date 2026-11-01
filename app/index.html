@@ -92,8 +92,7 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 </style>
 <style>
 /* Official five-community redesign */
-.createBtn,#createModal{display:none!important}
-.homeFilters [data-filter="mine"]{display:none!important}
+/* Keep user-created communities enabled alongside the five official communities. */
 #commPage{grid-template-columns:1fr;gap:14px;padding:0 13px 28px;max-width:760px;margin:0 auto}
 #commPage .comm{position:relative;min-height:116px;display:grid;grid-template-columns:92px minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:center;justify-items:stretch;gap:5px 14px;padding:15px 16px;text-align:right;border:1px solid rgba(231,189,99,.28);border-radius:22px;background:radial-gradient(circle at 8% 10%,rgba(139,99,215,.20),transparent 42%),linear-gradient(120deg,#211a2b,#111019 72%);box-shadow:inset 0 1px rgba(255,255,255,.07),0 12px 28px rgba(0,0,0,.24);overflow:hidden}
 #commPage .comm:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(#f5d99d,#8b63d7);opacity:.9}
@@ -122,7 +121,7 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 <div class="tabs homeTabs"><button class="on communitiesTab" type="button"><span>▦</span> المجتمعات</button><button class="publicChatTab" type="button" onclick="window.location.href='/global-chat/index.html'" aria-label="فتح الشات العام"><span class="chatGlobe" aria-hidden="true"><svg viewBox="0 0 48 48"><defs><radialGradient id="chatOrb" cx="28%" cy="22%"><stop stop-color="#b9fff5"/><stop offset=".35" stop-color="#45cfc3"/><stop offset="1" stop-color="#24558d"/></radialGradient></defs><circle cx="24" cy="24" r="20" fill="url(#chatOrb)" stroke="#b9fff5" stroke-width="1.2"/><path d="M12 16l7-5 5 3 1 5-5 4-2 6-6-4-2-5zm17-4 7 4 2 6-5 3-2 7-5-5 1-6-3-4zm-16 19 7-2 6 4 1 6-6 3-7-5zm19-1 6-3 4 4-3 7-6 1-3-5z" fill="#caffdf"/><path d="M4 24h40M24 4c-7 7-9 13-9 20s2 13 9 20M24 4c7 7 9 13 9 20s-2 13-9 20" fill="none" stroke="#e2fffa" stroke-opacity=".55"/></svg></span><span>الشات العام</span><span class="chatArrow">←</span></button></div>
 <div class="homeFilters" role="group" aria-label="تصفية المجتمعات"><button type="button" class="active" data-filter="all">الكل</button><button type="button" data-filter="active">الأكثر نشاطاً</button></div>
 
-<section class="engagementSection" aria-labelledby="engagementTitle"><div class="sectionHead"><div><small>COMMUNITY PULSE</small><h2 id="engagementTitle">🔥 الأكثر تفاعلاً</h2><p>نشاط المجتمعات الرسمية خلال آخر 24 ساعة</p></div><span class="liveBadge">● مباشر</span></div><div id="activityPage" class="activityList"><div class="activityEmpty">جارٍ تحميل نشاط المجتمعات...</div></div></section><div class="sectionHead communityHead"><div><small>DISCOVER</small><h2>🌍 مجتمعات GABO الرسمية</h2><p>خمسة مجتمعات رسمية تجمع أبناء المنطقة والخليج</p></div></div><div class="communityMeta"><span>اكتشف مكانك بين المجتمعات</span><strong id="communityCount">— مجتمع</strong></div><div id="commPage" class="grid"><div class="gridEmpty">جارٍ تحميل المجتمعات...</div></div>
+<section class="engagementSection" aria-labelledby="engagementTitle"><div class="sectionHead"><div><small>COMMUNITY PULSE</small><h2 id="engagementTitle">🔥 الأكثر تفاعلاً</h2><p>نشاط المجتمعات الرسمية خلال آخر 24 ساعة</p></div><span class="liveBadge">● مباشر</span></div><div id="activityPage" class="activityList"><div class="activityEmpty">جارٍ تحميل نشاط المجتمعات...</div></div></section><div class="sectionHead communityHead"><div><small>DISCOVER</small><h2>🌍 مجتمعات GABO الرسمية</h2><p>خمسة مجتمعات رسمية تجمع أبناء المنطقة والخليج</p></div></div><div class="communityMeta"><span>اكتشف مكانك بين المجتمعات</span><strong id="communityCount">— مجتمع</strong></div><button type="button" class="createBtn" onclick="openCreate()">＋ إنشاء مجتمع</button><div id="commPage" class="grid"><div class="gridEmpty">جارٍ تحميل المجتمعات...</div></div>
 
 
 
@@ -360,7 +359,7 @@ onSnapshot(collection(db,'communities'),snap=>{
     const data=d.data();
     counts[d.id]=data.membersCount||(data.members?data.members.length:0)||0;
     if(STATIC_IDS.includes(d.id))rankedDocs.push({id:d.id,data});
-    // المجتمعات المخصصة القديمة لا تظهر في الواجهة الجديدة؛ بياناتها لم تُحذف من Firestore.
+    if(!STATIC_IDS.includes(d.id))customDocs.push({id:d.id,data});
   });
   grid.innerHTML="";
   activityGrid.innerHTML="";
