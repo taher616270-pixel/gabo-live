@@ -23,7 +23,6 @@ textarea{min-height:90px}
 .small{padding:6px 10px;font-size:11px}
 @media(max-width:800px){.grid{grid-template-columns:1fr}}
 </style>
-<script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
 </head>
 <body>
@@ -32,7 +31,6 @@ textarea{min-height:90px}
 
 <div class="tabs">
 <div class="tab active" data-p="main">🌍 المجتمعات</div>
-<div class="tab" data-p="agora">🎙️ Agora</div>
 <div class="tab" data-p="subs">💳 الاشتراكات</div>
 <div class="tab" data-p="nav">🧭 الأزرار</div>
 <div class="tab" data-p="pages">📄 الصفحات</div>
@@ -55,19 +53,6 @@ textarea{min-height:90px}
 <div class="card"><b>➕ إضافة مجتمع جديد</b><input id="newName" placeholder="مثال: عمان"><input id="newIcon" placeholder="أيقونة مثال: 🇴🇲"><button id="addOne" class="primary" style="width:100%">إضافة</button></div>
 </div>
 <div class="card"><b>💬 كل الرسائل (30 الأخيرة)</b><div id="msgsList"></div></div>
-</div>
-
-<!-- AGORA -->
-<div class="card panel" id="p-agora">
-<b>🎙️ إعدادات Agora - الغرف الصوتية (مرتبطة بالأدمن)</b>
-<div class="grid">
-<div><label>App ID من Agora Console</label><input id="agAppId" placeholder="xxxxxx"></div>
-<div><label>App Certificate (اتركه فاضي للتجربة)</label><input id="agCert"></div>
-<div><label>مفعل؟</label><select id="agEnabled"><option value="true">مفعل ✅</option><option value="false">معطل ❌</option></select></div>
-<div><label>عدد المايكات</label><input id="agMaxMic" type="number" value="8"></div>
-</div>
-<button id="saveAgora" class="primary" style="margin-top:10px;width:100%">💾 حفظ Agora - يطبق على كل الموقع فوراً</button>
-<small style="color:#aaa">الموقع يقرأ هذه القيم من site_config/main → كل غرفة صوتية تنشئها تستخدم هذا الـ App ID</small>
 </div>
 
 <!-- SUBS -->
@@ -140,11 +125,20 @@ textarea{min-height:90px}
 <script type="module">
 import { auth, db, storage } from "/firebase-config.js";
 
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const EMAIL_URL = "https://script.google.com/macros/s/AKfycbyDYmsYoCBSkuzn97cD9bnl6Fo0IuI-MrcCO8q1H4fdnT1EvGXCYoxM3TW2zinmopqS/exec";
+const EMAIL_URL = "https://gabo-otp.taher616270.workers.dev/";
+async function sendAdminEmail(payload){
+ const user=auth.currentUser;
+ if(!user)throw new Error('AUTH_REQUIRED');
+ const idToken=await user.getIdToken();
+ const response=await fetch(EMAIL_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'admin_email',idToken,...payload})});
+ const data=await response.json().catch(()=>({}));
+ if(!response.ok||data.success!==true)throw new Error(data.error||'EMAIL_SEND_FAILED');
+ return data;
+}
 
 const commsDefault = [
  {id:'general', name:'الشات العام', icon:'🔥'},
@@ -156,7 +150,7 @@ const commsDefault = [
 ];
 
 let me=null, countryRegistry=[];
-let cfg={brand:"GABO LIVE",bottomNav:[{icon:"⌂",label:"الرئيسية",path:"/",order:0,visible:true},{icon:"♬",label:"المجتمع",path:"/app/",order:1,visible:true},{icon:"✉",label:"الخاص",path:"/dm/",order:2,visible:true},{icon:"◉",label:"حسابي",path:"/profile/",order:3,visible:true}],agora:{appId:"",appCert:"",enabled:true,maxMic:8},payment:{key:"",currency:"SAR"},plans:[{id:"vip1",name:"VIP شهري",price:29,days:30}],pages:[],features:{privateChat:true}};
+let cfg={brand:"GABO LIVE",bottomNav:[{icon:"⌂",label:"الرئيسية",path:"/",order:0,visible:true},{icon:"♬",label:"المجتمع",path:"/app/",order:1,visible:true},{icon:"✉",label:"الخاص",path:"/dm/",order:2,visible:true},{icon:"◉",label:"حسابي",path:"/profile/",order:3,visible:true}],payment:{key:"",currency:"SAR"},plans:[{id:"vip1",name:"VIP شهري",price:29,days:30}],pages:[],features:{privateChat:true}};
 
 onAuthStateChanged(auth, async u=>{
  if(!u){ location.replace('/login/'); return; }
@@ -174,7 +168,7 @@ onAuthStateChanged(auth, async u=>{
  }
  me=u; document.getElementById('adminEmail').innerText=u.email;
  const c=await getDoc(doc(db,'site_config','main')); if(c.exists()) cfg={...cfg,...c.data()};
- initTabs(); listenAll(); fillAgoraForm(); renderNav(); renderPlans(); renderPages(); renderSouthFlag(); try{countryRegistry=await getCountryRegistryAdmin();renderCountryRegistry();}catch(countryError){console.error('Country manager setup:',countryError);document.getElementById('countryAdminList').innerHTML='<p style="color:#fbbf24;line-height:1.8">لتفعيل إدارة الدول، انشر قواعد Firestore وStorage الموضحة في ملف FIREBASE_COUNTRY_RULES.md داخل المستودع.</p>';} loadHosts(); loadUsersFull();
+ initTabs(); listenAll(); renderNav(); renderPlans(); renderPages(); renderSouthFlag(); try{countryRegistry=await getCountryRegistryAdmin();renderCountryRegistry();}catch(countryError){console.error('Country manager setup:',countryError);document.getElementById('countryAdminList').innerHTML='<p style="color:#fbbf24;line-height:1.8">لتفعيل إدارة الدول، انشر قواعد Firestore وStorage الموضحة في ملف FIREBASE_COUNTRY_RULES.md داخل المستودع.</p>';} loadHosts(); loadUsersFull();
 });
 
 document.getElementById('logout').onclick=()=>signOut(auth).then(()=>location.href='/login/');
@@ -200,10 +194,6 @@ document.getElementById('addOne').onclick=async()=>{
  await setDoc(doc(db,'communities',id),{name,icon,createdAt:serverTimestamp()});
  document.getElementById('newName').value=''; document.getElementById('newIcon').value='';
 };
-
-// Agora
-function fillAgoraForm(){ document.getElementById('agAppId').value=cfg.agora?.appId||''; document.getElementById('agCert').value=cfg.agora?.appCert||''; document.getElementById('agEnabled').value=String(cfg.agora?.enabled??true); document.getElementById('agMaxMic').value=cfg.agora?.maxMic||8; }
-document.getElementById('saveAgora').onclick=()=>{ cfg.agora={appId:document.getElementById('agAppId').value.trim(),appCert:document.getElementById('agCert').value.trim(),enabled:document.getElementById('agEnabled').value==='true',maxMic:parseInt(document.getElementById('agMaxMic').value||'8')}; saveCfg(); };
 
 // Nav
 function renderNav(){ const el=document.getElementById('navList'); el.innerHTML=''; (cfg.bottomNav||[]).forEach((n,i)=>{const d=document.createElement('div'); d.className='row'; d.innerHTML=`<span>${n.icon} ${n.label} → ${n.path}</span><div><button class="small" onclick="moveNav(${i},-1)">↑</button><button class="small" onclick="moveNav(${i},1)">↓</button><button class="small danger" onclick="delNav(${i})">حذف</button></div>`; el.appendChild(d);});}
@@ -309,8 +299,10 @@ window.giveVIP=async uid=>{
  const userEmail=userSnap.data().email;
  await updateDoc(doc(db,'users',uid),{subscription:'VIP',subUntil:Date.now()+30*24*3600*1000});
  if(userEmail){
-  try{ await fetch(EMAIL_URL,{method:"POST",body:JSON.stringify({type:"contact",name:"نظام GABO",email:userEmail,message:"تمت ترقيتك الى VIP ✅"})}); }catch{}
-  alert('تمت الترقية وإرسال طلب إشعار البريد');
+  let emailSent=false;
+  try{ await sendAdminEmail({type:"contact",name:"نظام GABO",email:userEmail,message:"تمت ترقيتك الى VIP ✅"});emailSent=true; }
+  catch(error){console.error('VIP email failed',error);}
+  alert(emailSent?'تمت الترقية وإرسال البريد بنجاح':'تمت الترقية لكن تعذر إرسال البريد');
  }else{ alert('تمت الترقية، لكن لا يوجد بريد إلكتروني محفوظ لهذا المستخدم'); }
 }
 window.banUser=async uid=>{ if(confirm('حظر؟')) await updateDoc(doc(db,'users',uid),{banned:true}); }
@@ -329,8 +321,10 @@ function loadHosts(){
 }
 window.approveHost=async(id,email,name)=>{
  await updateDoc(doc(db,'hosts',id),{approved:true,approvedAt:serverTimestamp()});
- fetch(EMAIL_URL,{method:"POST",body:JSON.stringify({type:"host",name,email,city:"موافقة",details:"تمت الموافقة عليك كمضيف في GABO LIVE 🎉 - رح يجيك ايميل الآن"})});
- alert('✅ تمت الموافقة + ارسال ايميل للمضيف + تنبيه لك على taher616270@gmail.com');
+ let emailSent=false;
+ try{await sendAdminEmail({type:"host",name,email,city:"موافقة",details:"تمت الموافقة عليك كمضيف في GABO LIVE 🎉 - رح يجيك ايميل الآن"});emailSent=true;}
+ catch(error){console.error('Host approval email failed',error);}
+ alert(emailSent?'✅ تمت الموافقة وإرسال البريد للمضيف':'تمت الموافقة، لكن تعذر إرسال بريد المضيف');
 }
 window.delHost=async id=>{ if(confirm('حذف؟')) await deleteDoc(doc(db,'hosts',id)); }
 </script>

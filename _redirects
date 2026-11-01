@@ -1,20 +1,23 @@
-# كل صفحة تفتح بدون الشرطة الأخيرة أيضا
+# Canonical routes for existing GABO LIVE pages
 /login /login/index.html 200
 /app /app/index.html 200
 /app/public /app/public/index.html 200
 /app/private /dm/index.html 200
 /profile /profile/index.html 200
+/profile/view /profile/view/index.html 200
 /hosts /hosts/index.html 200
+/host /hosts/index.html 200
 /vip /vip/index.html 200
 /admin /admin/index.html 200
 /posts /posts/index.html 200
 /dm /dm/index.html 200
-/create /create/index.html 200
-/communities /communities/index.html 200
-/members /members/index.html 200
-/chat /chat/index.html 200
-/host /host/index.html 200
+/community /community/index.html 200
+/communities /community/index.html 200
+/chat /global-chat/index.html 200
+/global-chat /global-chat/index.html 200
+/notifications /notifications/index.html 200
+/subscriptions /subscriptions/index.html 200
+/games /games/index.html 200
 
-
-# اي مسار غير موجود يرجع للافتتاحية
+# Unknown paths display the branded landing page with a 404 status
 /* /index.html 404

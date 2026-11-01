@@ -434,10 +434,17 @@ initialize();
 
 const OTP_API_URL='https://gabo-otp.taher616270.workers.dev/';
 async function otpCall(payload){
-  const response=await fetch(OTP_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-  const data=await response.json().catch(()=>({}));
-  if(!response.ok)throw new Error(data.error||'REQUEST_FAILED');
-  return data;
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),23000);
+  try{
+    const response=await fetch(OTP_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(data.error||'REQUEST_FAILED');
+    return data;
+  }catch(error){
+    if(error?.name==='AbortError')throw new Error('REQUEST_TIMEOUT');
+    throw error;
+  }finally{clearTimeout(timer);}
 }
 async function sendWelcomeEmail(user){
   if(!user?.uid||!user?.email)return false;
@@ -456,7 +463,7 @@ async function requestSignupOtp(email){
     setMessage('جاري إرسال رمز التحقق إلى بريدك...','');
     await otpCall({action:'send_signup',email});
   }catch(e){
-    const map={EMAIL_SEND_FAILED:'تعذر إرسال الرمز. تحقق من إعداد البريد وحاول لاحقًا.',RESEND_WAIT:'انتظر دقيقة قبل طلب رمز جديد.',RATE_LIMITED:'وصلت إلى الحد المسموح لطلبات الرمز اليوم.'};
+    const map={EMAIL_SEND_FAILED:'تعذر إرسال الرمز. تحقق من إعداد البريد وحاول لاحقًا.',EMAIL_SERVICE_TIMEOUT:'تأخر خادم البريد. حاول مرة أخرى بعد قليل.',REQUEST_TIMEOUT:'انتهت مهلة الاتصال. حاول مرة أخرى.',RESEND_WAIT:'انتظر دقيقة قبل طلب رمز جديد.',RATE_LIMITED:'وصلت إلى الحد المسموح لطلبات الرمز اليوم.'};
     setMessage(map[e.message]||'تعذر إرسال رمز التحقق. حاول مرة أخرى.','e');return false;
   }
   input.value='';error.hidden=true;modal.hidden=false;input.focus();
@@ -485,7 +492,7 @@ $('signupOtpCode').addEventListener('input',e=>{e.target.value=e.target.value.re
 $('authForm').addEventListener('submit', async (e)=>{
   e.preventDefault(); clearErrors();
   if(!auth){ setMessage('النظام لم يتحمل بعد','e'); return; }
-  const emailRule=value=>/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(value);
+  const emailRule=value=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
   emailRule.message='أدخل بريدًا إلكترونيًا صحيحًا';
   if(mode==='login'){
     if(!validateFields([['l_email','أدخل البريد الإلكتروني',emailRule],['f_loginPass','أدخل كلمة المرور']])){setMessage('راجع الحقول المحددة باللون الأحمر','e');return;}

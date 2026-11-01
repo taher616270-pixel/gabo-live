@@ -1,8 +1,8 @@
 // GABO LIVE - المحرك المشترك لكل الصفحات (حراسة الدخول، التنقل، الشات)
 import { auth, db } from '/firebase-config.js';
 import { getSouthArabiaFlag, getCountryRegistry } from '/assets/country-flags.js';
-import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import { doc, getDoc, collection, addDoc, query, where, orderBy, limitToLast, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { doc, getDoc, collection, addDoc, query, where, orderBy, limitToLast, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 export { auth, db };
 
