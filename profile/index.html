@@ -265,44 +265,59 @@ function showCoverInMain(coverData){
 }
 onAuthStateChanged(auth,async u=>{
   if(!u){location.replace('/login/');return}
-  cur=u; SOUTH_FLAG=await getSouthArabiaFlag(); countries= (await getCountryRegistry()).map(c=>({code:c.code,name:c.name,flagImg:c.code==='south-arabia'?SOUTH_FLAG:c.flag})); const ref=doc(db,'users',u.uid); const snap=await getDoc(ref);
-  let finalId; let savedGender='أنثى ♀️'; let savedBday='2000-01-03';
-  if(!snap.exists()){
-    finalId=genId(u.uid); 
-    await setDoc(ref,{followers:0,following:0,visitors:0,gaboId:finalId,bio:'مرحبا بكم في ملفي الشخصي 👋',country:'south-arabia',countryName:'الجنوب العربي',countryFlagImg:SOUTH_FLAG,gender:'أنثى ♀️',bday:'2000-01-03'},{merge:true});
-    setCountryDisplay('الجنوب العربي','south-arabia',SOUTH_FLAG); updateMeta(savedGender,savedBday);
-  }else{
-    finalId=snap.data().gaboId||genId(u.uid);
-    const d=snap.data();
-    if(d.bio){document.getElementById('bioPublic').textContent=d.bio; document.getElementById('rowBioVal').textContent=d.bio;}
-    if(d.countryName){const activeCountry=countries.find(c=>c.code===String(d.country||'').toLowerCase());setCountryDisplay(activeCountry?.name||'غير محدد',activeCountry?.code||'',activeCountry?.flagImg||'');} else{setCountryDisplay('الجنوب العربي','south-arabia',SOUTH_FLAG);}
-    if(d.gender){savedGender=d.gender; document.getElementById('rowGenderVal').textContent=d.gender;}
-    if(d.bday){savedBday=d.bday; document.getElementById('rowBdayVal').textContent=d.bday;}
+  cur=u;
+  try{
+    SOUTH_FLAG=await getSouthArabiaFlag();
+    countries=(await getCountryRegistry()).map(c=>({code:String(c.code).toLowerCase(),name:c.name,flagImg:c.code==='south-arabia'?SOUTH_FLAG:c.flag}));
+    const ref=doc(db,'users',u.uid);
+    const snap=await getDoc(ref);
+    let d=snap.exists()?snap.data():{};
+    if(!snap.exists()){
+      const finalId=genId(u.uid);
+      const defaults={uid:u.uid,name:u.displayName||u.email?.split('@')[0]||'مستخدم',displayName:u.displayName||u.email?.split('@')[0]||'مستخدم',photo:u.photoURL||'',photoURL:u.photoURL||'',followers:0,following:0,visitors:0,gaboId:finalId,bio:'مرحبا بكم في ملفي الشخصي 👋',country:'south-arabia',countryName:'الجنوب العربي',countryFlagImg:SOUTH_FLAG,gender:'',bday:''};
+      await setDoc(ref,defaults,{merge:true});
+      d=defaults;
+    }
+    const finalId=d.gaboId||genId(u.uid);
+    const displayName=d.displayName||d.name||u.displayName||u.email?.split('@')[0]||'مستخدم';
+    document.getElementById('idMain').textContent=finalId;
+    document.getElementById('userId').textContent=finalId;
+    document.getElementById('nameMain').textContent=displayName;
+    document.getElementById('rowNameVal').textContent=displayName;
+    document.getElementById('avL').textContent=displayName.charAt(0);
+    document.getElementById('rowAvLetter').textContent=displayName.charAt(0);
+    document.getElementById('bioPublic').textContent=d.bio||'مرحبا بك في ملفك الشخصي 👋';
+    document.getElementById('rowBioVal').textContent=d.bio||'اكتب لتعريف نفسك';
+    const savedGender=d.gender||'';
+    const savedBday=d.bday||'';
+    document.getElementById('rowGenderVal').textContent=savedGender||'غير محدد';
+    document.getElementById('rowBdayVal').textContent=savedBday||'غير محدد';
+    const countryCode=String(d.country||'south-arabia').toLowerCase();
+    const country=countries.find(x=>x.code===countryCode);
+    setCountryDisplay(d.countryName||country?.name||'الجنوب العربي',countryCode,d.countryFlagImg||country?.flagImg||SOUTH_FLAG);
     updateMeta(savedGender,savedBday);
+    const photo=localStorage.getItem('gabo_photo_'+u.uid)||d.photoURL||d.photo||d.avatar||u.photoURL||'';
+    const cover=localStorage.getItem('gabo_cover_'+u.uid)||d.cover||'';
+    if(photo){
+      const img=document.getElementById('avatarImgMain');img.src=photo;img.style.display='block';document.getElementById('avL').style.display='none';
+      document.getElementById('rowAvImg').src=photo;document.getElementById('rowAvImg').style.display='block';document.getElementById('rowAvLetter').style.display='none';
+    }
+    if(cover){
+      showCoverInMain(cover);
+      document.getElementById('coverImg').src=cover;document.getElementById('coverImg').style.display='block';document.getElementById('coverEmpty').style.display='none';
+    }
+    onSnapshot(ref,ds=>{
+      if(!ds.exists())return;
+      const p=ds.data();
+      document.getElementById('c1').textContent=p.followers||0;document.getElementById('c2').textContent=p.following||0;document.getElementById('c3').textContent=p.visitors||0;
+      document.getElementById('s_c1').textContent=p.followers||0;document.getElementById('s_c2').textContent=p.following||0;document.getElementById('s_c3').textContent=p.visitors||0;
+      updateMeta(p.gender||savedGender,p.bday||savedBday);
+      if(p.bio)document.getElementById('bioPublic').textContent=p.bio;
+    },err=>showStatus('تعذر تحميل بيانات الحساب: '+err.message));
+  }catch(err){
+    console.error('Profile load error:',err);
+    showStatus('تعذر تحميل بيانات الحساب: '+(err.message||'خطأ غير معروف'));
   }
-  document.getElementById('idMain').textContent=finalId; document.getElementById('userId').textContent=finalId;
-  document.getElementById('nameMain').textContent=u.displayName||snap.data()?.displayName||snap.data()?.name||'Taher Hammam';
-  document.getElementById('avL').textContent=(u.displayName||snap.data()?.displayName||'T')[0];
-  document.getElementById('rowNameVal').textContent=u.displayName||snap.data()?.displayName||snap.data()?.name||'Taher Hammam';
-  document.getElementById('rowAvLetter').textContent=(u.displayName||snap.data()?.displayName||'T')[0];
-  const photo = localStorage.getItem('gabo_photo_'+u.uid) || localStorage.getItem('gabo_photo') || snap.data()?.photoURL || snap.data()?.photo || snap.data()?.avatar || u.photoURL || '';
-  const cover = localStorage.getItem('gabo_cover_'+u.uid) || snap.data()?.cover || '';
-  if(photo){
-    const img=document.getElementById('avatarImgMain');img.src=photo;img.style.display='block';document.getElementById('avL').style.display='none';
-    document.getElementById('rowAvImg').src=photo;document.getElementById('rowAvImg').style.display='block';document.getElementById('rowAvLetter').style.display='none';
-    localStorage.setItem('gabo_photo',photo);
-    localStorage.setItem('gabo_photo_'+u.uid,photo);
-  }
-  if(cover){
-    showCoverInMain(cover);
-    document.getElementById('coverImg').src=cover;document.getElementById('coverImg').style.display='block';document.getElementById('coverEmpty').style.display='none';
-  }
-  onSnapshot(ref,d=>{if(d.exists()){
-    document.getElementById('c1').textContent=d.data().followers||0;document.getElementById('c2').textContent=d.data().following||0;document.getElementById('c3').textContent=d.data().visitors||0;
-    document.getElementById('s_c1').textContent=d.data().followers||0;document.getElementById('s_c2').textContent=d.data().following||0;document.getElementById('s_c3').textContent=d.data().visitors||0;
-    const g=d.data().gender||savedGender; const b=d.data().bday||savedBday; updateMeta(g,b);
-    if(d.data().bio) document.getElementById('bioPublic').textContent=d.data().bio;
-  }});
 });
 document.getElementById('openEdit').onclick=()=>{document.getElementById('editPage').classList.add('on');};
 document.getElementById('closeEdit').onclick=()=>document.getElementById('editPage').classList.remove('on');
