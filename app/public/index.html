@@ -145,7 +145,7 @@ onAuthStateChanged(auth,async u=>{
   document.getElementById('rowNameVal').textContent=u.displayName||'طاهر اليافعي';
   document.getElementById('rowAvLetter').textContent=(u.displayName||'T')[0];
   document.getElementById('userId').textContent=u.uid.slice(0,8);
-  const ref=doc(db,'users',u.uid); const s=await getDoc(ref); if(!s.exists()) await setDoc(ref,{followers:0,following:0,visitors:0});
+  const ref=doc(db,'users',u.uid); const s=await getDoc(ref); if(!s.exists()) await setDoc(ref,{uid:u.uid,email:u.email||null,name:u.displayName||u.email?.split('@')[0]||'مستخدم',displayName:u.displayName||u.email?.split('@')[0]||'مستخدم',photo:u.photoURL||'',photoURL:u.photoURL||'',followers:0,following:0,visitors:0,banned:false});
   onSnapshot(ref,d=>{if(d.exists()){document.getElementById('c1').textContent=d.data().followers||0;document.getElementById('c2').textContent=d.data().following||0;document.getElementById('c3').textContent=d.data().visitors||0;}});
   const p=localStorage.getItem('gabo_photo_'+u.uid); if(p){document.getElementById('avatarMain').innerHTML=`<img src="${p}" style="width:100%;height:100%;object-fit:cover"><div class="pencil" id="openEdit">✏️</div>`; document.getElementById('rowAvImg').src=p; document.getElementById('rowAvImg').style.display='block'; document.getElementById('rowAvLetter').style.display='none'; document.getElementById('openEdit').onclick=()=>document.getElementById('editPage').classList.add('on');}
   const b=localStorage.getItem('gabo_bio_'+u.uid); if(b){document.getElementById('bioMain').textContent=b; document.getElementById('rowBioVal').textContent=b;}
