@@ -78,7 +78,7 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 .imgPicker small{line-height:1.6;text-align:center}
 .btnCreate:disabled{opacity:.55;cursor:wait}
 @media(max-width:380px){.grid{gap:9px;padding:0 10px}.grid .comm{padding:12px 8px}.grid .comm .flag{height:70px}.heroCopy h1{font-size:22px}}
-</style>
+.createCommunityBox{max-width:480px;padding:19px 17px}.createModalTop{display:flex;align-items:center;gap:12px;margin-bottom:17px}.createModalMark{width:48px;height:48px;display:grid;place-items:center;border-radius:16px;background:linear-gradient(135deg,#f3d58e,#8b63d7);color:#160f20;font-size:27px;font-weight:900}.createModalTop>div{flex:1}.createModalTop small{font-size:9px;letter-spacing:1.5px;color:var(--gold);font-weight:900}.createModalTop h3{text-align:right;margin:2px 0;color:#fff2d6}.createModalTop p{font-size:11px;color:var(--muted)}.createClose{width:32px;height:32px;border:1px solid #ffffff20;border-radius:10px;background:#ffffff09;color:#fff;font-size:20px}.createCoverPicker{flex-direction:row;justify-content:flex-start;text-align:right;padding:12px;border:1px solid #e7bd6325;border-radius:17px;background:#ffffff06}.createCoverPicker .imgBox{width:104px;height:78px;flex-shrink:0}.createCoverPicker>div:last-of-type{flex:1}.createCoverPicker b{display:block;font-size:13px;margin-bottom:4px}.field textarea{width:100%;min-height:76px;resize:vertical;background:#0f0e18;border:1px solid #ffffff20;border-radius:13px;padding:12px;color:#fff;font:600 13px Tajawal,system-ui}.field textarea:focus{outline:none;border-color:var(--gold)}.privacyChoices{display:grid;grid-template-columns:1fr 1fr;gap:8px}.privacyChoice{padding:12px 10px;border-radius:14px;border:1px solid #ffffff18;background:#0f0e18;color:#fff;text-align:right}.privacyChoice b,.privacyChoice small{display:block}.privacyChoice b{font-size:13px;margin-bottom:5px}.privacyChoice small{font-size:10px;line-height:1.5;color:var(--muted)}.privacyChoice.active{border-color:var(--gold);background:linear-gradient(145deg,#e7bd631b,#8b63d71a)}.privacyHint{font-size:10px;color:#d5c18f;margin-top:8px;line-height:1.6}.createCommunityBox .field{margin-bottom:14px}</style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
 </head>
 <body>
@@ -90,34 +90,14 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 
 <button class="createBtn" onclick="openCreate()">+ إنشاء مجتمع جديد</button>
 
-<div id="createModal" class="modal" onclick="if(event.target===this)closeCreate()">
-  <div class="modalBox">
-    <h3>إنشاء مجتمع جديد</h3>
-    <div class="imgPicker">
-      <div class="imgBox" id="imgBox" onclick="document.getElementById('fileInput').click()">
-        <span id="imgPlus">+</span>
-        <img id="imgPreview" style="display:none">
-      </div>
-      <small style="color:var(--muted);font-size:11px">اختر صورة للمجتمع وسيتم تحسين حجمها تلقائياً</small>
-      <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="previewImg(this)">
-    </div>
-    <div class="field"><label>اسم المجتمع</label><input id="commNameInput" placeholder="مثال: سواق"></div>
-    <div class="field">
-      <label>علم الدولة</label>
-      <div class="flagOptions">
-        <div class="flagOpt on" onclick="selectFlag(this,'south')" aria-label="علم الجنوب العربي"><img id="southFlagOption" src="/assets/south-arabia.png.JPG" alt="علم الجنوب العربي"></div>
-        <div class="flagOpt" onclick="selectFlag(this,'sa')"><img src="https://flagcdn.com/w80/sa.png"></div>
-        <div class="flagOpt" onclick="selectFlag(this,'ye')"><img src="https://flagcdn.com/w80/ye.png"></div>
-        <div class="flagOpt" onclick="selectFlag(this,'ae')"><img src="https://flagcdn.com/w80/ae.png"></div>
-        <div class="flagOpt" onclick="selectFlag(this,'om')"><img src="https://flagcdn.com/w80/om.png"></div>
-        <div class="flagOpt" onclick="selectFlag(this,'qa')"><img src="https://flagcdn.com/w80/qa.png"></div>
-        <div class="flagOpt" onclick="selectFlag(this,'kw')"><img src="https://flagcdn.com/w80/kw.png"></div>
-        <div class="flagOpt" onclick="selectFlag(this,'bh')"><img src="https://flagcdn.com/w80/bh.png"></div>
-      </div>
-    </div>
-    <div class="modalBtns"><button class="btnCancel" onclick="closeCreate()">إلغاء</button><button class="btnCreate" onclick="doCreate()">إنشاء</button></div>
-  </div>
-</div>
+<div id="createModal" class="modal" onclick="if(event.target===this)closeCreate()"><div class="modalBox createCommunityBox">
+<div class="createModalTop"><span class="createModalMark">G</span><div><small>GABO LIVE • COMMUNITY</small><h3>أنشئ عالمك الخاص</h3><p>اجمع الأشخاص حول اهتماماتك</p></div><button type="button" class="createClose" onclick="closeCreate()">×</button></div>
+<div class="imgPicker createCoverPicker"><div class="imgBox" id="imgBox" onclick="document.getElementById('fileInput').click()"><span id="imgPlus">＋</span><img id="imgPreview" style="display:none"></div><div><b>صورة المجتمع</b><small style="color:var(--muted);display:block">سيتم ضغطها تلقائياً لتناسب Firestore المجاني</small></div><input type="file" id="fileInput" accept="image/*" style="display:none" onchange="previewImg(this)"></div>
+<div class="field"><label for="commNameInput">اسم المجتمع</label><input id="commNameInput" maxlength="32" placeholder="مثال: أصدقاء الجنوب"></div>
+<div class="field"><label for="commDescInput">وصف المجتمع</label><textarea id="commDescInput" maxlength="180" placeholder="اكتب نبذة قصيرة عن مجتمعك"></textarea></div>
+<div class="field"><label>علم المجتمع</label><div class="flagOptions"><div class="flagOpt on" onclick="selectFlag(this,'south')" aria-label="علم الجنوب العربي"><img id="southFlagOption" src="/assets/south-arabia.png.JPG" alt="علم الجنوب العربي"></div><div class="flagOpt" onclick="selectFlag(this,'sa')"><img src="https://flagcdn.com/w80/sa.png" alt="السعودية"></div><div class="flagOpt" onclick="selectFlag(this,'ye')"><img src="https://flagcdn.com/w80/ye.png" alt="اليمن"></div><div class="flagOpt" onclick="selectFlag(this,'ae')"><img src="https://flagcdn.com/w80/ae.png" alt="الإمارات"></div><div class="flagOpt" onclick="selectFlag(this,'om')"><img src="https://flagcdn.com/w80/om.png" alt="عمان"></div><div class="flagOpt" onclick="selectFlag(this,'qa')"><img src="https://flagcdn.com/w80/qa.png" alt="قطر"></div><div class="flagOpt" onclick="selectFlag(this,'kw')"><img src="https://flagcdn.com/w80/kw.png" alt="الكويت"></div><div class="flagOpt" onclick="selectFlag(this,'bh')"><img src="https://flagcdn.com/w80/bh.png" alt="البحرين"></div></div></div>
+<div class="field"><label>خصوصية المجتمع</label><div class="privacyChoices"><button type="button" class="privacyChoice active" data-visibility="public" onclick="selectVisibility('public')"><b>🌍 عام</b><small>يظهر للجميع ويمكن الانضمام إليه</small></button><button type="button" class="privacyChoice" data-visibility="private" onclick="selectVisibility('private')"><b>🔒 خاص بالدعوة</b><small>الدخول عبر رابط دعوة فقط</small></button></div><div id="privacyHint" class="privacyHint">يمكن للجميع العثور على مجتمعك والانضمام إليه.</div></div>
+<div class="modalBtns"><button class="btnCancel" onclick="closeCreate()">إلغاء</button><button class="btnCreate" onclick="doCreate()">إنشاء المجتمع</button></div></div></div>
 
 
 
@@ -127,11 +107,12 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 import { auth, db } from '/firebase-config.js';
 import { getSouthArabiaFlag, getCountryRegistry } from '/assets/country-flags.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { collection, onSnapshot, doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { collection, onSnapshot, doc, setDoc, serverTimestamp, getDoc, updateDoc, arrayUnion, increment, query, where } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 let uid=localStorage.getItem('gabo_uid')||null;
 let selectedFlag='south';
 let selectedImgBase64=null;
+let selectedVisibility='public';
 let activeFilter="all";
 let latestCommunityCounts={},latestActivityScores={};
 
@@ -152,74 +133,32 @@ window.goComm=(id)=>{ location.href=`/community/index.html?id=${encodeURICompone
 window.openCreate=()=>document.getElementById('createModal').classList.add('on');
 window.closeCreate=()=>document.getElementById('createModal').classList.remove('on');
 window.selectFlag=(el,flag)=>{ document.querySelectorAll('.flagOpt').forEach(e=>e.classList.remove('on')); el.classList.add('on'); selectedFlag=flag; }
+window.selectVisibility=(value)=>{selectedVisibility=value;document.querySelectorAll('.privacyChoice').forEach(b=>b.classList.toggle('active',b.dataset.visibility===value));document.getElementById('privacyHint').textContent=value==='private'?'مجتمعك لن يظهر في الاستكشاف. شارك رابط الدعوة مع من تريد فقط.':'يمكن للجميع العثور على مجتمعك والانضمام إليه.';};
 window.previewImg=async(input)=>{
-  const file=input.files&&input.files[0];if(!file)return;
-  if(!file.type.startsWith("image/")){alert("اختر ملف صورة صحيح");input.value="";return;}
-  const imageUrl=URL.createObjectURL(file),image=new Image();
-  image.onload=()=>{
-    try{
-      const sourceWidth=image.naturalWidth||image.width,sourceHeight=image.naturalHeight||image.height;
-      if(!sourceWidth||!sourceHeight)throw new Error("Invalid image dimensions");
-      let maxSide=720,output="";
-      while(maxSide>=256){
-        const scale=Math.min(1,maxSide/Math.max(sourceWidth,sourceHeight));
-        const canvas=document.createElement("canvas");
-        canvas.width=Math.max(1,Math.round(sourceWidth*scale));
-        canvas.height=Math.max(1,Math.round(sourceHeight*scale));
-        const context=canvas.getContext("2d");
-        if(!context)throw new Error("Canvas unavailable");
-        context.drawImage(image,0,0,canvas.width,canvas.height);
-        for(const quality of [.78,.66,.54,.42,.34]){
-          output=canvas.toDataURL("image/webp",quality);
-          if(!output.startsWith("data:image/webp"))output=canvas.toDataURL("image/jpeg",quality);
-          if(output.length<=320000)break;
-        }
-        if(output.length<=320000)break;
-        maxSide=Math.floor(maxSide*.78);
-      }
-      if(!output||output.length>320000)throw new Error("Image compression limit");
-      selectedImgBase64=output;
-      const img=document.getElementById("imgPreview");img.src=output;img.style.display="block";
-      document.getElementById("imgPlus").style.display="none";
-    }catch(error){
-      console.error("Community image processing failed:",error);
-      alert("تعذر تجهيز الصورة تلقائياً. جرّب صورة أخرى.");
-      input.value="";selectedImgBase64=null;
-    }finally{
-      URL.revokeObjectURL(imageUrl);
-    }
-  };
-  image.onerror=()=>{URL.revokeObjectURL(imageUrl);alert("تعذر قراءة هذا النوع من الصور على الجهاز");input.value="";selectedImgBase64=null;};
-  image.src=imageUrl;
+ const file=input.files&&input.files[0];if(!file)return;if(!file.type.startsWith('image/')){alert('اختر ملف صورة صحيح');input.value='';return;}
+ const url=URL.createObjectURL(file),image=new Image();
+ image.onload=async()=>{try{const w=image.naturalWidth||image.width,h=image.naturalHeight||image.height;if(!w||!h)throw Error('bad dimensions');let side=640,blob=null;
+ while(side>=240&&!blob){const scale=Math.min(1,side/Math.max(w,h)),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(w*scale));canvas.height=Math.max(1,Math.round(h*scale));const ctx=canvas.getContext('2d');if(!ctx)throw Error('canvas');ctx.drawImage(image,0,0,canvas.width,canvas.height);
+ for(const q of [.62,.5,.4,.3]){blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',q));if(blob&&blob.size<=145000)break;blob=null;}if(!blob)side=Math.floor(side*.78);}
+ if(!blob)throw Error('too large');selectedImgBase64=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(blob);});const preview=document.getElementById('imgPreview');preview.src=selectedImgBase64;preview.style.display='block';document.getElementById('imgPlus').style.display='none';
+ }catch(e){console.error('Image compression failed',e);alert('تعذر تجهيز الصورة. جرّب صورة JPG أو PNG أصغر.');input.value='';selectedImgBase64=null;}finally{URL.revokeObjectURL(url);}};
+ image.onerror=()=>{URL.revokeObjectURL(url);alert('هذا النوع من الصور غير مدعوم. جرّب JPG أو PNG.');input.value='';selectedImgBase64=null;};image.src=url;
 };
 window.doCreate=async()=>{
-  const name=document.getElementById("commNameInput").value.trim();
-  if(!name){alert("اكتب اسم المجتمع");return;}
-  if(name.length<2||name.length>32){alert("اسم المجتمع يجب أن يكون بين حرفين و32 حرفاً");return;}
-  if(!uid){alert("سجل دخول أول");location.href="/login/";return;}
-  const createButton=document.querySelector(".btnCreate");
-  if(createButton.disabled)return;
-  createButton.disabled=true;createButton.textContent="جارٍ الإنشاء...";
-  const id=name.toLowerCase().replace(/\s+/g,"-").replace(/[^a-z0-9\-أ-ي]/g,"")+"-"+Date.now().toString(36).slice(-4);
-  try{
-    await setDoc(doc(db,"communities",id),{name:name,flag:selectedFlag,img:selectedImgBase64||null,ownerUid:uid,members:[uid],membersCount:1,banned:[],closed:false,createdAt:serverTimestamp()});
-    closeCreate();
-    document.getElementById("commNameInput").value="";
-    selectedImgBase64=null;
-    document.getElementById("fileInput").value="";
-    document.getElementById("imgPreview").style.display="none";
-    document.getElementById("imgPlus").style.display="block";
-    window.goComm(id);
-  }catch(e){
-    console.error("Community creation failed:",e);
-    alert("تعذر إنشاء المجتمع حالياً. تحقق من الاتصال وحاول مرة أخرى.");
-  }finally{
-    createButton.disabled=false;createButton.textContent="إنشاء";
-  }
+ const name=document.getElementById('commNameInput').value.trim(),description=document.getElementById('commDescInput').value.trim();
+ if(name.length<2||name.length>32){alert('اسم المجتمع يجب أن يكون بين حرفين و32 حرفاً');return;}if(description.length>180){alert('الوصف طويل جداً');return;}if(!uid){alert('سجل دخول أول');location.href='/login/';return;}
+ const button=document.querySelector('.btnCreate');if(button.disabled)return;button.disabled=true;button.textContent='جارٍ إنشاء المجتمع...';
+ const id=name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-أ-ي]/g,'')+'-'+Date.now().toString(36).slice(-5),dayKey=new Date().toISOString().slice(0,10);
+ const inviteToken=selectedVisibility==='private'?Array.from(crypto.getRandomValues(new Uint8Array(24)),b=>b.toString(16).padStart(2,'0')).join(''):null;
+ try{
+  await setDoc(doc(db,'communities',id),{name,description,flag:selectedFlag,img:selectedImgBase64||null,ownerUid:uid,visibility:selectedVisibility,members:[uid],membersCount:1,banned:[],closed:false,joinsToday:1,joinsDay:dayKey,inviteJoins:0,activityScore:0,createdAt:serverTimestamp()});
+  await setDoc(doc(db,'communities',id,'members',uid),{uid,joinedAt:serverTimestamp(),role:'owner'});
+  if(inviteToken)await setDoc(doc(db,'communities',id,'invites',inviteToken),{communityId:id,active:true,uses:0,createdBy:uid,createdAt:serverTimestamp()});
+  closeCreate();document.getElementById('commNameInput').value='';document.getElementById('commDescInput').value='';selectedImgBase64=null;selectedVisibility='public';selectVisibility('public');document.getElementById('fileInput').value='';document.getElementById('imgPreview').style.display='none';document.getElementById('imgPlus').style.display='block';
+  location.href='/community/index.html?id='+encodeURIComponent(id)+(inviteToken?'&invite='+inviteToken:'');
+ }catch(e){console.error('Community creation failed:',e);alert('تعذر إنشاء المجتمع. تحقق من قواعد Firestore ثم حاول مرة أخرى.');}
+ finally{button.disabled=false;button.textContent='إنشاء المجتمع';}
 };
- 
-
-
 const grid=document.getElementById('commPage');
 const communityCount=document.getElementById('communityCount');
 const activityGrid=document.getElementById('activityPage');
