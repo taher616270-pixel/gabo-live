@@ -140,7 +140,7 @@ body{background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans
 .vip-blank-heading{flex:1;text-align:center;color:#f4d18a;font-size:19px;font-weight:700}
 .vip-notice-list{width:100%;overflow-y:auto;display:grid;direction:rtl;grid-template-columns:repeat(3,minmax(0,1fr));align-content:start;align-items:center;gap:8px 4px;padding:2px 1px 8px;scrollbar-width:thin;scrollbar-color:#9b7136 transparent}
 .vip-notice-card{width:100%;min-width:0;min-height:104px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 0;border:0;border-radius:0;background:transparent;box-shadow:none;cursor:default}
-.vip-notice-name{display:block;color:#f4d18a;font-size:13px;font-weight:800;line-height:1.2;text-align:center;letter-spacing:.4px}
+.vip-notice-name{display:block;font-size:13px;font-weight:800;line-height:1.2;text-align:center;letter-spacing:.4px;background:linear-gradient(110deg,var(--tier-color) 20%,#fff 40%,var(--tier-accent) 55%,var(--tier-color) 75%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 5px var(--tier-color))}
 .vip-notice-card:nth-child(1){grid-column:2;grid-row:1}
 .vip-notice-card:nth-child(2){grid-column:1;grid-row:2}
 .vip-notice-card:nth-child(3){grid-column:2;grid-row:2}
@@ -257,6 +257,7 @@ function renderVipNotices(){
     card.style.setProperty('--tier-color', t[1]);
     card.style.setProperty('--tier-dark', t[2]);
     card.style.setProperty('--tier-level', level);
+    card.style.setProperty('--tier-accent', C2[level] || t[1]);
     card.style.setProperty('--a', t[1]);
     card.style.setProperty('--b', t[2]);
     card.style.setProperty('--n', level);
@@ -270,6 +271,7 @@ document.getElementById('vipBlankClose').addEventListener('click', function(){
 
 // إشعارات الدخول VIP1 إلى VIP10
 var TIERS=[['فضي','#dfe5ec','#3a4048'],['برونزي','#e29a52','#4a2a0c'],['ذهبي','#ffd982','#6a4410'],['زمردي','#5af0b0','#07412d'],['ياقوتي','#6ab7ff','#102f73'],['أرجواني','#d08bff','#40137a'],['قرمزي','#ff6b7a','#650a1f'],['اللهب','#ffb347','#7a1d05'],['المجرّة','#9ef0ff','#2a1480'],['الأسطورة','#fff3cf','#7a3d00']];
+var C2={6:'#5ad7ff',7:'#ffd24a',8:'#ff3d3d',9:'#c06bff',10:'#ff8a1f'};
 var stage=document.getElementById('stage'),RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 var boom=document.getElementById('boom'),bx=boom.getContext('2d'),BP=[],bon=0;
 function bs(){boom.width=innerWidth;boom.height=innerHeight}bs();addEventListener('resize',bs);
