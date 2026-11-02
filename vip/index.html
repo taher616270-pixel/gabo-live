@@ -204,7 +204,7 @@ body{background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans
 </div>
 <canvas id="boom"></canvas><div id="stage"></div>
 <div class="vip-blank-page" id="vipBlankPage" aria-label="إشعارات VIP"><div class="vip-blank-top"><button class="vip-blank-close" id="vipBlankClose" type="button" aria-label="إغلاق">×</button><div class="vip-blank-heading">إشعارات VIP</div></div><div class="vip-notice-list" id="vipNoticeList"></div></div>
-<div class="vip-blank-page" id="headFrameBlankPage" aria-label="إطار الرأس"><div class="vip-blank-top"><button class="vip-blank-close" id="headFrameBlankClose" type="button" aria-label="إغلاق">×</button><div class="vip-blank-heading">إطار الرأس</div></div><div class="head-frame-gallery"><img id="vip1HeadFrame" src="/vip/frames/VIP1.png.PNG?v=2" alt="إطار الرأس VIP1"><div class="head-frame-error" id="headFrameError">تعذر تحميل إطار VIP1</div></div></div>
+<div class="vip-blank-page" id="headFrameBlankPage" aria-label="إطار الرأس"><div class="vip-blank-top"><button class="vip-blank-close" id="headFrameBlankClose" type="button" aria-label="إغلاق">×</button><div class="vip-blank-heading">إطار الرأس</div></div><div class="head-frame-gallery"><img id="vip1HeadFrame" src="/vip/frames/VIP1.png.PNG?v=3" data-fallback="https://raw.githubusercontent.com/taher616270-pixel/gabo-live/main/vip/frames/VIP1.png.PNG" alt="إطار الرأس VIP1"><div class="head-frame-error" id="headFrameError">تعذر تحميل إطار VIP1</div></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -281,7 +281,7 @@ function renderVipNotices(){
 document.getElementById('vipBlankClose').addEventListener('click', function(){
   document.getElementById('vipBlankPage').classList.remove('show');
 });
-document.getElementById('vip1HeadFrame').addEventListener('error', function(){ this.style.display='none'; document.getElementById('headFrameError').style.display='block'; });
+document.getElementById('vip1HeadFrame').addEventListener('error', function(){ if (this.dataset.fallback && this.src !== this.dataset.fallback && !this.dataset.fallbackTried) { this.dataset.fallbackTried='1'; this.src=this.dataset.fallback; return; } this.style.display='none'; document.getElementById('headFrameError').style.display='block'; });
 document.getElementById('headFrameBlankClose').addEventListener('click', function(){
   document.getElementById('headFrameBlankPage').classList.remove('show');
 });
