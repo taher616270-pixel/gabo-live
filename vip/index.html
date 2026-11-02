@@ -3,129 +3,104 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#08060e">
-<title>GABO LIVE | عالم VIP</title>
+<meta name="theme-color" content="#090806">
+<title>GABO LIVE | VIP</title>
 <style>
-:root{color-scheme:dark;--bg:#08060e;--panel:#15111f;--panel2:#1d1729;--line:#342744;--text:#fff;--muted:#b9afc8;--gold:#f2cb72;--purple:#a78bfa}
+:root{color-scheme:dark;--gold:#e8c36b;--gold2:#fff0b4;--ink:#090806;--muted:#b8a77e}
 *{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at 50% -12%,#43245c 0,transparent 43%),linear-gradient(180deg,#0b0812,#08060e 65%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding-bottom:88px}
-.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;background:#090710eF;border-bottom:1px solid #33243e;backdrop-filter:blur(16px)}
-.top b{font-size:16px;letter-spacing:.4px}.back{color:#f4eaff;text-decoration:none;border:1px solid #4a385b;border-radius:12px;padding:8px 13px;font-size:13px}
-.wrap{width:min(900px,100%);margin:auto;padding:16px}
-.hero{position:relative;overflow:hidden;text-align:center;padding:28px 18px 24px;border:1px solid #75522b;border-radius:24px;background:radial-gradient(circle at 50% 0,#6d4380 0,transparent 54%),linear-gradient(135deg,#21142e,#17101f 58%,#30200e);box-shadow:inset 0 1px #ffffff18}
-.hero:before,.hero:after{content:"✦";position:absolute;color:#f6d58b;font-size:28px;opacity:.55}.hero:before{top:18px;right:22px}.hero:after{bottom:18px;left:24px}
-.crown{font-size:34px;filter:drop-shadow(0 0 12px #e9bd68)}.hero h1{margin:7px 0 0;font-size:clamp(23px,5vw,32px);background:linear-gradient(90deg,#fff1c7,#d8b5ff,#fff);color:transparent;background-clip:text}.hero p{margin:8px auto 0;max-width:570px;color:#d2c5dc;font-size:13px;line-height:1.9}
-.notice{margin:14px 0;padding:12px 14px;border:1px solid #5d482a;border-radius:14px;background:#211a11;color:#f6dda2;font-size:12px;line-height:1.85}
-.section-title{display:flex;align-items:center;gap:9px;margin:22px 2px 12px;font-size:17px}.section-title:before{content:"";width:4px;height:20px;border-radius:9px;background:linear-gradient(#f8d88d,#9563d8)}
-.tier-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:14px}
-.tier-btn{min-height:43px;border:1px solid #3b2c4b;border-radius:12px;background:#171221;color:#d8cce5;font-weight:800;font-size:13px;cursor:pointer}
-.tier-btn[aria-pressed=true]{border-color:#e5bd6c;background:linear-gradient(145deg,#45301b,#2a1b39);color:#fff4d5;box-shadow:0 0 0 1px #e5bd6c44,inset 0 1px #fff2}
-.showcase{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:13px}
-.preview,.details{min-width:0;border:1px solid #382a48;border-radius:19px;background:linear-gradient(145deg,#1b1626,#100d17);padding:16px}
-.preview{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:265px;position:relative;overflow:hidden}
-.preview:before{content:"";position:absolute;width:210px;height:210px;border-radius:50%;background:var(--glow);filter:blur(45px);opacity:.17}
-.avatar-frame{--c1:#c7a4ff;--c2:#fff0c4;--glow:#b17cff;position:relative;z-index:1;width:124px;height:124px;border-radius:50%;display:grid;place-items:center;padding:7px;background:conic-gradient(from 10deg,var(--c1),var(--c2),var(--c1),var(--c2),var(--c1));box-shadow:0 0 0 3px #08060e,0 0 0 5px var(--c1),0 0 25px var(--glow)}
-.avatar-frame:before{content:"";position:absolute;inset:3px;border:1px solid #fff9;border-radius:50%;pointer-events:none}
-.avatar{width:100%;height:100%;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 25%,#55406c,#17111f 70%);border:3px solid #100d17;color:#f9e9c7;font-size:34px;font-weight:900}
-.frame-label{position:relative;z-index:1;margin-top:17px;font-size:12px;color:#c9bbd7}
-.badge{--c1:#c7a4ff;--c2:#fff0c4;--glow:#b17cff;position:relative;z-index:1;margin-top:13px;min-width:92px;height:34px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;gap:5px;border-radius:8px 8px 12px 12px;border:1px solid var(--c2);background:linear-gradient(135deg,var(--c1),#21172c 48%,var(--c2));color:#fff;font-size:13px;font-weight:950;letter-spacing:1px;text-shadow:0 1px 4px #000;box-shadow:0 0 15px var(--glow),inset 0 1px #fff9}
-.badge:before,.badge:after{content:"";position:absolute;top:-5px;width:7px;height:7px;transform:rotate(45deg);background:var(--c2);border:1px solid #fff8}.badge:before{right:8px}.badge:after{left:8px}
-.preview.ornate .avatar-frame{box-shadow:0 0 0 3px #08060e,0 0 0 6px var(--c1),0 0 0 9px var(--c2),0 0 28px var(--glow)}
-.preview.ornate .avatar-frame:after{content:"✦  ✧  ✦";position:absolute;inset:-17px;border:1px solid var(--c2);border-radius:50%;display:grid;place-items:start center;padding-top:0;color:var(--c2);font-size:14px;letter-spacing:15px;pointer-events:none}
-.profile-bg{display:none;position:absolute;inset:9px;border-radius:14px;background:linear-gradient(130deg,#2e1642,#34230e 55%,#171323);border:1px solid #b78cfa66}
-.preview.has-bg .profile-bg{display:block}
-.preview.has-bg .avatar-frame,.preview.has-bg .badge,.preview.has-bg .frame-label{transform:translateY(4px)}
-.details h2{margin:0 0 5px;font-size:22px}.rank-sub{color:var(--muted);font-size:12px;line-height:1.7;margin-bottom:13px}
-.perks{list-style:none;margin:0;padding:0;display:grid;gap:9px}.perks li{display:flex;align-items:flex-start;gap:9px;color:#eee8f5;font-size:13px;line-height:1.7}.perks li:before{content:"✓";flex:0 0 20px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:#2a583f;color:#9bf0bf;font-weight:900;font-size:12px;margin-top:1px}
-.pending-note{padding:10px 12px;border:1px dashed #554465;border-radius:12px;color:#c9bad8;font-size:12px;line-height:1.8;margin-top:12px}
-.design-rules{margin-top:15px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
-.rule{border:1px solid #332640;border-radius:13px;background:#14101d;padding:12px;text-align:center}.rule b{display:block;font-size:12px;color:#f1d89f;margin-bottom:4px}.rule span{font-size:11px;color:#bdb1ca;line-height:1.6}
-.footer{text-align:center;color:#a99db7;font-size:11px;line-height:1.9;margin:18px 4px}
-@media(max-width:620px){.showcase{grid-template-columns:1fr}.preview{min-height:245px}.details{padding:14px}.tier-tabs{gap:6px}.tier-btn{font-size:12px}.design-rules{grid-template-columns:1fr}}
-@media(prefers-reduced-motion:no-preference){.avatar-frame,.badge{transition:box-shadow .25s ease,transform .25s ease}.preview{animation:arrive .35s ease both}@keyframes arrive{from{opacity:.65;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}}
+html,body{margin:0;min-height:100%;background:#050505;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+body{min-height:100svh;display:flex;justify-content:center;padding:12px 10px 92px;overflow-x:hidden}
+.vip-shell{position:relative;isolation:isolate;width:min(100%,430px);aspect-ratio:9/16;min-height:680px;max-height:790px;overflow:hidden;border:1px solid #9d7b37;border-radius:22px;background:
+ radial-gradient(ellipse at 18% 16%,#ffffff0b 0 1px,transparent 2px),
+ radial-gradient(ellipse at 82% 29%,#e8c36b26 0 1px,transparent 2px),
+ radial-gradient(ellipse at 28% 68%,#ffffff12 0 1px,transparent 2px),
+ radial-gradient(ellipse at 76% 82%,#e8c36b22 0 1px,transparent 2px),
+ repeating-linear-gradient(117deg,transparent 0 38px,#ffffff08 39px,transparent 41px 76px),
+ repeating-linear-gradient(23deg,transparent 0 57px,#d8c49a0a 58px,transparent 60px 112px),
+ radial-gradient(ellipse at 50% 0,#393126 0,#171512 38%,#080807 78%);
+ box-shadow:0 0 0 2px #e8c36b22,inset 0 0 70px #000,0 20px 70px #000}
+.vip-shell:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.75;background:
+ radial-gradient(1.5px 1.5px at 8% 12%,#f6d98d 98%,transparent),
+ radial-gradient(1px 1px at 19% 30%,#fff1c4 98%,transparent),
+ radial-gradient(2px 2px at 87% 17%,#d9b45d 98%,transparent),
+ radial-gradient(1px 1px at 74% 45%,#fff0bd 98%,transparent),
+ radial-gradient(1.5px 1.5px at 12% 76%,#d9b45d 98%,transparent),
+ radial-gradient(1px 1px at 91% 72%,#fff0bd 98%,transparent),
+ radial-gradient(2px 2px at 42% 91%,#c69b43 98%,transparent)}
+.vip-shell:after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(110deg,transparent 15%,#fff1c40a 35%,transparent 47%),radial-gradient(ellipse at center,transparent 48%,#000b 100%)}
+.inner{height:100%;min-height:680px;padding:18px 18px 20px;display:flex;flex-direction:column}
+.topline{display:flex;justify-content:flex-start;align-items:center}
+.back{width:34px;height:34px;border:1px solid #a98742;border-radius:50%;display:grid;place-items:center;color:var(--gold2);text-decoration:none;background:#080705a8;font-size:20px}
+.emblem{width:150px;height:128px;margin:3px auto 0;display:block;filter:drop-shadow(0 0 13px #d8ad4d55)}
+h1{margin:0;text-align:center;font-family:Georgia,serif;font-size:clamp(48px,14vw,66px);line-height:1.02;font-weight:900;letter-spacing:5px;background:linear-gradient(180deg,#fff7d7 0%,#e8c36b 35%,#a97824 70%,#ffe9a1 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 3px 20px #d7a94b36}
+.subtitle{text-align:center;color:#d6c18b;font-size:10px;letter-spacing:3px;margin:7px 0 17px}
+.progress-area{padding:0 5px}
+.progress-head{display:flex;align-items:center;justify-content:space-between;color:#f3dda0;font-size:12px;font-weight:800;margin-bottom:8px}
+.progress-head span:last-child{direction:ltr;font-family:Georgia,serif;letter-spacing:1px}
+.progress-track{height:10px;border-radius:20px;border:1px solid #a78035;background:#100e0a;overflow:hidden;box-shadow:inset 0 2px 4px #000}
+.progress-fill{height:100%;width:68%;border-radius:20px;background:linear-gradient(90deg,#80551a,#e4bd5d 45%,#fff0b0 72%,#b17c2d);box-shadow:0 0 12px #e8c36b99}
+.divider{display:flex;align-items:center;gap:10px;margin:22px 0 16px;color:#f1d68c;font-weight:800;font-size:15px;white-space:nowrap}
+.divider:before,.divider:after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,#c99b43,#f5e2a3)}
+.divider span{position:relative;padding:0 3px;text-shadow:0 0 10px #d9ad4d66}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;flex:1;align-content:start}
+.slot{min-width:0;min-height:112px;border:1px solid #9b7736;border-radius:12px;background:linear-gradient(145deg,#15130fef,#080807f5 65%);box-shadow:inset 0 1px #fff2,0 4px 12px #0008;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;position:relative}
+.slot:before{content:"";position:absolute;inset:4px;border:1px solid #d5b45a22;border-radius:8px;pointer-events:none}
+.icon-ring{width:43px;height:43px;border-radius:50%;display:grid;place-items:center;border:1px solid #e8c36b;background:radial-gradient(circle at 35% 25%,#59451f,#17120a 72%);box-shadow:0 0 13px #d5a74335,inset 0 1px #fff3;color:#f6d889}
+.icon-ring svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lock-label{display:flex;align-items:center;gap:4px;color:#f1d58e;font-size:11px;font-weight:900;letter-spacing:.8px}
+.lock-label svg{width:12px;height:12px;stroke:#d6b45e;fill:none;stroke-width:1.8}
+.bottom{margin-top:auto;padding-top:16px}
+.charge{width:100%;height:49px;border:1px solid #ffedb1;border-radius:12px;background:linear-gradient(180deg,#fff0b4 0%,#e5bd5e 35%,#a87325 100%);color:#211707;font-size:17px;font-weight:950;letter-spacing:.5px;box-shadow:0 5px 0 #654316,0 8px 20px #d2a34233,inset 0 1px #fff9;cursor:pointer}
+.charge:active{transform:translateY(2px);box-shadow:0 3px 0 #654316,0 5px 12px #d2a34233}
+.toast{min-height:17px;text-align:center;margin-top:10px;color:#e4ce91;font-size:10px}
+@media(max-width:360px){body{padding:6px 6px 88px}.vip-shell{min-height:650px;border-radius:17px}.inner{padding:14px 13px 16px;min-height:650px}.emblem{height:112px}.slot{min-height:101px}.grid{gap:7px}}
+@media(min-height:900px){.vip-shell{max-height:790px}}
 </style>
-<link rel="stylesheet" href="/assets/style/gabo-theme.css">
 </head>
 <body>
-<header class="top"><b>👑 GABO LIVE <span style="color:#d8b7ff">VIP</span></b><a class="back" href="/profile/">رجوع ‹</a></header>
-<main class="wrap">
-<section class="hero">
-  <div class="crown" aria-hidden="true">♛</div>
-  <h1>ارتقِ بمكانتك في عالم GABO</h1>
-  <p>عشرة مستويات بهوية بصرية خاصة؛ شارة وإطار مستقلان لكل مستوى، بتفاصيل تزداد فخامة كلما ارتقيت.</p>
-</section>
-<aside class="notice">معرض تصميم ومراجعة لمستويات VIP. هذه الصفحة لا تفعّل اشتراكًا ولا تمنح صلاحيات مدفوعة. المزايا الوظيفية غير المحددة ستظل قيد المراجعة حتى اعتمادها.</aside>
-<h2 class="section-title">استعرض شارات وإطارات المستويات</h2>
-<nav class="tier-tabs" aria-label="اختيار مستوى VIP">
-<button class="tier-btn" type="button" data-tier="1" aria-pressed="true">VIP1</button>
-<button class="tier-btn" type="button" data-tier="2" aria-pressed="false">VIP2</button>
-<button class="tier-btn" type="button" data-tier="3" aria-pressed="false">VIP3</button>
-<button class="tier-btn" type="button" data-tier="4" aria-pressed="false">VIP4</button>
-<button class="tier-btn" type="button" data-tier="5" aria-pressed="false">VIP5</button>
-<button class="tier-btn" type="button" data-tier="6" aria-pressed="false">VIP6</button>
-<button class="tier-btn" type="button" data-tier="7" aria-pressed="false">VIP7</button>
-<button class="tier-btn" type="button" data-tier="8" aria-pressed="false">VIP8</button>
-<button class="tier-btn" type="button" data-tier="9" aria-pressed="false">VIP9</button>
-<button class="tier-btn" type="button" data-tier="10" aria-pressed="false">VIP10</button>
-</nav>
-<section class="showcase" aria-live="polite">
-  <div class="preview" id="preview">
-    <div class="profile-bg"></div>
-    <div class="avatar-frame" id="avatarFrame"><div class="avatar">G</div></div>
-    <div class="badge" id="badge">VIP1</div>
-    <div class="frame-label" id="frameLabel">إطار وشارة VIP1</div>
+<main class="vip-shell" aria-label="واجهة GABO VIP">
+<div class="inner">
+  <div class="topline"><a class="back" href="/profile/" aria-label="رجوع">‹</a></div>
+  <svg class="emblem" viewBox="0 0 180 150" role="img" aria-label="تاج ذهبي داخل إكليل غار">
+    <defs>
+      <linearGradient id="laurel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0b4"/><stop offset=".45" stop-color="#c99a42"/><stop offset="1" stop-color="#75501e"/></linearGradient>
+      <linearGradient id="crown" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff8d7"/><stop offset=".42" stop-color="#e6c36e"/><stop offset="1" stop-color="#98651f"/></linearGradient>
+    </defs>
+    <g fill="none" stroke="url(#laurel)" stroke-width="2.4" stroke-linecap="round">
+      <path d="M88 132C49 128 21 98 22 58M92 132c39-4 67-34 66-74"/>
+      <path d="M27 70Q12 59 13 43Q29 47 33 62M35 88Q17 84 13 68Q31 66 40 80M49 105Q31 106 23 91Q40 84 54 98M66 119Q49 125 37 112Q52 101 69 112M153 70q15-11 14-27q-16 4-20 19M145 88q18-4 22-20q-18-2-27 12M131 105q18 1 26-14q-17-7-31 7M114 119q17 6 29-7q-15-11-32 0"/>
+      <path d="M25 132Q90 145 155 132"/>
+    </g>
+    <g fill="url(#laurel)" stroke="#6d4a1c" stroke-width=".6">
+      <path d="M24 59Q6 48 10 32Q27 36 31 53Z"/><path d="M34 80Q15 77 12 59Q29 58 40 73Z"/><path d="M49 99Q30 100 23 84Q41 78 55 93Z"/><path d="M67 115Q49 122 36 108Q53 97 70 108Z"/>
+      <path d="M156 59Q174 48 170 32Q153 36 149 53Z"/><path d="M146 80Q165 77 168 59Q151 58 140 73Z"/><path d="M131 99Q150 100 157 84Q139 78 125 93Z"/><path d="M113 115Q131 122 144 108Q127 97 110 108Z"/>
+    </g>
+    <path d="M51 47L66 61L88 30L111 61L128 47L120 91Q90 103 60 91Z" fill="url(#crown)" stroke="#fff0b4" stroke-width="2"/>
+    <path d="M60 91Q90 103 120 91L124 102Q90 115 56 102Z" fill="#a87329" stroke="#f8dfa0" stroke-width="1.5"/>
+    <circle cx="51" cy="45" r="5" fill="#f8e8b7"/><circle cx="88" cy="27" r="6" fill="#fff6d7"/><circle cx="129" cy="45" r="5" fill="#f8e8b7"/>
+    <path d="M67 62L88 87L109 62M88 31V87" fill="none" stroke="#fff4ca" stroke-width="1.5" opacity=".8"/>
+  </svg>
+  <h1>VIP</h1>
+  <div class="subtitle">GABO LIVE · ELITE MEMBERSHIP</div>
+  <section class="progress-area" aria-label="شريط التقدم">
+    <div class="progress-head"><span>التقدم نحو VIP</span><span>50000 / 100</span></div>
+    <div class="progress-track"><div class="progress-fill"></div></div>
+  </section>
+  <div class="divider"><span>✦ مزايا VIP ✦</span></div>
+  <section class="grid" aria-label="مساحات المزايا">
+    <div class="slot" aria-label="ميزة مقفلة VIPX"><div class="icon-ring"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></div><div class="lock-label"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>VIPX</div></div><div class="slot" aria-label="ميزة مقفلة VIPX"><div class="icon-ring"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></div><div class="lock-label"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>VIPX</div></div><div class="slot" aria-label="ميزة مقفلة VIPX"><div class="icon-ring"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></div><div class="lock-label"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>VIPX</div></div><div class="slot" aria-label="ميزة مقفلة VIPX"><div class="icon-ring"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></div><div class="lock-label"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>VIPX</div></div><div class="slot" aria-label="ميزة مقفلة VIPX"><div class="icon-ring"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></div><div class="lock-label"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>VIPX</div></div><div class="slot" aria-label="ميزة مقفلة VIPX"><div class="icon-ring"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></div><div class="lock-label"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>VIPX</div></div>
+  </section>
+  <div class="bottom">
+    <button class="charge" id="charge" type="button">اشحن الآن</button>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
   </div>
-  <div class="details">
-    <h2 id="tierTitle">👑 VIP1</h2>
-    <div class="rank-sub" id="tierSub">بداية رحلتك المميزة في GABO LIVE</div>
-    <ul class="perks" id="perks">
-      <li>شارة VIP1 الخاصة بجانب الاسم.</li>
-      <li>إطار VIP1 الدائري بتصميم مستقل.</li>
-      <li>وسام VIP1 في الإنجازات.</li>
-      <li>إحصائيات نشاط فعلية: إجمالي الرسائل، رسائل اليوم والأسبوع، التفاعلات، وأيام المشاركة.</li>
-      <li>مشاهدة زوار الملف الشخصي ومعرفة الحسابات التي زارته.</li>
-    </ul>
-    <div class="pending-note" id="pendingNote" hidden></div>
-  </div>
-</section>
-<h2 class="section-title">قواعد الهوية البصرية المعتمدة</h2>
-<section class="design-rules">
-  <div class="rule"><b>شارة مستقلة</b><span>شعار خاص لكل مستوى من VIP1 إلى VIP10.</span></div>
-  <div class="rule"><b>إطار متدرّج الفخامة</b><span>إطار واحد مميز لكل مستوى، ويتطور تصميمه مع ارتفاع المستوى.</span></div>
-  <div class="rule"><b>الخلفيات والإطارات المزخرفة</b><span>خلفية ملف شخصية من VIP5، وإطار مزخرف من VIP8.</span></div>
-</section>
-<p class="footer">تصميمات الشارات والإطارات هنا معاينة مرئية أولية داخل الصفحة. لا توجد أي صلاحيات أو عمليات اشتراك مرتبطة بها بعد.</p>
+</div>
 </main>
 <script>
-(()=>{
- const tiers=[
-  {n:1,name:"VIP1",sub:"بداية رحلتك المميزة في GABO LIVE",c1:"#c5b5e8",c2:"#f6e6bd",glow:"#9c75d9",perks:["شارة VIP1 الخاصة بجانب الاسم.","إطار VIP1 الدائري بتصميم مستقل.","وسام VIP1 في الإنجازات.","إحصائيات نشاط فعلية: إجمالي الرسائل، رسائل اليوم والأسبوع، التفاعلات، وأيام المشاركة.","مشاهدة زوار الملف الشخصي ومعرفة الحسابات التي زارته."]},
-  {n:2,name:"VIP2",sub:"خطوة أعلى بهوية أكثر تميزًا",c1:"#73d6e8",c2:"#d7f8ff",glow:"#39b7d0"},
-  {n:3,name:"VIP3",sub:"فخامة ذهبية وتفاصيل لافتة",c1:"#d9a84e",c2:"#fff0b0",glow:"#c78a24",perks:["جميع مميزات VIP1.","شارة VIP3 الخاصة.","إطار VIP3 بتصميم أرقى من المستويات السابقة.","إحصائيات متقدمة.","أوسمة حصرية."]},
-  {n:4,name:"VIP4",sub:"حضور أنيق بتفاصيل زمردية",c1:"#51c9a0",c2:"#d6ffe9",glow:"#23a878"},
-  {n:5,name:"VIP5",sub:"هوية شخصية بخلفية خاصة",c1:"#d66bc9",c2:"#ffe0fa",glow:"#b83ba7",bg:true},
-  {n:6,name:"VIP6",sub:"تصميم أعمق ولمعان أقوى",c1:"#ed7180",c2:"#ffe0c9",glow:"#cf405b",bg:true},
-  {n:7,name:"VIP7",sub:"معرّف عضو متحرك بألوان مميزة",c1:"#79d7f4",c2:"#f4c5ff",glow:"#5d9ee8",bg:true,perks:["معرّف العضو (ID) بألوان متحركة ومميزة، يبدأ من VIP7."]},
-  {n:8,name:"VIP8",sub:"زخارف ملكية تحيط بالإطار",c1:"#b28aff",c2:"#ffe5a6",glow:"#9564dc",bg:true,ornate:true},
-  {n:9,name:"VIP9",sub:"إطار ملكي متعدد الطبقات",c1:"#dce8ff",c2:"#d8b4ff",glow:"#8f9de8",bg:true,ornate:true},
-  {n:10,name:"VIP10",sub:"قمة الفخامة في هوية GABO",c1:"#f8d36e",c2:"#fff7d4",glow:"#d5a12d",bg:true,ornate:true}
- ];
- const root=document.getElementById("preview"),frame=document.getElementById("avatarFrame"),badge=document.getElementById("badge"),label=document.getElementById("frameLabel"),title=document.getElementById("tierTitle"),sub=document.getElementById("tierSub"),perks=document.getElementById("perks"),note=document.getElementById("pendingNote");
- function select(n){
-  const t=tiers[n-1];if(!t)return;
-  document.querySelectorAll(".tier-btn").forEach(b=>b.setAttribute("aria-pressed",String(Number(b.dataset.tier)===n)));
-  frame.style.setProperty("--c1",t.c1);frame.style.setProperty("--c2",t.c2);frame.style.setProperty("--glow",t.glow);
-  badge.style.setProperty("--c1",t.c1);badge.style.setProperty("--c2",t.c2);badge.style.setProperty("--glow",t.glow);
-  badge.textContent=t.name;label.textContent="الإطار والشارة الخاصة بـ "+t.name;
-  root.classList.toggle("has-bg",!!t.bg);root.classList.toggle("ornate",!!t.ornate);
-  title.textContent=(n===10?"♛ ":"✦ ")+t.name;sub.textContent=t.sub;
-  perks.innerHTML="";
-  if(t.perks){t.perks.forEach(p=>{const li=document.createElement("li");li.textContent=p;perks.appendChild(li)});note.hidden=true}
-  else{note.hidden=false;note.textContent="مميزات "+t.name+" الوظيفية لم تُعتمد بعد. المعروض هنا هو تصميم الشارة والإطار فقط، وليس إعلانًا عن صلاحيات إضافية."}
- }
- document.querySelectorAll(".tier-btn").forEach(b=>b.addEventListener("click",()=>select(Number(b.dataset.tier))));
- select(1);
-})();
+document.getElementById("charge").addEventListener("click",()=>{
+ const toast=document.getElementById("toast");
+ toast.textContent="خدمة الشحن ستُفعّل لاحقًا";
+});
 </script>
 <script type="module" src="/js/unified-bottom-nav.js"></script>
 </body>
