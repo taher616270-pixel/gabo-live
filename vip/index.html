@@ -139,9 +139,9 @@ body{background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans
 .vip-blank-close{width:40px;height:40px;border:1px solid rgba(233,181,96,.35);border-radius:50%;background:#171512;color:#f4d18a;font:32px/1 Arial,sans-serif;display:grid;place-items:center;cursor:pointer;flex:none}
 .vip-blank-heading{flex:1;text-align:center;color:#f4d18a;font-size:19px;font-weight:700}
 .vip-notice-list{width:100%;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:2px 1px 8px;scrollbar-width:thin;scrollbar-color:#9b7136 transparent}
-.vip-notice-card{width:100%;min-height:112px;display:flex;align-items:center;justify-content:center;padding:12px 8px;border:1px solid color-mix(in srgb,var(--tier-color) 55%,transparent);border-radius:16px;background:radial-gradient(ellipse at center,color-mix(in srgb,var(--tier-color) 16%,#17120b),#080808 72%);box-shadow:inset 0 0 18px color-mix(in srgb,var(--tier-color) 13%,transparent);cursor:pointer}
-.vip-notice-preview{width:100%;display:flex;align-items:center;gap:8px;justify-content:center;--a:var(--tier-color);--b:var(--tier-dark);--n:var(--tier-level)}
-.vip-notice-preview .emb{width:82px;max-height:86px;flex:none;margin:0;filter:drop-shadow(0 0 8px var(--a))}
+.vip-notice-card{width:100%;min-height:104px;display:flex;align-items:center;justify-content:center;padding:8px 0;border:0;border-radius:0;background:transparent;box-shadow:none;cursor:pointer}
+.vip-notice-preview{width:100%;display:flex;align-items:center;gap:12px;justify-content:center;--a:var(--tier-color);--b:var(--tier-dark);--n:var(--tier-level)}
+.vip-notice-preview .emb{width:112px;max-height:100px;flex:none;margin:0;filter:drop-shadow(0 0 10px var(--a))}
 .vip-notice-preview-copy{display:flex;flex-direction:column;gap:5px;min-width:0}
 .vip-notice-preview-copy strong{color:var(--tier-color);font-size:17px;font-weight:900}
 .vip-notice-preview-copy small{color:#fff;font-size:13px}
@@ -246,7 +246,7 @@ function renderVipNotices(){
     card.style.setProperty('--tier-color', t[1]);
     card.style.setProperty('--tier-dark', t[2]);
     card.style.setProperty('--tier-level', level);
-    card.innerHTML = '<div class="vip-notice-preview">'+emb(level, 'popup'+level)+'<div class="vip-notice-preview-copy"><strong>'+t[0]+'</strong><small>'+String(USER.name).replace(/</g,'&lt;')+'</small><u>'+'0123456789'.split('').map(function(_,i){return '<s'+(i<level?' class="on"':'')+'></s>'}).join('')+'</u></div></div>';
+    card.innerHTML = '<div class="vip-notice-preview">'+emb(level, 'popup'+level)+'</div>';
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');
     function activateTier(){
