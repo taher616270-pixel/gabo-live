@@ -474,16 +474,46 @@ document.getElementById('grantVip6Frame').addEventListener('click',async()=>{
  finally{btn.disabled=false;}
 });
 window.toggleAdmin=async(uid,cur)=>{await updateDoc(doc(db,'users',uid),{isAdmin:!cur});}
+let selectedVipUid=null;
 window.giveVIP=async uid=>{
- const userSnap=await getDoc(doc(db,'users',uid));
- if(!userSnap.exists()) return alert('المستخدم غير موجود');
- const userEmail=userSnap.data().email;
- const plan=userSnap.data().subPlanRequest==='pro'?'pro':'vip';const label=plan.toUpperCase();await updateDoc(doc(db,'users',uid),{subscription:label,subPlan:plan,subUntil:Date.now()+30*24*3600*1000,subPlanRequest:deleteField(),subRequestedAt:deleteField()});
- if(userEmail){
-  try{ await fetch(EMAIL_URL,{method:"POST",body:JSON.stringify({type:"contact",name:"نظام GABO",email:userEmail,message:"تم تفعيل باقة "+label+" بنجاح ✅"})}); }catch{}
-  alert('تمت الترقية وإرسال طلب إشعار البريد');
- }else{ alert('تمت الترقية، لكن لا يوجد بريد إلكتروني محفوظ لهذا المستخدم'); }
-}
+ const user=allMembers.find(x=>x.uid===uid);
+ selectedVipUid=uid;
+ document.getElementById('vipLevelMember').textContent='العضو: '+(user?.displayName||user?.name||user?.email||uid);
+ document.getElementById('vipLevelSelect').value=String(Math.max(1,Math.min(10,memberVip(user||{})||1)));
+ document.getElementById('vipLevelStatus').textContent='';
+ document.getElementById('vipLevelDialog').showModal();
+};
+document.getElementById('cancelVipLevel').addEventListener('click',()=>document.getElementById('vipLevelDialog').close());
+document.getElementById('vipLevelForm').addEventListener('submit',async event=>{
+ event.preventDefault();
+ if(!selectedVipUid)return;
+ const level=Number(document.getElementById('vipLevelSelect').value);
+ const status=document.getElementById('vipLevelStatus');
+ const submit=event.currentTarget.querySelector('button[type="submit"]');
+ if(!Number.isInteger(level)||level<1||level>10){status.textContent='اختر مستوى صحيحاً من VIP1 إلى VIP10.';return;}
+ submit.disabled=true;status.textContent='جارٍ حفظ مستوى VIP...';
+ try{
+  const userSnap=await getDoc(doc(db,'users',selectedVipUid));
+  if(!userSnap.exists())throw new Error('المستخدم غير موجود');
+  const userEmail=userSnap.data().email;
+  await updateDoc(doc(db,'users',selectedVipUid),{
+   vipLevel:level,
+   subscription:'VIP',
+   subPlan:'vip',
+   subUntil:Date.now()+30*24*3600*1000,
+   subPlanRequest:deleteField(),
+   subRequestedAt:deleteField()
+  });
+  status.textContent='✅ تم منح VIP'+level+' وحفظه في حساب العضو.';
+  if(userEmail){
+   try{await fetch(EMAIL_URL,{method:'POST',body:JSON.stringify({type:'contact',name:'نظام GABO',email:userEmail,message:'تم تفعيل عضوية VIP'+level+' بنجاح ✅'})});}catch{}
+  }
+  setTimeout(()=>document.getElementById('vipLevelDialog').close(),900);
+ }catch(error){
+  console.error('VIP level grant failed:',error);
+  status.textContent='تعذر منح المستوى: '+(error.message||'خطأ غير معروف');
+ }finally{submit.disabled=false;}
+});
 window.banUser=async(uid,current)=>{const next=!current;if(!confirm(next?'تأكيد حظر هذا العضو؟':'تأكيد إلغاء الحظر عن هذا العضو؟'))return;try{await updateDoc(doc(db,'users',uid),{banned:next});}catch(err){alert('تعذر تحديث حالة الحظر: '+(err.message||''));}}
 
 function loadHosts(){
@@ -505,6 +535,30 @@ window.approveHost=async(id,email,name)=>{
 }
 window.delHost=async id=>{ if(confirm('حذف؟')) await deleteDoc(doc(db,'hosts',id)); }
 </script>
+
+
+<dialog id="vipLevelDialog" style="width:min(420px,calc(100% - 28px));border:1px solid #d6a84a88;border-radius:20px;background:#130f1d;color:#fff;padding:22px;max-width:420px">
+ <form id="vipLevelForm">
+  <h3 style="margin:0 0 8px;color:#f8d98b">👑 تحديد مستوى VIP</h3>
+  <p id="vipLevelMember" style="color:#bdb5ca;font-size:13px;margin:0 0 12px">اختر المستوى الذي تريد منحه للعضو.</p>
+  <label for="vipLevelSelect">مستوى العضوية</label>
+  <select id="vipLevelSelect" required>
+   <option value="1">VIP1</option><option value="2">VIP2</option><option value="3">VIP3</option>
+   <option value="4">VIP4</option><option value="5">VIP5</option><option value="6">VIP6</option>
+   <option value="7">VIP7</option><option value="8">VIP8</option><option value="9">VIP9</option><option value="10">VIP10</option>
+  </select>
+  <div style="display:flex;gap:8px;margin-top:14px">
+   <button type="submit" class="primary" style="flex:1">تأكيد المنح</button>
+   <button type="button" id="cancelVipLevel" style="flex:1">إلغاء</button>
+  </div>
+  <div id="vipLevelStatus" role="status" style="font-size:12px;color:#f8d98b;margin-top:10px"></div>
+ </form>
+</dialog>
+<style>
+#vipLevelDialog::backdrop{background:#000b;backdrop-filter:blur(5px)}
+#vipLevelDialog label{display:block;color:#c9c1d7;font-size:12px;margin-top:10px}
+#vipLevelDialog select{margin-top:7px}
+</style>
 
 <!-- تم تعطيل شريط تنقل المستخدمين داخل لوحة الإدارة -->
 </body>
