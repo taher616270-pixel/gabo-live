@@ -139,8 +139,9 @@ body{background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans
 .vip-blank-top{display:flex;align-items:center;gap:12px;flex:none}
 .vip-blank-close{width:40px;height:40px;border:1px solid rgba(233,181,96,.35);border-radius:50%;background:#171512;color:#f4d18a;font:32px/1 Arial,sans-serif;display:grid;place-items:center;cursor:pointer;flex:none}
 .vip-blank-heading{flex:1;text-align:center;color:#f4d18a;font-size:19px;font-weight:700}
-.head-frame-gallery{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:auto;padding:12px}
-.head-frame-gallery img{display:block;width:min(100%,260px);max-height:100%;object-fit:contain;filter:drop-shadow(0 0 12px rgba(255,211,125,.45))}
+.head-frame-gallery{flex:1;min-height:180px;width:100%;display:flex;align-items:center;justify-content:center;overflow:auto;padding:12px;box-sizing:border-box}
+.head-frame-gallery img{display:block;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 0 12px rgba(255,211,125,.45))}
+.head-frame-error{display:none;color:#f4d18a;text-align:center;font:16px Tajawal,sans-serif;padding:20px}
 .vip-notice-list{width:100%;overflow-y:auto;display:grid;direction:rtl;grid-template-columns:repeat(3,minmax(0,1fr));align-content:start;align-items:center;gap:8px 4px;padding:2px 1px 8px;scrollbar-width:thin;scrollbar-color:#9b7136 transparent}
 .vip-notice-card{width:100%;min-width:0;min-height:104px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 0;border:0;border-radius:0;background:transparent;box-shadow:none;cursor:default}
 .vip-notice-name{display:block;font-size:13px;font-weight:800;line-height:1.2;text-align:center;letter-spacing:.4px;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 5px var(--tier-color))}
@@ -203,7 +204,7 @@ body{background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans
 </div>
 <canvas id="boom"></canvas><div id="stage"></div>
 <div class="vip-blank-page" id="vipBlankPage" aria-label="إشعارات VIP"><div class="vip-blank-top"><button class="vip-blank-close" id="vipBlankClose" type="button" aria-label="إغلاق">×</button><div class="vip-blank-heading">إشعارات VIP</div></div><div class="vip-notice-list" id="vipNoticeList"></div></div>
-<div class="vip-blank-page" id="headFrameBlankPage" aria-label="إطار الرأس"><div class="vip-blank-top"><button class="vip-blank-close" id="headFrameBlankClose" type="button" aria-label="إغلاق">×</button><div class="vip-blank-heading">إطار الرأس</div></div><div class="head-frame-gallery"><img src="https://raw.githubusercontent.com/taher616270-pixel/gabo-live/main/vip-frames/vip1-frame.PNG" alt="إطار الرأس VIP1" loading="eager"></div></div>
+<div class="vip-blank-page" id="headFrameBlankPage" aria-label="إطار الرأس"><div class="vip-blank-top"><button class="vip-blank-close" id="headFrameBlankClose" type="button" aria-label="إغلاق">×</button><div class="vip-blank-heading">إطار الرأس</div></div><div class="head-frame-gallery"><img id="vip1HeadFrame" src="https://cdn.jsdelivr.net/gh/taher616270-pixel/gabo-live@main/vip-frames/vip1-frame.PNG" alt="إطار الرأس VIP1"><div class="head-frame-error" id="headFrameError">تعذر تحميل إطار VIP1</div></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -280,6 +281,7 @@ function renderVipNotices(){
 document.getElementById('vipBlankClose').addEventListener('click', function(){
   document.getElementById('vipBlankPage').classList.remove('show');
 });
+document.getElementById('vip1HeadFrame').addEventListener('error', function(){ this.style.display='none'; document.getElementById('headFrameError').style.display='block'; });
 document.getElementById('headFrameBlankClose').addEventListener('click', function(){
   document.getElementById('headFrameBlankPage').classList.remove('show');
 });
