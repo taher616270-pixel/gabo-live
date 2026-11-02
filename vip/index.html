@@ -139,11 +139,15 @@ body{background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans
 .vip-blank-close{width:40px;height:40px;border:1px solid rgba(233,181,96,.35);border-radius:50%;background:#171512;color:#f4d18a;font:32px/1 Arial,sans-serif;display:grid;place-items:center;cursor:pointer;flex:none}
 .vip-blank-heading{flex:1;text-align:center;color:#f4d18a;font-size:19px;font-weight:700}
 .vip-notice-list{width:100%;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:2px 1px 8px;scrollbar-width:thin;scrollbar-color:#9b7136 transparent}
-.vip-notice-card{min-height:76px;display:flex;align-items:center;gap:13px;padding:10px 14px;border:1px solid color-mix(in srgb,var(--tier-color) 55%,transparent);border-radius:16px;background:linear-gradient(110deg,#090909,#201a10 55%,#090909);box-shadow:inset 0 0 14px color-mix(in srgb,var(--tier-color) 12%,transparent)}
-.vip-notice-mark{width:48px;height:48px;flex:none;display:grid;place-items:center;border-radius:13px;border:1px solid var(--tier-color);color:var(--tier-color);font:bold italic 17px Arial,sans-serif;text-shadow:0 0 9px var(--tier-color);box-shadow:0 0 12px color-mix(in srgb,var(--tier-color) 28%,transparent)}
-.vip-notice-copy{display:flex;flex-direction:column;gap:4px}
-.vip-notice-copy strong{color:var(--tier-color);font-size:17px}
-.vip-notice-copy span{color:#eee4d1;font-size:14px}
+.vip-notice-card{width:100%;min-height:112px;display:flex;align-items:center;justify-content:center;padding:12px 8px;border:1px solid color-mix(in srgb,var(--tier-color) 55%,transparent);border-radius:16px;background:radial-gradient(ellipse at center,color-mix(in srgb,var(--tier-color) 16%,#17120b),#080808 72%);box-shadow:inset 0 0 18px color-mix(in srgb,var(--tier-color) 13%,transparent);cursor:pointer}
+.vip-notice-preview{width:100%;display:flex;align-items:center;gap:8px;justify-content:center;--a:var(--tier-color);--b:var(--tier-dark);--n:var(--tier-level)}
+.vip-notice-preview .emb{width:82px;max-height:86px;flex:none;margin:0;filter:drop-shadow(0 0 8px var(--a))}
+.vip-notice-preview-copy{display:flex;flex-direction:column;gap:5px;min-width:0}
+.vip-notice-preview-copy strong{color:var(--tier-color);font-size:17px;font-weight:900}
+.vip-notice-preview-copy small{color:#fff;font-size:13px}
+.vip-notice-preview-copy u{display:flex;gap:4px;text-decoration:none}
+.vip-notice-preview-copy s{width:6px;height:6px;transform:rotate(45deg);background:#ffffff26}
+.vip-notice-preview-copy s.on{background:var(--tier-color);box-shadow:0 0 6px var(--tier-color)}
 .toast{position:fixed;top:calc(20px + env(safe-area-inset-top,0px));left:50%;transform:translate(-50%,-90px);background:#222;color:#fff;border:1px solid var(--gold3);padding:12px 20px;border-radius:14px;font-size:15px;transition:transform .3s;z-index:9;white-space:nowrap}
 .toast.show{transform:translate(-50%,0)}
 </style>
@@ -240,7 +244,9 @@ function renderVipNotices(){
     var card = document.createElement('div');
     card.className = 'vip-notice-card';
     card.style.setProperty('--tier-color', t[1]);
-    card.innerHTML = '<div class="vip-notice-mark">VIP '+level+'</div><div class="vip-notice-copy"><strong>'+('VIP '+level)+' · '+t[0]+'</strong><span>اضغط لعرض إشعار الدخول</span></div>';
+    card.style.setProperty('--tier-dark', t[2]);
+    card.style.setProperty('--tier-level', level);
+    card.innerHTML = '<div class="vip-notice-preview">'+emb(level, 'popup'+level)+'<div class="vip-notice-preview-copy"><strong>'+t[0]+'</strong><small>'+String(USER.name).replace(/</g,'&lt;')+'</small><u>'+'0123456789'.split('').map(function(_,i){return '<s'+(i<level?' class="on"':'')+'></s>'}).join('')+'</u></div></div>';
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');
     function activateTier(){
