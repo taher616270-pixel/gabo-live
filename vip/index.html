@@ -1,236 +1,133 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#090806">
-<title>GABO LIVE | VIP</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VIP</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:dark;--gold:#e8c36b;--gold2:#fff0b4;--ink:#090806;--muted:#b8a77e;--line:#9b7736}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;min-height:100%;background:#050505;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
-body{min-height:100svh;display:flex;justify-content:center;padding:12px 10px calc(86px + env(safe-area-inset-bottom));overflow-x:hidden}
-.vip-shell{position:relative;isolation:isolate;width:min(100%,430px);min-height:740px;overflow:hidden;border:1px solid #9d7b37;border-radius:22px;background:radial-gradient(ellipse at 18% 16%,#ffffff0b 0 1px,transparent 2px),radial-gradient(ellipse at 82% 29%,#e8c36b26 0 1px,transparent 2px),radial-gradient(ellipse at 28% 68%,#ffffff12 0 1px,transparent 2px),radial-gradient(ellipse at 76% 82%,#e8c36b22 0 1px,transparent 2px),repeating-linear-gradient(117deg,transparent 0 38px,#ffffff08 39px,transparent 41px 76px),repeating-linear-gradient(23deg,transparent 0 57px,#d8c49a0a 58px,transparent 60px 112px),radial-gradient(ellipse at 50% 0,#393126 0,#171512 38%,#080807 78%);box-shadow:0 0 0 2px #e8c36b22,inset 0 0 70px #000,0 20px 70px #000}
-.vip-shell:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.75;background:radial-gradient(1.5px 1.5px at 8% 12%,#f6d98d 98%,transparent),radial-gradient(1px 1px at 19% 30%,#fff1c4 98%,transparent),radial-gradient(2px 2px at 87% 17%,#d9b45d 98%,transparent),radial-gradient(1px 1px at 74% 45%,#fff0bd 98%,transparent),radial-gradient(1.5px 1.5px at 12% 76%,#d9b45d 98%,transparent),radial-gradient(1px 1px at 91% 72%,#fff0bd 98%,transparent),radial-gradient(2px 2px at 42% 91%,#c69b43 98%,transparent)}
-.vip-shell:after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(110deg,transparent 15%,#fff1c40a 35%,transparent 47%),radial-gradient(ellipse at center,transparent 48%,#000b 100%)}
-.inner{min-height:740px;padding:18px 18px 20px;display:flex;flex-direction:column}
-.topline{display:flex;justify-content:space-between;align-items:center}
-.back{width:38px;height:38px;border:1px solid #a98742;border-radius:50%;display:grid;place-items:center;color:var(--gold2);text-decoration:none;background:#080705a8;font-size:22px}
-.current-level{border:1px solid #9b7736;background:#120f09;color:#f4d98e;border-radius:20px;padding:7px 12px;font-size:12px;font-weight:900;direction:ltr}
-.emblem{width:145px;height:120px;margin:4px auto 0;display:block;filter:drop-shadow(0 0 13px #d8ad4d55)}
-h1{margin:0;text-align:center;font-family:Georgia,serif;font-size:clamp(48px,14vw,66px);line-height:1.02;font-weight:900;letter-spacing:5px;background:linear-gradient(180deg,#fff7d7 0%,#e8c36b 35%,#a97824 70%,#ffe9a1 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 3px 20px #d7a94b36}
-.subtitle{text-align:center;color:#d6c18b;font-size:10px;letter-spacing:3px;margin:7px 0 16px}
-.progress-area{padding:0 5px}
-.progress-head{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#f3dda0;font-size:12px;font-weight:800;margin-bottom:8px}
-.progress-head span:last-child{direction:ltr;font-family:Georgia,serif;letter-spacing:1px;white-space:nowrap}
-.progress-track{height:10px;border-radius:20px;border:1px solid #a78035;background:#100e0a;overflow:hidden;box-shadow:inset 0 2px 4px #000}
-.progress-fill{height:100%;width:0;border-radius:20px;background:linear-gradient(90deg,#80551a,#e4bd5d 45%,#fff0b0 72%,#b17c2d)}
-.progress-note{text-align:center;color:#a99a76;font-size:10px;margin-top:7px}
-.divider{display:flex;align-items:center;gap:10px;margin:20px 0 13px;color:#f1d68c;font-weight:800;font-size:15px;white-space:nowrap}
-.divider:before,.divider:after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,#c99b43,#f5e2a3)}
-.divider span{position:relative;padding:0 3px;text-shadow:0 0 10px #d9ad4d66}
-.level-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-bottom:15px}
-.level-tab{min-height:37px;border:1px solid #8c6b32;border-radius:9px;background:#100e0b;color:#c8b27c;font-size:12px;font-weight:900;direction:ltr;cursor:pointer}
-.level-tab[aria-pressed="true"]{background:linear-gradient(180deg,#fff0b4,#d6a64d);border-color:#fff0b4;color:#261907;box-shadow:0 0 13px #d8ad4d44}
-.level-tab:focus-visible,.charge:focus-visible,.back:focus-visible{outline:2px solid #fff0b4;outline-offset:3px}
-.level-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 2px 11px}
-.level-heading strong{font-size:14px;color:#ffe7a5}
-.level-heading small{font-size:10px;color:#b8a77e}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;align-content:start}
-.slot{min-width:0;min-height:116px;border:1px solid #9b7736;border-radius:12px;background:linear-gradient(145deg,#15130fef,#080807f5 65%);box-shadow:inset 0 1px #fff2,0 4px 12px #0008;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;position:relative;padding:10px 7px;text-align:center}
-.slot:before{content:"";position:absolute;inset:4px;border:1px solid #d5b45a22;border-radius:8px;pointer-events:none}
-.slot.available{border-color:#c7a354}
-.slot.pending{border-color:#6d5a35}
-.icon-ring{width:42px;height:42px;flex:0 0 42px;border-radius:50%;display:grid;place-items:center;border:1px solid #e8c36b;background:radial-gradient(circle at 35% 25%,#59451f,#17120a 72%);box-shadow:0 0 13px #d5a74335,inset 0 1px #fff3;color:#f6d889}
-.icon-ring svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.feature-name{color:#ffe5a0;font-size:12px;font-weight:900;line-height:1.4}
-.feature-state{font-size:10px;color:#c3a76b;font-weight:800}
-.available .feature-state{color:#83d6a1}
-.note-card{margin-top:12px;padding:11px 12px;border:1px solid #80612d66;border-radius:10px;background:#100d08;color:#c6b58d;font-size:11px;line-height:1.7;text-align:center}
-.bottom{margin-top:auto;padding-top:17px}
-.charge{width:100%;height:49px;border:1px solid #ffedb1;border-radius:12px;background:linear-gradient(180deg,#fff0b4 0%,#e5bd5e 35%,#a87325 100%);color:#211707;font-size:17px;font-weight:950;letter-spacing:.5px;box-shadow:0 5px 0 #654316,0 8px 20px #d2a34233,inset 0 1px #fff9;cursor:pointer}
-.charge:active{transform:translateY(2px);box-shadow:0 3px 0 #654316,0 5px 12px #d2a34233}
-.toast{min-height:18px;text-align:center;margin-top:10px;color:#e4ce91;font-size:11px}
-.loading{color:#d8c28c;text-align:center;font-size:12px;padding:14px}
-@media(max-width:360px){body{padding-inline:6px}.vip-shell{border-radius:17px}.inner{padding:14px 12px 16px}.emblem{height:108px}.slot{min-height:108px}.level-tabs{gap:5px}.level-tab{font-size:11px}}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+:root{
+  --bg:#050505; --panel:#0e0e0e; --circle:#1f1e1c;
+  --gold1:#ffe3a3; --gold2:#e9b560; --gold3:#b9863a;
+  --text:#f4f1ea; --muted:#8c8a85; --lock:#a8935f;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){:root{--bg:#050505}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center}
+.app{width:100%;max-width:480px;position:relative;padding-bottom:130px;overflow:hidden}
+.hero{position:relative;height:330px;background:radial-gradient(120% 80% at 25% 35%,rgba(233,181,96,.3),transparent 60%),linear-gradient(160deg,#3a3326 0%,#141210 42%,#050505 80%);overflow:hidden}#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.nav{position:absolute;top:14px;inset-inline:14px;display:flex;justify-content:space-between}
+.nav button{width:48px;height:48px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:20px;cursor:pointer}
+.badge{position:absolute;top:100px;inset-inline-start:34px;width:112px;height:128px;filter:drop-shadow(0 0 18px rgba(233,181,96,.6));animation:float 4s ease-in-out infinite}
+.vip-title{position:absolute;top:104px;inset-inline-end:22px;font-size:46px;font-weight:700;font-style:italic;letter-spacing:-1px;background:linear-gradient(110deg,#a9792f 20%,#fff3cf 40%,#e9b560 50%,#a9792f 70%);background-size:250% 100%;animation:shine 3.5s linear infinite;-webkit-background-clip:text;background-clip:text;color:transparent;direction:ltr}
+.progress{padding:0 22px;margin-top:-6px}
+.hint{color:var(--muted);font-size:15px;line-height:1.7}
+.hint b{color:#fff;font-weight:700}
+.bar{height:6px;border-radius:6px;background:#2a2a2a;margin:14px 0 12px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--gold3),var(--gold1));transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.row{display:flex;justify-content:space-between;color:var(--muted);font-size:15px;direction:rtl}
+.perks{margin-top:28px;border-top-left-radius:50% 26px;border-top-right-radius:50% 26px;background:linear-gradient(180deg,#151515,#070707 160px);border-top:1px solid rgba(233,181,96,.45);padding:26px 14px 10px}
+.title{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:26px;color:var(--gold1);font-size:22px;font-weight:500}
+.title::before,.title::after{content:"";width:58px;height:1px;background:linear-gradient(90deg,transparent,var(--gold2))}
+.title::after{transform:scaleX(-1)}
+.title span.d{width:9px;height:9px;background:var(--gold2);transform:rotate(45deg)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px 6px}
+.item{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;border:0;background:none;color:inherit;font-family:inherit}
+.item .c{width:78px;height:78px;border-radius:50%;background:radial-gradient(circle at 50% 30%,#2e2b25,#141312);border:1px solid rgba(233,181,96,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 6px 18px rgba(0,0,0,.6);display:grid;place-items:center;font-size:32px;transition:transform .15s,box-shadow .3s}.item.open .c{border-color:var(--gold2);box-shadow:0 0 22px rgba(233,181,96,.45),inset 0 0 14px rgba(233,181,96,.2)}.item:not(.open) .c span{opacity:.7}
+.item:active .c{transform:scale(.92)}
+.item .c span{background:linear-gradient(160deg,var(--gold1),var(--gold3));-webkit-background-clip:text;background-clip:text;color:transparent;filter:saturate(1.2)}
+.item .n{font-size:16px;font-weight:500;color:var(--gold1);text-align:center;line-height:1.3}
+.item .l{font-size:14px;color:var(--lock);display:flex;align-items:center;gap:4px;direction:ltr}
+.item.open .l{color:#6fd18b}
+.footer{position:fixed;bottom:0;width:100%;max-width:480px;background:rgba(16,15,13,.82);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(233,181,96,.3);border-bottom:0;border-radius:28px 28px 0 0;padding:22px 22px calc(26px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:16px}
+.footer p{flex:1;font-size:15px;line-height:1.6;color:#e9e6df}
+.footer button{position:relative;overflow:hidden;border:0;border-radius:40px;padding:16px 30px;font:700 18px 'Tajawal',sans-serif;color:#5e3908;background:linear-gradient(90deg,#ffd982,#f5ab55);box-shadow:0 0 24px rgba(245,171,85,.45);cursor:pointer}.footer button::after{content:'';position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.65),transparent);animation:sweep 3s ease-in-out infinite}
+.footer button:active{transform:scale(.97)}
+.tabs{display:flex;justify-content:center;gap:8px;margin:-8px 0 24px}.tabs button{border:1px solid rgba(233,181,96,.3);background:#13110e;color:var(--lock);font:500 14px 'Tajawal',sans-serif;padding:7px 14px;border-radius:20px;cursor:pointer;direction:ltr;transition:.2s}.tabs button.on{background:linear-gradient(90deg,#ffd982,#f5ab55);color:#5e3908;border-color:transparent;font-weight:700}
+@keyframes float{50%{transform:translateY(-8px)}}@keyframes shine{to{background-position:-250% 0}}@keyframes sweep{0%,60%{left:-60%}100%{left:130%}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+.toast{position:fixed;top:calc(20px + env(safe-area-inset-top,0px));left:50%;transform:translate(-50%,-90px);background:#222;color:#fff;border:1px solid var(--gold3);padding:12px 20px;border-radius:14px;font-size:15px;transition:transform .3s;z-index:9;white-space:nowrap}
+.toast.show{transform:translate(-50%,0)}
 </style>
 </head>
 <body>
-<main class="vip-shell" aria-label="واجهة GABO VIP">
-<div class="inner">
-  <div class="topline">
-    <a class="back" href="/profile/" aria-label="رجوع إلى الملف الشخصي">‹</a>
-    <span class="current-level" id="currentLevel">VIP0</span>
+<div class="app">
+  <div class="hero">
+    <canvas id="fx"></canvas><div class="nav"><button aria-label="رجوع">›</button><button aria-label="المزيد">⋯</button></div>
+    <svg class="badge" viewBox="0 0 112 128" aria-hidden="true">
+      <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3cf"/><stop offset=".45" stop-color="#e9b560"/><stop offset="1" stop-color="#7a4f17"/></linearGradient></defs>
+      <path d="M56 4 L66 20 L96 14 L104 54 L90 100 L56 124 L22 100 L8 54 L16 14 L46 20Z" fill="url(#g)" stroke="#ddd" stroke-width="2"/>
+      <circle cx="56" cy="58" r="30" fill="#222" stroke="#bbb" stroke-width="3"/>
+      <path d="M56 24 V86 M50 34 H62" stroke="#e5e5e5" stroke-width="6" stroke-linecap="round"/>
+      <rect x="26" y="86" width="60" height="20" rx="6" fill="#444" stroke="#ccc"/>
+      <text x="56" y="101" text-anchor="middle" fill="#fff" font-size="14" font-weight="700" font-style="italic">VIP1</text>
+    </svg>
+    <div class="vip-title">VIP 1</div>
   </div>
-  <svg class="emblem" viewBox="0 0 180 150" role="img" aria-label="تاج ذهبي داخل إكليل غار">
-    <defs>
-      <linearGradient id="laurel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0b4"/><stop offset=".45" stop-color="#c99a42"/><stop offset="1" stop-color="#75501e"/></linearGradient>
-      <linearGradient id="crown" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff8d7"/><stop offset=".42" stop-color="#e6c36e"/><stop offset="1" stop-color="#98651f"/></linearGradient>
-    </defs>
-    <g fill="none" stroke="url(#laurel)" stroke-width="2.4" stroke-linecap="round">
-      <path d="M88 132C49 128 21 98 22 58M92 132c39-4 67-34 66-74"/>
-      <path d="M27 70Q12 59 13 43Q29 47 33 62M35 88Q17 84 13 68Q31 66 40 80M49 105Q31 106 23 91Q40 84 54 98M66 119Q49 125 37 112Q52 101 69 112M153 70q15-11 14-27q-16 4-20 19M145 88q18-4 22-20q-18-2-27 12M131 105q18 1 26-14q-17-7-31 7M114 119q17 6 29-7q-15-11-32 0"/>
-      <path d="M25 132Q90 145 155 132"/>
-    </g>
-    <g fill="url(#laurel)" stroke="#6d4a1c" stroke-width=".6">
-      <path d="M24 59Q6 48 10 32Q27 36 31 53Z"/><path d="M34 80Q15 77 12 59Q29 58 40 73Z"/><path d="M49 99Q30 100 23 84Q41 78 55 93Z"/><path d="M67 115Q49 122 36 108Q53 97 70 108Z"/>
-      <path d="M156 59Q174 48 170 32Q153 36 149 53Z"/><path d="M146 80Q165 77 168 59Q151 58 140 73Z"/><path d="M131 99Q150 100 157 84Q139 78 125 93Z"/><path d="M113 115Q131 122 144 108Q127 97 110 108Z"/>
-    </g>
-    <path d="M51 47L66 61L88 30L111 61L128 47L120 91Q90 103 60 91Z" fill="url(#crown)" stroke="#fff0b4" stroke-width="2"/>
-    <path d="M60 91Q90 103 120 91L124 102Q90 115 56 102Z" fill="#a87329" stroke="#f8dfa0" stroke-width="1.5"/>
-    <circle cx="51" cy="45" r="5" fill="#f8e8b7"/><circle cx="88" cy="27" r="6" fill="#fff6d7"/><circle cx="129" cy="45" r="5" fill="#f8e8b7"/>
-    <path d="M67 62L88 87L109 62M88 31V87" fill="none" stroke="#fff4ca" stroke-width="1.5" opacity=".8"/>
-  </svg>
-  <h1>VIP</h1>
-  <div class="subtitle">GABO LIVE · ELITE MEMBERSHIP</div>
-
-  <section class="progress-area" aria-label="تقدم نقاط VIP">
-    <div class="progress-head"><span>مستواك الحالي</span><span id="progressValue">0 / 100</span></div>
-    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-    <div class="progress-note">سيتم ربط نقاط الخبرة والترقية تلقائيًا عند تفعيل نظام الشحن</div>
+  <div class="progress">
+    <p class="hint">تحتاج إلى <b id="need">49900</b> نقطة خبرة VIP للوصول إلى VIP1، استمتع بالعديد من الامتيازات الحصرية</p>
+    <div class="bar"><i id="fill"></i></div>
+    <div class="row"><span>VIP0</span><span><span id="xp">100/50000</span> الخبرة</span><span>VIP1</span></div>
+  </div>
+  <section class="perks">
+    <div class="title"><span class="d"></span>امتيازات VIP حصرية<span class="d"></span></div>
+    <div class="tabs" id="tabs"></div><div class="grid" id="grid"></div>
   </section>
-
-  <div class="divider"><span>✦ مزايا VIP الحصرية ✦</span></div>
-  <nav class="level-tabs" id="levelTabs" aria-label="اختيار مستوى VIP"></nav>
-  <div class="level-heading"><strong id="levelTitle">مزايا VIP1</strong><small id="levelStatus">مستوى المعاينة</small></div>
-  <section class="grid" id="featureGrid" aria-label="مزايا المستوى">
-    <div class="loading">جاري تجهيز المزايا...</div>
-  </section>
-  <div class="note-card" id="levelNote">تظهر هنا المزايا المعتمدة لهذا المستوى، ولا يتم فتح أي ميزة اعتمادًا على اختيار التبويب فقط.</div>
-
-  <div class="bottom">
-    <button class="charge" id="charge" type="button">اشحن الآن</button>
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="footer">
+    <button id="charge">اشحن الآن</button>
+    <p>استمر في الشحن للحصول على <span id="need2">49900</span> نقطة خبرة VIP، وقم بالترقية إلى VIP1</p>
   </div>
 </div>
-</main>
-
-<script type="module">
-import {auth,db,authReady} from "/firebase-config.js";
-import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {doc,getDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const $=id=>document.getElementById(id);
-let userLevel=0,selectedLevel=1,toastTimer;
-
-const ICONS={
- badge:'<path d="M12 3 14.8 8.7 21 9.6l-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9Z"/>',
- frame:'<rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="10" r="2.5"/><path d="M7.5 18c.8-2.2 2.3-3.3 4.5-3.3s3.7 1.1 4.5 3.3"/>',
- medal:'<circle cx="12" cy="8" r="5"/><path d="m8.5 12-1 9 4.5-2.5 4.5 2.5-1-9"/>',
- chart:'<path d="M4 19V5m0 14h16"/><path d="m7 15 3-4 3 2 5-7"/>',
- visitors:'<circle cx="9" cy="8" r="3"/><path d="M3.5 19c.4-3.1 2.2-4.7 5.5-4.7 1.4 0 2.5.3 3.4.9"/><path d="M16 11.5a3 3 0 1 0 0-6M15 15c3.2 0 5 1.4 5.5 4"/>',
- spark:'<path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8Z"/><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8Z"/>'
-};
-
-const vip1=[
- {name:"شارة VIP بجانب الاسم",level:1,icon:"badge",state:"active",detail:"شارة المستوى تظهر بجانب اسمك في الملف الشخصي."},
- {name:"إطار خاص للصورة الشخصية",level:1,icon:"frame",state:"pending",detail:"إطار VIP1 الدائري الخاص قيد التجهيز."},
- {name:"وسام VIP1 في الإنجازات",level:1,icon:"medal",state:"pending",detail:"إضافة الوسام إلى صفحة إنجازاتك قيد التجهيز."},
- {name:"إحصائيات نشاطك",level:1,icon:"chart",state:"pending",detail:"إجمالي الرسائل والتفاعلات وأيام المشاركة قيد الربط."},
- {name:"مشاهدة زوار ملفك",level:1,icon:"visitors",state:"pending",detail:"قائمة الحسابات التي زارت ملفك قيد التجهيز."}
+<div class="toast" id="toast"></div>
+<script>
+// عدّل هذي القيم حسب بياناتك
+var USER = { xp: 100, next: 50000, level: 0 };
+var PERKS = [
+  {n:"شعار الـ VIP", lv:1, i:"♦"},
+  {n:"إطار الرأس", lv:1, i:"♚"},
+  {n:"العرض في المقدمة", lv:1, i:"⇪"},
+  {n:"عرض الزوار", lv:1, i:"☺"},
+  {n:"فقاعة دردشة", lv:2, i:"✉"},
+  {n:"إخفاء وقت آخر ظهور", lv:2, i:"◔"},
+  {n:"خلفية مخصصة", lv:3, i:"▣"},
+  {n:"هدايا حصرية", lv:3, i:"✦"},
+  {n:"عدد اصدقاء أكثر", lv:4, i:"☻"},
+  {n:"تأثير الدخول", lv:4, i:"✧"},
+  {n:"بطاقة خيالية", lv:5, i:"❖"},
+  {n:"ترحيب بصورة", lv:5, i:"☼"}
 ];
-const vip3=[
- {name:"شارة VIP3 الخاصة",level:3,icon:"badge",state:"pending",detail:"شارة المستوى VIP3 الخاصة قيد التجهيز."},
- {name:"إطار VIP3 الذهبي المتحرك",level:3,icon:"frame",state:"pending",detail:"إطار واحد مميز للمستوى VIP3 قيد التجهيز."},
- {name:"إحصائيات متقدمة",level:3,icon:"chart",state:"pending",detail:"إحصائيات النشاط المتقدمة قيد التجهيز."},
- {name:"أوسمة VIP حصرية",level:3,icon:"spark",state:"pending",detail:"الأوسمة الحصرية للمستوى VIP3 قيد التجهيز."}
-];
-
-function showToast(message){
- const toast=$("toast");
- toast.textContent=message;
- clearTimeout(toastTimer);
- toastTimer=setTimeout(()=>toast.textContent="",2600);
-}
-function getFeatures(level){
- const result=vip1.slice();
- if(level>=3)result.push(...vip3);
- return result;
-}
-function renderTabs(){
- const tabs=$("levelTabs");
- tabs.innerHTML="";
- for(let level=1;level<=10;level++){
-  const button=document.createElement("button");
-  button.type="button";
-  button.className="level-tab";
-  button.textContent="VIP"+level;
-  button.setAttribute("aria-pressed",String(level===selectedLevel));
-  button.addEventListener("click",()=>{
-   selectedLevel=level;
-   renderTabs();
-   renderFeatures();
-  });
-  tabs.appendChild(button);
- }
-}
-function renderFeatures(){
- const grid=$("featureGrid");
- const features=getFeatures(selectedLevel);
- grid.innerHTML="";
- $("levelTitle").textContent="مزايا VIP"+selectedLevel;
- $("levelStatus").textContent=selectedLevel<=userLevel?"ضمن مستواك الحالي":"معاينة مستوى أعلى";
- features.forEach(feature=>{
-  const unlocked=userLevel>=feature.level;
-  const active=feature.state==="active";
-  const card=document.createElement("article");
-  card.className="slot "+(active&&unlocked?"available":"pending");
-  const icon=document.createElement("div");
-  icon.className="icon-ring";
-  icon.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+ICONS[feature.icon]+'</svg>';
-  const name=document.createElement("div");
-  name.className="feature-name";
-  name.textContent=feature.name;
-  const state=document.createElement("div");
-  state.className="feature-state";
-  state.textContent=active&&unlocked?"✓ مفعّلة":(!unlocked?"تُفتح عند VIP"+feature.level:"قيد التجهيز");
-  card.append(icon,name,state);
-  card.addEventListener("click",()=>{
-   if(!unlocked)showToast("هذه الميزة تُفتح عند الوصول إلى VIP"+feature.level);
-   else if(active)showToast(feature.detail);
-   else showToast("الميزة ضمن امتيازات مستواك، وربطها الفعلي قيد التجهيز");
-  });
-  grid.appendChild(card);
- });
- if(selectedLevel===1){
-  $("levelNote").textContent="مزايا VIP1 المعتمدة: الشارة، إطار الصورة، وسام الإنجازات، إحصائيات النشاط، ومشاهدة زوار الملف. الشارة مفعّلة، وبقية المزايا قيد التطوير.";
- }else if(selectedLevel===3){
-  $("levelNote").textContent="يشمل VIP3 جميع مزايا VIP1، ويضيف شارة VIP3 وإطارًا ذهبيًا متحركًا واحدًا وإحصائيات متقدمة وأوسمة حصرية.";
- }else if(selectedLevel===2){
-  $("levelNote").textContent="يشمل هذا المستوى مزايا VIP1. لم تُعتمد إضافات مستقلة لـ VIP2 حتى الآن.";
- }else{
-  $("levelNote").textContent="يشمل هذا المستوى مزايا المستويات الأدنى. لم تُعتمد إضافات مستقلة لهذا المستوى بعد، ولن نعرض مزايا غير معتمدة.";
- }
-}
-function applyUserLevel(value){
- const parsed=Number(String(value??0).replace(/^VIP/i,""));
- userLevel=Number.isFinite(parsed)?Math.max(0,Math.min(10,Math.floor(parsed))):0;
- $("currentLevel").textContent="VIP"+userLevel;
- renderTabs();
- renderFeatures();
-}
-$("charge").addEventListener("click",()=>showToast("خدمة الشحن والترقية ستُفعّل لاحقًا"));
-
-try{
- await authReady;
- onAuthStateChanged(auth,async user=>{
-  if(!user){location.replace("/login/");return;}
-  try{
-   const snapshot=await getDoc(doc(db,"users",user.uid));
-   applyUserLevel(snapshot.exists()?snapshot.data().vipLevel:0);
-  }catch(error){
-   console.error("VIP profile read failed:",error);
-   applyUserLevel(0);
-   showToast("تعذر تحميل مستوى VIP من الحساب");
-  }
- });
-}catch(error){
- console.error("VIP initialization failed:",error);
- applyUserLevel(0);
- showToast("تعذر الاتصال بخدمة الحساب");
-}
+var LOCK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+var toast = document.getElementById('toast'), tt;
+function say(m){toast.textContent=m;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove('show')},1800)}
+var grid = document.getElementById('grid'), tabs = document.getElementById('tabs'), view = 1;
+function render(){ grid.innerHTML=''; tabs.innerHTML='';
+[1,2,3,4,5].forEach(function(l){var t=document.createElement('button');t.textContent='VIP'+l;t.className=l===view?'on':'';t.onclick=function(){view=l;render()};tabs.appendChild(t)});
+PERKS.forEach(function(p){
+  var open = view >= p.lv;
+  var b = document.createElement('button');
+  b.className = 'item' + (open ? ' open' : '');
+  b.innerHTML = '<div class="c"><span>'+p.i+'</span></div><div class="n">'+p.n+'</div><div class="l">VIP'+p.lv+' '+(open?'✓':LOCK)+'</div>';
+  b.onclick = function(){ say(open ? 'الميزة مفعّلة: '+p.n : 'تنفتح عند VIP'+p.lv); };
+  grid.appendChild(b);
+});}
+render();
+var left = USER.next - USER.xp;
+document.getElementById('need').textContent = left;
+document.getElementById('need2').textContent = left;
+document.getElementById('xp').textContent = USER.xp + '/' + USER.next;
+setTimeout(function(){ document.getElementById('fill').style.width = Math.max(1, USER.xp/USER.next*100)+'%'; }, 150);
+document.getElementById('charge').onclick = function(){ say('فتح صفحة الشحن...'); };
+// جزيئات ذهبية متطايرة
+(function(){var c=document.getElementById('fx'),x=c.getContext('2d'),W,H,P=[];
+function rs(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight}rs();addEventListener('resize',rs);
+for(var i=0;i<34;i++)P.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.8+.4,v:Math.random()*.4+.15,a:Math.random()});
+function f(){x.clearRect(0,0,W,H);P.forEach(function(p){p.y-=p.v;p.a+=.02;if(p.y<-5){p.y=H+5;p.x=Math.random()*W}
+x.globalAlpha=.25+.5*Math.abs(Math.sin(p.a));x.fillStyle='#ffd982';x.shadowColor='#e9b560';x.shadowBlur=8;x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill()});requestAnimationFrame(f)}
+if(!matchMedia('(prefers-reduced-motion:reduce)').matches)f()})();
 </script>
-<script type="module" src="/js/unified-bottom-nav.js"></script>
 </body>
 </html>
