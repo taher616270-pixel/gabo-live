@@ -66,6 +66,11 @@ body{background:var(--bg);color:#fff;font-family:system-ui;min-height:100vh;padd
 
 /* Hide gender and age from public profile */
 #gender,#age{display:none!important}
+
+/* Assigned VIP6 avatar frame on public profiles */
+.avatar.vip6-frame{overflow:visible!important;isolation:isolate}
+.avatar.vip6-frame img{border-radius:inherit}
+.avatar.vip6-frame::after{content:"";position:absolute;inset:-13px;background:url('/vip/frames/VIP6.mp4.webp') center/contain no-repeat;pointer-events:none;z-index:5}
 </style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
 </head>
@@ -103,6 +108,7 @@ if(!targetUid){
         return;
       }
       const d=snap.data();
+      if(d.headFrame==='VIP6')document.getElementById('avatar').classList.add('vip6-frame');
       const name=d.displayName||d.name||'مستخدم';
       const photo=d.photoURL||d.photoUrl||d.photo||d.avatar||'';
       const cover=d.cover||d.coverURL||d.coverUrl||'';
