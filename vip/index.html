@@ -261,7 +261,7 @@ function renderVipNotices(){
     card.style.setProperty('--a', t[1]);
     card.style.setProperty('--b', t[2]);
     card.style.setProperty('--n', level);
-    card.innerHTML = '<div class="vip-notice-preview">'+emb(level, 'popup'+level)+'</div><span class="vip-notice-name" style="color:'+t[1]+'">VIP'+level+'</span>';
+    card.innerHTML = '<div class="vip-notice-preview">'+emb(level, 'popup'+level)+'</div><span class="vip-notice-name">VIP'+level+'</span>';
     list.appendChild(card);
   });
 }
