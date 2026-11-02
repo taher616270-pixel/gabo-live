@@ -50,6 +50,7 @@ body{background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans
 .item:active .c{transform:scale(.92)}
 .item .c span{background:linear-gradient(160deg,var(--gold1),var(--gold3));-webkit-background-clip:text;background-clip:text;color:transparent;filter:saturate(1.2)}
 .item .c .vip-mark{width:66px;height:66px;display:block;overflow:visible;filter:drop-shadow(0 0 5px rgba(255,211,125,.55));animation:vipMarkGlow 3s ease-in-out infinite}
+.item .c .head-frame-icon{width:68px;height:68px;display:block;overflow:visible;filter:drop-shadow(0 0 6px rgba(255,211,125,.7));animation:vipMarkGlow 3s ease-in-out infinite}
 @keyframes vipMarkGlow{50%{filter:drop-shadow(0 0 10px rgba(255,211,125,.9));transform:translateY(-1px)}}
 .item .n{font-size:16px;font-weight:500;color:var(--gold1);text-align:center;line-height:1.3}
 .item .l{font-size:14px;color:var(--lock);display:flex;align-items:center;gap:4px;direction:ltr}
@@ -239,7 +240,9 @@ PERKS.forEach(function(p){
   b.className = 'item' + (open ? ' open' : '');
   var perkIcon = p.n === 'شعار الـ VIP'
     ? '<svg class="vip-mark" viewBox="0 0 78 78" role="img" aria-label="VIP"><defs><linearGradient id="vipCleanGold" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff4c9"/><stop offset=".48" stop-color="#f2c56b"/><stop offset="1" stop-color="#b77a2b"/></linearGradient></defs><text x="39" y="49" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="900" letter-spacing="-2" fill="url(#vipCleanGold)">VIP</text></svg>'
-    : '<span>'+p.i+'</span>';
+    : p.n === 'إطار الرأس'
+      ? '<svg class="head-frame-icon" viewBox="0 0 78 78" role="img" aria-label="شخص بإطار رأس"><defs><linearGradient id="headGoldFrame" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff4c9"/><stop offset=".5" stop-color="#e9b560"/><stop offset="1" stop-color="#9b6425"/></linearGradient></defs><circle cx="39" cy="39" r="29" fill="none" stroke="url(#headGoldFrame)" stroke-width="3"/><circle cx="39" cy="39" r="24" fill="none" stroke="#f8dda0" stroke-width="1" stroke-dasharray="2 3"/><path d="M39 4l4 7 8-3 1 8 8 2-3 8 7 5-6 6 3 8-8 2-1 8-8-3-5 7-5-7-8 3-1-8-8-2 3-8-7-5 6-6-3-8 8-2 1-8 8 3z" fill="none" stroke="url(#headGoldFrame)" stroke-width="1.8" stroke-linejoin="round"/><circle cx="39" cy="29" r="8" fill="#f4d18a"/><path d="M23 57c1-10 7-16 16-16s15 6 16 16" fill="#e9b560" stroke="#fff0c4" stroke-width="1.5" stroke-linecap="round"/><path d="M28 56c3-5 7-7 11-7s8 2 11 7" fill="none" stroke="#8d5c25" stroke-width="1.5"/></svg>'
+      : '<span>'+p.i+'</span>';
   b.innerHTML = '<div class="c">'+perkIcon+'</div><div class="n">'+p.n+'</div><div class="l">VIP'+p.lv+' '+(open?'✓':LOCK)+'</div>';
   b.onclick = function(){
     if (p.n === 'شعار الـ VIP') {
