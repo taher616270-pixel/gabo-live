@@ -27,7 +27,7 @@ textarea{min-height:90px}
 </head>
 <body>
 <div class="wrap">
-<div class="topbar"><a class="brand" href="/">✦ GABO LIVE - ADMIN كل شي</a><div><span id="adminEmail" style="color:#aaa3bd;font-size:13px"></span> <button id="logout">خروج</button></div></div>
+<div class="topbar"><a class="brand" href="/admin/">✦ GABO LIVE - لوحة الإدارة</a><div><span id="adminEmail" style="color:#aaa3bd;font-size:13px"></span> <button id="logout">خروج</button></div></div>
 
 <div class="tabs">
 <div class="tab active" data-p="main">🌍 المجتمعات</div>
@@ -147,17 +147,19 @@ let me=null, countryRegistry=[];
 let cfg={brand:"GABO LIVE",bottomNav:[{icon:"⌂",label:"الرئيسية",path:"/",order:0,visible:true},{icon:"♬",label:"المجتمع",path:"/app/",order:1,visible:true},{icon:"✉",label:"الخاص",path:"/dm/",order:2,visible:true},{icon:"◉",label:"حسابي",path:"/profile/",order:3,visible:true}],payment:{currency:"SAR"},plans:[{id:"vip1",name:"VIP شهري",price:29,days:30}],pages:[],features:{privateChat:true}};
 
 onAuthStateChanged(auth, async u=>{
- if(!u){ location.replace('/login/'); return; }
+ if(!u){ location.replace('/admin/login/'); return; }
  try {
   const adminProfile=await getDoc(doc(db,'users',u.uid));
   if(u.email !== 'taher616380@gmail.com' && (!adminProfile.exists() || adminProfile.data().isAdmin !== true)){
    alert('هذه الصفحة مخصصة للإدارة فقط');
-   location.replace('/app/');
+   await signOut(auth);
+   location.replace('/admin/login/?denied=1');
    return;
   }
  } catch (error) {
   alert('تعذر التحقق من صلاحيات الإدارة');
-  location.replace('/app/');
+  await signOut(auth);
+  location.replace('/admin/login/?error=verify');
   return;
  }
  me=u; document.getElementById('adminEmail').innerText=u.email;
@@ -165,7 +167,7 @@ onAuthStateChanged(auth, async u=>{
  initTabs(); listenAll(); renderNav(); renderPlans(); renderPages(); renderSouthFlag(); try{countryRegistry=await getCountryRegistryAdmin();renderCountryRegistry();}catch(countryError){console.error('Country manager setup:',countryError);document.getElementById('countryAdminList').innerHTML='<p style="color:#fbbf24;line-height:1.8">تعذر تحميل قائمة الدول. تحقق من صلاحيات Firestore واتصال الإنترنت.</p>';} loadHosts(); loadUsersFull();
 });
 
-document.getElementById('logout').onclick=()=>signOut(auth).then(()=>location.href='/login/');
+document.getElementById('logout').onclick=()=>signOut(auth).then(()=>location.href='/admin/login/');
 
 function initTabs(){
  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
