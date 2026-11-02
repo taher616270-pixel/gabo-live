@@ -133,9 +133,9 @@ body{background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans
 @keyframes bin{from{transform:translateX(120%) scale(.8);opacity:0}}@keyframes bout{to{transform:translateX(110%);opacity:0}}@keyframes spin{to{transform:rotate(360deg)}}@keyframes cin{from{opacity:0}}@keyframes cout{to{opacity:0}}@keyframes pop{from{transform:scale(.3);opacity:0}}@keyframes fl{from{opacity:.75}to{opacity:0}}
 @keyframes shk{20%{transform:translate(calc(var(--s)*-1px),calc(var(--s)*.5px))}40%{transform:translate(calc(var(--s)*1px),calc(var(--s)*-.5px))}60%{transform:translate(calc(var(--s)*-.7px),0)}80%{transform:translate(calc(var(--s)*.7px),0)}}
 /* صفحة شعار VIP الفارغة */
-.vip-blank-page{position:fixed;inset:0;z-index:50;background:#050505;display:none;align-items:flex-start;justify-content:flex-start;padding:calc(18px + env(safe-area-inset-top,0px)) 18px}
+.vip-blank-page{position:fixed;z-index:50;left:50%;top:50%;width:min(calc(100% - 32px),448px);height:min(62vh,520px);transform:translate(-50%,-50%);border:1px solid rgba(233,181,96,.55);border-radius:24px;background:linear-gradient(160deg,#15130f,#050505 55%);box-shadow:0 18px 60px rgba(0,0,0,.8),0 0 24px rgba(233,181,96,.12);display:none;align-items:flex-start;justify-content:flex-start;padding:14px}
 .vip-blank-page.show{display:flex}
-.vip-blank-close{width:42px;height:42px;border:1px solid rgba(233,181,96,.35);border-radius:50%;background:#171512;color:#f4d18a;font:32px/1 Arial,sans-serif;display:grid;place-items:center;cursor:pointer}
+.vip-blank-close{width:40px;height:40px;border:1px solid rgba(233,181,96,.35);border-radius:50%;background:#171512;color:#f4d18a;font:32px/1 Arial,sans-serif;display:grid;place-items:center;cursor:pointer}
 .toast{position:fixed;top:calc(20px + env(safe-area-inset-top,0px));left:50%;transform:translate(-50%,-90px);background:#222;color:#fff;border:1px solid var(--gold3);padding:12px 20px;border-radius:14px;font-size:15px;transition:transform .3s;z-index:9;white-space:nowrap}
 .toast.show{transform:translate(-50%,0)}
 </style>
