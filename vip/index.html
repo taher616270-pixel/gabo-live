@@ -272,5 +272,27 @@ x.globalAlpha=.25+.5*Math.abs(Math.sin(p.a));x.fillStyle='#ffd982';x.shadowColor
 if(!matchMedia('(prefers-reduced-motion:reduce)').matches)f()})();
 </script>
 
+<script type="module">
+  import { auth, db, authReady } from '/firebase-config.js';
+  import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+  import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+  await authReady;
+  onAuthStateChanged(auth, async user => {
+    if (!user) return;
+    let name = user.displayName || user.email?.split('@')[0] || 'مستخدم';
+    try {
+      const profile = await getDoc(doc(db, 'users', user.uid));
+      if (profile.exists()) {
+        const data = profile.data();
+        name = data.name || data.displayName || name;
+      }
+    } catch (error) {
+      console.error('تعذر قراءة اسم الحساب لعرض دخولية VIP:', error);
+    }
+    setUser(name);
+  });
+</script>
+
 </body>
 </html>
