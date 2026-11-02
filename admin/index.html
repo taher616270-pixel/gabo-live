@@ -21,6 +21,55 @@ textarea{min-height:90px}
 .tab.active{background:#7c3aed;color:#fff}
 .panel{display:none}.panel.active{display:block}
 .small{padding:6px 10px;font-size:11px}
+
+/* Premium members management */
+#p-users{color:#f8f6ff}
+.members-hero{position:relative;display:flex;justify-content:space-between;align-items:center;gap:16px;overflow:hidden;padding:24px;border:1px solid #a78bfa35;border-radius:22px;background:radial-gradient(circle at 8% 5%,#8b5cf633,transparent 35%),linear-gradient(125deg,#171027,#0c0a15 65%,#21152c);box-shadow:0 18px 45px #0005}
+.members-hero:after{content:"✦";position:absolute;left:24px;bottom:-42px;font-size:145px;color:#d8b4fe0b;pointer-events:none}
+.members-kicker{font-size:10px;letter-spacing:2px;color:#d6bcff;font-weight:900}
+.members-hero h2{font-size:26px;margin:7px 0 4px}.members-hero p{margin:0;color:#aaa2bd;font-size:13px}
+.members-live{white-space:nowrap;border:1px solid #4ade8030;background:#16a34a12;color:#86efac;border-radius:30px;padding:8px 12px;font-size:11px}
+.members-live i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#4ade80;margin-left:6px;box-shadow:0 0 10px #4ade80}
+.members-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
+.member-stat{padding:16px;border-radius:17px;border:1px solid #ffffff14;background:linear-gradient(145deg,#1b1529,#100d19);min-width:0}
+.member-stat span,.member-stat small{display:block;color:#aaa2bd;font-size:11px}.member-stat b{display:block;font-size:27px;color:#f4d58a;margin:7px 0 2px}
+.members-tools{padding:17px;border:1px solid #ffffff18;border-radius:19px;background:#110e1b;margin:12px 0}
+.members-tools-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.members-tools-head b{display:block;font-size:17px}.members-tools-head small{display:block;color:#968da9;font-size:11px;margin-top:4px}
+.members-refresh,.members-pagination button{background:#241a35;border:1px solid #a78bfa35;color:#e9ddff;border-radius:11px;padding:9px 13px}
+.members-search{height:48px;display:flex;align-items:center;gap:10px;padding:0 14px;border:1px solid #a78bfa35;border-radius:13px;background:#090711;color:#d8b4fe;font-size:20px}
+.members-search input{border:0!important;background:transparent!important;margin:0!important;padding:8px 0!important;outline:none;box-shadow:none;min-width:0}
+.members-filters{display:flex;gap:7px;overflow-x:auto;padding:13px 0 4px}
+.members-filters button{white-space:nowrap;border-radius:30px;padding:8px 15px;background:#ffffff08;border:1px solid #ffffff17;color:#bdb5ca;font-size:12px}
+.members-filters button.selected{background:linear-gradient(135deg,#7c3aed,#5b21b6);border-color:#a78bfa;color:#fff}
+.members-sort{display:flex;align-items:center;gap:10px;color:#a69db8;font-size:12px;margin-top:8px}
+.members-sort select{max-width:190px;margin:0;padding:8px 12px}
+.members-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.member-card{position:relative;min-width:0;padding:15px;border-radius:18px;border:1px solid #ffffff16;background:linear-gradient(145deg,#191426,#0e0b16);overflow:hidden}
+.member-card.is-banned{border-color:#ef444455;background:linear-gradient(145deg,#25121b,#100b13)}
+.member-main{display:flex;align-items:center;gap:11px;min-width:0}
+.member-avatar{width:54px;height:54px;flex:0 0 54px;border-radius:17px;display:grid;place-items:center;overflow:hidden;background:linear-gradient(145deg,#7041a8,#28203b);border:1px solid #d8b4fe40;font-size:21px;font-weight:900;color:#fff}
+.member-avatar img{width:100%;height:100%;object-fit:cover}
+.member-ident{min-width:0;flex:1}.member-name{font-size:14px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.member-email{font-size:11px;color:#aaa2bd;direction:ltr;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}
+.member-badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.member-badge{font-size:10px;padding:4px 8px;border-radius:20px;background:#ffffff0c;border:1px solid #ffffff15;color:#c9c1d7}
+.member-badge.vip{color:#f8d98b;border-color:#d6a84a55;background:#d6a84a12}.member-badge.admin{color:#d8b4fe;border-color:#a78bfa55}.member-badge.banned{color:#fca5a5;border-color:#ef444455}
+.member-meta{display:flex;justify-content:space-between;gap:8px;color:#9188a4;font-size:10px;border-top:1px solid #ffffff10;margin-top:12px;padding-top:10px}
+.member-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.member-actions button{font-size:11px;padding:7px 10px;border-radius:9px;background:#ffffff0b;border:1px solid #ffffff19}
+.member-actions .gold{color:#f8d98b;border-color:#d6a84a45}.member-actions .red{color:#fca5a5;border-color:#ef444444}
+.members-state{padding:26px;text-align:center;color:#b9afca;border:1px dashed #ffffff22;border-radius:16px;margin:12px 0}
+.members-pagination{display:flex;justify-content:center;align-items:center;gap:18px;padding:15px;color:#bdb5ca;font-size:12px}
+.members-pagination button:disabled{opacity:.35;cursor:not-allowed}
+.vip6-console{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;padding:17px;margin:12px 0;border:1px solid #d6a84a55;border-radius:18px;background:linear-gradient(120deg,#261d10,#14101b 65%,#1c1428)}
+.vip6-mark{width:43px;height:43px;border-radius:14px;display:grid;place-items:center;background:#d6a84a1c;color:#f8d98b;font-size:24px}
+.vip6-copy b,.vip6-copy small{display:block}.vip6-copy small{color:#aaa2bd;font-size:11px;margin-top:4px}
+.vip6-controls{grid-column:1/-1;display:flex;gap:8px}.vip6-controls input{margin:0;min-width:0}.vip6-controls button{white-space:nowrap}
+#vip6GrantStatus{grid-column:1/-1;color:#f5d78e;font-size:12px;min-height:16px}
+@media(max-width:760px){.members-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.members-list{grid-template-columns:1fr}.members-hero{padding:19px}.members-hero h2{font-size:22px}}
+@media(max-width:380px){.members-hero{align-items:flex-start;flex-direction:column}.member-card{padding:13px}.members-tools{padding:12px}}
+
 @media(max-width:800px){.grid{grid-template-columns:1fr}}
 </style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
@@ -115,13 +164,37 @@ textarea{min-height:90px}
 </div>
 
 <!-- USERS -->
-<div class="card panel" id="p-users">
-<b>👥 كل الأعضاء - حظر / ترقية / VIP / جعل أدمن (يظهرون تلقائياً)</b>
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">
- <input id="vip6GaboId" inputmode="numeric" placeholder="رقم حساب GABO" style="flex:1;min-width:170px;padding:11px;border-radius:10px;background:#111;color:#fff;border:1px solid #80632c">
- <button id="grantVip6Frame" class="small primary" type="button">منح إطار VIP6</button>
- </div><div id="vip6GrantStatus" style="font-size:13px;color:#f5d78e;margin-bottom:10px" aria-live="polite"></div>
- <div id="usersListFull"></div>
+<div class="panel" id="p-users">
+ <section class="members-hero">
+  <div><span class="members-kicker">GABO LIVE · CONTROL CENTER</span><h2>إدارة الأعضاء</h2><p>مركز موحّد لمراجعة الحسابات وإدارة الصلاحيات والعضويات.</p></div>
+  <div class="members-live"><i></i> تحديث مباشر</div>
+ </section>
+ <div class="members-stats">
+  <div class="member-stat"><span>إجمالي الأعضاء</span><b id="membersTotal">—</b><small>كل الحسابات المسجلة</small></div>
+  <div class="member-stat"><span>أعضاء VIP</span><b id="membersVip">—</b><small>العضويات المميزة</small></div>
+  <div class="member-stat"><span>مديرو النظام</span><b id="membersAdmins">—</b><small>صلاحيات الإدارة</small></div>
+  <div class="member-stat"><span>حسابات محظورة</span><b id="membersBanned">—</b><small>الحظر الحالي</small></div>
+ </div>
+ <section class="members-tools">
+  <div class="members-tools-head"><div><b>قائمة الأعضاء</b><small id="membersResultCount">جارٍ تحميل البيانات…</small></div><button id="refreshMembers" type="button" class="members-refresh">↻ تحديث العرض</button></div>
+  <label class="members-search">⌕ <input id="membersSearch" type="search" placeholder="ابحث بالاسم أو البريد أو رقم GABO أو UID…" autocomplete="off"></label>
+  <div class="members-filters" id="membersFilters">
+   <button type="button" class="selected" data-filter="all">الكل</button>
+   <button type="button" data-filter="vip">VIP</button>
+   <button type="button" data-filter="admin">الإدارة</button>
+   <button type="button" data-filter="banned">المحظورون</button>
+   <button type="button" data-filter="normal">عادي</button>
+  </div>
+  <div class="members-sort"><label for="membersSort">ترتيب حسب</label><select id="membersSort"><option value="new">الأحدث أولاً</option><option value="old">الأقدم أولاً</option><option value="name">الاسم</option><option value="vip">مستوى VIP</option></select></div>
+ </section>
+ <div id="membersLoading" class="members-state">⏳ جارٍ تحميل الأعضاء من قاعدة البيانات…</div>
+ <div id="usersListFull" class="members-list" aria-live="polite"></div>
+ <div class="members-pagination"><button type="button" id="membersPrev" disabled>السابق</button><span id="membersPageLabel">صفحة 1</span><button type="button" id="membersNext" disabled>التالي</button></div>
+ <section class="vip6-console">
+  <div class="vip6-mark">✦</div><div class="vip6-copy"><b>منح إطار VIP6</b><small>ابحث عن العضو باستخدام رقم حساب GABO الخاص به.</small></div>
+  <div class="vip6-controls"><input id="vip6GaboId" inputmode="numeric" placeholder="رقم حساب GABO"><button id="grantVip6Frame" class="primary" type="button">منح الإطار</button></div>
+  <div id="vip6GrantStatus" aria-live="polite"></div>
+ </section>
 </div>
 
 </div>
@@ -309,13 +382,81 @@ function listenAll(){
  });
 }
 
+let allMembers=[],membersFilter='all',membersPage=1;const MEMBERS_PAGE_SIZE=12;
+function memberDate(u){const v=u.createdAt||u.created_at||u.joinedAt||u.registrationDate;if(v?.toDate)return v.toDate().getTime();if(typeof v==='number')return v;const parsed=Date.parse(v||'');return Number.isFinite(parsed)?parsed:0;}
+function memberVip(u){return Number(u.vipLevel)||Number(String(u.subscription||u.subPlan||'').replace(/[^0-9]/g,''))||0;}
 function loadUsersFull(){
- onSnapshot(collection(db,'users'), s=>{
-   document.getElementById('cUsers').innerText=s.size;
-   const list=document.getElementById('usersListFull'); list.innerHTML='';
-   s.forEach(d=>{ const u=d.data(); const div=document.createElement('div'); div.className='row'; div.innerHTML=`<span>🟢 ${u.name||u.email}<br><small>${u.email} | ${u.subscription||u.subPlan||'مجاني'} | طلب: ${u.subPlanRequest||'لا يوجد'} ${u.isAdmin?'⭐ أدمن':''}</small></span><div style="display:flex;gap:4px;flex-wrap:wrap"><button class="small" onclick="toggleAdmin('${d.id}',${!!u.isAdmin})">${u.isAdmin?'إلغاء أدمن':'جعله أدمن'}</button><button class="small" onclick="giveVIP('${d.id}')">VIP</button><button class="small" onclick="location.href='/dm/?uid=${d.id}'">خاص</button><button class="small danger" onclick="banUser('${d.id}')">حظر</button></div>`; list.appendChild(div); });
+ const loading=document.getElementById('membersLoading');
+ onSnapshot(collection(db,'users'),snap=>{
+  allMembers=snap.docs.map(d=>({uid:d.id,...d.data()}));
+  document.getElementById('cUsers').innerText=snap.size;
+  document.getElementById('membersTotal').textContent=snap.size.toLocaleString('ar');
+  document.getElementById('membersVip').textContent=allMembers.filter(u=>memberVip(u)>0||/vip|pro/i.test(String(u.subscription||u.subPlan||''))).length.toLocaleString('ar');
+  document.getElementById('membersAdmins').textContent=allMembers.filter(u=>u.isAdmin===true).length.toLocaleString('ar');
+  document.getElementById('membersBanned').textContent=allMembers.filter(u=>u.banned===true).length.toLocaleString('ar');
+  loading.style.display='none';renderMembers();
+ },err=>{
+  console.error('Members live query failed:',err);loading.style.display='block';
+  loading.textContent='تعذر تحميل الأعضاء من Firestore: '+(err.message||'تحقق من صلاحيات قراءة مجموعة users.');
+  document.getElementById('membersResultCount').textContent='فشل الاتصال';
  });
 }
+function renderMembers(){
+ const q=(document.getElementById('membersSearch').value||'').trim().toLowerCase();
+ let rows=allMembers.filter(u=>{
+  const text=[u.name,u.displayName,u.email,u.gaboId,u.uid,u.countryName,u.country].map(x=>String(x||'').toLowerCase()).join(' ');
+  if(q&&!text.includes(q))return false;
+  if(membersFilter==='vip')return memberVip(u)>0||/vip|pro/i.test(String(u.subscription||u.subPlan||''));
+  if(membersFilter==='admin')return u.isAdmin===true;
+  if(membersFilter==='banned')return u.banned===true;
+  if(membersFilter==='normal')return u.isAdmin!==true&&u.banned!==true&&memberVip(u)===0&&!/vip|pro/i.test(String(u.subscription||u.subPlan||''));
+  return true;
+ });
+ const sort=document.getElementById('membersSort').value;
+ rows.sort((a,b)=>sort==='name'?String(a.name||a.displayName||'').localeCompare(String(b.name||b.displayName||''),'ar'):sort==='old'?memberDate(a)-memberDate(b):sort==='vip'?memberVip(b)-memberVip(a):memberDate(b)-memberDate(a));
+ const total=rows.length,pages=Math.max(1,Math.ceil(total/MEMBERS_PAGE_SIZE));membersPage=Math.min(membersPage,pages);
+ const shown=rows.slice((membersPage-1)*MEMBERS_PAGE_SIZE,membersPage*MEMBERS_PAGE_SIZE);
+ const list=document.getElementById('usersListFull');list.innerHTML='';
+ document.getElementById('membersResultCount').textContent=total.toLocaleString('ar')+' نتيجة';
+ document.getElementById('membersPageLabel').textContent='صفحة '+membersPage+' من '+pages;
+ document.getElementById('membersPrev').disabled=membersPage<=1;document.getElementById('membersNext').disabled=membersPage>=pages;
+ if(!shown.length){list.innerHTML='<div class="members-state" style="grid-column:1/-1">لا توجد نتائج مطابقة لبحثك. جرّب كلمة أخرى أو غيّر التصنيف.</div>';return;}
+ shown.forEach(u=>{
+  const card=document.createElement('article');card.className='member-card'+(u.banned?' is-banned':'');
+  const main=document.createElement('div');main.className='member-main';
+  const avatar=document.createElement('div');avatar.className='member-avatar';
+  const photo=u.photoURL||u.photo||u.avatar||'';
+  if(photo){const img=document.createElement('img');img.src=photo;img.alt='';img.onerror=()=>{avatar.textContent=(u.name||u.displayName||'؟').trim().charAt(0)||'؟';};avatar.appendChild(img);}
+  else avatar.textContent=(u.name||u.displayName||u.email||'؟').trim().charAt(0)||'؟';
+  const ident=document.createElement('div');ident.className='member-ident';
+  const name=document.createElement('div');name.className='member-name';name.textContent=u.displayName||u.name||'عضو بدون اسم';
+  const email=document.createElement('div');email.className='member-email';email.textContent=u.email||'لا يوجد بريد مسجل';
+  ident.append(name,email);main.append(avatar,ident);card.append(main);
+  const badges=document.createElement('div');badges.className='member-badges';
+  const addBadge=(label,cls='')=>{const b=document.createElement('span');b.className='member-badge '+cls;b.textContent=label;badges.appendChild(b);};
+  if(u.isAdmin)addBadge('✦ مدير','admin');
+  const vip=memberVip(u);if(vip>0||/vip|pro/i.test(String(u.subscription||u.subPlan||'')))addBadge('👑 '+(vip?'VIP '+vip:String(u.subscription||u.subPlan).toUpperCase()),'vip');
+  if(u.banned)addBadge('محظور','banned');
+  addBadge('ID: '+(u.gaboId||'غير محدد'));
+  if(u.countryName)addBadge('🌍 '+u.countryName);
+  card.append(badges);
+  const meta=document.createElement('div');meta.className='member-meta';
+  const date=memberDate(u);meta.textContent='UID: '+u.uid+' · '+(date?new Date(date).toLocaleDateString('ar-SA'):'تاريخ التسجيل غير متاح');card.append(meta);
+  const actions=document.createElement('div');actions.className='member-actions';
+  const action=(label,cls,fn)=>{const b=document.createElement('button');b.type='button';b.textContent=label;if(cls)b.classList.add(cls);b.addEventListener('click',fn);actions.appendChild(b);};
+  action(u.isAdmin?'إلغاء الإدارة':'ترقية مدير','',()=>window.toggleAdmin(u.uid,!!u.isAdmin));
+  action('منح VIP','gold',()=>window.giveVIP(u.uid));
+  action('فتح الخاص','',()=>location.href='/dm/?uid='+encodeURIComponent(u.uid));
+  action(u.banned?'إلغاء الحظر':'حظر',u.banned?'':'red',()=>window.banUser(u.uid,!!u.banned));
+  card.append(actions);list.appendChild(card);
+ });
+}
+document.getElementById('membersSearch').addEventListener('input',()=>{membersPage=1;renderMembers();});
+document.getElementById('membersSort').addEventListener('change',()=>{membersPage=1;renderMembers();});
+document.getElementById('membersFilters').addEventListener('click',e=>{const b=e.target.closest('button[data-filter]');if(!b)return;membersFilter=b.dataset.filter;membersPage=1;document.querySelectorAll('#membersFilters button').forEach(x=>x.classList.toggle('selected',x===b));renderMembers();});
+document.getElementById('membersPrev').addEventListener('click',()=>{if(membersPage>1){membersPage--;renderMembers();}});
+document.getElementById('membersNext').addEventListener('click',()=>{membersPage++;renderMembers();});
+document.getElementById('refreshMembers').addEventListener('click',()=>{membersPage=1;renderMembers();});
 document.getElementById('grantVip6Frame').addEventListener('click',async()=>{
  const input=document.getElementById('vip6GaboId');
  const status=document.getElementById('vip6GrantStatus');
@@ -343,7 +484,7 @@ window.giveVIP=async uid=>{
   alert('تمت الترقية وإرسال طلب إشعار البريد');
  }else{ alert('تمت الترقية، لكن لا يوجد بريد إلكتروني محفوظ لهذا المستخدم'); }
 }
-window.banUser=async uid=>{ if(confirm('حظر؟')) await updateDoc(doc(db,'users',uid),{banned:true}); }
+window.banUser=async(uid,current)=>{const next=!current;if(!confirm(next?'تأكيد حظر هذا العضو؟':'تأكيد إلغاء الحظر عن هذا العضو؟'))return;try{await updateDoc(doc(db,'users',uid),{banned:next});}catch(err){alert('تعذر تحديث حالة الحظر: '+(err.message||''));}}
 
 function loadHosts(){
  onSnapshot(collection(db,'hosts'), s=>{
