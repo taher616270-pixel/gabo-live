@@ -271,5 +271,16 @@ function f(){x.clearRect(0,0,W,H);P.forEach(function(p){p.y-=p.v;p.a+=.02;if(p.y
 x.globalAlpha=.25+.5*Math.abs(Math.sin(p.a));x.fillStyle='#ffd982';x.shadowColor='#e9b560';x.shadowBlur=8;x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill()});requestAnimationFrame(f)}
 if(!matchMedia('(prefers-reduced-motion:reduce)').matches)f()})();
 </script>
+<script type="module">
+  import { boot, userName } from '/assets/app.js';
+  (async function () {
+    try {
+      await boot({ auth: true });
+      setUser(userName());
+    } catch (error) {
+      console.error('تعذر تحميل اسم المستخدم في صفحة VIP:', error);
+    }
+  })();
+</script>
 </body>
 </html>
