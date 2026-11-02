@@ -361,7 +361,7 @@ try{
     if(Number.isFinite(latest.visitors))document.getElementById('c3').textContent=latest.visitors;
   }
 }catch(cacheErr){console.warn('Instant profile cache error:',cacheErr);}
-function applyHeadFrame(level){const el=document.getElementById('avatarMain');if(!el)return;const n=Number(String(level??'').trim().toUpperCase().replace('VIP',''));const paths={1:'/vip/frames/VIP1.png.PNG',2:'/vip/frames/VIP2.png.PNG',3:'/vip/frames/VIP3.png.PNG',4:'/vip/frames/VIP4.png.PNG',5:'/vip/frames/VIP5.png.PNG',6:'/vip/frames/VIP6.mp4.webp'};el.classList.remove('vip-head-frame');el.style.removeProperty('--vip-head-frame-image');if(Number.isInteger(n)&&paths[n]){el.style.setProperty('--vip-head-frame-image','url('+String.fromCharCode(34)+paths[n]+String.fromCharCode(34)+')');el.classList.add('vip-head-frame');}}
+function applyHeadFrame(level){const el=document.getElementById('avatarMain');if(!el)return;const n=Number(String(level??'').trim().toUpperCase().replace('VIP',''));const paths={1:'/vip/frames/VIP1.png.PNG',2:'/vip/frames/VIP2.png.PNG',3:'/vip/frames/VIP3.png.PNG',4:'/vip/frames/VIP4.png.PNG',5:'/vip/frames/VIP5.png.PNG',6:'/vip/frames/VIP6.mp4.webp',7:'/vip/frames/VIP7.mp4.webp'};el.classList.remove('vip-head-frame');el.style.removeProperty('--vip-head-frame-image');if(Number.isInteger(n)&&paths[n]){el.style.setProperty('--vip-head-frame-image','url('+String.fromCharCode(34)+paths[n]+String.fromCharCode(34)+')');el.classList.add('vip-head-frame');}}
 function renderVipBadge(level){
   const badge=document.getElementById('vipBadgeMain');
   if(!badge)return;
