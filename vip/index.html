@@ -52,7 +52,7 @@ h1{margin:0;text-align:center;font-family:Georgia,serif;font-size:clamp(48px,14v
 .vip1-level{color:#ffe6a0;font-size:11px;font-weight:1000;letter-spacing:1.1px;text-shadow:0 0 10px #e8c36b88;margin-bottom:3px}
 .vip1-icon{border-color:#ffe7a0;background:radial-gradient(circle at 35% 25%,#806022,#211707 72%);color:#ffe7a0;box-shadow:0 0 16px #e8c36b66,inset 0 1px #fff5}
 .vip1-icon svg{width:31px;height:31px;fill:#f3d27b22;stroke:currentColor;stroke-width:1.7}
-.vip1-lock{background:radial-gradient(circle at 35% 25%,#806022,#211707 72%);box-shadow:0 0 18px #e8c36b77,inset 0 1px #fff8;border-width:1.5px}
+.vip1-notification{background:radial-gradient(circle at 35% 25%,#806022,#211707 72%);box-shadow:0 0 18px #e8c36b77,inset 0 1px #fff8;border-width:1.5px}
 .feature-label{color:#ffe5a0;font-size:11px;font-weight:950;text-shadow:0 0 9px #e8c36b55}
 .bottom{margin-top:auto;padding-top:16px}
 .charge{width:100%;height:49px;border:1px solid #ffedb1;border-radius:12px;background:linear-gradient(180deg,#fff0b4 0%,#e5bd5e 35%,#a87325 100%);color:#211707;font-size:17px;font-weight:950;letter-spacing:.5px;box-shadow:0 5px 0 #654316,0 8px 20px #d2a34233,inset 0 1px #fff9;cursor:pointer}
@@ -95,14 +95,15 @@ h1{margin:0;text-align:center;font-family:Georgia,serif;font-size:clamp(48px,14v
   <section class="grid" aria-label="مساحات المزايا">
     <div class="slot vip1-feature" aria-label="إشعار الـ VIP — VIP1">
       <div class="vip1-level">VIP1</div>
-      <div class="icon-ring vip1-icon vip1-lock" aria-hidden="true">
+      <div class="icon-ring vip1-icon vip1-notification" aria-hidden="true">
         <svg viewBox="0 0 48 48">
-          <defs><linearGradient id="vipLockGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2bd"/><stop offset=".48" stop-color="#e7bd55"/><stop offset="1" stop-color="#8c5b16"/></linearGradient></defs>
-          <path d="M15 21v-6a9 9 0 0 1 18 0v6" fill="none" stroke="url(#vipLockGold)" stroke-width="3.2" stroke-linecap="round"/>
-          <rect x="9" y="20" width="30" height="23" rx="5" fill="#2b1c08" stroke="url(#vipLockGold)" stroke-width="2.5"/>
-          <path d="M24 27a3.5 3.5 0 0 0-2 6.4V38h4v-4.6a3.5 3.5 0 0 0-2-6.4Z" fill="url(#vipLockGold)"/>
-          <path d="M5 24l-3-2m41 2 3-2M7 9l-3-3m37 3 3-3" stroke="#f5d98d" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M24 2v3" stroke="#fff0b4" stroke-width="1.5" stroke-linecap="round"/>
+          <defs><linearGradient id="vipBellGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff4c9"/><stop offset=".5" stop-color="#e9c15e"/><stop offset="1" stop-color="#94601b"/></linearGradient></defs>
+          <path d="M24 5c-7 0-11 5.5-11 13v7c0 3.2-1.5 5.7-4.5 8.2-.9.8-.3 2.3.9 2.3h29.2c1.2 0 1.8-1.5.9-2.3-3-2.5-4.5-5-4.5-8.2v-7C35 10.5 31 5 24 5Z" fill="#35240a" stroke="url(#vipBellGold)" stroke-width="2.6" stroke-linejoin="round"/>
+          <path d="M19 40c.8 2 2.5 3 5 3s4.2-1 5-3" fill="none" stroke="url(#vipBellGold)" stroke-width="2.8" stroke-linecap="round"/>
+          <path d="M24 2v2M7 12l-2-2m38 2 2-2" fill="none" stroke="#fff0b4" stroke-width="1.7" stroke-linecap="round"/>
+          <circle cx="36.5" cy="10" r="6" fill="#8c5b16" stroke="#ffe6a0" stroke-width="1.4"/>
+          <text x="36.5" y="12.2" text-anchor="middle" font-size="5.2" font-weight="900" fill="#fff2bd">VIP</text>
+          <path d="M17 24h14" stroke="#eac66f" stroke-width="1" opacity=".65"/>
         </svg>
       </div>
       <div class="feature-label">إشعار الـ VIP</div>
