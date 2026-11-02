@@ -201,6 +201,7 @@ body{background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans
 </div>
 <canvas id="boom"></canvas><div id="stage"></div>
 <div class="vip-blank-page" id="vipBlankPage" aria-label="إشعارات VIP"><div class="vip-blank-top"><button class="vip-blank-close" id="vipBlankClose" type="button" aria-label="إغلاق">×</button><div class="vip-blank-heading">إشعارات VIP</div></div><div class="vip-notice-list" id="vipNoticeList"></div></div>
+<div class="vip-blank-page" id="headFrameBlankPage" aria-label="إطار الرأس"><div class="vip-blank-top"><button class="vip-blank-close" id="headFrameBlankClose" type="button" aria-label="إغلاق">×</button><div class="vip-blank-heading">إطار الرأس</div></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -249,6 +250,8 @@ PERKS.forEach(function(p){
     if (p.n === 'شعار الـ VIP') {
       renderVipNotices();
       document.getElementById('vipBlankPage').classList.add('show');
+    } else if (p.n === 'إطار الرأس') {
+      document.getElementById('headFrameBlankPage').classList.add('show');
     }
   };
   grid.appendChild(b);
@@ -274,6 +277,9 @@ function renderVipNotices(){
 }
 document.getElementById('vipBlankClose').addEventListener('click', function(){
   document.getElementById('vipBlankPage').classList.remove('show');
+});
+document.getElementById('headFrameBlankClose').addEventListener('click', function(){
+  document.getElementById('headFrameBlankPage').classList.remove('show');
 });
 
 // إشعارات الدخول VIP1 إلى VIP10
