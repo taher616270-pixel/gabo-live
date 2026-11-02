@@ -139,8 +139,8 @@ body{padding-bottom:110px}
 }
 
 /* Automatic VIP1-VIP6 avatar frames */
-.avatar.vip-head-frame{overflow:visible!important;isolation:isolate}
-.avatar.vip-head-frame img{border-radius:inherit}
+.avatar.vip-head-frame{overflow:visible!important;isolation:isolate;border-radius:50%!important}
+.avatar.vip-head-frame img{border-radius:50%!important;clip-path:circle(50% at 50% 50%)}
 .avatar.vip-head-frame::after{content:"";position:absolute;inset:-22px;background-image:var(--vip-head-frame-image);background-position:center;background-size:contain;background-repeat:no-repeat;pointer-events:none;z-index:5}
 
 /* Nudge profile alias slightly left */
