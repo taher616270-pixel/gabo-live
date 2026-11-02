@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#08060e">
+<title>دخول الإدارة | GABO LIVE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--gold:#e8c77b;--purple:#8b5cf6;--muted:#aaa3bd}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(ellipse at 50% 0%,#48266c55,transparent 48%),#07060b;color:#fff;font-family:Tajawal,Arial,sans-serif}
+.shell{width:min(100%,430px)}
+.card{padding:28px;border:1px solid #d9b66c44;border-radius:24px;background:linear-gradient(150deg,#191324,#0c0a11);box-shadow:0 24px 80px #0009}
+.logo{text-align:center;margin-bottom:26px}
+.mark{font:900 72px Arial;color:var(--gold);text-shadow:0 0 28px #d9b66c44}
+h1{margin:5px 0;font-size:25px;letter-spacing:2px}
+h1 span{color:var(--gold)}
+.subtitle{margin:8px 0 0;color:var(--muted);font-size:14px}
+.badge{display:inline-block;margin-top:14px;padding:6px 13px;border:1px solid #d9b66c55;border-radius:30px;color:var(--gold);font-size:12px}
+label{display:block;margin:15px 0 7px;font-weight:700;font-size:13px}
+input{width:100%;height:50px;padding:0 13px;border:1px solid #ffffff25;border-radius:12px;background:#08070d;color:#fff;font:inherit;font-size:16px;outline:none}
+input:focus{border-color:var(--gold)}
+button{width:100%;height:50px;margin-top:18px;border:0;border-radius:12px;background:linear-gradient(120deg,#e8c77b,#a87935);color:#1c1408;font:800 16px Tajawal;cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}
+.status{min-height:24px;margin-top:14px;text-align:center;color:var(--muted);font-size:13px;line-height:1.7}
+.status.error{color:#ff8d9d}.status.ok{color:#80e0b1}
+.note{margin-top:20px;text-align:center;color:#777184;font-size:11px}
+</style>
+</head>
+<body>
+<main class="shell">
+<section class="card">
+<header class="logo">
+<div class="mark">G</div>
+<h1>GABO <span>LIVE</span></h1>
+<p class="subtitle">بوابة الإدارة المستقلة</p>
+<span class="badge">دخول المدير فقط</span>
+</header>
+<form id="adminLogin" novalidate>
+<label for="email">البريد الإلكتروني الإداري</label>
+<input id="email" type="email" inputmode="email" autocomplete="username" value="taher616380@gmail.com" required>
+<label for="password">كلمة المرور</label>
+<input id="password" type="password" autocomplete="current-password" required>
+<button id="submit" type="submit">دخول لوحة التحكم</button>
+</form>
+<div id="status" class="status" role="status" aria-live="polite"></div>
+<div class="note">هذه البوابة منفصلة عن صفحة تسجيل المضيفين والمستخدمين.</div>
+</section>
+</main>
+<script type="module">
+import {auth,db,authReady} from '/firebase-config.js';
+import {signInWithEmailAndPassword,signOut} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {doc,getDoc} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+const form=document.getElementById('adminLogin');
+const email=document.getElementById('email');
+const password=document.getElementById('password');
+const button=document.getElementById('submit');
+const status=document.getElementById('status');
+function message(text,type=''){status.textContent=text;status.className='status '+type;}
+async function isAdmin(user){
+ if(user.email==='taher616380@gmail.com')return true;
+ const snap=await getDoc(doc(db,'users',user.uid));
+ return snap.exists()&&snap.data().isAdmin===true;
+}
+async function checkExisting(){
+ try{
+  await authReady;
+  if(auth.currentUser){
+   if(await isAdmin(auth.currentUser)){location.replace('/admin/');return;}
+   await signOut(auth);
+  }
+ }catch(error){console.error(error);}
+ if(new URLSearchParams(location.search).get('denied')==='1')message('هذا الحساب ليس لديه صلاحية دخول لوحة الإدارة.','error');
+ else if(new URLSearchParams(location.search).get('error'))message('تعذر التحقق من صلاحيات الإدارة. حاول تسجيل الدخول مجدداً.','error');
+}
+form.addEventListener('submit',async event=>{
+ event.preventDefault();
+ const mail=email.value.trim().toLowerCase(),pass=password.value;
+ if(!mail||!pass){message('أدخل البريد الإلكتروني وكلمة المرور.','error');return;}
+ button.disabled=true;message('جارٍ التحقق من حساب الإدارة...');
+ try{
+  await authReady;
+  const credential=await signInWithEmailAndPassword(auth,mail,pass);
+  if(!(await isAdmin(credential.user))){
+   await signOut(auth);
+   message('تم رفض الدخول: هذا الحساب غير معتمد كمدير.','error');
+   return;
+  }
+  message('تم التحقق بنجاح. جارٍ فتح لوحة الإدارة...','ok');
+  location.replace('/admin/');
+ }catch(error){
+  console.error(error);
+  const text=error.code==='auth/invalid-credential'?'البريد أو كلمة المرور غير صحيحة.':error.code==='auth/too-many-requests'?'محاولات كثيرة. حاول لاحقاً.':error.code==='auth/network-request-failed'?'تحقق من اتصال الإنترنت.':'تعذر تسجيل الدخول. '+(error.message||'');
+  message(text,'error');
+ }finally{button.disabled=false;}
+});
+checkExisting();
+</script>
+</body>
+</html>
