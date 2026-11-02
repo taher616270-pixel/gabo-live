@@ -14,18 +14,26 @@ body{margin:0;min-height:100dvh;background:radial-gradient(ellipse at 15% 0%,#30
 main{width:min(720px,100%);margin:auto;padding:22px 16px calc(30px + env(safe-area-inset-bottom))}
 .hero{padding:20px;border:1px solid #8b69c544;border-radius:22px;background:linear-gradient(135deg,#29203fdd,#171526ee 65%,#14252b);margin-bottom:16px}
 .kicker{color:#8de5d4;font-size:11px;font-weight:800;letter-spacing:1px}
-h1{font-size:23px;margin:8px 0 5px}.sub{color:var(--muted);font-size:12px;line-height:1.8}
+h1{font-size:23px;margin:8px 0 5px}.sub{color:var(--muted);font-size:12px;line-height:1.8;margin:0}
 .status{display:inline-flex;align-items:center;gap:7px;color:#91e7bb;font-size:11px;margin-top:13px}.dot{width:7px;height:7px;border-radius:50%;background:#72e3a7;box-shadow:0 0 10px #72e3a7}
+.tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:0 0 15px}
+.tab{min-height:48px;border:1px solid #ffffff20;border-radius:14px;background:#171426;color:#c8c1d6;font:800 13px system-ui}
+.tab[aria-selected="true"]{border-color:#d7b86c99;background:linear-gradient(135deg,#46351d,#2a2140);color:#ffe5a1;box-shadow:inset 0 0 0 1px #d7b86c22}
+.sectionIntro{margin:0 2px 12px}.sectionIntro b{display:block;font-size:15px}.sectionIntro small{display:block;color:var(--muted);font-size:11px;margin-top:4px;line-height:1.7}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
 .card{min-width:0;padding:17px 14px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#1d1a2d,#12121e);position:relative;overflow:hidden}
 .card:after{content:"";position:absolute;width:70px;height:70px;border-radius:50%;background:#8b65d414;left:-25px;top:-25px}
 .icon{width:39px;height:39px;border-radius:13px;display:grid;place-items:center;background:#8b65d426;font-size:20px}
 .label{display:block;color:#b9b2c9;font-size:11px;margin-top:13px}
-.value{display:block;color:var(--gold);font-size:27px;font-weight:900;margin-top:3px;direction:ltr;text-align:right}
-.note{color:#777287;font-size:10px;margin-top:3px}
+.value{display:block;color:var(--gold);font-size:27px;font-weight:900;margin-top:3px;direction:ltr;text-align:right;overflow-wrap:anywhere}
+.note{color:#89839b;font-size:10px;margin-top:4px;line-height:1.6}
+.ownerBadge,.memberBadge{display:inline-flex;align-items:center;gap:6px;border:1px solid #d7b86c55;background:#d7b86c12;color:#f4d88f;padding:6px 10px;border-radius:30px;font-size:10px;font-weight:800;margin-top:12px}
+.memberBadge{border-color:#7ccfc455;background:#49b6a012;color:#a6f0df}
 .error{display:none;margin-top:14px;padding:13px;border:1px solid #d56b7966;border-radius:13px;color:#ffb4bd;background:#7a26301f;font-size:12px;line-height:1.8}
 .refresh{width:100%;margin-top:16px;padding:13px;border-radius:14px;border:1px solid #9876d866;background:#261d3b;color:#eee5ff;font-weight:800;font-size:13px}
-@media(max-width:370px){.grid{gap:8px}.card{padding:14px 11px}.value{font-size:24px}}
+.loading{color:#aaa5bb;text-align:center;padding:18px;font-size:12px}
+[hidden]{display:none!important}
+@media(max-width:370px){.grid{gap:8px}.card{padding:14px 11px}.value{font-size:24px}.hero{padding:17px}}
 </style>
 </head>
 <body>
@@ -37,70 +45,142 @@ h1{font-size:23px;margin:8px 0 5px}.sub{color:var(--muted);font-size:12px;line-h
 <section class="hero">
 <div class="kicker">COMMUNITY INSIGHTS</div>
 <h1 id="communityName">جاري تحميل المجتمع...</h1>
-<p class="sub">تابع إحصائيات مجتمعك وأرقامه في مكان واحد.</p>
-<div class="status"><span class="dot"></span> تحديث مباشر لبيانات المجتمع</div>
+<p class="sub" id="heroSub">اختر لوحة العدادات المناسبة لدورك في المجتمع.</p>
+<div class="status"><span class="dot"></span> تحديث بيانات المجتمع عند فتح الصفحة</div>
+<div id="roleBadge" class="memberBadge" hidden></div>
 </section>
-<section class="grid" aria-live="polite">
-<article class="card"><span class="icon">👥</span><span class="label">إجمالي الأعضاء</span><strong class="value" id="members">—</strong><div class="note">الأعضاء المنضمون للمجتمع</div></article>
-<article class="card"><span class="icon">💬</span><span class="label">إجمالي الرسائل</span><strong class="value" id="messages">—</strong><div class="note">عدد الرسائل المسجلة</div></article>
-<article class="card"><span class="icon">📈</span><span class="label">انضمام اليوم</span><strong class="value" id="joins">—</strong><div class="note">الأعضاء الجدد اليوم</div></article>
-<article class="card"><span class="icon">🔗</span><span class="label">انضمامات الدعوات</span><strong class="value" id="invites">—</strong><div class="note">الانضمامات عبر الدعوات</div></article>
-<article class="card"><span class="icon">⚡</span><span class="label">مؤشر النشاط</span><strong class="value" id="activity">—</strong><div class="note">النشاط المسجل للمجتمع</div></article>
-<article class="card"><span class="icon">🛡️</span><span class="label">حالة المجتمع</span><strong class="value" id="state" style="font-size:18px">—</strong><div class="note">حالة استقبال أعضاء جدد</div></article>
+<nav class="tabs" id="roleTabs" aria-label="نوع العدادات" hidden>
+<button class="tab" id="ownerTab" type="button" aria-selected="true">👑 عدادات المالك</button>
+<button class="tab" id="memberTab" type="button" aria-selected="false">👤 عدادات العضو</button>
+</nav>
+<section id="ownerSection" hidden>
+<div class="sectionIntro"><b>لوحة مالك المجتمع</b><small>إحصائيات الإدارة ونمو المجتمع وحركة الأعضاء.</small></div>
+<div class="grid" aria-live="polite">
+<article class="card"><span class="icon">👥</span><span class="label">إجمالي الأعضاء</span><strong class="value" id="ownerMembers">—</strong><div class="note">عدد الأعضاء المسجلين في المجتمع</div></article>
+<article class="card"><span class="icon">💬</span><span class="label">إجمالي الرسائل</span><strong class="value" id="ownerMessages">—</strong><div class="note">كل الرسائل المسجلة في المجتمع</div></article>
+<article class="card"><span class="icon">📈</span><span class="label">انضمام اليوم</span><strong class="value" id="ownerJoins">—</strong><div class="note">الأعضاء الجدد اليوم حسب سجل المجتمع</div></article>
+<article class="card"><span class="icon">🔗</span><span class="label">انضمامات الدعوات</span><strong class="value" id="ownerInvites">—</strong><div class="note">الانضمامات المسجلة عبر الدعوات</div></article>
+<article class="card"><span class="icon">⚡</span><span class="label">مؤشر النشاط</span><strong class="value" id="ownerActivity">—</strong><div class="note">مؤشر النشاط المحفوظ للمجتمع</div></article>
+<article class="card"><span class="icon">🛡️</span><span class="label">حالة استقبال الأعضاء</span><strong class="value" id="ownerState" style="font-size:18px">—</strong><div class="note">هل الانضمام متاح للأعضاء الجدد؟</div></article>
+</div>
 </section>
+<section id="memberSection" hidden>
+<div class="sectionIntro"><b>لوحة العضو</b><small>أرقام مشاركتك ووجودك داخل GABO LIVE.</small></div>
+<div class="grid" aria-live="polite">
+<article class="card"><span class="icon">✍️</span><span class="label">رسائلي في هذا المجتمع</span><strong class="value" id="memberMessages">—</strong><div class="note">عدد الرسائل المنشورة من حسابك هنا</div></article>
+<article class="card"><span class="icon">🌐</span><span class="label">مجتمعاتي</span><strong class="value" id="memberCommunities">—</strong><div class="note">المجتمعات المسجلة في قائمة حسابك</div></article>
+<article class="card"><span class="icon">🤝</span><span class="label">حالة عضويتي</span><strong class="value" id="memberStatus" style="font-size:18px">—</strong><div class="note">حالة حسابك بالنسبة لهذا المجتمع</div></article>
+<article class="card"><span class="icon">🏅</span><span class="label">مشاركتي</span><strong class="value" id="memberLevel" style="font-size:18px">—</strong><div class="note">مستوى وصفي مبني على عدد رسائلك هنا</div></article>
+</div>
+</section>
+<div class="loading" id="loadingState">جارٍ تحميل العدادات...</div>
 <div class="error" id="errorBox" role="alert"></div>
 <button class="refresh" id="refreshBtn" type="button">تحديث العدادات الآن ↻</button>
 </main>
 <script type="module">
 import {auth,db} from '/firebase-config.js';
 import {onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import {collection,doc,onSnapshot,getDoc,getCountFromServer} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import {collection,doc,getDoc,getCountFromServer,query,where} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 const params=new URLSearchParams(location.search);
 const communityId=params.get('id')||'south';
-document.getElementById('backLink').href='/community/?id='+encodeURIComponent(communityId);
 const $=id=>document.getElementById(id);
-let messageTimer=null;
-let currentCommunity=null;
+$('backLink').href='/community/index.html?id='+encodeURIComponent(communityId);
+let user=null,community=null,isOwner=false;
+let selectedView='owner';
 function showError(message){$('errorBox').style.display='block';$('errorBox').textContent=message;}
 function hideError(){$('errorBox').style.display='none';$('errorBox').textContent='';}
-function renderCommunity(data){
- currentCommunity=data||{};
- $('communityName').textContent=currentCommunity.name||(communityId==='global'?'الشات العام':'إحصائيات المجتمع');
- const members=Array.isArray(currentCommunity.members)?currentCommunity.members.length:null;
- $('members').textContent=Number(currentCommunity.membersCount??members??0).toLocaleString('en-US');
- $('joins').textContent=Number(currentCommunity.joinsToday||0).toLocaleString('en-US');
- $('invites').textContent=Number(currentCommunity.inviteJoins||0).toLocaleString('en-US');
- $('activity').textContent=Number(currentCommunity.activityScore||0).toLocaleString('en-US');
- $('state').textContent=currentCommunity.closed?'مغلق':'مفتوح';
+function number(value){return Number(value||0).toLocaleString('en-US');}
+function showView(view){
+ selectedView=view;
+ $('ownerSection').hidden=view!=='owner';
+ $('memberSection').hidden=view!=='member';
+ $('ownerTab').setAttribute('aria-selected',String(view==='owner'));
+ $('memberTab').setAttribute('aria-selected',String(view==='member'));
+ $('heroSub').textContent=view==='owner'?'إحصائيات الإدارة ونمو المجتمع وحركة الأعضاء.':'أرقام مشاركتك ووجودك داخل GABO LIVE.';
 }
-async function refreshMessages(){
+function renderOwner(data){
+ const members=Array.isArray(data.members)?data.members.length:Number(data.membersCount||0);
+ $('ownerMembers').textContent=number(members);
+ $('ownerJoins').textContent=number(data.joinsToday);
+ $('ownerInvites').textContent=number(data.inviteJoins);
+ $('ownerActivity').textContent=number(data.activityScore);
+ $('ownerState').textContent=data.closed?'مغلق':'مفتوح';
+}
+async function loadOwnerMessages(){
  try{
   const result=await getCountFromServer(collection(db,'communities',communityId,'messages'));
-  $('messages').textContent=result.data().count.toLocaleString('en-US');
-  hideError();
+  $('ownerMessages').textContent=number(result.data().count);
  }catch(error){
-  console.error('Community message count failed:',error);
-  $('messages').textContent='—';
-  showError('تعذر قراءة عدد الرسائل. تحقق من اتصالك وصلاحيات قراءة رسائل المجتمع.');
+  $('ownerMessages').textContent='غير متاح';
+  showError('تعذر قراءة إجمالي الرسائل. قد تكون صلاحيات قراءة رسائل المجتمع غير مفعّلة.');
+  console.error('Owner message count failed:',error);
  }
 }
-onAuthStateChanged(auth,async user=>{
- if(!user){location.replace('/login/');return;}
+async function loadMemberStats(){
  try{
-  const ref=doc(db,'communities',communityId);
-  const first=await getDoc(ref);
-  if(!first.exists()){showError('هذا المجتمع غير موجود أو لم يتم إنشاؤه بعد.');$('communityName').textContent='المجتمع غير متاح';return;}
-  renderCommunity(first.data());
-  onSnapshot(ref,snap=>{if(snap.exists())renderCommunity(snap.data());},error=>showError('تعذر تحديث بيانات المجتمع مباشرة.'));
-  await refreshMessages();
-  if(messageTimer)clearInterval(messageTimer);
-  messageTimer=setInterval(()=>{if(!document.hidden)refreshMessages();},30000);
+  const [ownMessages,userSnap]=await Promise.all([
+   getCountFromServer(query(collection(db,'communities',communityId,'messages'),where('uid','==',user.uid))),
+   getDoc(doc(db,'users',user.uid))
+  ]);
+  const sent=ownMessages.data().count;
+  $('memberMessages').textContent=number(sent);
+  const profile=userSnap.exists()?userSnap.data():{};
+  const joined=Array.isArray(profile.joinedCommunityIds)?profile.joinedCommunityIds:[];
+  $('memberCommunities').textContent=number(new Set(joined).size);
+  const members=Array.isArray(community.members)?community.members:[];
+  const isMember=members.includes(user.uid)||community.ownerUid===user.uid;
+  $('memberStatus').textContent=community.ownerUid===user.uid?'مالك':isMember?'منضم':'غير منضم';
+  $('memberLevel').textContent=sent>=100?'نشط جدًا':sent>=25?'نشط':sent>0?'مشارك':'بداية المشاركة';
+ }catch(error){
+  $('memberMessages').textContent='—';
+  $('memberCommunities').textContent='—';
+  showError('تعذر تحميل بعض إحصائيات العضو. تحقق من صلاحيات قراءة بيانات الحساب والرسائل.');
+  console.error('Member stats failed:',error);
+ }
+}
+async function loadAll(){
+ hideError();
+ $('loadingState').hidden=false;
+ $('ownerSection').hidden=true;
+ $('memberSection').hidden=true;
+ try{
+  const snap=await getDoc(doc(db,'communities',communityId));
+  if(!snap.exists()){
+   $('communityName').textContent='المجتمع غير متاح';
+   showError('هذا المجتمع غير موجود أو لم يتم إنشاؤه بعد.');
+   return;
+  }
+  community=snap.data();
+  isOwner=community.ownerUid===user.uid;
+  $('communityName').textContent=community.name||(communityId==='global'?'الشات العام':'إحصائيات المجتمع');
+  $('roleBadge').hidden=false;
+  $('roleBadge').className=isOwner?'ownerBadge':'memberBadge';
+  $('roleBadge').textContent=isOwner?'👑 أنت مالك هذا المجتمع':'👤 عرض إحصائيات العضو';
+  $('roleTabs').hidden=!isOwner;
+  if(isOwner){
+   renderOwner(community);
+   await loadOwnerMessages();
+   showView(selectedView);
+  }else{
+   showView('member');
+  }
+  await loadMemberStats();
  }catch(error){
   console.error('Community stats load failed:',error);
-  showError(error?.message||'تعذر تحميل عدادات المجتمع حالياً.');
+  showError(error?.message||'تعذر تحميل العدادات حالياً.');
+ }finally{
+  $('loadingState').hidden=true;
+  if(!$('ownerSection').hidden||!$('memberSection').hidden)$('refreshBtn').hidden=false;
  }
+}
+$('ownerTab').addEventListener('click',()=>showView('owner'));
+$('memberTab').addEventListener('click',()=>showView('member'));
+$('refreshBtn').addEventListener('click',loadAll);
+onAuthStateChanged(auth,async currentUser=>{
+ if(!currentUser){location.replace('/login/');return;}
+ user=currentUser;
+ await loadAll();
 });
-$('refreshBtn').addEventListener('click',refreshMessages);
 </script>
 </body>
 </html>
