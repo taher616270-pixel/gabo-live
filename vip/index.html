@@ -244,6 +244,7 @@ function renderVipNotices(){
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');
     function activateTier(){
+      document.getElementById('vipBlankPage').classList.remove('show');
       notify(level);
     }
     card.addEventListener('click', activateTier);
