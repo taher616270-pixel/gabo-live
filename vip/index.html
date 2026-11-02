@@ -3,63 +3,102 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>GABO VIP</title>
+<meta name="theme-color" content="#09070f">
+<title>مراجعة مستويات GABO VIP</title>
 <style>
-:root{--bg:#07060c;--card:#161426;--b:#2a2840;--v:#7c3aed;--gold:#fbbf24}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:#fff;font-family:system-ui;padding-bottom:120px}
-.top{padding:16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg);z-index:10;border-bottom:1px solid var(--b)}
-.top b{font-size:17px}
-.back{background:#1e1c2e;border:1px solid var(--b);color:#fff;padding:7px 16px;border-radius:20px;text-decoration:none;font-size:13px;font-weight:700}
-.hero{margin:16px;background:linear-gradient(135deg,#1a1033,#2d1a0f);border:1px solid #3a2a1a;border-radius:20px;padding:20px;text-align:center}
-.hero h1{font-size:22px}
-.hero p{font-size:12px;color:#a1a1aa;margin-top:6px}
-.plans{margin:16px;display:flex;flex-direction:column;gap:12px}
-.plan{background:var(--card);border:1px solid var(--b);border-radius:16px;padding:14px;display:flex;justify-content:space-between;align-items:center}
-.plan.gold{border-color:var(--gold);background:linear-gradient(135deg,#1a160f,#161426)}
-.plan b{font-size:14px}.plan span{font-size:11px;color:#a1a1aa;display:block;margin-top:2px}
-.plan button{background:var(--v);border:0;color:#fff;padding:8px 14px;border-radius:10px;font-weight:800;font-size:12px}
-.plan.gold button{background:var(--gold);color:#000}
-
-/* اخفاء الشريط القديم اللي يسبب الانقلاب */
-.old-bar, .extra-bar, .voice-rooms{display:none!important}
+:root{--bg:#09070f;--card:#171322;--line:#302640;--text:#fff;--muted:#b7afc5;--gold:#f6c453;--purple:#8b5cf6;--green:#6ee7b7}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#211333 0,#09070f 48%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding-bottom:40px}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:#09070fee;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.top b{font-size:17px}.back{color:#fff;text-decoration:none;border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:13px}
+.wrap{width:min(760px,100%);margin:auto;padding:16px}
+.hero{border:1px solid #594323;border-radius:20px;padding:22px 18px;text-align:center;background:linear-gradient(135deg,#21152f,#30210f 85%);margin:4px 0 16px}
+.hero h1{margin:0;font-size:25px}.hero p{color:#d4c9df;font-size:13px;line-height:1.8;margin:9px 0 0}
+.notice{border:1px solid #6b5526;background:#211b10;color:#f8df9b;border-radius:13px;padding:12px 14px;font-size:12px;line-height:1.8;margin-bottom:16px}
+.levels{display:grid;grid-template-columns:1fr;gap:11px}
+.level{background:linear-gradient(145deg,#1b1727,#12101a);border:1px solid var(--line);border-radius:17px;padding:15px}
+.level.confirmed{border-color:#66502b}
+.head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.head h2{font-size:18px;margin:0}.tag{font-size:11px;color:var(--green);border:1px solid #285c4d;border-radius:30px;padding:5px 9px;white-space:nowrap}
+.pending{color:#c8b8df;border-color:#4b3c61}
+ul{margin:0;padding:0 20px 0 0;color:#eee;line-height:1.9;font-size:14px}
+.empty{color:var(--muted);font-size:13px;line-height:1.8;margin:0}
+.vipid{display:inline-block;font-weight:900;letter-spacing:.5px;background:linear-gradient(90deg,#ff5b9e,#ffcb55,#67e8f9,#a78bfa,#ff5b9e);background-size:300% 100%;color:transparent;background-clip:text;-webkit-background-clip:text;animation:flow 4s linear infinite}
+@keyframes flow{to{background-position:300% 0}}
+.footer{margin-top:16px;color:var(--muted);font-size:12px;line-height:1.8;text-align:center}
+@media(prefers-reduced-motion:reduce){.vipid{animation:none}}
 </style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
 </head>
 <body>
-
-<div class="top">
-  <b>✨ GABO VIP</b>
+<header class="top">
+  <b>👑 GABO VIP — مراجعة المستويات</b>
   <a class="back" href="/profile/">رجوع ‹</a>
-</div>
-
-<div class="hero">
-  <h1>👑 دائرتك المميزة</h1>
-  <p>مساحة مخصصة للمميزين - الجنوب العربي</p>
-  <div style="margin-top:14px;display:flex;gap:8px;justify-content:center">
-    <button onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})" style="background:var(--v);border:0;color:#fff;padding:10px 18px;border-radius:10px;font-weight:800">عرض الباقات ↓</button>
-  </div>
-</div>
-
-<div class="plans" id="plans">
-  <div class="plan gold">
-    <div><b>⭐ VIP ذهبي</b><span>بدون إعلانات + شارة ذهبية + دخول غرف VIP</span></div>
-    <button>اشترك</button>
-  </div>
-  <div class="plan">
-    <div><b>💎 VIP ماسي</b><span>كل مميزات الذهبي + دعم فني + ظهور أعلى</span></div>
-    <button>اشترك</button>
-  </div>
-  <div class="plan">
-    <div><b>🚀 دعم الجنوب</b><span>ادعم مجتمع الجنوب العربي</span></div>
-    <button>ادعم</button>
-  </div>
-</div>
-
-<!-- شريط واحد فقط وثابت -->
-
-
-
+</header>
+<main class="wrap">
+  <section class="hero">
+    <h1>مستويات VIP من 1 إلى 10</h1>
+    <p>صفحة لمراجعة المميزات وتأكيدها قبل ربطها بصلاحيات الأعضاء داخل المجتمع.</p>
+  </section>
+  <aside class="notice">هذه الصفحة للمراجعة فقط. لا تفعّل اشتراكًا ولا تمنح أي صلاحية VIP حاليًا. المستويات التي لم تُحدد مميزاتها موضحة بأنها بانتظار تحديدها.</aside>
+  <section class="levels" aria-label="مستويات VIP">
+    <article class="level confirmed">
+      <div class="head"><h2>👑 VIP1</h2><span class="tag">مميزات محددة</span></div>
+      <ul>
+        <li>شارة VIP1 بجانب الاسم.</li>
+        <li>إطار خاص للصورة الشخصية.</li>
+        <li>وسام VIP1 في الإنجازات.</li>
+        <li>إحصائيات نشاط إضافية.</li>
+      </ul>
+    </article>
+    <article class="level">
+      <div class="head"><h2>💠 VIP2</h2><span class="tag pending">بانتظار تحديد المميزات</span></div>
+      <p class="empty">لم تُحدد مميزات هذا المستوى بعد.</p>
+    </article>
+    <article class="level confirmed">
+      <div class="head"><h2>💎 VIP3</h2><span class="tag">مميزات محددة</span></div>
+      <ul>
+        <li>جميع مميزات VIP1.</li>
+        <li>شارة VIP3.</li>
+        <li>إطارات ذهبية متحركة.</li>
+        <li>إحصائيات متقدمة.</li>
+        <li>أوسمة حصرية.</li>
+      </ul>
+    </article>
+    <article class="level">
+      <div class="head"><h2>🏅 VIP4</h2><span class="tag pending">بانتظار تحديد المميزات</span></div>
+      <p class="empty">لم تُحدد مميزات هذا المستوى بعد.</p>
+    </article>
+    <article class="level">
+      <div class="head"><h2>🏅 VIP5</h2><span class="tag pending">بانتظار تحديد المميزات</span></div>
+      <p class="empty">لم تُحدد مميزات هذا المستوى بعد.</p>
+    </article>
+    <article class="level">
+      <div class="head"><h2>🔥 VIP6</h2><span class="tag pending">بانتظار تحديد المميزات</span></div>
+      <p class="empty">لم تُحدد مميزات هذا المستوى بعد.</p>
+    </article>
+    <article class="level confirmed">
+      <div class="head"><h2>🏆 VIP7</h2><span class="tag">ميزة محددة</span></div>
+      <ul>
+        <li>معرّف العضو (ID) بألوان متحركة ومميزة، يبدأ من VIP7.</li>
+      </ul>
+      <p class="empty" style="margin-top:8px">بقية مميزات VIP7 لم تُحدد بعد.</p>
+    </article>
+    <article class="level">
+      <div class="head"><h2>💠 VIP8</h2><span class="tag pending">بانتظار تحديد المميزات</span></div>
+      <p class="empty">لم تُحدد مميزات هذا المستوى بعد.</p>
+    </article>
+    <article class="level">
+      <div class="head"><h2>🌟 VIP9</h2><span class="tag pending">بانتظار تحديد المميزات</span></div>
+      <p class="empty">لم تُحدد مميزات هذا المستوى بعد.</p>
+    </article>
+    <article class="level">
+      <div class="head"><h2>👑 VIP10</h2><span class="tag pending">بانتظار تحديد المميزات</span></div>
+      <p class="empty">لم تُحدد مميزات هذا المستوى بعد.</p>
+    </article>
+  </section>
+  <p class="footer">بعد تأكيدك النهائي للمميزات، تُربط المستويات بصلاحياتها في النظام. لن تُفعّل صلاحيات أو مزايا مدفوعة قبل ذلك.</p>
+</main>
 <script type="module" src="/js/unified-bottom-nav.js"></script>
 </body>
 </html>
