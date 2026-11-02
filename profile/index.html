@@ -138,10 +138,10 @@ body{padding-bottom:110px}
   .head .pencil#openEdit{top:57px!important;right:calc(50% + 74px - 7.5cm)!important;left:auto!important}
 }
 
-/* Assigned VIP6 avatar frame */
-.avatar.vip6-frame{overflow:visible!important;isolation:isolate}
-.avatar.vip6-frame img{border-radius:inherit}
-.avatar.vip6-frame::after{content:"";position:absolute;inset:-13px;background:url('/vip/frames/VIP6.mp4.webp') center/contain no-repeat;pointer-events:none;z-index:5}
+/* Automatic VIP1-VIP6 avatar frames */
+.avatar.vip-head-frame{overflow:visible!important;isolation:isolate}
+.avatar.vip-head-frame img{border-radius:inherit}
+.avatar.vip-head-frame::after{content:"";position:absolute;inset:-13px;background-image:var(--vip-head-frame-image);background-position:center;background-size:contain;background-repeat:no-repeat;pointer-events:none;z-index:5}
 
 /* Nudge profile alias slightly left */
 .nameRow{transform:translateX(calc(-4px - 1cm + 0.20cm + 0.5cm + 0.10cm - 0.15cm - 0.15cm - 0.15cm))}
@@ -361,7 +361,7 @@ try{
     if(Number.isFinite(latest.visitors))document.getElementById('c3').textContent=latest.visitors;
   }
 }catch(cacheErr){console.warn('Instant profile cache error:',cacheErr);}
-function applyHeadFrame(level){const el=document.getElementById('avatarMain');if(!el)return;const n=Number(String(level??'').trim().toUpperCase().replace(/^VIP\\s*/,''));const paths={1:'/vip/frames/VIP1.png.PNG',2:'/vip/frames/VIP2.png.PNG',3:'/vip/frames/VIP3.png.PNG',4:'/vip/frames/VIP4.png.PNG',5:'/vip/frames/VIP5.png.PNG',6:'/vip/frames/VIP6.mp4.webp'};el.classList.remove('vip-head-frame');el.style.removeProperty('--vip-head-frame-image');if(Number.isInteger(n)&&paths[n]){el.style.setProperty('--vip-head-frame-image','url('+String.fromCharCode(34)+paths[n]+String.fromCharCode(34)+')');el.classList.add('vip-head-frame');}}
+function applyHeadFrame(level){const el=document.getElementById('avatarMain');if(!el)return;const n=Number(String(level??'').trim().toUpperCase().replace('VIP',''));const paths={1:'/vip/frames/VIP1.png.PNG',2:'/vip/frames/VIP2.png.PNG',3:'/vip/frames/VIP3.png.PNG',4:'/vip/frames/VIP4.png.PNG',5:'/vip/frames/VIP5.png.PNG',6:'/vip/frames/VIP6.mp4.webp'};el.classList.remove('vip-head-frame');el.style.removeProperty('--vip-head-frame-image');if(Number.isInteger(n)&&paths[n]){el.style.setProperty('--vip-head-frame-image','url('+String.fromCharCode(34)+paths[n]+String.fromCharCode(34)+')');el.classList.add('vip-head-frame');}}
 function renderVipBadge(level){
   const badge=document.getElementById('vipBadgeMain');
   if(!badge)return;
@@ -460,6 +460,7 @@ onAuthStateChanged(auth,async u=>{
     onSnapshot(ref,ds=>{
       if(!ds.exists())return;
       const p=ds.data();
+      applyHeadFrame(p.vipLevel);
       renderVipBadge(p.vipLevel);
       document.getElementById('c1').textContent=p.followers||0;document.getElementById('c2').textContent=p.following||0;document.getElementById('c3').textContent=p.visitors||0;
       document.getElementById('s_c1').textContent=p.followers||0;document.getElementById('s_c2').textContent=p.following||0;document.getElementById('s_c3').textContent=p.visitors||0;
