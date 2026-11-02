@@ -210,7 +210,7 @@ PERKS.forEach(function(p){
     ? '<svg class="vip-mark" viewBox="0 0 78 78" role="img" aria-label="VIP"><defs><linearGradient id="vipCleanGold" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff4c9"/><stop offset=".48" stop-color="#f2c56b"/><stop offset="1" stop-color="#b77a2b"/></linearGradient></defs><text x="39" y="49" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="900" letter-spacing="-2" fill="url(#vipCleanGold)">VIP</text></svg>'
     : '<span>'+p.i+'</span>';
   b.innerHTML = '<div class="c">'+perkIcon+'</div><div class="n">'+p.n+'</div><div class="l">VIP'+p.lv+' '+(open?'✓':LOCK)+'</div>';
-  b.onclick = function(){ if (!open) say('تنفتح عند VIP'+p.lv); };
+  b.onclick = function(){};
   grid.appendChild(b);
 });tabs.scrollLeft=sl;}
 render();
