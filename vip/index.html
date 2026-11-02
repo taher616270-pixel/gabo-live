@@ -277,21 +277,23 @@ if(!matchMedia('(prefers-reduced-motion:reduce)').matches)f()})();
   import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
   import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-  await authReady;
-  onAuthStateChanged(auth, async user => {
+  function applyUser(user) {
     if (!user) return;
-    let name = user.displayName || user.email?.split('@')[0] || 'مستخدم';
-    try {
-      const profile = await getDoc(doc(db, 'users', user.uid));
-      if (profile.exists()) {
-        const data = profile.data();
-        name = data.name || data.displayName || name;
-      }
-    } catch (error) {
-      console.error('تعذر قراءة اسم الحساب لعرض دخولية VIP:', error);
-    }
-    setUser(name);
-  });
+    // اعرض الاسم المتاح فوراً، ولا تنتظر قراءة Firestore
+    setUser(user.displayName || user.email?.split('@')[0] || 'مستخدم');
+    // حدّثه بالاسم المحفوظ في الملف الشخصي بالخلفية
+    getDoc(doc(db, 'users', user.uid)).then(profile => {
+      if (!profile.exists()) return;
+      const data = profile.data();
+      const name = data.name || data.displayName;
+      if (name) setUser(name);
+    }).catch(error => console.error('تعذر تحديث اسم VIP من الملف الشخصي:', error));
+  }
+
+  authReady.then(() => {
+    if (auth.currentUser) applyUser(auth.currentUser);
+    onAuthStateChanged(auth, applyUser);
+  }).catch(error => console.error('تعذر تهيئة حساب VIP:', error));
 </script>
 
 </body>
