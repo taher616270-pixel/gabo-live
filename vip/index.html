@@ -133,9 +133,17 @@ body{background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans
 @keyframes bin{from{transform:translateX(120%) scale(.8);opacity:0}}@keyframes bout{to{transform:translateX(110%);opacity:0}}@keyframes spin{to{transform:rotate(360deg)}}@keyframes cin{from{opacity:0}}@keyframes cout{to{opacity:0}}@keyframes pop{from{transform:scale(.3);opacity:0}}@keyframes fl{from{opacity:.75}to{opacity:0}}
 @keyframes shk{20%{transform:translate(calc(var(--s)*-1px),calc(var(--s)*.5px))}40%{transform:translate(calc(var(--s)*1px),calc(var(--s)*-.5px))}60%{transform:translate(calc(var(--s)*-.7px),0)}80%{transform:translate(calc(var(--s)*.7px),0)}}
 /* صفحة شعار VIP الفارغة */
-.vip-blank-page{position:fixed;z-index:50;left:50%;top:50%;width:min(calc(100% - 32px),448px);height:min(62vh,520px);transform:translate(-50%,-50%);border:1px solid rgba(233,181,96,.55);border-radius:24px;background:linear-gradient(160deg,#15130f,#050505 55%);box-shadow:0 18px 60px rgba(0,0,0,.8),0 0 24px rgba(233,181,96,.12);display:none;align-items:flex-start;justify-content:flex-start;padding:14px}
+.vip-blank-page{position:fixed;z-index:50;left:50%;top:50%;width:min(calc(100% - 32px),448px);height:min(72vh,620px);transform:translate(-50%,-50%);border:1px solid rgba(233,181,96,.55);border-radius:24px;background:linear-gradient(160deg,#15130f,#050505 55%);box-shadow:0 18px 60px rgba(0,0,0,.8),0 0 24px rgba(233,181,96,.12);display:none;flex-direction:column;gap:12px;padding:14px;overflow:hidden}
 .vip-blank-page.show{display:flex}
-.vip-blank-close{width:40px;height:40px;border:1px solid rgba(233,181,96,.35);border-radius:50%;background:#171512;color:#f4d18a;font:32px/1 Arial,sans-serif;display:grid;place-items:center;cursor:pointer}
+.vip-blank-top{display:flex;align-items:center;gap:12px;flex:none}
+.vip-blank-close{width:40px;height:40px;border:1px solid rgba(233,181,96,.35);border-radius:50%;background:#171512;color:#f4d18a;font:32px/1 Arial,sans-serif;display:grid;place-items:center;cursor:pointer;flex:none}
+.vip-blank-heading{flex:1;text-align:center;color:#f4d18a;font-size:19px;font-weight:700}
+.vip-notice-list{width:100%;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:2px 1px 8px;scrollbar-width:thin;scrollbar-color:#9b7136 transparent}
+.vip-notice-card{min-height:76px;display:flex;align-items:center;gap:13px;padding:10px 14px;border:1px solid color-mix(in srgb,var(--tier-color) 55%,transparent);border-radius:16px;background:linear-gradient(110deg,#090909,#201a10 55%,#090909);box-shadow:inset 0 0 14px color-mix(in srgb,var(--tier-color) 12%,transparent)}
+.vip-notice-mark{width:48px;height:48px;flex:none;display:grid;place-items:center;border-radius:13px;border:1px solid var(--tier-color);color:var(--tier-color);font:bold italic 17px Arial,sans-serif;text-shadow:0 0 9px var(--tier-color);box-shadow:0 0 12px color-mix(in srgb,var(--tier-color) 28%,transparent)}
+.vip-notice-copy{display:flex;flex-direction:column;gap:4px}
+.vip-notice-copy strong{color:var(--tier-color);font-size:17px}
+.vip-notice-copy span{color:#eee4d1;font-size:14px}
 .toast{position:fixed;top:calc(20px + env(safe-area-inset-top,0px));left:50%;transform:translate(-50%,-90px);background:#222;color:#fff;border:1px solid var(--gold3);padding:12px 20px;border-radius:14px;font-size:15px;transition:transform .3s;z-index:9;white-space:nowrap}
 .toast.show{transform:translate(-50%,0)}
 </style>
@@ -172,7 +180,7 @@ body{background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans
   </div>
 </div>
 <canvas id="boom"></canvas><div id="stage"></div>
-<div class="vip-blank-page" id="vipBlankPage" aria-label="صفحة شعار VIP"><button class="vip-blank-close" id="vipBlankClose" type="button" aria-label="إغلاق">×</button></div>
+<div class="vip-blank-page" id="vipBlankPage" aria-label="إشعارات VIP"><div class="vip-blank-top"><button class="vip-blank-close" id="vipBlankClose" type="button" aria-label="إغلاق">×</button><div class="vip-blank-heading">إشعارات VIP</div></div><div class="vip-notice-list" id="vipNoticeList"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -217,12 +225,25 @@ PERKS.forEach(function(p){
   b.innerHTML = '<div class="c">'+perkIcon+'</div><div class="n">'+p.n+'</div><div class="l">VIP'+p.lv+' '+(open?'✓':LOCK)+'</div>';
   b.onclick = function(){
     if (p.n === 'شعار الـ VIP') {
+      renderVipNotices();
       document.getElementById('vipBlankPage').classList.add('show');
     }
   };
   grid.appendChild(b);
 });tabs.scrollLeft=sl;}
 render();
+function renderVipNotices(){
+  var list = document.getElementById('vipNoticeList');
+  list.innerHTML = '';
+  TIERS.forEach(function(t, index){
+    var level = index + 1;
+    var card = document.createElement('div');
+    card.className = 'vip-notice-card';
+    card.style.setProperty('--tier-color', t[1]);
+    card.innerHTML = '<div class="vip-notice-mark">VIP '+level+'</div><div class="vip-notice-copy"><strong>'+('VIP '+level)+' · '+t[0]+'</strong><span>إشعار الـ VIP</span></div>';
+    list.appendChild(card);
+  });
+}
 document.getElementById('vipBlankClose').addEventListener('click', function(){
   document.getElementById('vipBlankPage').classList.remove('show');
 });
