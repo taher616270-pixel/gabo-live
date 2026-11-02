@@ -239,13 +239,16 @@ render();
 function renderVipNotices(){
   var list = document.getElementById('vipNoticeList');
   list.innerHTML = '';
-  TIERS.forEach(function(t, index){
-    var level = index + 1;
+  TIERS.slice().reverse().forEach(function(t, index){
+    var level = 10 - index;
     var card = document.createElement('div');
     card.className = 'vip-notice-card';
     card.style.setProperty('--tier-color', t[1]);
     card.style.setProperty('--tier-dark', t[2]);
     card.style.setProperty('--tier-level', level);
+    card.style.setProperty('--a', t[1]);
+    card.style.setProperty('--b', t[2]);
+    card.style.setProperty('--n', level);
     card.innerHTML = '<div class="vip-notice-preview">'+emb(level, 'popup'+level)+'</div>';
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');
