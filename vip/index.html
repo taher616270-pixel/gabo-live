@@ -264,7 +264,15 @@ document.getElementById('need').textContent = left;
 document.getElementById('need2').textContent = left;
 document.getElementById('xp').textContent = USER.xp + '/' + USER.next;
 setTimeout(function(){ document.getElementById('fill').style.width = Math.max(1, USER.xp/USER.next*100)+'%'; }, 150);
-heroSet(view);document.getElementById('charge').onclick = function(){ say('فتح صفحة الشحن...'); };
+heroSet(view);
+document.querySelector('.nav button[aria-label="رجوع"]').addEventListener('click', function(){
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = '/profile/';
+  }
+});
+document.getElementById('charge').onclick = function(){ say('فتح صفحة الشحن...'); };
 // جزيئات ذهبية متطايرة
 (function(){var c=document.getElementById('fx'),x=c.getContext('2d'),W,H,P=[];
 function rs(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight}rs();addEventListener('resize',rs);
