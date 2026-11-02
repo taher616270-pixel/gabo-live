@@ -169,7 +169,9 @@ body{background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans
 
 <script>
 // عدّل هذي القيم حسب بياناتك
-var USER = { name: 'اسم المستخدم', xp: 100, next: 50000, level: 0 };
+var cachedVipName = '';
+try { cachedVipName = localStorage.getItem('gabo_vip_username') || ''; } catch(e) {}
+var USER = { name: cachedVipName || 'اسم المستخدم', xp: 100, next: 50000, level: 0 };
 // اسم المستخدم ينقرأ من الرابط مثل: index.html?name=محمد
 var qn = new URLSearchParams(location.search).get('name'); if (qn) USER.name = qn;
 // استدعها من تطبيقك لتغيير الاسم: setUser('محمد')
@@ -273,27 +275,33 @@ if(!matchMedia('(prefers-reduced-motion:reduce)').matches)f()})();
 </script>
 
 <script type="module">
-  import { auth, db, authReady } from '/firebase-config.js';
+  import { auth, db } from '/firebase-config.js';
   import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
   import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
   function applyUser(user) {
-    if (!user) return;
-    // اعرض الاسم المتاح فوراً، ولا تنتظر قراءة Firestore
-    setUser(user.displayName || user.email?.split('@')[0] || 'مستخدم');
-    // حدّثه بالاسم المحفوظ في الملف الشخصي بالخلفية
+    if (!user) {
+      try { localStorage.removeItem('gabo_vip_username'); } catch(e) {}
+      return;
+    }
+    const quickName = user.displayName || user.email?.split('@')[0] || 'مستخدم';
+    setUser(quickName);
+    try { localStorage.setItem('gabo_vip_username', quickName); } catch(e) {}
+
+    // اقرأ الاسم الكامل في الخلفية دون تعطيل ظهور تأثير VIP
     getDoc(doc(db, 'users', user.uid)).then(profile => {
       if (!profile.exists()) return;
       const data = profile.data();
       const name = data.name || data.displayName;
-      if (name) setUser(name);
+      if (name) {
+        setUser(name);
+        try { localStorage.setItem('gabo_vip_username', name); } catch(e) {}
+      }
     }).catch(error => console.error('تعذر تحديث اسم VIP من الملف الشخصي:', error));
   }
 
-  authReady.then(() => {
-    if (auth.currentUser) applyUser(auth.currentUser);
-    onAuthStateChanged(auth, applyUser);
-  }).catch(error => console.error('تعذر تهيئة حساب VIP:', error));
+  // لا ننتظر تهيئة persistence؛ Firebase يبلغنا بالحساب فور جاهزيته
+  onAuthStateChanged(auth, applyUser, error => console.error('تعذر تهيئة حساب VIP:', error));
 </script>
 
 </body>
