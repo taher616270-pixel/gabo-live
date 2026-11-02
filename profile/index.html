@@ -137,6 +137,11 @@ body{padding-bottom:110px}
 @media(max-width:380px){
   .head .pencil#openEdit{top:57px!important;right:calc(50% + 74px - 7.5cm)!important;left:auto!important}
 }
+
+/* Assigned VIP6 avatar frame */
+.avatar.vip6-frame{overflow:visible!important;isolation:isolate}
+.avatar.vip6-frame img{border-radius:inherit}
+.avatar.vip6-frame::after{content:"";position:absolute;inset:-13px;background:url('/vip/frames/VIP6.mp4.webp') center/contain no-repeat;pointer-events:none;z-index:5}
 </style>
 <link rel="stylesheet" href="/assets/style/gabo-theme.css">
 </head>
@@ -351,6 +356,7 @@ try{
     if(Number.isFinite(latest.visitors))document.getElementById('c3').textContent=latest.visitors;
   }
 }catch(cacheErr){console.warn('Instant profile cache error:',cacheErr);}
+function applyHeadFrame(frame){const el=document.getElementById('avatarMain');if(el)el.classList.toggle('vip6-frame',frame==='VIP6');}
 function renderVipBadge(level){
   const badge=document.getElementById('vipBadgeMain');
   if(!badge)return;
@@ -367,6 +373,7 @@ onAuthStateChanged(auth,async u=>{
   try{
     const cached=JSON.parse(localStorage.getItem('gabo_profile_cache_'+u.uid)||'null');
     if(cached){
+      applyHeadFrame(cached.headFrame);
       if(cached.name)document.getElementById('nameMain').textContent=cached.name;
       renderVipBadge(cached.vipLevel);
       if(cached.id){document.getElementById('idMain').textContent=cached.id;document.getElementById('userId').textContent=cached.id;}
@@ -400,6 +407,7 @@ onAuthStateChanged(auth,async u=>{
       await setDoc(ref,defaults,{merge:true});
       d=defaults;
     }
+    applyHeadFrame(d.headFrame);
     const finalId=d.gaboId||genId(u.uid);
     const displayName=d.displayName||d.name||u.displayName||u.email?.split('@')[0]||'مستخدم';
     document.getElementById('idMain').textContent=finalId;
@@ -428,7 +436,7 @@ onAuthStateChanged(auth,async u=>{
         name:displayName,id:finalId,bio:visibleBio,
         countryName:d.countryName||country?.name||'الجنوب العربي',countryCode,
         countryFlag:d.countryFlagImg||country?.flagImg||SOUTH_FLAG,
-        gender:savedGender,bday:savedBday,photo,cover,
+        gender:savedGender,bday:savedBday,photo,cover,headFrame:d.headFrame||'',
         followers:Number(d.followers)||0,following:Number(d.following)||0,visitors:Number(d.visitors)||0,vipLevel:Number(d.vipLevel)||0
       }));
       localStorage.setItem('gabo_profile_cache_latest',localStorage.getItem('gabo_profile_cache_'+u.uid));
