@@ -240,7 +240,23 @@ function renderVipNotices(){
     var card = document.createElement('div');
     card.className = 'vip-notice-card';
     card.style.setProperty('--tier-color', t[1]);
-    card.innerHTML = '<div class="vip-notice-mark">VIP '+level+'</div><div class="vip-notice-copy"><strong>'+('VIP '+level)+' · '+t[0]+'</strong><span>إشعار الـ VIP</span></div>';
+    card.innerHTML = '<div class="vip-notice-mark">VIP '+level+'</div><div class="vip-notice-copy"><strong>'+('VIP '+level)+' · '+t[0]+'</strong><span>اضغط لعرض إشعار الدخول</span></div>';
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    function activateTier(){
+      view = level;
+      render();
+      heroSet(level);
+      document.getElementById('vipBlankPage').classList.remove('show');
+      notify(level);
+    }
+    card.addEventListener('click', activateTier);
+    card.addEventListener('keydown', function(event){
+      if(event.key === 'Enter' || event.key === ' '){
+        event.preventDefault();
+        activateTier();
+      }
+    });
     list.appendChild(card);
   });
 }
