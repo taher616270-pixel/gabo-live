@@ -117,7 +117,11 @@ textarea{min-height:90px}
 <!-- USERS -->
 <div class="card panel" id="p-users">
 <b>👥 كل الأعضاء - حظر / ترقية / VIP / جعل أدمن (يظهرون تلقائياً)</b>
-<div id="usersListFull"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">
+ <input id="vip6GaboId" inputmode="numeric" placeholder="رقم حساب GABO" style="flex:1;min-width:170px;padding:11px;border-radius:10px;background:#111;color:#fff;border:1px solid #80632c">
+ <button id="grantVip6Frame" class="small primary" type="button">منح إطار VIP6</button>
+ </div><div id="vip6GrantStatus" style="font-size:13px;color:#f5d78e;margin-bottom:10px" aria-live="polite"></div>
+ <div id="usersListFull"></div>
 </div>
 
 </div>
@@ -126,7 +130,7 @@ textarea{min-height:90px}
 import { auth, db } from "/firebase-config.js";
 
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnapshot, serverTimestamp, deleteField, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, query, where, limit, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnapshot, serverTimestamp, deleteField, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const EMAIL_URL = "https://script.google.com/macros/s/AKfycbyDYmsYoCBSkuzn97cD9bnl6Fo0IuI-MrcCO8q1H4fdnT1EvGXCYoxM3TW2zinmopqS/exec";
 
@@ -310,6 +314,22 @@ function loadUsersFull(){
    s.forEach(d=>{ const u=d.data(); const div=document.createElement('div'); div.className='row'; div.innerHTML=`<span>🟢 ${u.name||u.email}<br><small>${u.email} | ${u.subscription||u.subPlan||'مجاني'} | طلب: ${u.subPlanRequest||'لا يوجد'} ${u.isAdmin?'⭐ أدمن':''}</small></span><div style="display:flex;gap:4px;flex-wrap:wrap"><button class="small" onclick="toggleAdmin('${d.id}',${!!u.isAdmin})">${u.isAdmin?'إلغاء أدمن':'جعله أدمن'}</button><button class="small" onclick="giveVIP('${d.id}')">VIP</button><button class="small" onclick="location.href='/dm/?uid=${d.id}'">خاص</button><button class="small danger" onclick="banUser('${d.id}')">حظر</button></div>`; list.appendChild(div); });
  });
 }
+document.getElementById('grantVip6Frame').addEventListener('click',async()=>{
+ const input=document.getElementById('vip6GaboId');
+ const status=document.getElementById('vip6GrantStatus');
+ const gaboId=input.value.trim();
+ if(!/^\\d{5,15}$/.test(gaboId)){status.textContent='أدخل رقم GABO صحيحاً.';return;}
+ const btn=document.getElementById('grantVip6Frame');btn.disabled=true;status.textContent='جارٍ البحث عن الحساب...';
+ try{
+  const found=await getDocs(query(collection(db,'users'),where('gaboId','==',gaboId),limit(2)));
+  if(found.empty){status.textContent='لم يتم العثور على حساب بهذا الرقم.';return;}
+  if(found.size>1){status.textContent='يوجد أكثر من حساب بهذا الرقم؛ لم يتم منح الإطار.';return;}
+  const target=found.docs[0];
+  await updateDoc(doc(db,'users',target.id),{headFrame:'VIP6'});
+  status.textContent='✅ تم منح إطار VIP6 للحساب '+gaboId+'. سيظهر في الملف الشخصي بعد تحديث الصفحة.';
+ }catch(err){status.textContent='تعذر منح الإطار: '+(err.message||'خطأ غير معروف');}
+ finally{btn.disabled=false;}
+});
 window.toggleAdmin=async(uid,cur)=>{await updateDoc(doc(db,'users',uid),{isAdmin:!cur});}
 window.giveVIP=async uid=>{
  const userSnap=await getDoc(doc(db,'users',uid));
