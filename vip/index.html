@@ -139,7 +139,8 @@ body{background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans
 .vip-blank-close{width:40px;height:40px;border:1px solid rgba(233,181,96,.35);border-radius:50%;background:#171512;color:#f4d18a;font:32px/1 Arial,sans-serif;display:grid;place-items:center;cursor:pointer;flex:none}
 .vip-blank-heading{flex:1;text-align:center;color:#f4d18a;font-size:19px;font-weight:700}
 .vip-notice-list{width:100%;overflow-y:auto;display:grid;direction:rtl;grid-template-columns:repeat(3,minmax(0,1fr));align-content:start;align-items:center;gap:8px 4px;padding:2px 1px 8px;scrollbar-width:thin;scrollbar-color:#9b7136 transparent}
-.vip-notice-card{width:100%;min-width:0;min-height:104px;display:flex;align-items:center;justify-content:center;padding:8px 0;border:0;border-radius:0;background:transparent;box-shadow:none;cursor:pointer}
+.vip-notice-card{width:100%;min-width:0;min-height:104px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 0;border:0;border-radius:0;background:transparent;box-shadow:none;cursor:default}
+.vip-notice-name{display:block;color:#f4d18a;font-size:13px;font-weight:800;line-height:1.2;text-align:center;letter-spacing:.4px}
 .vip-notice-card:nth-child(1){grid-column:2;grid-row:1}
 .vip-notice-card:nth-child(2){grid-column:1;grid-row:2}
 .vip-notice-card:nth-child(3){grid-column:2;grid-row:2}
@@ -149,7 +150,8 @@ body{background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans
 .vip-notice-card:nth-child(7){grid-column:3;grid-row:3}
 .vip-notice-card:nth-child(8){grid-column:1;grid-row:4}
 .vip-notice-card:nth-child(9){grid-column:2;grid-row:4}
-.vip-notice-card:nth-child(10){grid-column:3;grid-row:4}\n.vip-notice-preview{width:100%;display:flex;align-items:center;gap:12px;justify-content:center;--a:var(--tier-color);--b:var(--tier-dark);--n:var(--tier-level)}
+.vip-notice-card:nth-child(10){grid-column:3;grid-row:4}
+.vip-notice-preview{width:100%;display:flex;align-items:center;gap:12px;justify-content:center;--a:var(--tier-color);--b:var(--tier-dark);--n:var(--tier-level)}
 .vip-notice-preview .emb{width:112px;max-height:100px;flex:none;margin:0;filter:drop-shadow(0 0 10px var(--a))}
 .vip-notice-preview-copy{display:flex;flex-direction:column;gap:5px;min-width:0}
 .vip-notice-preview-copy strong{color:var(--tier-color);font-size:17px;font-weight:900}
@@ -258,7 +260,7 @@ function renderVipNotices(){
     card.style.setProperty('--a', t[1]);
     card.style.setProperty('--b', t[2]);
     card.style.setProperty('--n', level);
-    card.innerHTML = '<div class="vip-notice-preview">'+emb(level, 'popup'+level)+'</div>';
+    card.innerHTML = '<div class="vip-notice-preview">'+emb(level, 'popup'+level)+'</div><span class="vip-notice-name">VIP'+level+'</span>';
     list.appendChild(card);
   });
 }
