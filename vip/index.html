@@ -259,19 +259,6 @@ function renderVipNotices(){
     card.style.setProperty('--b', t[2]);
     card.style.setProperty('--n', level);
     card.innerHTML = '<div class="vip-notice-preview">'+emb(level, 'popup'+level)+'</div>';
-    card.setAttribute('role', 'button');
-    card.setAttribute('tabindex', '0');
-    function activateTier(){
-      document.getElementById('vipBlankPage').classList.remove('show');
-      notify(level);
-    }
-    card.addEventListener('click', activateTier);
-    card.addEventListener('keydown', function(event){
-      if(event.key === 'Enter' || event.key === ' '){
-        event.preventDefault();
-        activateTier();
-      }
-    });
     list.appendChild(card);
   });
 }
