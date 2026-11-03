@@ -190,7 +190,7 @@ const profileUnsubs={};
 let activeProfileUid=null,activeProfileSeat=null;
 
 function safeName(){return String(profile.name||profile.displayName||currentUser?.displayName||currentUser?.email?.split('@')[0]||'عضو').trim().slice(0,50)||'عضو';}
-function safeAvatar(){return String(profile.photoURL||profile.photoUrl||profile.profilePhoto||profile.profilePicture||profile.avatarURL||profile.avatarUrl||profile.avatar||profile.photo||profile.imageURL||profile.imageUrl||currentUser?.photoURL||'').slice(0,900000);}
+function safeAvatar(){const value=String(profile.photoURL||profile.photoUrl||profile.profilePhoto||profile.profilePicture||profile.avatarURL||profile.avatarUrl||profile.avatar||profile.photo||profile.imageURL||profile.imageUrl||currentUser?.photoURL||'');return value.length<=2000?value:'';}
 function level(){const n=Number(profile.level||profile.vipLevel||1);return Number.isFinite(n)?Math.max(1,Math.min(100,Math.floor(n))):1;}
 function active(data){const t=data?.lastSeen?.toMillis?.();return !!t&&Date.now()-t<75000;}
 function generatedGaboId(uid){
@@ -363,7 +363,7 @@ async function enterRoom(user){
   // صورة الملف الشخصي تُقرأ مباشرة من users/{uid}. لا ننسخ صور Base64 الكبيرة إلى وثيقة الحضور لأن قواعد الغرفة تحد حجم avatar.
   const oldSnap=await getDoc(memberRef);
   const old=oldSnap.exists()?oldSnap.data():{};
-  mySeat=Number.isInteger(old.seat)?old.seat:null;
+  mySeat=Number.isInteger(old.seat)&&old.seat>=1&&old.seat<=16?old.seat:null;
   micOn=false;
   const profileAvatar=safeAvatar();
   const data={uid:user.uid,name:safeName(),avatar:profileAvatar.length<=2000?profileAvatar:'',level:level(),seat:mySeat,micOn:false,joinedAt:old.joinedAt||serverTimestamp(),lastSeen:serverTimestamp()};
