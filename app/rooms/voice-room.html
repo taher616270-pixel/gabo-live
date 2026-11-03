@@ -190,7 +190,7 @@ const profileUnsubs={};
 let activeProfileUid=null,activeProfileSeat=null;
 
 function safeName(){return String(profile.name||profile.displayName||currentUser?.displayName||currentUser?.email?.split('@')[0]||'عضو').trim().slice(0,50)||'عضو';}
-function safeAvatar(){return String(profile.photoURL||profile.photoUrl||profile.avatar||profile.photo||currentUser?.photoURL||'').slice(0,900000);}
+function safeAvatar(){return String(profile.photoURL||profile.photoUrl||profile.profilePhoto||profile.profilePicture||profile.avatarURL||profile.avatarUrl||profile.avatar||profile.photo||profile.imageURL||profile.imageUrl||currentUser?.photoURL||'').slice(0,900000);}
 function level(){const n=Number(profile.level||profile.vipLevel||1);return Number.isFinite(n)?Math.max(1,Math.min(100,Math.floor(n))):1;}
 function active(data){const t=data?.lastSeen?.toMillis?.();return !!t&&Date.now()-t<75000;}
 function generatedGaboId(uid){
@@ -199,7 +199,7 @@ function generatedGaboId(uid){
   return (10000000+(hash%90000000)).toString().padStart(8,'0');
 }
 function publicPhoto(data){
-  return String(data?.photoURL||data?.photoUrl||data?.avatarURL||data?.avatarUrl||data?.avatar||data?.photo||data?.profileImage||data?.image||'').slice(0,900000);
+  return String(data?.photoURL||data?.photoUrl||data?.profilePhoto||data?.profilePicture||data?.avatarURL||data?.avatarUrl||data?.avatar||data?.photo||data?.profileImage||data?.imageURL||data?.imageUrl||data?.image||'').slice(0,900000);
 }
 function syncProfileListeners(){
   const ids=new Set([...Object.keys(members),...Object.values(seatUsers).map(x=>x?.uid).filter(Boolean)]);
@@ -281,12 +281,12 @@ function render(){
     const label=document.createElement('div');label.className='n';
     const raw=seatUsers[i];
     const cached=raw?.uid?profileCache[raw.uid]||{}:{};
-    const u=raw?{...raw,...cached,name:cached.displayName||cached.name||raw.name,avatar:publicPhoto(cached)||publicPhoto(raw)||publicPhoto(members[raw.uid])||'',level:cached.vipLevel||cached.level||raw.level}:null;
+    const u=raw?{...raw,...cached,name:cached.displayName||cached.name||raw.name,avatar:publicPhoto(cached)||publicPhoto(raw)||publicPhoto(members[raw.uid]||{})||(raw.uid===currentUser?.uid?String(currentUser?.photoURL||''):'') ,level:cached.vipLevel||cached.level||raw.level}:null;
     if(locked.includes(i)){seat.classList.add('lock');av.textContent='🔒';label.textContent=String(i);}
     else if(u){
       seat.classList.add('on');
       if(u.avatar){const image=document.createElement('img');image.src=u.avatar;image.alt='';image.referrerPolicy='no-referrer';av.appendChild(image);}
-      else av.textContent=(u.name||'ع').trim().charAt(0)||'ع';
+      else av.textContent='';
       if(u.micOn){seat.classList.add('speak');const badge=document.createElement('span');badge.className='micBadge';badge.textContent='🎙';badge.title='المايك مفتوح';av.appendChild(badge);}
       const name=document.createElement('span');name.textContent=u.name||'عضو';
       const vip=document.createElement('b');vip.className='v';vip.textContent='V'+(u.level||1);
