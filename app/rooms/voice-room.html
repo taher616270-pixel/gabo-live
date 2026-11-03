@@ -199,7 +199,7 @@ function generatedGaboId(uid){
   return (10000000+(hash%90000000)).toString().padStart(8,'0');
 }
 function publicPhoto(data){
-  return String(data?.photoURL||data?.photoUrl||data?.photo||data?.avatar||'').slice(0,2000);
+  return String(data?.photoURL||data?.photoUrl||data?.avatarURL||data?.avatarUrl||data?.avatar||data?.photo||data?.profileImage||data?.image||'').slice(0,2000);
 }
 function syncProfileListeners(){
   const ids=new Set(Object.keys(members));
@@ -281,7 +281,7 @@ function render(){
     const label=document.createElement('div');label.className='n';
     const raw=seatUsers[i];
     const cached=raw?.uid?profileCache[raw.uid]||{}:{};
-    const u=raw?{...raw,...cached,name:cached.displayName||cached.name||raw.name,avatar:profileCache[raw.uid]!==undefined?publicPhoto(cached):raw.avatar,level:cached.vipLevel||cached.level||raw.level}:null;
+    const u=raw?{...raw,...cached,name:cached.displayName||cached.name||raw.name,avatar:publicPhoto(cached)||raw.avatar||members[raw.uid]?.avatar||'',level:cached.vipLevel||cached.level||raw.level}:null;
     if(locked.includes(i)){seat.classList.add('lock');av.textContent='🔒';label.textContent=String(i);}
     else if(u){
       seat.classList.add('on');
