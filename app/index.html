@@ -150,7 +150,7 @@ body{font-family:'Tajawal',system-ui;background:radial-gradient(ellipse at 50% -
 
 <section id="voiceRoomsSection" class="engagementSection voiceRoomsHomeSection" aria-labelledby="voiceRoomsHomeTitle" hidden>
 <div class="sectionHead"><div><small>GABO LIVE • VOICE</small><h2 id="voiceRoomsHomeTitle">🎙️ الغرف الصوتية</h2><p>مساحة للتواصل الصوتي المباشر مع الأصدقاء</p></div><span class="liveBadge">● الغرف</span></div>
-<article class="adminVoiceRoomCard"><div class="adminVoiceRoomVisual"><span class="adminVoiceRoomMic" aria-hidden="true">🎙️</span><span class="adminVoiceRoomBadge">غرفة رسمية</span></div><div class="adminVoiceRoomInfo"><div><h3>الإدارة</h3><p>الغرفة الرسمية لإدارة GABO LIVE والتواصل مع الأعضاء</p></div><span class="adminVoiceRoomStatus">الصوت قيد التجهيز</span></div></article>
+<article class="adminVoiceRoomCard" id="adminVoiceRoomCard" role="button" tabindex="0" aria-label="فتح غرفة الإدارة"><div class="adminVoiceRoomVisual"><span class="adminVoiceRoomMic" aria-hidden="true">🎙️</span><span class="adminVoiceRoomBadge">غرفة رسمية</span></div><div class="adminVoiceRoomInfo"><div><h3>الإدارة</h3><p>الغرفة الرسمية لإدارة GABO LIVE والتواصل مع الأعضاء</p></div><span class="adminVoiceRoomStatus">الصوت قيد التجهيز</span></div></article>
 </section>
 <section id="activeCommunitiesSection" class="engagementSection" aria-labelledby="engagementTitle" hidden><div class="sectionHead"><div><small>COMMUNITY PULSE</small><h2 id="engagementTitle">🔥 الأكثر تفاعلاً</h2><p>نشاط المجتمعات الرسمية خلال آخر 24 ساعة</p></div><span class="liveBadge">● مباشر</span></div><div id="activityPage" class="activityList"><div class="activityEmpty">جارٍ تحميل نشاط المجتمعات...</div></div></section><section id="officialCommunitiesSection"><div class="sectionHead communityHead"><div><small>DISCOVER</small><h2>🌍 مجتمعات GABO الرسمية</h2><p>خمسة مجتمعات رسمية تجمع أبناء المنطقة والخليج</p></div></div><div class="communityMeta"><span>اكتشف مكانك بين المجتمعات</span><strong id="communityCount">— مجتمع</strong></div><button type="button" class="createBtn" onclick="openCreate()">＋ إنشاء مجتمع</button><div id="commPage" class="grid"><div class="gridEmpty">جارٍ تحميل المجتمعات...</div></div></section>
 <section id="allCustomCommunitiesSection" class="customCommunitiesSection" hidden><div class="sectionHead customCommunityHead"><div><small>GABO COMMUNITY SPACE</small><h2>✦ المجتمعات</h2><p>جميع المجتمعات التي أنشأها المستخدمون</p></div><strong id="allCustomCommunityTotal">0 مجتمع</strong></div><div id="allCustomCommPage" class="grid"><div class="gridEmpty">جارٍ تحميل المجتمعات...</div></div></section>
@@ -483,5 +483,27 @@ onSnapshot(collection(db,'communities'),snap=>{
 </script>
 
 <script type="module" src="/js/unified-bottom-nav.js"></script>
+
+<style>
+#adminRoomPage{position:fixed;inset:0;z-index:99999;overflow-y:auto;background:radial-gradient(circle at 50% 0%,#34234b 0%,#100e17 42%,#09080d 100%);color:#fff;padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 28px)}
+#adminRoomPage[hidden]{display:none}
+.adminRoomPageInner{max-width:620px;margin:0 auto}
+.adminRoomPageTop{display:flex;align-items:center;gap:12px;margin-bottom:26px}
+.adminRoomBack{width:42px;height:42px;border:1px solid #e7bd6350;border-radius:13px;background:#ffffff0b;color:#f5d99d;font-size:23px}
+.adminRoomPageTop strong{font:900 17px Tajawal,system-ui;color:#f8e7c0}
+.adminRoomHero{padding:26px 18px;text-align:center;border:1px solid #e7bd6340;border-radius:24px;background:linear-gradient(145deg,#241b34,#100e17);box-shadow:0 16px 40px #0005}
+.adminRoomHeroIcon{width:82px;height:82px;margin:0 auto 15px;display:grid;place-items:center;border:1px solid #e7bd6355;border-radius:25px;background:#e7bd6318;font-size:40px}
+.adminRoomHero h1{font:900 25px Tajawal,system-ui;color:#f8e7c0}
+.adminRoomHero p{margin:8px auto 0;max-width:330px;color:#bdb2c9;font:600 12px/1.9 Tajawal,system-ui}
+.adminRoomNotice{margin-top:16px;padding:14px;border:1px solid #e7bd6335;border-radius:16px;background:#e7bd630c;color:#f5d99d;text-align:center;font:800 12px/1.8 Tajawal,system-ui}
+.adminRoomPeople{margin-top:18px;padding:16px;border:1px solid #ffffff18;border-radius:18px;background:#ffffff08}
+.adminRoomPeople h2{font:800 14px Tajawal,system-ui;color:#f8e7c0;margin-bottom:10px}
+.adminRoomEmpty{padding:18px;text-align:center;color:#aaa1b2;font:600 11px/1.8 Tajawal,system-ui}
+.adminVoiceRoomCard{cursor:pointer;transition:transform .18s ease,border-color .18s ease}.adminVoiceRoomCard:focus-visible{outline:2px solid #e7bd63;outline-offset:3px}.adminVoiceRoomCard:active{transform:scale(.985)}
+</style>
+<section id="adminRoomPage" hidden aria-label="صفحة غرفة الإدارة"><div class="adminRoomPageInner"><header class="adminRoomPageTop"><button type="button" class="adminRoomBack" id="adminRoomBack" aria-label="رجوع">‹</button><strong>غرف GABO LIVE</strong></header><div class="adminRoomHero"><div class="adminRoomHeroIcon" aria-hidden="true">🎙️</div><h1>غرفة الإدارة</h1><p>المساحة الرسمية لإدارة GABO LIVE والتواصل مع الأعضاء</p></div><div class="adminRoomNotice">الصوت المباشر قيد التجهيز — لا يمكن بدء محادثة صوتية حالياً</div><div class="adminRoomPeople"><h2>المتواجدون في الغرفة</h2><div class="adminRoomEmpty">لا توجد بيانات حضور متاحة حالياً</div></div></div></section>
+<script>
+(()=>{const card=document.getElementById('adminVoiceRoomCard'),page=document.getElementById('adminRoomPage'),back=document.getElementById('adminRoomBack');if(!card||!page||!back)return;const open=()=>{page.hidden=false;document.body.style.overflow='hidden';back.focus();};const close=()=>{page.hidden=true;document.body.style.overflow='';card.focus();};card.addEventListener('click',open);card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});back.addEventListener('click',close);document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!page.hidden)close();});})();
+</script>
 </body>
 </html>
