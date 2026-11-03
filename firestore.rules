@@ -254,7 +254,7 @@ service cloud.firestore {
       allow update: if
         (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
           'isAdmin', 'subscription', 'subPlan', 'subUntil', 'banned', 'verified',
-          'subPlanRequest', 'subRequestedAt', 'headFrame'
+          'subPlanRequest', 'subRequestedAt', 'headFrame', 'vipLevel'
         ]))
         || (isSelf(userId) && validProfileUpdate())
         || (isSelf(userId) && validFollowingUpdate())
