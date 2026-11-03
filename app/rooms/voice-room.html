@@ -190,7 +190,7 @@ const profileUnsubs={};
 let activeProfileUid=null,activeProfileSeat=null;
 
 function safeName(){return String(profile.name||profile.displayName||currentUser?.displayName||currentUser?.email?.split('@')[0]||'عضو').trim().slice(0,50)||'عضو';}
-function safeAvatar(){return String(profile.photoURL||profile.photoUrl||profile.avatar||profile.photo||currentUser?.photoURL||'').slice(0,2000);}
+function safeAvatar(){return String(profile.photoURL||profile.photoUrl||profile.avatar||profile.photo||currentUser?.photoURL||'').slice(0,900000);}
 function level(){const n=Number(profile.level||profile.vipLevel||1);return Number.isFinite(n)?Math.max(1,Math.min(100,Math.floor(n))):1;}
 function active(data){const t=data?.lastSeen?.toMillis?.();return !!t&&Date.now()-t<75000;}
 function generatedGaboId(uid){
@@ -199,7 +199,7 @@ function generatedGaboId(uid){
   return (10000000+(hash%90000000)).toString().padStart(8,'0');
 }
 function publicPhoto(data){
-  return String(data?.photoURL||data?.photoUrl||data?.avatarURL||data?.avatarUrl||data?.avatar||data?.photo||data?.profileImage||data?.image||'').slice(0,2000);
+  return String(data?.photoURL||data?.photoUrl||data?.avatarURL||data?.avatarUrl||data?.avatar||data?.photo||data?.profileImage||data?.image||'').slice(0,900000);
 }
 function syncProfileListeners(){
   const ids=new Set(Object.keys(members));
