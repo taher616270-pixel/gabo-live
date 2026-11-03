@@ -202,7 +202,7 @@ function publicPhoto(data){
   return String(data?.photoURL||data?.photoUrl||data?.avatarURL||data?.avatarUrl||data?.avatar||data?.photo||data?.profileImage||data?.image||'').slice(0,900000);
 }
 function syncProfileListeners(){
-  const ids=new Set(Object.keys(members));
+  const ids=new Set([...Object.keys(members),...Object.values(seatUsers).map(x=>x?.uid).filter(Boolean)]);
   Object.keys(profileUnsubs).forEach(uid=>{
     if(!ids.has(uid)){
       profileUnsubs[uid]();
@@ -230,7 +230,7 @@ function showMemberProfile(member,seatNumber=null){
   const uid=member?.uid||'';
   const data={...(member||{}),...(profileCache[uid]||{})};
   const name=String(data.displayName||data.name||member?.name||'عضو').trim()||'عضو';
-  const photo=profileCache[uid]!==undefined?publicPhoto(data):(publicPhoto(data)||String(member?.avatar||''));
+  const photo=publicPhoto(data)||publicPhoto(member)||'';
   const cover=String(data.cover||data.coverURL||data.coverUrl||'').slice(0,2000);
   const vip=Number(data.vipLevel||data.level||member?.level||1)||1;
   const userLevel=Number(data.level||data.vipLevel||member?.level||1)||1;
@@ -281,7 +281,7 @@ function render(){
     const label=document.createElement('div');label.className='n';
     const raw=seatUsers[i];
     const cached=raw?.uid?profileCache[raw.uid]||{}:{};
-    const u=raw?{...raw,...cached,name:cached.displayName||cached.name||raw.name,avatar:publicPhoto(cached)||raw.avatar||members[raw.uid]?.avatar||'',level:cached.vipLevel||cached.level||raw.level}:null;
+    const u=raw?{...raw,...cached,name:cached.displayName||cached.name||raw.name,avatar:publicPhoto(cached)||publicPhoto(raw)||publicPhoto(members[raw.uid])||'',level:cached.vipLevel||cached.level||raw.level}:null;
     if(locked.includes(i)){seat.classList.add('lock');av.textContent='🔒';label.textContent=String(i);}
     else if(u){
       seat.classList.add('on');
@@ -344,6 +344,7 @@ function listenRoom(){
       const number=Number(d.id);
       if(number>=1&&number<=16)seatUsers[number]=data;
     });
+    syncProfileListeners();
     render();
   },err=>showError(err));
   const q=query(messagesRef,orderBy('createdAt','asc'),limit(100));
