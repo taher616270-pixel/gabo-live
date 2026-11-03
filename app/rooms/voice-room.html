@@ -62,8 +62,8 @@ header{position:relative;z-index:2;padding:14px 14px 0;display:flex;justify-cont
 button:focus-visible,input:focus-visible,.seat:focus-visible{outline:2px solid #fff}
 @media(prefers-reduced-motion:reduce){.seat.speak .av{animation:none}}
 
-.seat .av{overflow:visible}
-.seat .av img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.seat .av{width:62px;height:62px;min-width:62px;min-height:62px;flex:0 0 62px;overflow:visible}
+.seat .av img{position:absolute;inset:0;width:100%;height:100%;max-width:100%;max-height:100%;border-radius:50%;object-fit:cover;display:block}
 .micBadge{position:absolute;right:-3px;bottom:-3px;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:#27a66a;border:2px solid #fff;color:#fff;font-size:12px;box-shadow:0 2px 8px #0008}
 .seat:not(.on) .micBadge{display:none}
 .syncState{position:relative;z-index:2;font-size:10px;color:#d9f7e8;text-align:center;padding:3px 8px;opacity:.9}
