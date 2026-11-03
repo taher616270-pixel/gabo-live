@@ -1,53 +1,30 @@
-# GABO LIVE — Web-first rebuild
+# GABO LIVE — Web-first infrastructure
 
-The rebuild starts with the browser experience. The same Flutter application will later be expanded to Android and iOS; the backend will remain shared across platforms.
+The existing website at the repository root remains the visual source of truth. Its HTML, CSS, JavaScript, images, routes, Firebase configuration, and Firestore rules have not been changed or deleted. The current Cloudflare Pages workflow continues to deploy the root website.
 
-## Current structure
+The new Laravel API is separate and is not connected to live UI actions yet. The Flutter files under frontend/ are an isolated starter prototype and are not the current website deployment.
 
-- `frontend/`: Flutter application, initially targeting Web.
-- `frontend/lib/main.dart`: Arabic, RTL, responsive starter screen.
-- `frontend/web/`: Flutter Web document entry point.
-- `backend/`: reserved for the Laravel API implementation.
-- `infra/`: reserved for Docker and deployment configuration.
-- `docs/`: architecture and API documentation.
+## Backend components
 
-## Requirements
+- backend/: Laravel 12 API runtime.
+- backend/routes/api.php: versioned API routes under /api/v1.
+- infra/docker-compose.yml: API, MySQL 8.4, and Redis 7.
+- infra/.env.example: Docker environment template.
+- docs/INFRASTRUCTURE.md: architecture and migration notes.
 
-- Flutter SDK 3.24 or newer (Dart 3.4+).
-- A modern browser.
-- For later backend work: PHP 8.3+, Composer, MySQL 8+, Redis 7+, and Docker.
+## Start locally
 
-## Run the web starter
-
-From the repository root:
+Install Docker Engine with Docker Compose. From the repository root, copy infra/.env.example to infra/.env, replace the sample database passwords, then run:
 
 ```bash
-cd frontend
-flutter doctor
-flutter config --enable-web
-flutter pub get
-flutter run -d chrome
+docker compose --env-file infra/.env -f infra/docker-compose.yml build
+docker compose --env-file infra/.env -f infra/docker-compose.yml up -d
 ```
 
-Create a production web build:
+The API health endpoint is http://localhost:8000/api/v1/health.
 
-```bash
-cd frontend
-flutter build web --release
-```
+## Implementation status
 
-The generated site is in `frontend/build/web/`. Deploy that directory to Cloudflare Pages.
+The Laravel runtime foundation, API health endpoint, Docker image, MySQL connection, Redis cache/queue configuration, and Compose services are scaffolded. Authentication, production database migrations, business APIs, Agora token issuance, gift processing, wallet ledger, VIP/family/agency rules, and the admin panel are not implemented yet.
 
-## Architecture direction
-
-- Frontend: Flutter Web first; Android and iOS follow using the same Flutter codebase.
-- API: Laravel REST API.
-- Database: MySQL.
-- Cache, queues, and realtime coordination: Redis.
-- Voice rooms: Agora SDK integration.
-- Admin console: browser-based administration connected to the Laravel API.
-- Deployment: Docker for backend services; Cloudflare Pages for the compiled web frontend.
-
-## Important status
-
-This is the initial web foundation only. Authentication, live voice, gifts, wallets, VIP, families, agencies, moderation, and admin workflows are not implemented yet. They will be added in separate tested stages. The legacy application remains untouched on the `main` branch.
+Do not connect the live website to this API or retire Firebase until each feature is migrated and tested. The next phase is backend authentication and data schema, followed by connecting existing UI behavior through an API adapter without changing its appearance.
