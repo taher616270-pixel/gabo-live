@@ -100,7 +100,7 @@ button:focus-visible,input:focus-visible,.seat:focus-visible{outline:2px solid #
 </footer>
 </div>
 <script>
-// هذه الواجهة مستقلة حالياً؛ الصوت والرسائل ليست متصلة بخادم بعد.
+// مقاعد: 1-16 (من اليمين لليسار)
 var seatsEl=document.getElementById('seats'),chat=document.getElementById('chat');
 var locked=[10,11,13];
 var users={};
@@ -122,7 +122,7 @@ function render(){
     } else {av.textContent='+';n.textContent=i}
     s.appendChild(av);s.appendChild(n);seatsEl.appendChild(s);
   }
-  document.getElementById('cnt').textContent=Object.keys(users).length+1;
+  document.getElementById('cnt').textContent=1;
 }
 function toggle(i){
   if(users[i]&&i!==me)return;
@@ -132,7 +132,7 @@ function toggle(i){
   render();
 }
 seatsEl.addEventListener('click',function(e){var s=e.target.closest('.seat');if(s)toggle(+s.dataset.i)});
-seatsEl.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();var s=e.target.closest('.seat');if(s)toggle(+s.dataset.i)}});
+seatsEl.addEventListener('keydown',function(e){if(e.key==='Enter'){var s=e.target.closest('.seat');if(s)toggle(+s.dataset.i)}});
 function add(node){chat.appendChild(node);chat.scrollTop=chat.scrollHeight}
 function sys(name,text){
   var d=document.createElement('div');d.className='msg sys';
