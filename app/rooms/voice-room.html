@@ -182,7 +182,7 @@ const chat=document.getElementById('chat');
 const input=document.getElementById('inp');
 const micButton=document.getElementById('mic');
 const locked=[10,11,13];
-let currentUser=null,profile={},mySeat=null,micOn=false;
+let currentUser=null,profile={},mySeat=null,micOn=false,seatSwitching=false;
 let members={},seatUsers={},messagesUnsub=null,membersUnsub=null,seatsUnsub=null;
 let memberRef=null,heartbeat=null,joinedNew=false,leaving=false;
 const profileCache={};
@@ -392,27 +392,32 @@ async function enterRoom(user){
   render();
 }
 async function toggleSeat(number){
-  if(!currentUser||locked.includes(number)||number<1||number>16)return;
-  const oldSeat=mySeat;
+  if(!currentUser||locked.includes(number)||seatSwitching)return;
+  seatSwitching=true;
   try{
-    // اقرأ المقاعد الستة عشر داخل المعاملة نفسها حتى نكتشف أي مقعد قديم
-    // بقي باسم المستخدم، ثم ننقل الحساب إلى مقعد واحد فقط بشكل ذري.
+    let leavingSeat=false;
     await runTransaction(db,async tx=>{
-      const refs=Array.from({length:16},(_,index)=>doc(db,roomPath,'seats',String(index+1)));
-      const snapshots=await Promise.all(refs.map(ref=>tx.get(ref)));
-      const targetIndex=number-1;
-      const target=snapshots[targetIndex];
-      if(target.exists()&&target.data().uid!==currentUser.uid){
-        throw new Error('هذا المقعد مشغول');
-      }
-      const isLeaving=target.exists()&&target.data().uid===currentUser.uid;
-      snapshots.forEach((snap,index)=>{
-        if(snap.exists()&&snap.data().uid===currentUser.uid&&(isLeaving||index!==targetIndex)){
-          tx.delete(refs[index]);
+      // اقرأ حالة العضوية وكل المقاعد أولاً حتى نعتمد على الحالة الفعلية في Firestore
+      // وليس على mySeat المحلي الذي قد يتأخر تحديثه عند التنقل السريع.
+      const memberSnap=await tx.get(memberRef);
+      const allSeatsSnap=await tx.get(seatsRef);
+      if(!memberSnap.exists())throw new Error('تعذر العثور على عضويتك في الغرفة');
+      const memberData=memberSnap.data();
+      const actualSeat=Number.isInteger(memberData.seat)&&memberData.seat>=1&&memberData.seat<=16?memberData.seat:null;
+      const targetDoc=allSeatsSnap.docs.find(d=>Number(d.id)===number);
+      const targetData=targetDoc?.data();
+      if(targetData&&targetData.uid!==currentUser.uid)throw new Error('هذا المقعد مشغول');
+
+      leavingSeat=actualSeat===number;
+      // احذف أي مقعد آخر مسجل باسم هذا المستخدم، حتى لو كانت هناك بيانات قديمة مكررة.
+      allSeatsSnap.docs.forEach(d=>{
+        if(d.data().uid===currentUser.uid&&(leavingSeat||Number(d.id)!==number)){
+          tx.delete(d.ref);
         }
       });
-      if(!isLeaving&&!target.exists()){
-        tx.set(refs[targetIndex],{
+
+      if(!leavingSeat&&!targetData){
+        tx.set(doc(db,roomPath,'seats',String(number)),{
           uid:currentUser.uid,
           name:safeName(),
           avatar:safeAvatar(),
@@ -421,25 +426,27 @@ async function toggleSeat(number){
           joinedAt:serverTimestamp(),
           lastSeen:serverTimestamp()
         });
+      }else if(!leavingSeat&&targetData?.uid===currentUser.uid){
+        // المقعد الهدف مملوك لنا بالفعل؛ أبقه ولا تنشئ وثيقة ثانية.
+        tx.update(doc(db,roomPath,'seats',String(number)),{micOn:false,lastSeen:serverTimestamp()});
       }
+
       tx.update(memberRef,{
-        seat:isLeaving?null:number,
+        seat:leavingSeat?null:number,
         micOn:false,
         lastSeen:serverTimestamp()
       });
     });
-    if(seatUsers[number]?.uid===currentUser.uid){
-      mySeat=null;
-      micOn=false;
-      systemMessage('غادر '+safeName()+' مقعد المايك');
-    }else{
-      mySeat=number;
-      micOn=false;
-      systemMessage('جلس '+safeName()+' على مقعد المايك');
-    }
+
+    mySeat=leavingSeat?null:number;
+    micOn=false;
     render();
+    systemMessage(leavingSeat?'غادر '+safeName()+' مقعد المايك':'انتقل '+safeName()+' إلى مقعد المايك');
   }catch(err){
-    alert(err.message==='هذا المقعد مشغول'?'هذا المقعد مشغول، اختر مقعداً آخر':'تعذر حجز المقعد: '+(err.message||'تحقق من صلاحيات Firestore'));
+    alert(err.message==='هذا المقعد مشغول'?'هذا المقعد مشغول، اختر مقعداً آخر':'تعذر نقل المقعد: '+(err.message||'تحقق من صلاحيات Firestore'));
+    console.error('Seat move failed:',err);
+  }finally{
+    seatSwitching=false;
   }
 }
 seatsEl.addEventListener('click',e=>{
