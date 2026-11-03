@@ -61,6 +61,16 @@ header{position:relative;z-index:2;padding:14px 14px 0;display:flex;justify-cont
 .bar button.mic.off{opacity:.45}
 button:focus-visible,input:focus-visible,.seat:focus-visible{outline:2px solid #fff}
 @media(prefers-reduced-motion:reduce){.seat.speak .av{animation:none}}
+
+.seat .av{overflow:visible}
+.seat .av img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.micBadge{position:absolute;right:-3px;bottom:-3px;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:#27a66a;border:2px solid #fff;color:#fff;font-size:12px;box-shadow:0 2px 8px #0008}
+.seat:not(.on) .micBadge{display:none}
+.syncState{position:relative;z-index:2;font-size:10px;color:#d9f7e8;text-align:center;padding:3px 8px;opacity:.9}
+.msg .u{font-weight:800}
+.msg.sys{align-self:center;text-align:center;font-size:12px;color:#f5d99d}
+.msg .avatarMini{width:22px;height:22px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-left:5px}
+.bar button:disabled{opacity:.35}
 </style>
 </head>
 <body>
@@ -99,61 +109,198 @@ button:focus-visible,input:focus-visible,.seat:focus-visible{outline:2px solid #
   <button aria-label="الصوت" id="vol">🔊</button>
 </footer>
 </div>
-<script>
-// مقاعد: 1-16 (من اليمين لليسار)
-var seatsEl=document.getElementById('seats'),chat=document.getElementById('chat');
-var locked=[10,11,13];
-var users={};
-var me=null,micOn=false;
+<script type="module">
+import { auth, db } from '../../firebase-config.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {
+  collection, doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc,
+  onSnapshot, serverTimestamp, query, orderBy, limit, runTransaction
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const ROOM_ID='6521974';
+const roomPath='voiceRooms/'+ROOM_ID;
+const membersRef=collection(db,roomPath,'members');
+const seatsRef=collection(db,roomPath,'seats');
+const messagesRef=collection(db,roomPath,'messages');
+const seatsEl=document.getElementById('seats');
+const chat=document.getElementById('chat');
+const input=document.getElementById('inp');
+const micButton=document.getElementById('mic');
+const locked=[10,11,13];
+let currentUser=null,profile={},mySeat=null,micOn=false;
+let members={},seatUsers={},messagesUnsub=null,membersUnsub=null,seatsUnsub=null;
+let memberRef=null,heartbeat=null,joinedNew=false,leaving=false;
+
+function safeName(){return String(profile.name||profile.displayName||currentUser?.displayName||currentUser?.email?.split('@')[0]||'عضو').trim().slice(0,50)||'عضو';}
+function safeAvatar(){return String(profile.photoURL||profile.photoUrl||profile.avatar||profile.photo||currentUser?.photoURL||'').slice(0,2000);}
+function level(){const n=Number(profile.level||profile.vipLevel||1);return Number.isFinite(n)?Math.max(1,Math.min(100,Math.floor(n))):1;}
+function active(data){const t=data?.lastSeen?.toMillis?.();return !!t&&Date.now()-t<75000;}
+function systemMessage(text){
+  if(!currentUser)return;
+  addDoc(messagesRef,{uid:currentUser.uid,name:safeName(),avatar:safeAvatar(),text:String(text).slice(0,300),type:'system',createdAt:serverTimestamp()}).catch(err=>console.error('room system message',err));
+}
 function render(){
   seatsEl.innerHTML='';
-  for(var i=1;i<=16;i++){
-    var s=document.createElement('div');s.className='seat';s.tabIndex=0;s.dataset.i=i;
-    var av=document.createElement('div');av.className='av';
-    var n=document.createElement('div');n.className='n';
-    var u=users[i];
-    if(locked.indexOf(i)>-1){s.classList.add('lock');av.textContent='🔒';n.textContent=i}
+  for(let i=1;i<=16;i++){
+    const seat=document.createElement('div');seat.className='seat';seat.tabIndex=0;seat.dataset.i=String(i);
+    const av=document.createElement('div');av.className='av';
+    const label=document.createElement('div');label.className='n';
+    const u=seatUsers[i];
+    if(locked.includes(i)){seat.classList.add('lock');av.textContent='🔒';label.textContent=String(i);}
     else if(u){
-      s.classList.add('on');av.textContent=u.img;
-      var sp=document.createElement('span');sp.textContent=u.n;
-      var v=document.createElement('b');v.className='v';v.textContent='V'+u.lv;
-      n.appendChild(sp);n.appendChild(v);
-      if(i===me&&micOn)s.classList.add('speak');
-    } else {av.textContent='+';n.textContent=i}
-    s.appendChild(av);s.appendChild(n);seatsEl.appendChild(s);
+      seat.classList.add('on');
+      if(u.avatar){const image=document.createElement('img');image.src=u.avatar;image.alt='';image.referrerPolicy='no-referrer';av.appendChild(image);}
+      else av.textContent=(u.name||'ع').trim().charAt(0)||'ع';
+      if(u.micOn){seat.classList.add('speak');const badge=document.createElement('span');badge.className='micBadge';badge.textContent='🎙';badge.title='المايك مفتوح';av.appendChild(badge);}
+      const name=document.createElement('span');name.textContent=u.name||'عضو';
+      const vip=document.createElement('b');vip.className='v';vip.textContent='V'+(u.level||1);
+      label.append(name,vip);
+    }else{av.textContent='+';label.textContent=String(i);}
+    seat.append(av,label);seatsEl.appendChild(seat);
   }
-  document.getElementById('cnt').textContent=1;
+  const count=Object.values(members).filter(active).length;
+  document.getElementById('cnt').textContent=String(count);
+  micButton.classList.toggle('off',!micOn);
+  micButton.setAttribute('aria-label',micOn?'إغلاق المايك':'فتح المايك');
 }
-function toggle(i){
-  if(users[i]&&i!==me)return;
-  if(locked.indexOf(i)>-1)return;
-  if(me===i){delete users[i];me=null}
-  else{if(me)delete users[me];users[i]={n:'MSHAKS',img:'😎',lv:1};me=i}
+function addChatMessage(data){
+  if(data.type==='system'){
+    const node=document.createElement('div');node.className='msg sys';node.textContent=data.text||'';
+    chat.appendChild(node);return;
+  }
+  const who=document.createElement('div');who.className='who';
+  const chip=document.createElement('span');chip.className='chip';chip.textContent='54';
+  const vip=document.createElement('b');vip.className='v';vip.textContent='V'+(data.level||1);
+  const name=document.createElement('span');name.textContent=data.name||'عضو';
+  if(data.avatar){const img=document.createElement('img');img.className='avatarMini';img.src=data.avatar;img.alt='';who.appendChild(img);}
+  who.append(chip,vip,name);
+  const body=document.createElement('div');body.className='msg';body.textContent=data.text||'';
+  chat.append(who,body);
+}
+function renderMessages(items){
+  chat.innerHTML='';
+  items.forEach(addChatMessage);
+  chat.scrollTop=chat.scrollHeight;
+}
+function listenRoom(){
+  membersUnsub=onSnapshot(membersRef,snap=>{
+    members={};
+    snap.forEach(d=>{const data=d.data();members[d.id]=data;});
+    const now=Date.now();
+    snap.forEach(d=>{
+      const data=d.data(),seen=data.lastSeen?.toMillis?.()||0;
+      if(seen&&now-seen>90000){
+        deleteDoc(doc(db,roomPath,'members',d.id)).catch(()=>{});
+        if(Number.isInteger(data.seat))deleteDoc(doc(db,roomPath,'seats',String(data.seat))).catch(()=>{});
+      }
+    });
+    const mine=members[currentUser.uid];
+    if(mine){mySeat=Number.isInteger(mine.seat)?mine.seat:null;micOn=!!mine.micOn;}
+    render();
+  },err=>showError(err));
+  seatsUnsub=onSnapshot(seatsRef,snap=>{
+    seatUsers={};
+    const now=Date.now();
+    snap.forEach(d=>{
+      const data=d.data(),seen=data.lastSeen?.toMillis?.()||0;
+      if(seen&&now-seen>90000){deleteDoc(d.ref).catch(()=>{});return;}
+      const number=Number(d.id);
+      if(number>=1&&number<=16)seatUsers[number]=data;
+    });
+    render();
+  },err=>showError(err));
+  const q=query(messagesRef,orderBy('createdAt','asc'),limit(100));
+  messagesUnsub=onSnapshot(q,snap=>renderMessages(snap.docs.map(d=>d.data())),err=>showError(err));
+}
+function showError(err){
+  console.error('Voice room sync error:',err);
+  systemMessage('تعذر الاتصال بالغرفة. تحقق من صلاحيات Firestore واتصال الإنترنت.');
+}
+async function enterRoom(user){
+  currentUser=user;
+  memberRef=doc(db,roomPath,'members',user.uid);
+  const profileSnap=await getDoc(doc(db,'users',user.uid));
+  profile=profileSnap.exists()?profileSnap.data():{};
+  const oldSnap=await getDoc(memberRef);
+  const old=oldSnap.exists()?oldSnap.data():{};
+  mySeat=Number.isInteger(old.seat)?old.seat:null;
+  micOn=false;
+  const data={uid:user.uid,name:safeName(),avatar:safeAvatar(),level:level(),seat:mySeat,micOn:false,joinedAt:old.joinedAt||serverTimestamp(),lastSeen:serverTimestamp()};
+  await setDoc(memberRef,data,{merge:true});
+  if(mySeat!==null){
+    const seatRef=doc(db,roomPath,'seats',String(mySeat));
+    const seatSnap=await getDoc(seatRef);
+    if(!seatSnap.exists()||seatSnap.data().uid===user.uid){
+      await setDoc(seatRef,{uid:user.uid,name:data.name,avatar:data.avatar,level:data.level,micOn:false,joinedAt:data.joinedAt,lastSeen:serverTimestamp()},{merge:true});
+    }else{
+      mySeat=null;await updateDoc(memberRef,{seat:null});
+    }
+  }
+  joinedNew=!oldSnap.exists();
+  listenRoom();
+  heartbeat=setInterval(()=>{
+    if(!memberRef)return;
+    updateDoc(memberRef,{lastSeen:serverTimestamp()}).catch(()=>{});
+    if(mySeat!==null)updateDoc(doc(db,roomPath,'seats',String(mySeat)),{lastSeen:serverTimestamp()}).catch(()=>{});
+  },20000);
+  if(joinedNew)systemMessage('دخل '+safeName()+' الغرفة');
   render();
 }
-seatsEl.addEventListener('click',function(e){var s=e.target.closest('.seat');if(s)toggle(+s.dataset.i)});
-seatsEl.addEventListener('keydown',function(e){if(e.key==='Enter'){var s=e.target.closest('.seat');if(s)toggle(+s.dataset.i)}});
-function add(node){chat.appendChild(node);chat.scrollTop=chat.scrollHeight}
-function sys(name,text){
-  var d=document.createElement('div');d.className='msg sys';
-  var u=document.createElement('span');u.className='u';u.textContent='@'+name+' ';
-  d.appendChild(u);d.appendChild(document.createTextNode(text));add(d);
+async function toggleSeat(number){
+  if(!currentUser||locked.includes(number))return;
+  const newRef=doc(db,roomPath,'seats',String(number));
+  const oldSeat=mySeat;
+  try{
+    await runTransaction(db,async tx=>{
+      const target=await tx.get(newRef);
+      if(oldSeat===number){
+        if(target.exists()&&target.data().uid===currentUser.uid)tx.delete(newRef);
+        tx.update(memberRef,{seat:null,micOn:false,lastSeen:serverTimestamp()});
+        return;
+      }
+      if(target.exists()&&target.data().uid!==currentUser.uid)throw new Error('هذا المقعد مشغول');
+      let oldRef=null,oldSnap=null;
+      if(oldSeat!==null&&oldSeat!==number){oldRef=doc(db,roomPath,'seats',String(oldSeat));oldSnap=await tx.get(oldRef);}
+      if(oldRef&&oldSnap?.exists()&&oldSnap.data().uid===currentUser.uid)tx.delete(oldRef);
+      const payload={uid:currentUser.uid,name:safeName(),avatar:safeAvatar(),level:level(),micOn:false,joinedAt:serverTimestamp(),lastSeen:serverTimestamp()};
+      tx.set(newRef,payload);
+      tx.update(memberRef,{seat:number,micOn:false,lastSeen:serverTimestamp()});
+    });
+    if(oldSeat===number){mySeat=null;micOn=false;systemMessage('غادر '+safeName()+' مقعد المايك');}
+    else{mySeat=number;micOn=false;systemMessage('جلس '+safeName()+' على مقعد المايك');}
+  }catch(err){alert(err.message==='هذا المقعد مشغول'?'هذا المقعد مشغول، اختر مقعداً آخر':'تعذر حجز المقعد: '+(err.message||'تحقق من صلاحيات Firestore'));}
 }
-function who(){
-  var w=document.createElement('div');w.className='who';
-  w.innerHTML='<span class="chip">54</span><b class="v">V1</b><span>MSHAKS</span>';return w;
+seatsEl.addEventListener('click',e=>{const s=e.target.closest('.seat');if(s)toggleSeat(Number(s.dataset.i));});
+seatsEl.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const s=e.target.closest('.seat');if(s){e.preventDefault();toggleSeat(Number(s.dataset.i));}}});
+async function sendText(){
+  const text=input.value.trim();if(!text||!currentUser)return;
+  input.value='';
+  try{await addDoc(messagesRef,{uid:currentUser.uid,name:safeName(),avatar:safeAvatar(),level:level(),text:text.slice(0,1000),type:'text',createdAt:serverTimestamp()});}
+  catch(err){input.value=text;alert('تعذر إرسال الرسالة. تحقق من صلاحيات Firestore.');console.error(err);}
 }
-document.getElementById('inp').addEventListener('keydown',function(e){
-  if(e.key==='Enter'&&this.value.trim()){
-    add(who());var m=document.createElement('div');m.className='msg me';m.textContent=this.value.trim();add(m);this.value='';
-  }
-});
-document.getElementById('mic').onclick=function(){
-  if(!me){sys('النظام','اجلس على مقعد أولاً');return}
-  micOn=!micOn;this.classList.toggle('off',!micOn);render();
+input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendText();}});
+micButton.onclick=async()=>{
+  if(mySeat===null){systemMessage('اجلس على مقعد أولاً لتفعيل حالة المايك');return;}
+  const next=!micOn;
+  try{
+    const changes={micOn:next,lastSeen:serverTimestamp()};
+    await updateDoc(memberRef,changes);
+    await updateDoc(doc(db,roomPath,'seats',String(mySeat)),changes);
+    micOn=next;render();
+    systemMessage(safeName()+(next?' فعّل المايك 🎙':' أغلق المايك'));
+  }catch(err){alert('تعذر تحديث حالة المايك. تحقق من صلاحيات Firestore.');console.error(err);}
 };
-document.getElementById('emo').onclick=function(){var i=document.getElementById('inp');i.value+='😍';i.focus()};
-render();
+document.getElementById('emo').onclick=()=>{input.value+='😍';input.focus();};
+window.addEventListener('pagehide',()=>{
+  if(leaving||!currentUser)return;leaving=true;
+  if(heartbeat)clearInterval(heartbeat);
+  if(mySeat!==null)deleteDoc(doc(db,roomPath,'seats',String(mySeat))).catch(()=>{});
+  if(memberRef)deleteDoc(memberRef).catch(()=>{});
+});
+onAuthStateChanged(auth,user=>{
+  if(!user){location.replace('/login/');return;}
+  if(!currentUser)enterRoom(user).catch(err=>{console.error(err);alert('تعذر دخول الغرفة: '+(err.message||'تحقق من Firebase'));});
+});
 </script>
 </body>
 </html>
