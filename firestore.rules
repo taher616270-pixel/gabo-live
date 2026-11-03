@@ -478,7 +478,7 @@ service cloud.firestore {
       allow read: if signedIn();
       allow create: if signedIn()
         && request.resource.data.keys().hasOnly([
-          'uid', 'userId', 'text', 'caption', 'image', 'imageUrl', 'videoUrl',
+          'uid', 'userId', 'name', 'photoURL', 'text', 'caption', 'image', 'imageUrl', 'videoUrl',
           'mediaUrl', 'type', 'visibility', 'createdAt', 'likesCount', 'commentsCount'
         ])
         && (request.resource.data.get('uid', '') == request.auth.uid
