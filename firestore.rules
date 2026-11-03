@@ -532,9 +532,103 @@ service cloud.firestore {
         || (signedIn() && resource.data.get('from', '') == request.auth.uid);
     }
 
-    // Voice rooms are intentionally disabled in the current GABO LIVE build.
+    // Shared voice-room state: presence, exclusive seats, shared chat and mic indicators.
     match /voiceRooms/{roomId} {
+      // Room metadata documents are not used by the client.
       allow read, write: if false;
+
+      match /members/{memberUid} {
+        allow read: if signedIn();
+        allow create: if signedIn()
+          && memberUid == request.auth.uid
+          && request.resource.data.keys().hasOnly([
+            'uid', 'name', 'avatar', 'level', 'seat', 'micOn', 'joinedAt', 'lastSeen'
+          ])
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.name.size() <= 50
+          && request.resource.data.avatar is string
+          && request.resource.data.avatar.size() <= 2000
+          && request.resource.data.level is int
+          && request.resource.data.seat in [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+          && request.resource.data.micOn is bool
+          && request.resource.data.joinedAt is timestamp
+          && request.resource.data.lastSeen is timestamp;
+        allow update: if signedIn()
+          && memberUid == request.auth.uid
+          && resource.data.uid == request.auth.uid
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'name', 'avatar', 'level', 'seat', 'micOn', 'lastSeen'
+          ])
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.name.size() <= 50
+          && request.resource.data.avatar is string
+          && request.resource.data.avatar.size() <= 2000
+          && request.resource.data.level is int
+          && request.resource.data.seat in [null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+          && request.resource.data.micOn is bool
+          && request.resource.data.lastSeen is timestamp;
+        allow delete: if signedIn() && (
+          memberUid == request.auth.uid
+          || resource.data.lastSeen < request.time - duration.value(90, 's')
+        );
+      }
+
+      match /seats/{seatId} {
+        allow read: if signedIn();
+        allow create: if signedIn()
+          && seatId in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']
+          && request.resource.data.keys().hasOnly([
+            'uid', 'name', 'avatar', 'level', 'micOn', 'joinedAt', 'lastSeen'
+          ])
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.name.size() <= 50
+          && request.resource.data.avatar is string
+          && request.resource.data.avatar.size() <= 2000
+          && request.resource.data.level is int
+          && request.resource.data.micOn is bool
+          && request.resource.data.joinedAt is timestamp
+          && request.resource.data.lastSeen is timestamp;
+        allow update: if signedIn()
+          && resource.data.uid == request.auth.uid
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['micOn', 'lastSeen'])
+          && request.resource.data.micOn is bool
+          && request.resource.data.lastSeen is timestamp;
+        allow delete: if signedIn() && (
+          resource.data.uid == request.auth.uid
+          || resource.data.lastSeen < request.time - duration.value(90, 's')
+        );
+      }
+
+      match /messages/{messageId} {
+        allow read: if signedIn();
+        allow create: if signedIn()
+          && exists(/databases/$(database)/documents/voiceRooms/$(roomId)/members/$(request.auth.uid))
+          && request.resource.data.keys().hasOnly([
+            'uid', 'name', 'avatar', 'level', 'text', 'type', 'createdAt'
+          ])
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.name.size() <= 50
+          && request.resource.data.avatar is string
+          && request.resource.data.avatar.size() <= 2000
+          && request.resource.data.level is int
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 1000
+          && request.resource.data.type in ['text', 'system']
+          && request.resource.data.createdAt is timestamp;
+        allow update: if false;
+        allow delete: if isAdmin()
+          || (signedIn() && resource.data.uid == request.auth.uid);
+      }
     }
 
     // No unlisted path is readable or writable by clients.
