@@ -97,9 +97,14 @@ button:focus-visible,input:focus-visible,.seat:focus-visible{outline:2px solid #
 .profileStat b{display:block;font-size:15px;color:#f4d58c}
 .profileStat small{font-size:10px;color:#c5bad8}
 .profileLeave{width:100%;margin-top:12px;padding:11px;border:1px solid #e6b85c66;border-radius:12px;background:#3a2a19;color:#ffe0a0;font-weight:800;font-size:12px;cursor:pointer}
-.profileAvatarWrap.vip6-frame{overflow:visible}
-.profileAvatarWrap.vip6-frame img{border-radius:18px}
-.profileAvatarWrap.vip6-frame:after{content:"";position:absolute;inset:-10px;background:url('/vip/frames/VIP6.mp4.webp') center/contain no-repeat;pointer-events:none}
+.profileAvatarWrap.vip-profile-frame{overflow:visible;isolation:isolate}
+.profileAvatarWrap.vip-profile-frame img{border-radius:18px}
+.profileAvatarWrap.vip-profile-frame:after{content:"";position:absolute;inset:-10px;background-image:var(--profile-vip-frame);background-position:center;background-size:contain;background-repeat:no-repeat;pointer-events:none;z-index:5}
+
+/* VIP frames overlay the member photo in each occupied microphone seat */
+.seat .av.vip-seat-frame{overflow:visible;isolation:isolate}
+.seat .av.vip-seat-frame img{z-index:0}
+.seat .av.vip-seat-frame:after{content:"";position:absolute;inset:-11px;background-image:var(--seat-vip-frame);background-position:center;background-size:contain;background-repeat:no-repeat;pointer-events:none;z-index:2}
 
 </style>
 </head>
@@ -198,6 +203,19 @@ function generatedGaboId(uid){
   for(let i=0;i<uid.length;i++)hash=(hash*31+uid.charCodeAt(i))%1000000000;
   return (10000000+(hash%90000000)).toString().padStart(8,'0');
 }
+function vipFramePath(value){
+  const n=Number(String(value??'').trim().toUpperCase().replace(/^VIP/i,''));
+  const paths={
+    1:'/vip/frames/VIP1.png.PNG',
+    2:'/vip/frames/VIP2.png.PNG',
+    3:'/vip/frames/VIP3.png.PNG',
+    4:'/vip/frames/VIP4.png.PNG',
+    5:'/vip/frames/VIP5.png.PNG',
+    6:'/vip/frames/VIP6.mp4.webp',
+    7:'/vip/frames/VIP7.mp4.webp'
+  };
+  return Number.isInteger(n)?(paths[n]||''):'';
+}
 function publicPhoto(data){
   return String(data?.photoURL||data?.photoUrl||data?.profilePhoto||data?.profilePicture||data?.avatarURL||data?.avatarUrl||data?.avatar||data?.photo||data?.profileImage||data?.imageURL||data?.imageUrl||data?.image||'').slice(0,900000);
 }
@@ -248,7 +266,11 @@ function showMemberProfile(member,seatNumber=null){
   document.getElementById('roomProfileVisitors').textContent=String(visitors);
   setProfileImage('roomProfileAvatar',photo);
   setProfileImage('roomProfileCover',cover);
-  document.getElementById('roomProfileAvatarWrap').classList.toggle('vip6-frame',data.headFrame==='VIP6');
+  const profileAvatarWrap=document.getElementById('roomProfileAvatarWrap');
+  const profileFrame=vipFramePath(data.vipLevel);
+  profileAvatarWrap.classList.toggle('vip-profile-frame',!!profileFrame);
+  if(profileFrame)profileAvatarWrap.style.setProperty('--profile-vip-frame','url("'+profileFrame+'")');
+  else profileAvatarWrap.style.removeProperty('--profile-vip-frame');
   const country=document.getElementById('roomProfileCountry');
   country.replaceChildren();
   if(data.countryFlagImg){
@@ -285,6 +307,11 @@ function render(){
     if(locked.includes(i)){seat.classList.add('lock');av.textContent='🔒';label.textContent=String(i);}
     else if(u){
       seat.classList.add('on');
+      const seatFrame=vipFramePath(cached.vipLevel||raw.vipLevel||members[raw.uid]?.vipLevel);
+      if(seatFrame){
+        av.classList.add('vip-seat-frame');
+        av.style.setProperty('--seat-vip-frame','url("'+seatFrame+'")');
+      }
       if(u.avatar){const image=document.createElement('img');image.src=u.avatar;image.alt='';image.referrerPolicy='no-referrer';av.appendChild(image);}
       else av.textContent='';
       if(u.micOn){seat.classList.add('speak');const badge=document.createElement('span');badge.className='micBadge';badge.textContent='🎙';badge.title='المايك مفتوح';av.appendChild(badge);}
