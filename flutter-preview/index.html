@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080810">
+<title>GABO LIVE | Flutter Preview</title>
+<style>
+:root{color-scheme:dark;--gold:#dfbd72;--purple:#a77bff;--bg:#080810;--panel:#151322;--muted:#aaa5b9}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 5%,#291b3d 0,#100d1c 38%,var(--bg) 78%);color:#fff;font-family:Tahoma,Arial,sans-serif;min-height:100vh}
+.app{max-width:520px;min-height:100dvh;margin:auto;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom)}
+header{display:flex;align-items:center;justify-content:space-between;padding:22px 4px 18px}.brand{font-size:23px;font-weight:900;letter-spacing:1.5px;color:var(--gold);text-shadow:0 0 20px #d9b66c44}.tag{font-size:11px;color:#c9b9eb;border:1px solid #7354a355;border-radius:20px;padding:7px 10px}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:30px 0 100px}.hero{text-align:center;width:100%}.logo{width:104px;height:104px;margin:0 auto 24px;border:1px solid #d9b66c88;border-radius:32px;display:grid;place-items:center;background:linear-gradient(145deg,#241a34,#11101b);box-shadow:0 0 55px #8c52d744,inset 0 0 22px #d9b66c18;transform:rotate(-4deg)}.logo span{font-size:64px;font-weight:900;color:var(--gold);transform:rotate(4deg);text-shadow:0 0 22px #d9b66c66}
+h1{font-size:29px;margin:0 0 9px;color:#f2dfb5}.subtitle{color:#c6bfd2;font-size:15px;margin:0 0 28px}.status{display:inline-flex;gap:8px;align-items:center;color:#d9c8f6;background:#9a6be51c;border:1px solid #9a6be544;border-radius:30px;padding:9px 14px;font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-top:30px;text-align:right}.card{background:linear-gradient(145deg,#1b1729,#11101a);border:1px solid #ffffff12;border-radius:17px;padding:17px 14px;min-height:92px}.card b{display:block;color:var(--gold);font-size:14px;margin-bottom:7px}.card small{color:var(--muted);font-size:11px;line-height:1.6}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);display:grid;grid-template-columns:repeat(5,1fr);padding:10px 8px calc(10px + env(safe-area-inset-bottom));background:#11101bf2;border-top:1px solid #ffffff12;backdrop-filter:blur(18px)}
+nav button{border:0;background:none;color:#8e899e;font:inherit;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 0;cursor:pointer}nav button span{font-size:20px}nav button.active{color:var(--gold)}nav button.active span{filter:drop-shadow(0 0 7px #d9b66c88)}
+.note{font-size:10px;color:#777184;margin-top:19px}
+@media(min-width:600px){body{padding:22px 0}.app{border:1px solid #ffffff12;border-radius:26px;overflow:hidden;min-height:calc(100dvh - 44px);background:#08081088}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="brand">GABO LIVE</div><div class="tag">معاينة Flutter</div></header>
+<main><section class="hero">
+<div class="logo"><span>G</span></div>
+<h1 id="title">عالمك الصوتي</h1>
+<p class="subtitle" id="subtitle">نسخة Flutter التجريبية من GABO LIVE</p>
+<div class="status">● واجهة المعاينة تعمل</div>
+<div class="cards">
+<div class="card"><b>المنشورات</b><small>واجهة قسم المنشورات قيد النقل</small></div>
+<div class="card"><b>الألعاب</b><small>سيتم ربط الألعاب في المرحلة التالية</small></div>
+<div class="card"><b>الرسائل</b><small>نقل المحادثات والرسائل الخاصة</small></div>
+<div class="card"><b>حسابي</b><small>نقل الملف الشخصي ومزايا VIP</small></div>
+</div>
+<p class="note">هذه معاينة تصميم وتنقل فقط؛ لم يتم ربط الحسابات أو بيانات Firebase بعد.</p>
+</section></main>
+<nav aria-label="التنقل الرئيسي">
+<button class="active" data-title="عالمك الصوتي" data-sub="نسخة Flutter التجريبية من GABO LIVE"><span>⌂</span>الرئيسية</button>
+<button data-title="المنشورات" data-sub="قسم المنشورات قيد النقل والاختبار"><span>▦</span>المنشورات</button>
+<button data-title="الألعاب" data-sub="الألعاب ستضاف بعد نقل الخدمات"><span>♜</span>الألعاب</button>
+<button data-title="الرسائل" data-sub="المحادثات الخاصة قيد النقل"><span>▤</span>الرسائل</button>
+<button data-title="حسابي" data-sub="الملف الشخصي ومزايا VIP قيد النقل"><span>♙</span>حسابي</button>
+</nav>
+</div>
+<script>
+document.querySelectorAll('nav button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));button.classList.add('active');document.getElementById('title').textContent=button.dataset.title;document.getElementById('subtitle').textContent=button.dataset.sub;}));
+</script>
+</body></html>
