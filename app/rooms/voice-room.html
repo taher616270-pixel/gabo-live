@@ -123,7 +123,7 @@ button:focus-visible,input:focus-visible,.seat:focus-visible{outline:2px solid #
   <div class="pill">🌻 هدايا الغرفة</div>
   <div class="lv">Lv.6</div>
 </div>
-<main class="seats" id="seats" aria-label="مقاعد الغرفة"></main>
+<main class="seats" id="seats" aria-label="مقاعد الغرفة"></main>\n<div id="livekitStatus" role="status" aria-live="polite" style="position:relative;z-index:2;text-align:center;font-size:11px;opacity:.8;min-height:14px"></div>
 <div class="tools">
   <div class="cnt">👤 <span id="cnt">1</span></div>
   <div class="all"><span>⤢</span><i>ALL</i><span>⌄</span></div>
@@ -171,6 +171,7 @@ button:focus-visible,input:focus-visible,.seat:focus-visible{outline:2px solid #
 </div>
 <script type="module">
 import { auth, db } from '../../firebase-config.js';
+import { Room, RoomEvent, Track } from 'https://cdn.jsdelivr.net/npm/livekit-client@2/+esm';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
   collection, doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc,
@@ -188,12 +189,56 @@ const input=document.getElementById('inp');
 const micButton=document.getElementById('mic');
 const locked=[10,11,13];
 let currentUser=null,profile={},mySeat=null,micOn=false,seatSwitching=false;
+let liveRoom=null,liveConnected=false,liveConnecting=false;
+const LIVEKIT_TOKEN_URL='/api/livekit-token';
+const remoteAudio=new Map();
 let members={},seatUsers={},messagesUnsub=null,membersUnsub=null,seatsUnsub=null;
 let memberRef=null,heartbeat=null,joinedNew=false,leaving=false;
 const profileCache={};
 const profileUnsubs={};
 let activeProfileUid=null,activeProfileSeat=null;
 
+function liveStatus(text){const node=document.getElementById('livekitStatus');if(node)node.textContent=text||'';}
+function clearRemoteAudio(){for(const el of remoteAudio.values()){try{el.pause();el.srcObject=null;el.remove();}catch{}}remoteAudio.clear();}
+async function disconnectLiveKit(){
+  micOn=false;
+  if(liveRoom){try{await liveRoom.localParticipant.setMicrophoneEnabled(false);}catch{}try{liveRoom.removeAllListeners();await liveRoom.disconnect();}catch{}}
+  liveRoom=null;liveConnected=false;liveConnecting=false;clearRemoteAudio();
+}
+async function connectLiveKit(){
+  if(!currentUser||liveConnected||liveConnecting)return;
+  liveConnecting=true;liveStatus('جارٍ الاتصال بالصوت...');
+  try{
+    const idToken=await currentUser.getIdToken();
+    const response=await fetch(LIVEKIT_TOKEN_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+idToken},body:JSON.stringify({roomId:ROOM_ID})});
+    const payload=await response.json().catch(()=>({}));
+    if(!response.ok||!payload.token||!payload.url)throw new Error(payload.error||'تعذر إصدار رمز الاتصال');
+    const room=new Room({adaptiveStream:true,dynacast:true,stopLocalTrackOnUnpublish:true});
+    liveRoom=room;
+    room.on(RoomEvent.TrackSubscribed,(track,publication,participant)=>{
+      if(track.kind!==Track.Kind.Audio)return;
+      const element=track.attach();element.autoplay=true;element.playsInline=true;element.style.display='none';element.dataset.participant=participant.identity;
+      document.body.appendChild(element);remoteAudio.set(publication.trackSid,element);
+      element.play().catch(()=>liveStatus('اضغط زر الصوت للسماح بتشغيل أصوات المشاركين'));
+    });
+    room.on(RoomEvent.TrackUnsubscribed,(track,publication)=>{track.detach().forEach(el=>el.remove());remoteAudio.delete(publication.trackSid);});
+    room.on(RoomEvent.Disconnected,()=>{liveConnected=false;micOn=false;clearRemoteAudio();render();liveStatus('انقطع الاتصال الصوتي');});
+    room.on(RoomEvent.ActiveSpeakersChanged,(speakers)=>{
+      const speaking=new Set(speakers.map(p=>p.identity));
+      document.querySelectorAll('.seat.on').forEach(node=>{
+        const index=Number(node.dataset.i),occupant=seatUsers[index];
+        node.classList.toggle('speak',!!occupant&&speaking.has(occupant.uid));
+      });
+    });
+    await room.connect(payload.url,payload.token,{autoSubscribe:true});
+    liveConnected=true;liveStatus('الصوت متصل');
+    // تشغيل المايك لا يبدأ تلقائياً؛ ينتظر ضغط المستخدم على زر المايك.
+  }catch(err){
+    console.error('LiveKit connection failed:',err);liveStatus('الصوت غير متصل: '+(err.message||'تحقق من إعداد LiveKit'));
+    await disconnectLiveKit();
+    throw err;
+  }finally{liveConnecting=false;}
+}
 function safeName(){return String(profile.name||profile.displayName||currentUser?.displayName||currentUser?.email?.split('@')[0]||'عضو').trim().slice(0,50)||'عضو';}
 function safeAvatar(){const value=String(profile.photoURL||profile.photoUrl||profile.profilePhoto||profile.profilePicture||profile.avatarURL||profile.avatarUrl||profile.avatar||profile.photo||profile.imageURL||profile.imageUrl||currentUser?.photoURL||'');return value.length<=2000?value:'';}
 function level(){const n=Number(profile.level||profile.vipLevel||1);return Number.isFinite(n)?Math.max(1,Math.min(100,Math.floor(n))):1;}
@@ -512,15 +557,21 @@ async function sendText(){
 }
 input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendText();}});
 micButton.onclick=async()=>{
-  if(mySeat===null){systemMessage('اجلس على مقعد أولاً لتفعيل حالة المايك');return;}
+  if(mySeat===null){systemMessage('اجلس على مقعد أولاً لتفعيل المايك');return;}
   const next=!micOn;
   try{
+    if(!liveConnected)await connectLiveKit();
+    // LiveKit is the real audio transport; Firestore only mirrors the UI state.
+    await liveRoom.localParticipant.setMicrophoneEnabled(next,{audioCaptureDefaults:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
     const changes={micOn:next,lastSeen:serverTimestamp()};
     await updateDoc(memberRef,changes);
     await updateDoc(doc(db,roomPath,'seats',String(mySeat)),changes);
     micOn=next;render();
     systemMessage(safeName()+(next?' فعّل المايك 🎙':' أغلق المايك'));
-  }catch(err){alert('تعذر تحديث حالة المايك. تحقق من صلاحيات Firestore.');console.error(err);}
+  }catch(err){
+    try{if(liveRoom)await liveRoom.localParticipant.setMicrophoneEnabled(false);}catch{}
+    micOn=false;render();alert('تعذر تشغيل الصوت: '+(err.message||'تحقق من إذن المايك وإعداد LiveKit'));console.error(err);
+  }
 };
 document.getElementById('emo').onclick=()=>{input.value+='😍';input.focus();};
 window.addEventListener('pagehide',()=>{
