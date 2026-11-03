@@ -1,5 +1,7 @@
 const ROOM_ID = "6521974";
 const PROJECT_ID = "gabo-live";
+// Firebase Web API keys are public client identifiers, not server secrets.
+const FIREBASE_API_KEY = "AIzaSyDlsjB8eJzVmU0LSnzmJoQY_oJ9QhZIFjA";
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "https://gabo-live.pages.dev",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -49,11 +51,11 @@ export async function onRequestPost({request,env}){
   try{
     const origin=request.headers.get("Origin")||"";
     if(origin!=="https://gabo-live.pages.dev"&&!/^https:\/\/[a-z0-9-]+\.gabo-live\.pages\.dev$/.test(origin))return json({error:"Origin not allowed"},403);
-    if(!env.FIREBASE_API_KEY||!env.LIVEKIT_API_KEY||!env.LIVEKIT_API_SECRET||!env.LIVEKIT_URL)return json({error:"LiveKit service is not configured"},503);
+    if(!env.LIVEKIT_API_KEY||!env.LIVEKIT_API_SECRET||!env.LIVEKIT_URL)return json({error:"LiveKit service is not configured"},503);
     const authorization=request.headers.get("Authorization")||"";
     const idToken=authorization.startsWith("Bearer ")?authorization.slice(7):"";
     if(!idToken)return json({error:"Missing Firebase authentication"},401);
-    const uid=await verifyFirebaseToken(idToken,env.FIREBASE_API_KEY);
+    const uid=await verifyFirebaseToken(idToken,FIREBASE_API_KEY);
     const body=await request.json().catch(()=>({}));
     if(String(body.roomId||ROOM_ID)!==ROOM_ID)return json({error:"Invalid room"},400);
     const canPublish=await canPublishAudio(uid,idToken);
