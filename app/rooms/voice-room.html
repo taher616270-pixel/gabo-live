@@ -230,8 +230,10 @@ async function enterRoom(user){
   if(mySeat!==null){
     const seatRef=doc(db,roomPath,'seats',String(mySeat));
     const seatSnap=await getDoc(seatRef);
-    if(!seatSnap.exists()||seatSnap.data().uid===user.uid){
-      await setDoc(seatRef,{uid:user.uid,name:data.name,avatar:data.avatar,level:data.level,micOn:false,joinedAt:data.joinedAt,lastSeen:serverTimestamp()},{merge:true});
+    if(!seatSnap.exists()){
+      await setDoc(seatRef,{uid:user.uid,name:data.name,avatar:data.avatar,level:data.level,micOn:false,joinedAt:data.joinedAt,lastSeen:serverTimestamp()});
+    }else if(seatSnap.data().uid===user.uid){
+      await updateDoc(seatRef,{micOn:false,lastSeen:serverTimestamp()});
     }else{
       mySeat=null;await updateDoc(memberRef,{seat:null});
     }
