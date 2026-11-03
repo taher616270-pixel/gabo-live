@@ -356,8 +356,17 @@ function showError(err){
 async function enterRoom(user){
   currentUser=user;
   memberRef=doc(db,roomPath,'members',user.uid);
-  const profileSnap=await getDoc(doc(db,'users',user.uid));
+  const profileRef=doc(db,'users',user.uid);
+  const profileSnap=await getDoc(profileRef);
   profile=profileSnap.exists()?profileSnap.data():{};
+  // بعض الصور القديمة كانت محفوظة على جهاز المستخدم فقط؛ انقلها إلى ملف Firestore حتى تظهر لبقية الموجودين بالغرفة.
+  let localPhoto='';
+  try{localPhoto=localStorage.getItem('gabo_photo_'+user.uid)||localStorage.getItem('gabo_photo')||'';}catch{}
+  const savedPhoto=publicPhoto(profile)||localPhoto||user.photoURL||'';
+  if(savedPhoto&&!publicPhoto(profile)){
+    profile={...profile,photo:savedPhoto,photoURL:savedPhoto,avatar:savedPhoto};
+    await setDoc(profileRef,{photo:savedPhoto,photoURL:savedPhoto,avatar:savedPhoto},{merge:true});
+  }
   const oldSnap=await getDoc(memberRef);
   const old=oldSnap.exists()?oldSnap.data():{};
   mySeat=Number.isInteger(old.seat)?old.seat:null;
@@ -370,7 +379,7 @@ async function enterRoom(user){
     if(!seatSnap.exists()){
       await setDoc(seatRef,{uid:user.uid,name:data.name,avatar:data.avatar,level:data.level,micOn:false,joinedAt:data.joinedAt,lastSeen:serverTimestamp()});
     }else if(seatSnap.data().uid===user.uid){
-      await updateDoc(seatRef,{micOn:false,lastSeen:serverTimestamp()});
+      await updateDoc(seatRef,{name:data.name,avatar:data.avatar,level:data.level,micOn:false,lastSeen:serverTimestamp()});
     }else{
       mySeat=null;await updateDoc(memberRef,{seat:null});
     }
