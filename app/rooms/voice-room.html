@@ -392,32 +392,36 @@ async function enterRoom(user){
   render();
 }
 async function toggleSeat(number){
-  if(!currentUser||locked.includes(number)||seatSwitching)return;
+  if(!currentUser||locked.includes(number)||number<1||number>16||seatSwitching)return;
   seatSwitching=true;
+  let leavingSeat=false;
   try{
-    let leavingSeat=false;
     await runTransaction(db,async tx=>{
-      // اقرأ حالة العضوية وكل المقاعد أولاً حتى نعتمد على الحالة الفعلية في Firestore
-      // وليس على mySeat المحلي الذي قد يتأخر تحديثه عند التنقل السريع.
+      // نقرأ حالة العضوية والمقاعد الـ16 داخل المعاملة؛ هذا يمنع اعتماد النقل
+      // على mySeat المحلي إذا تأخر تحديثه، ويزيل أي مقاعد مكررة للحساب نفسه.
       const memberSnap=await tx.get(memberRef);
-      const allSeatsSnap=await tx.get(seatsRef);
+      const seatRefs=Array.from({length:16},(_,index)=>doc(db,roomPath,'seats',String(index+1)));
+      const seatSnaps=await Promise.all(seatRefs.map(ref=>tx.get(ref)));
       if(!memberSnap.exists())throw new Error('تعذر العثور على عضويتك في الغرفة');
+
       const memberData=memberSnap.data();
       const actualSeat=Number.isInteger(memberData.seat)&&memberData.seat>=1&&memberData.seat<=16?memberData.seat:null;
-      const targetDoc=allSeatsSnap.docs.find(d=>Number(d.id)===number);
-      const targetData=targetDoc?.data();
+      const targetIndex=number-1;
+      const targetSnap=seatSnaps[targetIndex];
+      const targetData=targetSnap.exists()?targetSnap.data():null;
       if(targetData&&targetData.uid!==currentUser.uid)throw new Error('هذا المقعد مشغول');
 
-      leavingSeat=actualSeat===number;
-      // احذف أي مقعد آخر مسجل باسم هذا المستخدم، حتى لو كانت هناك بيانات قديمة مكررة.
-      allSeatsSnap.docs.forEach(d=>{
-        if(d.data().uid===currentUser.uid&&(leavingSeat||Number(d.id)!==number)){
-          tx.delete(d.ref);
+      leavingSeat=actualSeat===number&&targetData?.uid===currentUser.uid;
+
+      // احذف كل المقاعد الأخرى التابعة للحساب، أو كلها عند مغادرة المقعد.
+      seatSnaps.forEach((snap,index)=>{
+        if(snap.exists()&&snap.data().uid===currentUser.uid&&(leavingSeat||index!==targetIndex)){
+          tx.delete(seatRefs[index]);
         }
       });
 
       if(!leavingSeat&&!targetData){
-        tx.set(doc(db,roomPath,'seats',String(number)),{
+        tx.set(seatRefs[targetIndex],{
           uid:currentUser.uid,
           name:safeName(),
           avatar:safeAvatar(),
@@ -427,8 +431,8 @@ async function toggleSeat(number){
           lastSeen:serverTimestamp()
         });
       }else if(!leavingSeat&&targetData?.uid===currentUser.uid){
-        // المقعد الهدف مملوك لنا بالفعل؛ أبقه ولا تنشئ وثيقة ثانية.
-        tx.update(doc(db,roomPath,'seats',String(number)),{micOn:false,lastSeen:serverTimestamp()});
+        // المقعد الهدف ملك للحساب بالفعل؛ لا نعيد إنشاء الوثيقة.
+        tx.update(seatRefs[targetIndex],{micOn:false,lastSeen:serverTimestamp()});
       }
 
       tx.update(memberRef,{
