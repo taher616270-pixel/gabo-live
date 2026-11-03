@@ -516,6 +516,9 @@ async function toggleSeat(number){
 
     mySeat=leavingSeat?null:number;
     micOn=false;
+    // Refresh the signed token after seat changes so publishing permission matches the verified seat.
+    await disconnectLiveKit();
+    await connectLiveKit().catch(()=>{});
     render();
     systemMessage(leavingSeat?'غادر '+safeName()+' مقعد المايك':'انتقل '+safeName()+' إلى مقعد المايك');
   }catch(err){
@@ -562,7 +565,7 @@ micButton.onclick=async()=>{
   try{
     if(!liveConnected)await connectLiveKit();
     // LiveKit is the real audio transport; Firestore only mirrors the UI state.
-    await liveRoom.localParticipant.setMicrophoneEnabled(next,{audioCaptureDefaults:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+    await liveRoom.localParticipant.setMicrophoneEnabled(next,{echoCancellation:true,noiseSuppression:true,autoGainControl:true});
     const changes={micOn:next,lastSeen:serverTimestamp()};
     await updateDoc(memberRef,changes);
     await updateDoc(doc(db,roomPath,'seats',String(mySeat)),changes);
