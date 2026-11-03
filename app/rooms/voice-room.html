@@ -392,28 +392,55 @@ async function enterRoom(user){
   render();
 }
 async function toggleSeat(number){
-  if(!currentUser||locked.includes(number))return;
-  const newRef=doc(db,roomPath,'seats',String(number));
+  if(!currentUser||locked.includes(number)||number<1||number>16)return;
   const oldSeat=mySeat;
   try{
+    // اقرأ المقاعد الستة عشر داخل المعاملة نفسها حتى نكتشف أي مقعد قديم
+    // بقي باسم المستخدم، ثم ننقل الحساب إلى مقعد واحد فقط بشكل ذري.
     await runTransaction(db,async tx=>{
-      const target=await tx.get(newRef);
-      if(oldSeat===number){
-        if(target.exists()&&target.data().uid===currentUser.uid)tx.delete(newRef);
-        tx.update(memberRef,{seat:null,micOn:false,lastSeen:serverTimestamp()});
-        return;
+      const refs=Array.from({length:16},(_,index)=>doc(db,roomPath,'seats',String(index+1)));
+      const snapshots=await Promise.all(refs.map(ref=>tx.get(ref)));
+      const targetIndex=number-1;
+      const target=snapshots[targetIndex];
+      if(target.exists()&&target.data().uid!==currentUser.uid){
+        throw new Error('هذا المقعد مشغول');
       }
-      if(target.exists()&&target.data().uid!==currentUser.uid)throw new Error('هذا المقعد مشغول');
-      let oldRef=null,oldSnap=null;
-      if(oldSeat!==null&&oldSeat!==number){oldRef=doc(db,roomPath,'seats',String(oldSeat));oldSnap=await tx.get(oldRef);}
-      if(oldRef&&oldSnap?.exists()&&oldSnap.data().uid===currentUser.uid)tx.delete(oldRef);
-      const payload={uid:currentUser.uid,name:safeName(),avatar:safeAvatar(),level:level(),micOn:false,joinedAt:serverTimestamp(),lastSeen:serverTimestamp()};
-      tx.set(newRef,payload);
-      tx.update(memberRef,{seat:number,micOn:false,lastSeen:serverTimestamp()});
+      const isLeaving=target.exists()&&target.data().uid===currentUser.uid;
+      snapshots.forEach((snap,index)=>{
+        if(snap.exists()&&snap.data().uid===currentUser.uid&&(isLeaving||index!==targetIndex)){
+          tx.delete(refs[index]);
+        }
+      });
+      if(!isLeaving&&!target.exists()){
+        tx.set(refs[targetIndex],{
+          uid:currentUser.uid,
+          name:safeName(),
+          avatar:safeAvatar(),
+          level:level(),
+          micOn:false,
+          joinedAt:serverTimestamp(),
+          lastSeen:serverTimestamp()
+        });
+      }
+      tx.update(memberRef,{
+        seat:isLeaving?null:number,
+        micOn:false,
+        lastSeen:serverTimestamp()
+      });
     });
-    if(oldSeat===number){mySeat=null;micOn=false;systemMessage('غادر '+safeName()+' مقعد المايك');}
-    else{mySeat=number;micOn=false;systemMessage('جلس '+safeName()+' على مقعد المايك');}
-  }catch(err){alert(err.message==='هذا المقعد مشغول'?'هذا المقعد مشغول، اختر مقعداً آخر':'تعذر حجز المقعد: '+(err.message||'تحقق من صلاحيات Firestore'));}
+    if(seatUsers[number]?.uid===currentUser.uid){
+      mySeat=null;
+      micOn=false;
+      systemMessage('غادر '+safeName()+' مقعد المايك');
+    }else{
+      mySeat=number;
+      micOn=false;
+      systemMessage('جلس '+safeName()+' على مقعد المايك');
+    }
+    render();
+  }catch(err){
+    alert(err.message==='هذا المقعد مشغول'?'هذا المقعد مشغول، اختر مقعداً آخر':'تعذر حجز المقعد: '+(err.message||'تحقق من صلاحيات Firestore'));
+  }
 }
 seatsEl.addEventListener('click',e=>{
   const s=e.target.closest('.seat');if(!s)return;
